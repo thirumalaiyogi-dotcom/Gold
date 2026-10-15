@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ta"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b8860b"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<title>சுப்புலட்சுமி தங்க மாளிகை</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fffaf0;--card:#fff;--tx:#2b2111;--mut:#7a6a4f;--gold:#b8860b;--gold2:#f3d27a;--ln:#ecdcae;--ok:#1f7a4d}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#17130c;--card:#241d10;--tx:#f6ecd2;--mut:#bba983;--gold:#e8b94a;--gold2:#5a4410;--ln:#3b2f17;--ok:#5fd39a}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Tamil","Latha",system-ui,sans-serif;line-height:1.55;max-width:560px;margin:auto}
+header{background:linear-gradient(135deg,#8a6508,#d9a62b);color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:20px}header p{margin:2px 0 0;font-size:13px;opacity:.9}
+nav{display:flex;overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--ln);z-index:5}
+nav button{flex:1 0 auto;padding:12px 10px;font-size:13px;white-space:nowrap;border:0;background:none;color:var(--mut);font:600 14px inherit;font-family:inherit;border-bottom:3px solid transparent}
+nav button.on{color:var(--gold);border-color:var(--gold)}
+section{display:none;padding:14px}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:14px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:18px;color:var(--gold)}
+.tag{display:inline-block;background:var(--gold2);color:var(--tx);border-radius:20px;padding:2px 10px;font-size:12px;margin:0 4px 6px 0}
+ul{padding-left:18px;margin:6px 0}li{margin-bottom:4px;font-size:15px}
+label{display:block;font-size:14px;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--tx);font:16px inherit;font-family:inherit}
+.btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--gold);color:#fff;font:700 16px inherit;font-family:inherit;text-align:center;text-decoration:none;margin-top:12px}
+.btn.alt{background:var(--ok)}
+.res{background:var(--gold2);border-radius:12px;padding:12px;margin-top:12px;font-size:15px}
+.res b{font-size:20px;display:block}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+.mrow{display:flex;gap:6px;align-items:center;margin-bottom:6px}.mrow span{width:70px;font-size:13px;color:var(--mut)}
+.hide{display:none!important}.sum{background:var(--gold2);border-radius:12px;padding:12px;margin:10px 0}.sum b{font-size:20px}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--ln);font-size:14px}.mut{color:var(--mut);font-size:13px}
+
+.ov{position:fixed;inset:0;z-index:50;overflow:auto;font-family:inherit}
+#ob{background:radial-gradient(circle at 50% 38%,#c4101f 0,#a00010 55%,#7d000c 100%);color:#fff;display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#ob:before{content:"";position:absolute;inset:0;background:repeating-conic-gradient(from 0deg at 50% 38%,rgba(255,255,255,.06) 0 8deg,transparent 8deg 16deg);pointer-events:none}
+.obt{position:relative;display:flex;justify-content:space-between;align-items:center;padding:14px 18px}
+.obt b{background:#ffd23f;color:#8a0010;border:3px solid #ffeaa0;border-radius:12px;padding:6px 12px;font-size:15px}
+#obs{color:#fff;font-size:15px;padding:6px 4px}
+.obv{position:relative;flex:1;overflow:hidden}#sl{display:flex;height:100%;transition:transform .4s}
+.s{min-width:100%;padding:8px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:auto}
+.s h1{font-size:28px;line-height:1.35;margin:14px 0 8px}.s h1 em{color:#ffd23f;font-style:normal}
+.s p{font-size:16px;opacity:.92;margin:4px 0}
+.s .big{font-size:60px}
+.bub{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:360px;margin-top:10px}
+.bub div{background:linear-gradient(135deg,#fff3d1,#e9b94d);color:#7a0a0a;border-radius:50% 50% 50% 10%;padding:22px 10px;min-height:128px;display:flex;flex-direction:column;justify-content:center;font-size:13px;font-weight:600}
+.bub div:nth-child(even){border-radius:50% 50% 10% 50%}.bub b{font-size:24px;display:block;line-height:1.2}
+.stp{width:100%;max-width:340px;text-align:left}.stp div{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.1);border-radius:14px;padding:12px;margin:10px 0;font-size:15px}
+.stp i{flex:none;width:36px;height:36px;border-radius:50%;background:#ffd23f;color:#8a0010;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800}
+.mock{background:#fff3d1;color:#6b0a0a;border-radius:16px;padding:14px;width:100%;max-width:320px;margin:12px 0;text-align:left}
+.mock .pbar{height:10px;border-radius:8px;background:#fff;margin:8px 0}.mock .pbar i{display:block;width:25%;height:10px;border-radius:8px;background:#b8860b}
+.dots{position:relative;display:flex;justify-content:center;gap:8px;padding:10px}.dots i{width:14px;height:6px;border-radius:4px;background:rgba(255,255,255,.45)}.dots i.on{width:40px;background:#fff}
+.yb{position:relative;display:block;width:calc(100% - 40px);margin:6px 20px 18px;padding:15px;border:0;border-radius:10px;background:#f9c442;color:#000;font:700 17px inherit;font-family:inherit;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.lt{background:radial-gradient(circle at 80% 90%,#f2e3b8 0,transparent 45%),radial-gradient(circle at 10% 10%,#f6ecd0 0,transparent 40%),#f4f2ee;color:#222;padding:0 20px 24px;display:flex;flex-direction:column}
+.lt:before{content:"";display:block;height:14px;background:#f9c442;margin:0 -20px}
+.lt .lg{text-align:center;margin:36px 0 26px;color:#9b1b1b;font-size:26px;font-weight:800;line-height:1.3}
+.lt .lg small{display:block;font-size:13px;color:#7a6a4f;font-weight:500}
+.lt h2{text-align:center;color:#444;font-size:22px;margin:10px 0 26px}
+.lt label{color:#111;font-weight:700;font-size:15px;margin:14px 0 6px}
+.lt input,.lt select{background:#fff;color:#111;border:1px solid #ddd;border-radius:6px}
+.lt .yb{width:100%;margin:26px 0 12px}
+.lt .lk{text-align:center;color:#555;font-size:15px;margin:10px 0}.lt .lk a{color:#9b1b1b;font-weight:700;text-decoration:underline}
+.err{color:#b00020;font-size:14px;text-align:center;min-height:20px;margin-top:8px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:#444;margin-top:16px}.chk input{width:22px;height:22px;flex:none;margin:0}.chk a{color:#9b1b1b;text-decoration:underline}
+#tm{background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+#tm div{background:#fff;color:#222;border-radius:14px;padding:18px;max-height:85vh;overflow:auto;max-width:480px}
+#tm h3{margin:0 0 8px;color:#9b1b1b}#tm li{margin:6px 0;font-size:14px}
+.s.img{background-size:cover;background-position:center;padding:0}.s.img>*{display:none}
+</style></head><body>
+<div id="ob" class="ov hide">
+ <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
+ <div class="obv" id="obv"><div id="sl">
+  <div class="s" data-p="1"><div class="big">✨</div><h1>மாதம் சேமிங்க,<br><em>13 ஆவது மாதம்</em><br>தங்கம் வாங்குங்க</h1><p>தங்கநகை சேமிப்புத் திட்டம்</p><p>தனலட்சுமி · குபேரலட்சுமி</p></div>
+  <div class="s" data-p="2"><h1>உங்களுக்கான <em>சலுகைகள்</em></h1>
+   <div class="bub"><div><b>₹1,000</b>முதல் சேமிக்கலாம்</div><div><b>12 மாதம்</b>எளிய தவணை</div><div><b>0 சேதாரம்</b>செய்கூலி தள்ளுபடி</div><div><b>GST இல்லை</b>தங்க காயினுக்கு</div></div></div>
+  <div class="s" data-p="3"><h1>எப்படி <em>வேலை செய்யும்?</em></h1>
+   <div class="stp"><div><i>1</i>கடையில் சேர்ந்து Passbook பெறுங்க</div><div><i>2</i>மாதம் 1 முதல் 7 ஆம் தேதிக்குள் தவணை கட்டுங்க</div><div><i>3</i>13 ஆவது மாதம் நகை / காயின் வாங்குங்க</div></div></div>
+  <div class="s" data-p="4"><h1>உங்க <em>Passbook</em> மொபைல்ல</h1>
+   <div class="mock"><b>மாதிரி</b><div style="font-size:20px;font-weight:800;margin-top:4px">மொத்த சேமிப்பு ₹—</div><div class="pbar"><i></i></div><span style="font-size:13px">தவணை 3/12 · நகை வாங்கலாம்: மாதம்</span></div>
+   <p>✅ சேமிப்பு எவ்வளவு  ✅ எத்தனை தவணை</p><p>✅ இன்றைய தங்க விலை</p></div>
+ </div></div>
+ <div class="dots" id="dt"><i class="on"></i><i></i><i></i><i></i></div>
+ <button class="yb" id="obn">அடுத்து</button>
+</div>
+
+<div id="ln" class="ov lt hide">
+ <div class="lg"><span class="shopn"></span><small>தங்கநகை சேமிப்புத் திட்டம்</small></div>
+ <h2>உள்நுழையவும்</h2>
+ <label>மொபைல் எண்ணை உள்ளிடவும்*</label><input id="lm" type="tel" inputmode="numeric" maxlength="10">
+ <label>4 இலக்க PIN*</label><input id="lp" type="password" inputmode="numeric" maxlength="4">
+ <div class="err" id="le"></div>
+ <button class="yb" id="lb">உள்நுழையவும்</button>
+ <div class="lk">கணக்கு இல்லையா? <a id="gr2">பதிவு செய்யவும்</a></div>
+ <div class="lk"><a id="gst">திட்டங்களை மட்டும் பார்க்க</a> · <a id="stf">Staff</a></div>
+</div>
+
+<div id="rg" class="ov lt hide">
+ <div class="lg"><span class="shopn"></span></div>
+ <h2>பதிவு செய்யவும்</h2>
+ <label>பெயர்*</label><input id="rgn">
+ <label>மொபைல் எண்*</label><input id="rgm" type="tel" inputmode="numeric" maxlength="10">
+ <label>திட்டம்*</label><select id="rgs"><option>தனலட்சுமி</option><option>குபேரலட்சுமி</option></select>
+ <div class="chk"><input type="checkbox" id="rgc"><span>நான் <a id="tml">விதிமுறைகளுக்கு</a> ஒப்புதல் அளிக்கிறேன்</span></div>
+ <button class="yb" id="rgb">கோரிக்கை அனுப்பு</button>
+ <div class="lk">கணக்கு உள்ளதா? <a id="bk">உள்நுழையவும்</a></div>
+ <div class="lk" style="font-size:13px">கோரிக்கை WhatsApp-ல் கடைக்கு போகும். கடையில் முதல் தவணை கட்டியதும் உங்க PIN கிடைக்கும்.</div>
+</div>
+
+<div id="tm" class="ov hide"><div>
+ <h3>விதிமுறைகள் & நிபந்தனைகள்</h3>
+ <ul><li>திட்ட காலம் 12 மாதங்கள்; தவணை ₹1,000 முதல் ₹1,00,000 வரை.</li>
+ <li>ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் தவணை செலுத்த வேண்டும்.</li>
+ <li>தனலட்சுமி: தவணைத்தொகை மாதாமாதம் மாற்றலாம். குபேரலட்சுமி: முதல் மாதம் தேர்வு செய்த தொகையையே செலுத்த வேண்டும்.</li>
+ <li>13 ஆவது மாதம் அன்றைய தங்க விலைக்கு நகை அல்லது காயின் வாங்கலாம்.</li>
+ <li>காயின்: சேதாரம், செய்கூலி, GST தள்ளுபடி. நகை: சேதாரம், செய்கூலி தள்ளுபடி; GST உண்டு.</li>
+ <li>மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</li></ul>
+ <button class="yb" id="tmx" style="width:100%;margin:10px 0 0">சரி</button>
+</div></div>
+<div id="app" class="hide">
+
+<header><h1>✨ <span id="shop">சுப்புலட்சுமி தங்க மாளிகை</span></h1><p>தங்கநகை சேமிப்புத் திட்டங்கள்</p></header>
+<div style="text-align:center;padding:8px;background:var(--gold2);font-size:14px">இன்றைய தங்க விலை (22K): <b id="gr"></b> / கிராம் <div style="color:var(--mut);font-size:12px" id="gd"></div></div>
+<nav><button class="on" data-t="s">திட்டங்கள்</button><button data-t="c">கணக்கீடு</button><button data-t="p">Passbook</button><button data-t="e">தொடர்பு</button><button data-t="st">Staff</button></nav>
+
+<section id="s" class="on">
+<div class="card"><h2>தனலட்சுமி தங்கநகை சேமிப்புத்திட்டம்</h2>
+<span class="tag">12 மாதங்கள்</span><span class="tag">₹1,000 – ₹1,00,000</span><span class="tag">தவணை மாற்றலாம்</span>
+<ul>
+<li>ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்தவும்.</li>
+<li>தவணைத்தொகை உங்கள் விருப்பப்படி (எ.கா. 1000, 5000, 2500).</li>
+<li>பாஸ்புக் QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்.</li>
+<li>13 ஆவது மாதம் அன்றைய தங்க விலைக்கு நகை அல்லது காயின் வாங்கலாம்.</li>
+<li><b>காயின்:</b> சேதாரம், செய்கூலி, GST அனைத்தும் தள்ளுபடி.</li>
+<li><b>நகை:</b> சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி (GST மட்டும் உண்டு).</li>
+</ul></div>
+
+<div class="card"><h2>குபேரலட்சுமி தங்கநகை சேமிப்புத்திட்டம்</h2>
+<span class="tag">12 மாதங்கள்</span><span class="tag">₹1,000 – ₹1,00,000</span><span class="tag">நிலையான தவணை</span>
+<ul>
+<li>ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்தவும்.</li>
+<li>முதல் மாதம் தேர்வு செய்த தொகையையே 12 மாதமும் செலுத்த வேண்டும் (மாற்ற இயலாது).</li>
+<li>செலுத்தும் ஒவ்வொரு தொகையும் அன்றைய கிராம் விலைக்கு தங்கமாக மாற்றி உங்கள் கணக்கில் வரவு வைக்கப்படும்.</li>
+<li>13 ஆவது மாதம் மொத்த தங்க எடைக்கு 22K 916 ஹால்மார்க் நகை அல்லது காயின் வாங்கலாம்.</li>
+<li>நகைக்கு சேதாரம், செய்கூலி தள்ளுபடி; GST மட்டும் உண்டு.</li>
+</ul></div>
+<a class="btn alt" id="wa1" target="_blank">WhatsApp-ல் சேர விசாரிக்க</a>
+</section>
+
+<section id="c">
+<div class="card"><h2>சேமிப்பு கணக்கீடு</h2>
+<label>திட்டம்</label>
+<select id="sch"><option value="k">குபேரலட்சுமி (நிலையான தவணை)</option><option value="d">தனலட்சுமி (மாறும் தவணை)</option></select>
+<div id="kBox"><label>மாத தவணை (₹)</label><input id="amt" type="number" inputmode="numeric" value="2000" min="1000" max="100000">
+<label>தோராய தங்க விலை / கிராம் (₹)</label><input id="rate" type="number" inputmode="numeric" value="7000"></div>
+<div id="dBox" style="display:none"><label>12 மாத தவணைகள் (₹)</label><div id="months"></div></div>
+<div class="res" id="out"></div>
+<p class="note">இது தோராய கணக்கு மட்டுமே. உண்மையான எடை அன்றைய விலையைப் பொறுத்தது. தங்க விலையை கடையில் உறுதிசெய்யவும்.</p></div>
+</section>
+
+<section id="e">
+<div class="card"><h2>தொடர்பு கொள்ள</h2>
+<p>மேலும் விபரங்களுக்கு அழைக்கவும்:</p>
+<a class="btn" href="tel:+919791918344">📞 9791918344</a>
+<a class="btn" href="tel:+919344395078">📞 9344395078</a>
+<a class="btn alt" id="wa2" target="_blank">💬 WhatsApp</a></div>
+<div class="card"><h2>கடை விவரம்</h2>
+<p>📍 51b, கங்கை அம்மன் கோயில் தெரு, காந்தி பஜார், புளியங்குடி – 627855</p>
+<p>🕘 திங்கள் – சனி: 9:00 AM – 9:00 PM<br>ஞாயிறு: 9:00 AM – 8:00 PM</p>
+<a class="btn" target="_blank" href="https://www.google.com/maps/search/?api=1&query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855">🗺️ வழி காட்டு</a>
+<a class="btn" href="mailto:stmgold2021@gmail.com">✉️ stmgold2021@gmail.com</a>
+<a class="btn" target="_blank" href="https://instagram.com/subbulakshmi_thanga_maaligai">📷 Instagram</a></div>
+</section>
+
+<section id="p">
+ <div class="card"><h2>Passbook பார்க்க</h2>
+ <input id="cm" type="tel" inputmode="numeric" placeholder="மொபைல் எண்">
+ <input id="cp" type="password" inputmode="numeric" maxlength="4" placeholder="4 இலக்க PIN">
+ <button class="btn" onclick="viewPB()">பார்</button></div>
+ <div id="pb"></div>
+</section>
+<section id="st">
+ <div id="lg" class="card"><h2>Staff Login</h2>
+ <input id="se" type="email" placeholder="Email"><input id="sp" type="password" placeholder="Password">
+ <button class="btn" onclick="login()">Login</button></div>
+
+ <div id="adm" class="hide">
+  <div class="card"><h2>இன்றைய 22K விலை</h2>
+  <input id="gp" type="number" inputmode="numeric" placeholder="₹ / கிராம்">
+  <button class="btn" onclick="saveRate()">விலை அப்டேட்</button></div>
+
+  <div class="card"><h2>Onboarding படங்கள்</h2><div class="mut">9:16 படம் (1080×1920). படம் போட்டா அந்த slide முழுக்க அந்த படம் தான் வரும்.</div><div id="sa"></div></div>
+  <div class="card"><h2>இந்த மாத நினைவூட்டல்</h2><div id="rm"></div></div>
+  <div class="card"><h2>புதிய Customer</h2>
+  <input id="nn" placeholder="பெயர்"><input id="nm" type="tel" inputmode="numeric" placeholder="மொபைல்">
+  <input id="np" type="tel" inputmode="numeric" maxlength="4" placeholder="4 இலக்க PIN">
+  <select id="ns"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
+  <input id="na" type="number" inputmode="numeric" placeholder="மாத தவணை (₹)">
+  <button class="btn" onclick="addCust()">சேர்</button></div>
+
+  <div class="card"><h2>தவணை பதிவு</h2>
+  <select id="pc"></select>
+  <input id="pa" type="number" inputmode="numeric" placeholder="தொகை (₹)">
+  <input id="pr" type="number" inputmode="numeric" placeholder="இன்றைய 22K விலை/கிராம் (குபேரலட்சுமிக்கு)">
+  <button class="btn" onclick="addPay()">பதிவு செய்</button><div id="rc"></div></div>
+
+  <div class="card"><h2>Customers</h2><div id="cl"></div>
+  <button class="btn" onclick="out()" style="background:#777">Logout</button></div>
+ </div>
+</section>
+</div>
+<script>
+const SHOP="சுப்புலட்சுமி தங்க மாளிகை", WA="919791918344";
+const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString("en-IN");
+$("shop").textContent=SHOP;
+const RATE22=7000, RATE_DATE="15-10-2026"; // ← தினமும் இந்த 2 மதிப்பை மாத்துங்க
+$("gr").textContent="₹"+fmt(RATE22);$("gd").textContent="புதுப்பிப்பு: "+RATE_DATE;$("rate").value=RATE22;
+const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
+$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
+ b.classList.add("on");$(b.dataset.t).classList.add("on");scrollTo(0,0)});
+for(let i=1;i<=12;i++){const r=document.createElement("div");r.className="mrow";
+ r.innerHTML=`<span>மாதம் ${i}</span><input type="number" inputmode="numeric" class="m" value="2000">`;$("months").appendChild(r)}
+function calc(){
+ const k=$("sch").value==="k";$("kBox").style.display=k?"":"none";$("dBox").style.display=k?"none":"";
+ if(k){const a=+$("amt").value||0,r=+$("rate").value||1,t=a*12,g=t/r;
+  $("out").innerHTML=`மொத்த சேமிப்பு<b>₹${fmt(t)}</b>தோராய தங்கம்<b>${g.toFixed(2)} கிராம்</b>சேதாரம் & செய்கூலி: தள்ளுபடி`;}
+ else{const t=[...document.querySelectorAll(".m")].reduce((s,x)=>s+(+x.value||0),0);
+  $("out").innerHTML=`மொத்த சேமிப்பு<b>₹${fmt(t)}</b>13 ஆவது மாதம் அன்றைய விலையில் நகை / காயின் வாங்கலாம்.<br>காயின்: GST உட்பட தள்ளுபடி`;}
+}
+document.addEventListener("input",calc);$("sch").onchange=calc;calc();
+
+const f=fmt;
+const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const SN={dhana:"தனலட்சுமி",kubera:"குபேரலட்சுமி"};
+
+async function viewPB(){
+ const {data,error}=await sb.rpc("gold_get_passbook",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()});
+ if(data&&data.locked){$("pb").innerHTML=`<p class="mut">பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.</p>`;return}
+ if(error||!data){$("pb").innerHTML='<p class="mut">மொபைல் எண் / PIN தவறு</p>';return}
+ const sd=new Date(data.start);sd.setMonth(sd.getMonth()+12);const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});const ps=data.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0);
+ $("pb").innerHTML=`<div class="card"><h2>${data.name}</h2><div class="mut">${SN[data.scheme]} · தொடக்கம் ${data.start}</div>
+ <div class="sum">மொத்த சேமிப்பு <b>₹${f(t)}</b>${data.scheme=="kubera"?`<br>தங்கம் <b>${g.toFixed(3)} கிராம்</b>`:""}</div><div style="background:var(--bg);border-radius:8px;height:10px;margin:8px 0"><div style="width:${Math.min(100,ps.length/12*100)}%;height:10px;border-radius:8px;background:var(--gold)"></div></div><span class="mut">${ps.length}/12 தவணை · நகை வாங்கலாம்: ${bd}</span>
+ ${ps.map(x=>`<div class="row"><span>${x.on}</span><span>₹${f(x.amount)}${x.grams?` · ${(+x.grams).toFixed(3)}g`:""}</span></div>`).join("")||'<p class="mut">இன்னும் தவணை இல்லை</p>'}</div>`}
+
+async function login(){
+ const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
+ if(error)return alert("Login தவறு");show()}
+async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load()}
+async function load(){
+ const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
+ if(error)return alert(error.message);remind(data);
+ $("pc").innerHTML=data.map(c=>`<option value="${c.id}">${c.name} · ${c.mobile}</option>`).join("");
+ $("cl").innerHTML=data.map(c=>{const t=c.gold_payments.reduce((s,x)=>s+x.amount,0);
+  return `<div class="row"><span>${c.name}<br><span class="mut">${SN[c.scheme]} · ${c.gold_payments.length}/12</span></span><b>₹${f(t)}</b></div>`}).join("")}
+function remind(data){
+ const d=new Date(),ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+ const p=data.filter(c=>c.gold_payments.length<12&&!c.gold_payments.some(x=>String(x.paid_on).startsWith(ym)));
+ $("rm").innerHTML=p.length?`<div class="mut">இந்த மாதம் தவணை பாக்கி: ${p.length}</div>`+p.map(c=>{
+  const n=c.gold_payments.length+1;
+  const m=`வணக்கம் ${c.name},\nசுப்புலட்சுமி தங்க மாளிகை 🙏\nஉங்கள் ${SN[c.scheme]} தங்கநகை சேமிப்புத் திட்டத்தின் ${n} ஆவது தவணையை இந்த மாதம் 1 முதல் 7 ஆம் தேதிக்குள் செலுத்தவும்.`+(c.scheme=="kubera"&&c.monthly_amount?`\nதவணைத் தொகை: ₹${f(c.monthly_amount)}`:"")+"\nநன்றி ✨";
+  return `<div class="row"><span>${c.name}<br><span class="mut">${n}/12 · ${SN[c.scheme]}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://wa.me/91${c.mobile.slice(-10)}?text=${encodeURIComponent(m)}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
+async function addCust(){
+ const r={name:$("nn").value.trim(),mobile:$("nm").value.trim(),pin:$("np").value.trim(),scheme:$("ns").value,monthly_amount:+$("na").value||null};
+ if(!r.name||!r.mobile||r.pin.length!=4)return alert("பெயர், மொபைல், 4 இலக்க PIN வேண்டும்");
+ const {error}=await sb.from("gold_customers").insert(r);if(error)return alert(error.message);
+ ["nn","nm","np","na"].forEach(i=>$(i).value="");load()}
+async function addPay(){
+ const a=+$("pa").value,r=+$("pr").value||null,c=$("pc").value;
+ if(!c||!a)return alert("Customer, தொகை வேண்டும்");
+ const {data:cu}=await sb.from("gold_customers").select("scheme,name,mobile").eq("id",c).single();
+ if(cu.scheme=="kubera"&&!r)return alert("குபேரலட்சுமிக்கு தங்க விலை வேண்டும்");
+ const {error}=await sb.from("gold_payments").insert({customer_id:c,amount:a,gold_rate:cu.scheme=="kubera"?r:null,grams:cu.scheme=="kubera"?a/r:null});
+ if(error)return alert(error.message);
+ const {data:ps}=await sb.from("gold_payments").select("amount,grams").eq("customer_id",c);
+ const tot=ps.reduce((x,y)=>x+y.amount,0),g=ps.reduce((x,y)=>x+(+y.grams||0),0),k=cu.scheme=="kubera";
+ const msg=`வணக்கம் ${cu.name},\nசுப்புலட்சுமி தங்க மாளிகை\nதவணை ரசீது ✅\nதொகை: ₹${f(a)}`+(k?`\nவிலை: ₹${f(r)}/கிராம்\nதங்கம்: ${(a/r).toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/12\nமொத்த சேமிப்பு: ₹${f(tot)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+"\nநன்றி 🙏";
+ $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://wa.me/91${cu.mobile.slice(-10)}?text=${encodeURIComponent(msg)}">💬 ${cu.name}-க்கு WhatsApp ரசீது</a>`;
+ $("pa").value="";load()}
+sb.auth.getSession().then(({data})=>{if(data.session)show()});
+
+
+async function loadRate(){
+ const {data}=await sb.from("gold_rate").select("*").eq("id",1).maybeSingle();
+ if(!data)return;setRate(data.rate22,data.updated_on)}
+function setRate(r,d){$("gr").textContent="₹"+fmt(r);$("gd").textContent="புதுப்பிப்பு: "+String(d).split("-").reverse().join("-");
+ $("rate").value=r;$("pr").value=r;$("gp").value=r;calc()}
+async function saveRate(){
+ const v=+$("gp").value;if(!v)return alert("விலை போடுங்க");
+ const d=new Date().toISOString().slice(0,10);
+ const {error}=await sb.from("gold_rate").upsert({id:1,rate22:v,updated_on:d});
+ if(error)return alert(error.message);setRate(v,d);alert("விலை அப்டேட் ✅")}
+loadRate();
+
+// Onboarding + Login
+const LS={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
+document.querySelectorAll(".shopn").forEach(x=>x.textContent=SHOP);
+const vis=(id,on)=>$(id).classList.toggle("hide",!on);
+let sl=0;
+function go(n){sl=Math.max(0,Math.min(3,n));$("sl").style.transform=`translateX(-${sl*100}%)`;
+ [...$("dt").children].forEach((d,i)=>d.classList.toggle("on",i==sl));$("obn").textContent=sl==3?"தொடங்கு":"அடுத்து"}
+function endOb(){LS.set("ob","1");vis("ob",false);vis("ln",true)}
+$("obn").onclick=()=>sl==3?endOb():go(sl+1);$("obs").onclick=endOb;
+let tx=0;$("obv").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+$("obv").addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(sl+(d<0?1:-1))});
+function enter(t){vis("ln",false);vis("rg",false);vis("app",true);document.querySelector(`nav button[data-t="${t}"]`).click()}
+async function doLogin(){
+ const m=$("lm").value.trim(),p=$("lp").value.trim();
+ if(m.length<10||p.length!=4){$("le").textContent="மொபைல் எண், 4 இலக்க PIN போடுங்க";return}
+ $("le").textContent="";
+ const {data,error}=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});
+ if(data&&data.locked){$("le").textContent=`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`;return}
+ if(error||!data){$("le").textContent="மொபைல் எண் / PIN தவறு";return}
+ LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
+$("lb").onclick=doLogin;$("lp").addEventListener("keydown",e=>{if(e.key=="Enter")doLogin()});
+$("gr2").onclick=()=>{vis("ln",false);vis("rg",true)};$("bk").onclick=()=>{vis("rg",false);vis("ln",true)};
+$("gst").onclick=()=>enter("s");$("stf").onclick=()=>enter("st");
+$("tml").onclick=()=>vis("tm",true);$("tmx").onclick=()=>vis("tm",false);
+$("rgb").onclick=()=>{const n=$("rgn").value.trim(),m=$("rgm").value.trim();
+ if(!n||m.length<10)return alert("பெயர், மொபைல் எண் போடுங்க");
+ if(!$("rgc").checked)return alert("விதிமுறைகளுக்கு ஒப்புதல் தேவை");
+ open(wa(`புதிய சேர்க்கை கோரிக்கை\nபெயர்: ${n}\nமொபைல்: ${m}\nதிட்டம்: ${$("rgs").value}`),"_blank")};
+$("lm").value=LS.get("mob")||"";
+if(LS.get("ob"))vis("ln",true);else vis("ob",true);
+
+// Onboarding images (admin)
+function shrink(f){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>{const w=Math.min(1080,i.width),h=Math.round(i.height*w/i.width),c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);c.toBlob(b=>b?res(b):rej("படம் படிக்க முடியல"),"image/jpeg",.85)};i.onerror=()=>rej("படம் திறக்க முடியல");i.src=URL.createObjectURL(f)})}
+let SLM={};
+function renderSA(){$("sa").innerHTML=[1,2,3,4].map(p=>{const r=SLM[p];return `<div style="margin:12px 0"><div class="mut">படம் ${p} ${r?`· <a data-d="${p}" style="color:#b00020;text-decoration:underline">நீக்கு</a>`:"· இயல்பு slide"}</div>${r?`<img src="${r.image_url}" style="height:70px;border-radius:8px;margin:4px 0">`:""}<input type="file" accept="image/*" data-p="${p}"></div>`}).join("")}
+async function loadSlides(){
+ const {data}=await sb.from("gold_slides").select("*");SLM={};(data||[]).forEach(r=>SLM[r.pos]=r);
+ document.querySelectorAll("#sl .s").forEach(el=>{const r=SLM[el.dataset.p];
+  if(r&&r.image_url){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
+ renderSA()}
+$("sa").addEventListener("change",async e=>{const f=e.target.files[0],p=e.target.dataset.p;if(!f||!p)return;
+ try{const blob=await shrink(f),path=`s${p}.jpg`;
+  const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg"});if(u.error)throw u.error;
+  const url=sb.storage.from("slides").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+  const d=await sb.from("gold_slides").upsert({pos:+p,image_url:url});if(d.error)throw d.error;
+  await loadSlides();alert("படம் சேர்ந்தது ✅")}catch(x){alert(x.message||x)}});
+$("sa").addEventListener("click",async e=>{const p=e.target.dataset.d;if(!p)return;await sb.from("gold_slides").delete().eq("pos",+p);loadSlides()});
+loadSlides();
+// PWA
+(function(){const ic="data:image/svg+xml,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#b8860b"/><text x="256" y="340" font-size="280" text-anchor="middle" fill="#fff">✨</text></svg>');
+const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#fffaf0",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/svg+xml",purpose:"any"}]};
+const l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"}));document.head.appendChild(l);
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script></body></html>
