@@ -535,28 +535,6 @@ body header.hd .ptl{display:flex;align-items:center;justify-content:center;gap:6
 #app #why i{background:var(--pm);color:#fff;width:20px;height:20px;font-size:12px}
 #whyl{margin:4px 0 0;padding-left:20px}#whyl li{font-size:14px;color:var(--pt)}
 
-/* plan cards */
-#app .hs.xplans,#app #hs2{display:grid;grid-template-columns:1fr;gap:16px;overflow:visible;scroll-snap-type:none;padding:0}
-#app .sc{flex:none;width:auto;display:flex;flex-direction:column;background:#fff;border:1px solid var(--pb);border-radius:20px;box-shadow:var(--sh1);overflow:hidden;align-self:stretch;transition:transform .18s,box-shadow .18s}
-#app .sct{position:relative;min-height:0;padding:18px 18px 20px;color:#fff;cursor:pointer;
- background:radial-gradient(140% 120% at 100% 0,#9A2C3B 0,transparent 55%),linear-gradient(150deg,var(--pm),var(--pm2))}
-#app .sct:after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(212,177,106,.3);pointer-events:none}
-#app .sct small{display:inline-block;font-size:12px;font-weight:700;color:#F3E2BC;background:rgba(255,255,255,.1);border:1px solid rgba(212,177,106,.4);border-radius:999px;padding:2px 10px}
-#app .sct h3{margin:10px 0 2px;font-size:24px;font-weight:800;line-height:1.35;color:#fff}
-#app .sct>div{font-size:14px;color:rgba(255,255,255,.88);line-height:1.6}
-#app .sct .coin{right:16px;bottom:auto;top:50%;transform:translateY(-50%);width:54px;height:54px;font-size:14px;color:var(--pm2);background:radial-gradient(circle at 35% 30%,#FFF4D6,#E3C27E 55%,#B88E3E);box-shadow:0 0 0 4px rgba(212,177,106,.22)}
-#app .sct.img{padding:0;aspect-ratio:2/1;background-size:cover;background-position:center}#app .sct.img:after{display:none}
-.scbody{padding:14px 16px 4px;flex:1}
-.scf{list-style:none;margin:0;padding:0}
-.scf li{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;margin:0;font-size:14px;border-bottom:1px solid #F1EADB}
-.scf li:last-child{border-bottom:0}
-.scf span{color:var(--pmu);flex:none}.scf b{color:var(--pt);font-weight:700;text-align:right;line-height:1.5}
-.sctm{display:inline-flex;align-items:center;gap:6px;min-height:40px;font-size:13px;font-weight:700;color:var(--pm);text-decoration:underline;text-underline-offset:3px}
-#app .scb{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 16px 16px;border:0}
-#app .scb a{display:flex;align-items:center;justify-content:center;min-height:46px;padding:0 8px;border-radius:14px;font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap;border:1.5px solid var(--pm);color:var(--pm);background:#fff}
-#app .scb a.jn{background:var(--pm);color:#fff;border-left:1.5px solid var(--pm)}
-@media (hover:hover){#app .sc:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(51,37,31,.06),0 12px 28px rgba(51,37,31,.1)}#app .scb a:hover{filter:brightness(1.06)}}
-
 /* passbook summary */
 .xpbh{display:flex;align-items:center;gap:12px;margin:0 0 10px}
 .xic{flex:none;width:44px;height:44px;border-radius:14px;background:var(--pmt);color:var(--pm);display:flex;align-items:center;justify-content:center}
@@ -634,7 +612,6 @@ body nav button.on{color:var(--pm)}body nav button.on svg{background:var(--pmt);
  body{max-width:760px}body nav{max-width:760px}
  #app section{padding:20px 24px}
  body header.hd{padding-left:24px;padding-right:24px}
- #app .hs.xplans,#app #hs2{grid-template-columns:1fr 1fr}
  .xstore{display:grid;grid-template-columns:42% 1fr}#app .xstore .simg{aspect-ratio:auto;height:100%;min-height:220px}
 }
 /* desktop */
@@ -653,7 +630,6 @@ body nav button.on{color:var(--pm)}body nav button.on svg{background:var(--pmt);
  .xhome{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
  .xside{position:sticky;top:84px;margin-top:0}
  #e,#n,#p,#scx{max-width:760px;margin:0 auto}
- #app #hs2{grid-template-columns:1fr 1fr}
  .xstore{display:block}#app .xstore .simg{aspect-ratio:16/9;height:auto;min-height:0}
 }
 /* full-screen panels centred on wide screens */
@@ -853,8 +829,8 @@ body header.hd .hu:after,body header.hd.img .hu:after{content:"— ✿ —";disp
 <div class="intro xcard"><b>தங்கநகை சேமிப்புத் திட்டத்துக்கு வரவேற்கிறோம்</b><p>மாதம் சிறிது சிறிதாக சேமித்து, 13 ஆவது மாதம் உங்கள் கனவு தங்க நகையை எளிதாக வாங்குங்க.</p><a id="why" role="button" tabindex="0">ஏன் தங்கத்தில் சேமிக்க வேண்டும்? <i>i</i></a>
 <ul id="whyl" class="hide"><li>மாதம் சிறு தொகை, பெரிய சுமை இல்ல</li><li>நகைக்கு சேதாரம், செய்கூலி தள்ளுபடி</li><li>13 ஆவது மாதம் அன்றைய விலையில் நகை அல்லது காயின்</li><li>சேமிப்பு Passbook-ல மொபைல்ல பார்க்கலாம்</li></ul></div>
 <div class="xsh"><h2 class="sh">சேமிப்பு திட்டங்கள்</h2><p class="mut">உங்கள் தேவைக்கேற்ற திட்டத்தை தேர்வு செய்யுங்க</p></div>
-<div class="hs xplans" id="hs"></div>
-<div class="dots2 hide" id="d2"></div>
+<div class="hs" id="hs"></div>
+<div class="dots2" id="d2"></div>
 </div><div class="xside">
 <div class="xcard xpb" id="pss"></div>
 <div class="xsh"><h2 class="sh">எங்கள் கடை</h2></div>
@@ -1320,9 +1296,7 @@ function fillSel(){const o=allSch().map(x=>`<option value="${x.key}">${esc(x.nam
 // திட்ட அட்டை: கடையின் விதிமுறைகளில் உள்ள விவரங்கள் மட்டும்
 const SINFO={dhana:{tag:"தவணை உங்கள் விருப்பம்",amt:"₹1,000 – ₹1,00,000",type:"மாதா மாதம் மாற்றலாம்",mat:"13 ஆவது மாதம் அன்றைய தங்க விலைக்கு நகை / காயின்"},
  kubera:{tag:"நிலையான தவணை · தங்க எடையில் சேமிப்பு",amt:"₹1,000 – ₹1,00,000",type:"நிலையானது (முதல் மாதத் தொகையே)",mat:"13 ஆவது மாதம் சேர்ந்த தங்க எடைக்கு நகை / காயின்"}};
-function schCard(x){const i=SINFO[x.key],r=(a,b)=>`<li><span>${a}</span><b>${b}</b></li>`;
- const rows=i?r("மாத தவணை",i.amt)+r("தவணை முறை",i.type)+r("காலம்",x.months+" மாதம்")+r("செலுத்தும் நாள்","மாதம் 1 – 7 தேதி")+r("முதிர்வு",i.mat):r("காலம்",x.months+" மாதம்")+(x.card?r("விவரம்",x.card):"");
- return `<div class="sc" data-k="${x.key}"><div class="sct" role="button" tabindex="0" aria-label="${esc(x.name)} திட்ட விவரங்கள்"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${i?i.tag:x.card}</div><span class="coin">${x.coin}</span></div><div class="scbody"><ul class="scf">${rows}</ul>${i?'<a class="sctm" data-tm role="button" tabindex="0">விதிமுறைகள் &amp; நிபந்தனைகள் ›</a>':""}</div><div class="scb"><a class="mo" role="button" tabindex="0">விவரங்கள்</a><a class="jn" role="button" tabindex="0">இப்போது சேரவும்</a></div></div>`}
+function schCard(x){return `<div class="sc" data-k="${x.key}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`}
 function renderSchemes(){const L=allSch();
  $("hs").innerHTML=L.map(schCard).join("");
  $("d2").innerHTML=L.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("");
