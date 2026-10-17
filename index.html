@@ -767,6 +767,9 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 #app #lo{margin-top:14px}
 @media print{.pbsum{background:#fff!important;color:#000!important;border:1px solid #ccc}.pbsum *{color:#000!important}.pbcard{box-shadow:none}}
 @media (prefers-reduced-motion:reduce){.pbsk{animation:none}}
+
+.tgb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:0 0 6px;border:1.5px solid #229ED9;border-radius:14px;background:#fff;color:#1c7fb0;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.tgb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -844,10 +847,11 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <div id="ot1">
   <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பருக்கு SMS-ல OTP வரும்.</p>
   <label>மொபைல் எண்*</label><input id="otm" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national">
-  <button class="yb" id="otb1">OTP அனுப்பு</button>
+  <button class="yb" id="otb1">OTP அனுப்பு (SMS)</button>
+  <button type="button" class="tgb" id="otbt"><svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l8-6"/></svg>Telegram-ல code அனுப்பு</button>
  </div>
  <div id="ot2" class="hide">
-  <p class="otp-note"><b id="otsh"></b> நம்பருக்கு SMS-ல 6 இலக்க OTP அனுப்பியிருக்கோம்.</p>
+  <p class="otp-note"><b id="otsh"></b> நம்பருக்கு <span id="otvia">SMS</span>-ல 6 இலக்க OTP அனுப்பியிருக்கோம்.</p>
   <label>OTP*</label><input id="otc" type="tel" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
   <button class="yb" id="otb2">OTP சரிபார்</button>
   <div class="lk"><a id="otr">OTP மறுபடி அனுப்பு</a> · <a id="otbk">நம்பர் மாத்த</a></div>
@@ -1257,7 +1261,7 @@ const FBC={apiKey:"AIzaSyBbd5y2GZYhpvYxupNLiCW_kqVK98OK_A4",authDomain:"jeweller
 const FBV="13.0.0";let FB=null;
 async function fbLoad(){if(FB)return FB;const [m1,A]=await Promise.all([import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`)]);
  const auth=A.getAuth(m1.initializeApp(FBC));auth.languageCode="ta";FB={A,auth};return FB}
-let OTM="",otT=0,OTC=null,RV=null,IDT="";
+let OTM="",otT=0,OTC=null,RV=null,IDT="",OTV="sms",TGR="",TGC="";
 const otErr=t=>$("oterr").textContent=t;
 function otStep(n){["ot1","ot2","ot3"].forEach((id,i)=>vis(id,i+1==n));otErr("")}
 function openOT(mode){$("oth").textContent=mode=="f"?"PIN மறந்துட்டீங்களா?":"முதல் தடவை: PIN அமைக்க";
@@ -1272,15 +1276,27 @@ async function sendOT(){
   const {A,auth}=await fbLoad();
   if(!RV)RV=new A.RecaptchaVerifier(auth,"rcap",{size:"invisible"});
   OTC=await A.signInWithPhoneNumber(auth,"+91"+m,RV);
-  OTM=m;otT=Date.now()+60000;$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
+  OTV="sms";$("otvia").textContent="SMS";OTM=m;otT=Date.now()+60000;$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
  catch(x){const c=(x&&x.code)||"";try{RV&&RV.clear()}catch(e){}RV=null;const oc=document.getElementById("rcap");if(oc){const nc=document.createElement("div");nc.id="rcap";oc.replaceWith(nc)}
   otErr(/too-many-requests/.test(c)?"ரொம்ப அதிக முயற்சி. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.":/quota/.test(c)?"இன்று SMS அனுப்ப முடியல. கடைக்கு WhatsApp பண்ணுங்க.":/invalid-phone/.test(c)?"மொபைல் எண் சரியா இல்ல.":/unauthorized-domain|operation-not-allowed|billing/.test(c)?"OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.");const why=c?c.replace("auth/",""):String((x&&x.message)||x||"").slice(0,90);if(why)$("oterr").textContent+=" ("+why+")"}
  finally{$("otb1").disabled=false}}
-$("otb1").onclick=sendOT;$("otr").onclick=()=>{otStep(1);sendOT()};$("otbk").onclick=()=>otStep(1);
+// Telegram Gateway (Supabase Edge Function: tg-otp)
+async function tgCall(b){try{const r=await fetch(SB_URL+"/functions/v1/tg-otp",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
+async function sendTG(){const m=$("otm").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
+ const left=Math.ceil((otT-Date.now())/1000);if(left>0)return otErr(left+" வினாடி கழித்து மறுபடி அனுப்பலாம்");
+ otErr("Telegram-ல அனுப்புகிறோம்…");$("otbt").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otbt").disabled=false;
+ if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":"Telegram-ல code அனுப்ப முடியல. இந்த நம்பர்ல Telegram இருக்கா பாருங்க.")+(d&&d.err?" ("+d.err+")":""));
+ OTV="tg";TGR=d.request_id;OTM=m;otT=Date.now()+60000;$("otvia").textContent="Telegram";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
+$("otbt").onclick=sendTG;
+$("otb1").onclick=sendOT;$("otr").onclick=()=>{otStep(1);OTV=="tg"?sendTG():sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
 $("otac").onclick=()=>{vis("ot",false);$("avm").value=$("otm").value;vis("av",true)};
 $("otb2").onclick=async()=>{const t=$("otc").value.trim();
  if(!/^[0-9]{6}$/.test(t))return otErr("SMS-ல வந்த 6 இலக்க OTP-ஐ போடுங்க");
+ if(OTV=="tg"){$("otb2").disabled=true;otErr("சரிபார்க்கிறோம்…");const d=await tgCall({action:"check",request_id:TGR,code:t});$("otb2").disabled=false;
+  if(!d||!d.ok)return otErr(d&&d.err=="expired"?"Code காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.":d&&d.err=="code_max_attempts_exceeded"?"நிறைய தவறான முயற்சி. மறுபடி code அனுப்புங்க.":"Code தவறு. சரியா பாத்து போடுங்க.");
+  TGC=t;$("otp1").value="";$("otp2").value="";otStep(3);return}
  if(!OTC)return otStep(1);
  $("otb2").disabled=true;otErr("சரிபார்க்கிறோம்…");
  try{const cr=await OTC.confirm(t);IDT=await cr.user.getIdToken();$("otp1").value="";$("otp2").value="";otStep(3)}
@@ -1289,11 +1305,11 @@ $("otb2").onclick=async()=>{const t=$("otc").value.trim();
 $("otb3").onclick=async()=>{const p=$("otp1").value.trim(),q=$("otp2").value.trim();
  if(!/^[0-9]{6}$/.test(p))return otErr("6 இலக்க PIN வைங்க");if(p!==q)return otErr("இரண்டு PIN-உம் ஒண்ணா இல்ல");
  $("otb3").disabled=true;otErr("PIN அமைக்கிறோம்…");let d=null;
- try{const r=await fetch(SB_URL+"/functions/v1/otp-pin",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({idToken:IDT,pin:p})});d=await r.json().catch(()=>null)}catch(e){}
+ if(OTV=="tg")d=await tgCall({action:"set",request_id:TGR,code:TGC,pin:p});else try{const r=await fetch(SB_URL+"/functions/v1/otp-pin",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({idToken:IDT,pin:p})});d=await r.json().catch(()=>null)}catch(e){}
  $("otb3").disabled=false;
  if(!d||!d.ok)return otErr(d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&(d.err=="expired"||d.err=="token")?"நேரம் முடிஞ்சுடுச்சு. மறுபடி OTP அனுப்புங்க.":"PIN அமைக்க முடியல. மறுபடி முயற்சிக்கவும்.");
- try{await FB.A.signOut(FB.auth)}catch(e){}
- IDT="";OTC=null;vis("ot",false);vis("av",false);$("lm").value=OTM;$("lp").value=p;["otc","otp1","otp2"].forEach(i=>$(i).value="");doLogin()};
+ try{FB&&await FB.A.signOut(FB.auth)}catch(e){}
+ IDT="";OTC=null;TGR="";TGC="";vis("ot",false);vis("av",false);$("lm").value=OTM;$("lp").value=p;["otc","otp1","otp2"].forEach(i=>$(i).value="");doLogin()};
 
 // Price trend chart (gold / silver history)
 let PTH=null,PTE=false,PTM="g",PTR=30,PTN=10,PTI=-1;
