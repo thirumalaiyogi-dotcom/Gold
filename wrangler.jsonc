@@ -1,0 +1,8 @@
+// Cloudflare Workers – static site only (no server code).
+// `npx wrangler deploy` runs build.sh, which copies the two app pages + _headers into dist/.
+{
+  "name": "stm-gold",
+  "compatibility_date": "2026-10-01",
+  "build": { "command": "sh build.sh" },
+  "assets": { "directory": "./dist", "html_handling": "auto-trailing-slash" }
+}
