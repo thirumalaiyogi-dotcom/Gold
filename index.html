@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#b8860b"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
@@ -362,6 +363,90 @@ header.hd .pc>div{cursor:pointer}
 .ptlist{margin:12px 0;border:1px solid var(--ln);border-radius:12px;padding:12px;background:var(--card)}
 .ptlist summary{font-weight:700;cursor:pointer}
 .ptlist .row{font-size:14px}.ptlist .row span:last-child{text-align:right}
+
+/* ===== Round 10: scheme detail hero – clean card ===== */
+.sdb .hero2{position:relative;overflow:hidden;background:linear-gradient(180deg,#fffaf0,#fcefd2);border:1px solid #e6c365;border-radius:18px;padding:20px 18px 0;box-shadow:0 6px 18px rgba(120,70,0,.12)}
+.sdb .hero2:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#b8860b,#f3d27a,#b8860b)}
+.sdb .hero2 .h2ey{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.3px;color:#8a5a06;background:#fbe7b0;border-radius:20px;padding:3px 10px}
+.sdb .hero2 h2{margin:10px 0 2px;font-size:30px;line-height:1.45;font-weight:800;color:#7a0a0a}
+.sdb .hero2 .h2tag{margin:0 0 16px;font-size:15px;line-height:1.6;color:#5a3a10}
+.sdb .hero2 .h2facts{display:grid;grid-template-columns:repeat(3,1fr);margin:0 -18px;border-top:1px solid #ecd59a;background:rgba(255,255,255,.55)}
+.sdb .hero2 .h2facts span{padding:11px 6px 12px;text-align:center;font-size:12.5px;font-weight:700;line-height:1.5;color:#4a3410;display:flex;align-items:center;justify-content:center}
+.sdb .hero2 .h2facts span+span{border-left:1px solid #ecd59a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sdb .hero2{background:linear-gradient(180deg,#2c2312,#241d10);border-color:#5a4410;box-shadow:none}
+ :root:not([data-theme="light"]) .sdb .hero2 h2{color:#f3c53a}:root:not([data-theme="light"]) .sdb .hero2 .h2tag,:root:not([data-theme="light"]) .sdb .hero2 .h2facts span{color:var(--tx)}
+ :root:not([data-theme="light"]) .sdb .hero2 .h2ey{background:#4a3810;color:#f3d27a}:root:not([data-theme="light"]) .sdb .hero2 .h2facts{background:rgba(0,0,0,.15);border-color:#5a4410}:root:not([data-theme="light"]) .sdb .hero2 .h2facts span+span{border-color:#5a4410}}
+.sdb .hero2 .h2coin{position:absolute;right:16px;top:22px;width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#fff3b0,#e8b93a 55%,#b8860b);box-shadow:0 0 0 4px rgba(232,185,58,.25),inset 0 -3px 6px rgba(120,70,0,.35),0 4px 10px rgba(120,70,0,.25);overflow:hidden}
+.sdb .hero2 .h2coin:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.7) 50%,transparent 60%);background-size:250% 100%;animation:shine 3.4s infinite}
+.sdb .hero2 .h2coin b{font-size:17px;line-height:1.1;color:#6b3a00!important;text-shadow:0 1px 0 rgba(255,255,255,.6)}.sdb .hero2 .h2coin small{font-size:10.5px;font-weight:700;color:#7a4b00;line-height:1.1}
+.sdb .hero2 h2,.sdb .hero2 .h2tag{padding-right:72px}
+
+/* ===== Round 11: Scheme detail page – premium brand UI ===== */
+#sd section{display:block}
+#sd .sdsec{padding:0}#sd .sdinfo{padding:16px}#sd .sdcon{padding:16px;display:grid}
+#sd{--sm:#781D2A;--sg:#D4B16A;--si:#FBF8F1;--sw:#FFFFFF;--st:#33251F;--sl:#EADBB8;--smu:#6E5A4E;color-scheme:light;background:var(--si);color:var(--st);font-family:"Noto Sans Tamil","Latha",system-ui,sans-serif}
+#sd .sdh{min-height:56px;padding:8px 8px 8px 4px;gap:4px;background:var(--sw);color:var(--st);border-bottom:1px solid var(--sl);font-size:17px;font-weight:700}
+#sd .sdh a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;font-size:28px;color:var(--sm);cursor:pointer;flex:none}
+#sd .sdh span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.6}
+#sd .sdb{padding:16px 16px 24px;background:var(--si)}
+#sd .sdb b{color:inherit}
+#sd svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sdbn{margin:0 0 16px;border-radius:16px;overflow:hidden;border:1px solid var(--sl);aspect-ratio:2/1;background:#f3e7cc}
+.sdbn img{display:block;width:100%;height:100%;object-fit:cover}
+.sdbf{position:relative;display:flex;align-items:center;padding:16px 20px;background:radial-gradient(circle at 85% 30%,rgba(212,177,106,.35),transparent 55%),linear-gradient(135deg,#8a2433,#5e1420);border-color:#5e1420}
+.sdbf div{display:flex;flex-direction:column;gap:2px;color:#fff;max-width:70%}
+.sdbf b{font-size:26px;font-weight:800;line-height:1.45;color:var(--sg)!important}
+.sdbf span{font-size:15px;line-height:1.6;opacity:.95}
+.sdbf em{font-style:normal;margin-top:8px;align-self:flex-start;background:var(--sg);color:var(--sm);font-weight:800;font-size:15px;border-radius:20px;padding:4px 14px;line-height:1.6}
+.sdbf i{position:absolute;right:20px;top:50%;transform:translateY(-50%);width:76px;height:76px;border-radius:50%;border:1px solid rgba(212,177,106,.6);display:flex;align-items:center;justify-content:center;color:var(--sg)}
+#sd .sdbf i svg{width:38px;height:38px;stroke-width:1.4}
+.sdinfo{background:var(--sw);border:1px solid var(--sg);border-radius:16px;padding:16px;box-shadow:0 4px 16px rgba(120,29,42,.07)}
+.sdtop{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sdbadge{font-size:12.5px;font-weight:700;color:var(--sm);background:#F6ECEC;border-radius:20px;padding:4px 12px;line-height:1.6}
+.sdpur{font-size:12.5px;font-weight:800;color:#7a5410;background:linear-gradient(180deg,#fbf0d4,#efd99c);border:1px solid var(--sg);border-radius:20px;padding:3px 12px;line-height:1.6;letter-spacing:.3px}
+.sdinfo h2{margin:12px 0 0;font-size:28px;font-weight:800;line-height:1.5;color:var(--sm)}
+.sdsub{margin:0 0 16px;font-size:16px;line-height:1.6;color:var(--smu)}
+.sdfeat{list-style:none;margin:0;padding:12px 0 0;border-top:1px solid var(--sl);display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sdfeat li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;font-size:13px;font-weight:600;line-height:1.5;color:var(--st)}
+#sd .sdfeat li svg{width:36px;height:36px;padding:8px;border-radius:50%;background:#FBF3E2;color:var(--sm);stroke-width:1.7}
+.sdsec{margin-top:24px}
+.sdsec h3{margin:0 0 8px;font-size:19px;font-weight:800;line-height:1.5;color:var(--st)}
+.sdp{margin:0 0 8px;font-size:15.5px;line-height:1.8;color:var(--st)}
+.sdlink{display:inline-flex;align-items:center;gap:8px;min-height:44px;border:0;background:none;padding:0;font-family:inherit;font-size:15px;font-weight:600;color:var(--sm);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.sdtl{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column}
+.sdtl li{position:relative;display:flex;gap:16px;padding-bottom:16px}
+.sdtl li:not(:last-child):before{content:"";position:absolute;left:21px;top:46px;bottom:2px;width:2px;background:linear-gradient(var(--sg),rgba(212,177,106,.3))}
+.sdtn{flex:none;width:44px;height:44px;border-radius:50%;background:var(--sw);border:1.5px solid var(--sg);display:flex;align-items:center;justify-content:center;color:var(--sm)}
+.sdtl small{display:block;font-size:12px;font-weight:700;color:#8a6a2a;line-height:1.5}
+.sdtl b{display:block;font-size:16px;line-height:1.5;color:var(--st)}
+.sdtl p{margin:2px 0 0;font-size:14.5px;line-height:1.7;color:var(--smu)}
+@media (min-width:520px){.sdtl{flex-direction:row;gap:12px}.sdtl li{flex:1;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:0}
+ .sdtl li:not(:last-child):before{left:calc(50% + 30px);right:calc(-50% + 18px);top:21px;bottom:auto;width:auto;height:2px;background:var(--sg)}}
+.sdacc{background:var(--sw);border:1px solid var(--sl);border-radius:12px;margin:8px 0;padding:0;transition:border-color .2s}
+.sdacc[open]{border-color:var(--sg)}
+.sdacc summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:8px 16px;cursor:pointer;font-size:15.5px;font-weight:700;line-height:1.6;color:var(--sm)}
+.sdacc summary::-webkit-details-marker{display:none}
+.sdacc summary::after{content:none!important}
+.sdacc summary:focus-visible{outline:2px solid var(--sm);outline-offset:2px;border-radius:12px}
+.sdacc summary i{position:relative;flex:none;width:24px;height:24px;border-radius:50%;background:#FBF3E2}
+.sdacc summary i:before,.sdacc summary i:after{content:"";position:absolute;left:7px;right:7px;top:11px;height:2px;border-radius:2px;background:var(--sm);transition:transform .2s}
+.sdacc summary i:after{transform:rotate(90deg)}
+.sdacc[open] summary i:after{transform:rotate(0)}
+.sdans{padding:0 16px 16px;margin:0!important;font-size:15px;line-height:1.75;color:var(--st)!important}
+.sdacc[open] .sdans{animation:sdfade .2s ease}
+@keyframes sdfade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.sdacc[open] .sdans{animation:none}.sdacc summary i:before,.sdacc summary i:after{transition:none}}
+.sdcon{margin-top:24px;background:var(--sw);border:1px solid var(--sg);border-radius:16px;padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sdcon>b{grid-column:1/-1;font-size:16px;line-height:1.6;margin-bottom:4px;color:var(--st)}
+.sdcon a{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;border:1px solid var(--sl);border-radius:12px;font-size:15px;font-weight:700;color:var(--sm);text-decoration:none;background:var(--si)}
+.sdcon a#sdwa{grid-column:1/-1;color:#0f6b3a}
+#sd .sdf{padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--sw);border-top:1px solid var(--sl)}
+.sdcta{display:block;width:100%;height:56px;border:0;border-radius:14px;background:var(--sm);color:#fff;font-family:inherit;font-size:17px;font-weight:800;line-height:1.5;cursor:pointer;box-shadow:0 4px 12px rgba(120,29,42,.25)}
+.sdcta:active{transform:translateY(1px)}
+.sdcta:focus-visible{outline:3px solid var(--sg);outline-offset:2px}
+#tm{z-index:60}
+#scx,#p,#n,#e{padding-top:20px}
+.sc .sct{cursor:pointer}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -480,14 +565,14 @@ header.hd .pc>div{cursor:pointer}
  <li>மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</li></ul>
  <button class="yb" id="tmx" style="width:100%;margin:10px 0 0">சரி</button>
 </div></div>
-<div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><a id="sdjoin" target="_blank">இப்போது சேரவும்</a></div></div>
+<div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><button type="button" id="sdjoin" class="sdcta">இப்போதே சேரவும்</button></div></div>
 <div id="app" class="hide">
 
 <header class="hd"><a class="hb" id="hb">?</a><div class="hl"><span id="shop"></span></div>
 <div class="hu" id="gd"></div>
 <div class="pc"><div><span class="ci">22K</span><small class="pl">தங்க விலை<em class="chg" id="gchg"></em></small><b id="gr">—</b><small class="pu">22KT / கிராம்</small></div><div><span class="ci cis">Ag</span><small class="pl">வெள்ளி விலை<em class="chg" id="schg"></em></small><b id="sr">—</b><small class="pu">வெள்ளி / கிராம்</small></div></div>
 <a id="ptopen" class="ptl">📈 விலை நிலவரம் பார்க்க ›</a></header>
-<nav><button class="on" data-t="s"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>சேமிப்பு</button><button data-t="c"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h1M12 12h1M16 12h0M8 16h1M12 16h1M16 16h0"/></svg>கணக்கீடு</button><button data-t="scx"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6"/></svg>திட்டங்கள்</button><button data-t="p"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6"/></svg>Passbook</button><button data-t="n"><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span id="ndot" class="dot hide"></span>அறிவிப்பு</button><button data-t="e"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>தொடர்பு</button></nav>
+<nav><button class="on" data-t="s"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>சேமிப்பு</button><button data-t="scx"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6"/></svg>திட்டங்கள்</button><button data-t="p"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6"/></svg>Passbook</button><button data-t="n"><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span id="ndot" class="dot hide"></span>அறிவிப்பு</button><button data-t="e"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>தொடர்பு</button></nav>
 
 <section id="s" class="on">
 <div id="bn" class="hide"><div class="bs" id="bs"></div><div class="dots2" id="bd"></div></div>
@@ -533,16 +618,6 @@ header.hd .pc>div{cursor:pointer}
 <div class="dots2" id="d3"></div>
 </section>
 
-<section id="c">
-<div class="card"><h2>சேமிப்பு கணக்கீடு</h2>
-<label>திட்டம்</label>
-<select id="sch"><option value="k">குபேரலட்சுமி (நிலையான தவணை)</option><option value="d">தனலட்சுமி (மாறும் தவணை)</option></select>
-<div id="kBox"><label>மாத தவணை (₹)</label><input id="amt" type="number" inputmode="numeric" value="2000" min="1000" max="100000">
-<label>தோராய தங்க விலை / கிராம் (₹)</label><input id="rate" type="number" inputmode="numeric" value="7000"></div>
-<div id="dBox" style="display:none"><label>12 மாத தவணைகள் (₹)</label><div id="months"></div></div>
-<div class="res" id="out"></div>
-<p class="note">இது தோராய கணக்கு மட்டுமே. உண்மையான எடை அன்றைய விலையைப் பொறுத்தது. தங்க விலையை கடையில் உறுதிசெய்யவும்.</p></div>
-</section>
 
 <section id="e"><h2 class="sh">தொடர்பு</h2>
 <div class="ct"><i class="ci2"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2"/></svg></i><div><small>கடை பெயர்</small><b>சுப்புலட்சுமி தங்க மாளிகை</b><small>தங்கம் மற்றும் வெள்ளி நகைகள்</small></div></div>
@@ -574,7 +649,7 @@ $("gr").textContent="₹"+fmt(RATE22);$("gd").textContent="விலை பு�
 const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
 $("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
 function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0}
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){openLn();return}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){openLn();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
  document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
  b.classList.add("on");$(b.dataset.t).classList.add("on");scrollTo(0,0)});
 for(let i=1;i<=12;i++){const r=document.createElement("div");r.className="mrow";
@@ -591,6 +666,19 @@ document.addEventListener("input",calc);$("sch").onchange=calc;calc();
 const f=fmt;
 const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4";
 const sb=supabase.createClient(SB_URL,SB_KEY);
+// Read cache for public data: repeat opens read from the phone instead of Supabase (cuts egress)
+(function(){const TTL={gold_rate:15,gold_notices:15,gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
+ const raw=sb.from.bind(sb);
+ try{const now=Date.now();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith("sbc:")){const c=JSON.parse(localStorage.getItem(k)||"{}");if(!c.t||now-c.t>864e5)localStorage.removeItem(k)}}}catch(e){}
+ sb.from=function(t){if(!TTL[t])return raw(t);const calls=[];let write=false;
+  const run=async()=>{const key="sbc:"+t+":"+JSON.stringify(calls);
+   if(!write){try{const c=JSON.parse(localStorage.getItem(key)||"null");if(c&&Date.now()-c.t<TTL[t]*60000)return {data:c.d,error:null}}catch(e){}}
+   let q=raw(t);for(const [m,a] of calls)q=q[m](...a);const r=await q;
+   if(!write&&r&&!r.error){try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d:r.data}))}catch(e){}}
+   return r};
+  const px=new Proxy({},{get(_,m){if(m==="then")return (ok,bad)=>run().then(ok,bad);if(typeof m!=="string")return undefined;
+   return (...a)=>{if(/^(insert|update|upsert|delete)$/.test(m))write=true;calls.push([m,a]);return px}}});
+  return px}})();
 const SN=new Proxy({},{get:(t,k)=>SNM(k)});
 
 async function viewPB(){
@@ -662,7 +750,7 @@ function renderBA(){$("ba").innerHTML=[1,2,3,4,5].map(p=>{const r=BNM[p];return 
 async function loadBanners(){
  const {data}=await sb.from("gold_banners").select("*").order("pos");BNM={};(data||[]).forEach(r=>BNM[r.pos]=r);
  const l=data||[];$("bn").classList.toggle("hide",!l.length);
- $("bs").innerHTML=l.map(r=>`<img src="${r.image_url}" alt="">`).join("");
+ $("bs").innerHTML=l.map((r,i)=>`<img src="${r.image_url}" alt="" decoding="async"${i?' loading="lazy"':""}>`).join("");
  $("bd").innerHTML=l.length>1?l.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join(""):"";
  renderBA();clearInterval(bt);
  if(l.length>1)bt=setInterval(()=>{const b=$("bs"),w=b.clientWidth+10,i=(Math.round(b.scrollLeft/w)+1)%l.length;b.scrollTo({left:i*w,behavior:"smooth"})},4000)}
@@ -709,29 +797,59 @@ const CT="கடையை தொடர்பு கொள்ளுங்க: 979
 const SCH={
 dhana:{n:"தனலட்சுமி",t:"தனலட்சுமி தங்கநகை சேமிப்புத் திட்டம்",tag:"₹1,000 முதல் தங்கம் சேமிங்க",tags:["12 மாதம்","தவணை மாற்றலாம்","சேதாரம் & செய்கூலி தள்ளுபடி"],
 why:"மாதம் சிறிது சிறிதாக சேமித்து, 13 ஆவது மாதம் உங்கள் கனவு தங்க நகையை வாங்க உதவும் திட்டம். உங்க வசதிக்கேற்ப ஒவ்வொரு மாதமும் வேறு வேறு தொகை செலுத்தலாம்.",
-acc:[["திட்ட <b>விவரம்</b>","₹1,000 முதல் ₹1,00,000 வரை பணம் செலுத்தி தங்கம் சேமிக்கலாம். திட்டக்காலம் 12 மாதங்கள். ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்த வேண்டும்."],
-["தவணை <b>உங்க விருப்பம்</b>","தவணைத்தொகையை மாதா மாதம் மாற்றலாம். எ.கா: முதல் மாதம் ₹1,000, இரண்டாவது மாதம் ₹5,000, மூன்றாவது மாதம் ₹2,500."],
-["13 ஆவது மாதம் <b>என்ன கிடைக்கும்?</b>","12 மாதங்களில் நீங்கள் செலுத்திய மொத்த ரூபாய்க்கு, 13 ஆவது மாதம் அன்றைய தங்க விலைக்கு ஏற்ப தங்க நகை அல்லது தங்க காசு (காயின்) வாங்கலாம்."],
-["<b>சலுகைகள்</b>","<b>காயின்:</b> சேதாரம், செய்கூலி, GST அனைத்தும் தள்ளுபடி.<br><b>நகை:</b> சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி. GST மட்டும் உண்டு."],
-["பணம் <b>எப்படி செலுத்துவது?</b>","வீட்டிலிருந்தபடியே உங்க Passbook-ல உள்ள QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்."]],
+acc:[["திட்ட விவரம்","₹1,000 முதல் ₹1,00,000 வரை பணம் செலுத்தி தங்கம் சேமிக்கலாம். திட்டக்காலம் 12 மாதங்கள். ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்த வேண்டும்."],
+["தவணை உங்கள் விருப்பம்","தவணைத்தொகையை மாதா மாதம் மாற்றலாம். எ.கா: முதல் மாதம் ₹1,000, இரண்டாவது மாதம் ₹5,000, மூன்றாவது மாதம் ₹2,500."],
+["13-வது மாதம் என்ன கிடைக்கும்?","12 மாதங்களில் நீங்கள் செலுத்திய மொத்த ரூபாய்க்கு, 13 ஆவது மாதம் அன்றைய தங்க விலைக்கு ஏற்ப தங்க நகை அல்லது தங்க காசு (காயின்) வாங்கலாம்."],
+["சலுகைகள் மற்றும் நிபந்தனைகள்","<b>காயின்:</b> சேதாரம், செய்கூலி, GST அனைத்தும் தள்ளுபடி.<br><b>நகை:</b> சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி. GST மட்டும் உண்டு."],
+["பணம் எப்படி செலுத்துவது?","வீட்டிலிருந்தபடியே உங்க Passbook-ல உள்ள QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்."]],
 faq:[["குறைந்தபட்சம், அதிகபட்சம் எவ்வளவு?","₹1,000 முதல் ₹1,00,000 வரை."],["தவணைத் தொகையை மாற்றலாமா?","தனலட்சுமி திட்டத்தில் ஆம், மாதம் தோறும் உங்க விருப்பப்படி மாற்றலாம்."],["காயினுக்கும் நகைக்கும் என்ன வித்தியாசம்?","இரண்டுக்கும் சேதாரம், செய்கூலி தள்ளுபடி. காயினுக்கு GST-உம் தள்ளுபடி, நகைக்கு GST உண்டு."],["என் சேமிப்பை எப்படி பார்ப்பது?","இந்த ஆப்-ல Passbook tab-ல மொபைல் எண் + PIN போட்டு பார்க்கலாம்."],["தேதி தவறினால் அல்லது வேறு சந்தேகம்?",CT]]},
 kubera:{n:"குபேரலட்சுமி",t:"குபேரலட்சுமி தங்கநகை சேமிப்புத் திட்டம்",tag:"நிலையான தவணை, சேமிப்பு தங்கமாக",tags:["12 மாதம்","நிலையான தவணை","கிராம் கணக்கு"],
 why:"ஒவ்வொரு மாதமும் நீங்க செலுத்தும் தொகை அன்றைய கிராம் விலைக்கு தங்கமாக மாற்றப்பட்டு உங்க கணக்கில் வரவு வைக்கப்படும். 13 ஆவது மாதம் மொத்த தங்க எடைக்கு நகை அல்லது காயின் வாங்கலாம்.",
-acc:[["திட்ட <b>விவரம்</b>","₹1,000 முதல் ₹1,00,000 வரை. திட்டக்காலம் 12 மாதங்கள். ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் Passbook QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்."],
-["நிலையான <b>தவணை</b>","முதல் மாதம் தேர்வு செய்த தொகையையே 12 மாதமும் செலுத்த வேண்டும், மாற்ற இயலாது. எ.கா: முதல் மாதம் ₹2,000 செலுத்தினால் 12 மாதமும் ₹2,000 மட்டுமே. அதனால முதல் மாதமே உங்களுக்கு ஏற்ற தொகையை தேர்வு செய்யுங்க."],
-["தங்கமா <b>மாறுவது எப்படி?</b>","மாதம் செலுத்தும் ஒவ்வொரு தொகையும் அன்றைய கிராம் விலைக்கு ஏற்ப தங்கமாக மாற்றப்பட்டு, அதே நாளில் உங்க கணக்கில் வரவு வைக்கப்படும். 12 மாதமும் சேமித்த தங்க எடை கூட்டப்படும்."],
-["13 ஆவது மாதம் <b>என்ன கிடைக்கும்?</b>","மொத்த தங்க எடைக்கு, 22K 916 ஹால்மார்க் தரத்துடன் கூடிய தங்க நகை அல்லது தங்க காசு (காயின்) வாங்கலாம்."],
-["<b>சலுகைகள்</b>","நகை அல்லது காயின் வாங்குபவர்களுக்கு சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி. GST வரி கட்டாயம் பிடித்தம் செய்யப்படும்."]],
+acc:[["திட்ட விவரம்","₹1,000 முதல் ₹1,00,000 வரை. திட்டக்காலம் 12 மாதங்கள். ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் Passbook QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்."],
+["நிலையான தவணை","முதல் மாதம் தேர்வு செய்த தொகையையே 12 மாதமும் செலுத்த வேண்டும், மாற்ற இயலாது. எ.கா: முதல் மாதம் ₹2,000 செலுத்தினால் 12 மாதமும் ₹2,000 மட்டுமே. அதனால முதல் மாதமே உங்களுக்கு ஏற்ற தொகையை தேர்வு செய்யுங்க."],
+["தங்கமாக மாறுவது எப்படி?","மாதம் செலுத்தும் ஒவ்வொரு தொகையும் அன்றைய கிராம் விலைக்கு ஏற்ப தங்கமாக மாற்றப்பட்டு, அதே நாளில் உங்க கணக்கில் வரவு வைக்கப்படும். 12 மாதமும் சேமித்த தங்க எடை கூட்டப்படும்."],
+["13-வது மாதம் என்ன கிடைக்கும்?","மொத்த தங்க எடைக்கு, 22K 916 ஹால்மார்க் தரத்துடன் கூடிய தங்க நகை அல்லது தங்க காசு (காயின்) வாங்கலாம்."],
+["சலுகைகள் மற்றும் நிபந்தனைகள்","நகை அல்லது காயின் வாங்குபவர்களுக்கு சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி. GST வரி கட்டாயம் பிடித்தம் செய்யப்படும்."]],
 faq:[["தவணைத் தொகையை மாற்றலாமா?","இல்லை. முதல் மாதம் தேர்வு செய்த தொகையையே 12 மாதமும் செலுத்த வேண்டும்."],["தங்க விலை மாறினா என்ன ஆகும்?","நீங்க செலுத்தும் நாளின் கிராம் விலைக்கு தங்கம் வரவாகும். விலை குறைவான மாதம் அதிக கிராம், விலை அதிகமான மாதம் குறைவான கிராம் கிடைக்கும்."],["என் தங்க எடை எப்படி தெரியும்?","Passbook-ல தவணை வாரியா கிராமும், மொத்த கிராமும் காட்டும்."],["காயினுக்கு GST உண்டா?","உண்டு. குபேரலட்சுமியில் நகை, காயின் இரண்டுக்கும் GST பிடித்தம் செய்யப்படும்."],["வேறு சந்தேகம்?",CT]]}};
-function openSD(k){const d=SCH[k];$("sdt").textContent=d.t;
- $("sdb").innerHTML=`${SIM[k]?`<img src="${SIM[k].image_url}" style="width:100%;border-radius:16px;margin-bottom:12px;display:block">`:""}<div class="hero"><div style="font-size:13px;color:#fff;opacity:.9">12 மாத திட்டம்</div><h2>${d.n}</h2><div class="hl2">${d.tag}</div><div class="tg">${d.tags.map(x=>`<span>${x}</span>`).join("")}</div></div>
- <h3 class="sh2">ஏன் <b>${d.n}?</b></h3><p>${d.why}</p>
- <div class="acc">${d.acc.map(a=>`<details><summary><span>${a[0]}</span></summary><div>${a[1]}</div></details>`).join("")}</div>
- <div class="hw">எப்படி <b>சேருவது?</b></div>
- <div class="stp3">${STEPS.map((x,i)=>`<div><div class="ic">${x[0]}</div><b>படி ${i+1}</b><small>${x[1]}</small></div>`).join("")}</div>
- <h3 class="sh2">அடிக்கடி கேட்கப்படும் <b>கேள்விகள்</b></h3>
- <div class="faq">${d.faq.map(a=>`<details><summary><span>${a[0]}</span></summary><div>${a[1]}</div></details>`).join("")}</div>
- <p class="mut" style="text-align:center;margin-top:16px">மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</p>`;
+const IC=p=>`<svg viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+const SDI={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ rep:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+ lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+ tag:'<path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1"/>',
+ chk:'<path d="M20 6 9 17l-5-5"/>',
+ store:'<path d="m2 7 4.4-4.4A2 2 0 0 1 7.8 2h8.4a2 2 0 0 1 1.4.6L22 7"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M2 7h20"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>',
+ wal:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+ gem:'<path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/>',
+ doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>',
+ ph:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+ wa:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'};
+const SDMIN={dhana:"₹1,000",kubera:"₹1,000"};
+function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera",mn=SDMIN[k];
+ $("sdt").textContent=d.n+" திட்டம்";
+ const feats=base?[[SDI.cal,mo+" மாதங்கள்"],fx?[SDI.lock,"நிலையான தவணை"]:[SDI.rep,"தவணை மாற்றலாம்"],[SDI.tag,"சேதாரம் & செய்கூலி தள்ளுபடி"]]
+  :d.tags.slice(0,3).map((x,i)=>[i?SDI.chk:SDI.cal,x]);
+ const banner=SIM[k]?`<figure class="sdbn"><img src="${SIM[k].image_url}" alt="${d.n} திட்டம்" loading="lazy"></figure>`
+  :`<figure class="sdbn sdbf" role="img" aria-label="${d.n}"><div><b>${d.n}</b><span>${fx?"நிலையான தவணை":"தவணை உங்கள் விருப்பம்"}</span>${mn?`<em>${mn} முதல்</em>`:""}</div><i aria-hidden="true">${IC(SDI.gem)}</i></figure>`;
+ const steps=[[SDI.store,"திட்டத்தில் சேருங்கள்","கடையில் பதிவு செய்து திட்டத்தில் இணையுங்கள்."],
+  [SDI.wal,mo+" மாதங்கள் சேமியுங்கள்","திட்ட விதிமுறைகளின்படி தவணை செலுத்துங்கள்."],
+  [SDI.gem,"நகை வாங்குங்கள்","திட்ட விதிமுறைகளின்படி "+(mo+1)+"-வது மாதத்தில் பலனைப் பெறுங்கள்."]];
+ const acc=(list,g)=>list.map(a=>`<details class="sdacc" data-g="${g}"><summary><span>${String(a[0]).replace(/<\/?b>/g,"")}</span><i aria-hidden="true"></i></summary><div class="sdans">${a[1]||'<span class="mut">விவரம் விரைவில் சேர்க்கப்படும் (கடை உறுதி செய்த பின்).</span>'}</div></details>`).join("");
+ $("sdb").innerHTML=`${banner}
+ <section class="sdinfo">
+  <div class="sdtop"><span class="sdbadge">${mo} மாத சேமிப்புத் திட்டம்</span><span class="sdpur">22K | 916</span></div>
+  <h2>${d.n}</h2><p class="sdsub">${mn?mn+" முதல் மாதத் தவணை":d.tag}</p>
+  <ul class="sdfeat">${feats.map(f=>`<li>${IC(f[0])}<span>${f[1]}</span></li>`).join("")}</ul>
+ </section>
+ <section class="sdsec"><h3>ஏன் ${d.n}?</h3><p class="sdp">${d.why}</p><button type="button" class="sdlink" id="sdterms">${IC(SDI.doc)}<span>முழு விதிமுறைகள் &amp; நிபந்தனைகள்</span></button></section>
+ <section class="sdsec"><h3>எப்படி வேலை செய்யும்?</h3><ol class="sdtl">${steps.map((x,i)=>`<li><span class="sdtn">${IC(x[0])}</span><div><small>படி ${i+1}</small><b>${x[1]}</b><p>${x[2]}</p></div></li>`).join("")}</ol></section>
+ <section class="sdsec"><h3>திட்ட விவரங்கள்</h3>${acc(d.acc,"a")}</section>
+ <section class="sdsec"><h3>அடிக்கடி கேட்கப்படும் கேள்விகள்</h3>${acc(d.faq,"f")}</section>
+ <section class="sdcon"><b>சந்தேகமா? எங்களை தொடர்பு கொள்ளுங்க</b>
+  <a href="tel:+919791918344">${IC(SDI.ph)}<span>97919 18344</span></a><a href="tel:+919344395078">${IC(SDI.ph)}<span>93443 95078</span></a>
+  <a id="sdwa" target="_blank" rel="noopener">${IC(SDI.wa)}<span>WhatsApp-ல் கேட்க</span></a></section>`;
+ $("sdwa").href=wa("வணக்கம், "+d.n+" திட்டம் பற்றி விபரம் வேண்டும்.");
+ $("sdterms").onclick=()=>vis("tm",true);
+ $("sdb").querySelectorAll("details.sdacc").forEach(x=>x.addEventListener("toggle",()=>{if(x.open)$("sdb").querySelectorAll(`details.sdacc[data-g="${x.dataset.g}"]`).forEach(y=>{if(y!==x)y.open=false})}));
  $("sdjoin").onclick=()=>{vis("sd",false);openEnrol(k)};vis("sd",true);$("sdb").scrollTop=0}
 $("sdback").onclick=()=>vis("sd",false);
 
@@ -743,7 +861,7 @@ $("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").v
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("சரியான Email போடுங்க");
  if(!r.address||!r.city)return alert("முகவரி, ஊர் போடுங்க");
  if(!$("rgc").checked)return alert("விதிமுறைகளுக்கு ஒப்புதல் தேவை");
- const {error}=await sb.from("gold_requests").insert(r);
+ if($("rgb").disabled)return;$("rgb").disabled=true;const _rt=$("rgb").textContent;$("rgb").textContent="அனுப்புகிறோம்…";let error;try{({error}=await sb.from("gold_requests").insert(r))}catch(x){error={message:"Internet இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்"}}$("rgb").disabled=false;$("rgb").textContent=_rt;
  if(error)return alert(error.code=="23505"?"இந்த மொபைலுக்கு விண்ணப்பம் ஏற்கனவே உள்ளது. கடையை தொடர்பு கொள்ளுங்க.":error.message);
  $("rgf").classList.add("hide");$("rgok").classList.remove("hide");["rgn","rgm","rge","rga","rgt","rgp","rgq","rgr","rgnn"].forEach(i=>$(i).value="");$("rgc").checked=false;$("rg").scrollTop=0};
 // Activation code flow
@@ -856,6 +974,8 @@ $("ptm").addEventListener("click",e=>{const m=e.target.closest("button");if(m){P
 $("ptr").addEventListener("click",e=>{const r=e.target.closest("button");if(r){PTR=+r.dataset.r;drawPT()}});
 let ptrz;window.addEventListener("resize",()=>{clearTimeout(ptrz);ptrz=setTimeout(()=>{if(!$("pt").classList.contains("hide"))drawPT()},150)});
 
+// Scheme card image/top → details
+document.addEventListener("click",e=>{const t=e.target.closest(".sc .sct");if(!t)return;const c=t.closest(".sc");if(c&&c.dataset.k&&SCH[c.dataset.k])openSD(c.dataset.k)});
 // Scheme card images
 let SIM={};
 function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>{const r=SIM[k];return `<div style="margin:12px 0"><div class="mut">${esc(SNM(k))} ${r?`· <a data-sd="${k}" style="color:#b00020;text-decoration:underline">நீக்கு</a>`:"· இயல்பு"}</div>${r?`<img src="${r.image_url}" style="height:60px;border-radius:8px;margin:4px 0">`:""}<input type="file" accept="image/*" data-sk="${k}"></div>`}).join("")}
