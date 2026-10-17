@@ -3,3 +3,4 @@
 set -e
 rm -rf dist && mkdir -p dist
 cp index.html staff.html _headers dist/
+cp -r lib dist/
