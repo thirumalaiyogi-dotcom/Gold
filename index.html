@@ -796,7 +796,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <button class="yb" id="lb">உள்நுழையவும்</button>
  </div>
  <div class="lk k1">கணக்கு இல்லையா? <a id="gr2">பதிவு செய்யவும்</a></div>
- <div class="lk k2"><a id="lac">முதல் தடவையா? Activation code போடுங்க</a></div>
+ <div class="lk k2"><a id="lac">முதல் தடவையா? OTP மூலம் PIN அமைக்க</a></div>
  <div class="lk k3"><a id="fgt">PIN மறந்துட்டீங்களா?</a></div>
  <div class="lk k4"><a id="gst">‹ முகப்புக்கு திரும்ப</a></div>
 </div>
@@ -842,25 +842,25 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <div class="lg"><span class="shopn"></span></div>
  <h2 id="oth">PIN அமைக்க</h2>
  <div id="ot1">
-  <p class="otp-note">கடையில் பதிவு செய்தபோது கொடுத்த மொபைல் எண், Email போடுங்க. அந்த Email-க்கு OTP வரும்.</p>
-  <label>மொபைல் எண்*</label><input id="otm" type="tel" inputmode="numeric" maxlength="10">
-  <label>Email*</label><input id="ote" type="email" inputmode="email" autocomplete="email">
+  <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பருக்கு SMS-ல OTP வரும்.</p>
+  <label>மொபைல் எண்*</label><input id="otm" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national">
   <button class="yb" id="otb1">OTP அனுப்பு</button>
  </div>
  <div id="ot2" class="hide">
-  <p class="otp-note"><b id="otsh"></b>-க்கு OTP அனுப்பியிருக்கோம். Inbox-ல வரலைன்னா Spam / Promotions folder-லயும் பாருங்க.</p>
-  <label>OTP*</label><input id="otc" type="tel" inputmode="numeric" maxlength="8" autocomplete="one-time-code">
+  <p class="otp-note"><b id="otsh"></b> நம்பருக்கு SMS-ல 6 இலக்க OTP அனுப்பியிருக்கோம்.</p>
+  <label>OTP*</label><input id="otc" type="tel" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
   <button class="yb" id="otb2">OTP சரிபார்</button>
-  <div class="lk"><a id="otr">OTP மறுபடி அனுப்பு</a> · <a id="otbk">Email மாத்த</a></div>
+  <div class="lk"><a id="otr">OTP மறுபடி அனுப்பு</a> · <a id="otbk">நம்பர் மாத்த</a></div>
  </div>
  <div id="ot3" class="hide">
-  <p class="otp-note">✅ Email சரிபார்க்கப்பட்டது. இனி login-க்கு உங்க சொந்த 6 இலக்க PIN வைங்க.</p>
+  <p class="otp-note">✅ மொபைல் சரிபார்க்கப்பட்டது. இனி login-க்கு உங்க சொந்த 6 இலக்க PIN வைங்க.</p>
   <label>புது 6 இலக்க PIN*</label><input id="otp1" type="password" inputmode="numeric" maxlength="6">
   <label>PIN மறுபடி*</label><input id="otp2" type="password" inputmode="numeric" maxlength="6">
   <button class="yb" id="otb3">PIN அமை</button>
  </div>
  <div class="err" id="oterr"></div>
- <div class="lk" style="font-size:13px">Email பதிவு செய்யலையா? <a id="otw">கடைக்கு WhatsApp</a> · <a id="otac">கடையில் code கொடுத்தாங்களா?</a></div>
+ <div id="rcap"></div>
+ <div class="lk" style="font-size:13px">SMS வரலையா? <a id="otw">கடைக்கு WhatsApp</a> · <a id="otac">கடையில் code கொடுத்தாங்களா?</a></div>
 </div>
 <div id="pt" class="ov sdv hide"><div class="sdh"><a id="ptback" role="button" aria-label="பின் செல்ல" tabindex="0"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><span>விலை நிலவரம்</span></div><div class="sdb" id="ptb">
  <div class="ptseg" id="ptm" role="tablist" aria-label="உலோகம்"><button data-m="g" class="on" role="tab" aria-selected="true">தங்கம் 22K</button><button data-m="s" role="tab" aria-selected="false">வெள்ளி</button></div>
@@ -1238,7 +1238,7 @@ $("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").v
  if(error)return alert(error.code=="23505"?"இந்த மொபைலுக்கு விண்ணப்பம் ஏற்கனவே உள்ளது. கடையை தொடர்பு கொள்ளுங்க.":error.message);
  $("rgf").classList.add("hide");$("rgok").classList.remove("hide");["rgn","rgm","rge","rga","rgt","rgp","rgq","rgr","rgnn"].forEach(i=>$(i).value="");$("rgc").checked=false;$("rg").scrollTop=0};
 // Activation code flow
-$("lac").onclick=()=>{$("avm").value=$("lm").value;$("ave").textContent="";vis("av",true)};$("avk").onclick=()=>vis("av",false);
+$("lac").onclick=()=>openOT("n");$("avk").onclick=()=>vis("av",false);
 $("avb").onclick=async()=>{const m=$("avm").value.trim(),c=$("avc").value.trim(),p=$("avp").value.trim(),q=$("avq").value.trim();$("ave").textContent="";
  if(!/^[0-9]{10}$/.test(m)||!c){$("ave").textContent="மொபைல் எண், code போடுங்க";return}
  if(!/^[0-9]{6}$/.test(p)){$("ave").textContent="6 இலக்க PIN வைங்க";return}
@@ -1248,42 +1248,52 @@ $("avb").onclick=async()=>{const m=$("avm").value.trim(),c=$("avc").value.trim()
  if(error||!data||!data.ok){$("ave").textContent="மொபைல் / code தவறு. கடையை தொடர்பு கொள்ளுங்க.";return}
  vis("av",false);$("lm").value=m;$("lp").value=p;["avm","avc","avp","avq"].forEach(i=>$(i).value="");doLogin()};
 
-$("fgt").onclick=()=>$("otw").onclick();
-$("otw").onclick=()=>open(wa(`வணக்கம், என் Passbook PIN மறந்துட்டேன். புது Activation code வேணும்.\nமொபைல் எண்: ${$("lm").value.trim()||"-"}`),"_blank");
+$("fgt").onclick=()=>openOT("f");
+$("otw").onclick=()=>open(wa(`வணக்கம், என் Passbook PIN மறந்துட்டேன். OTP வரல / புது Activation code வேணும்.\nமொபைல் எண்: ${$("otm").value.trim()||$("lm").value.trim()||"-"}`),"_blank");
 
 // Email OTP → own PIN (first time / forgot PIN)
-const sbo=supabase.createClient(SB_URL,SB_KEY,{auth:{storageKey:"stm-cust-otp",persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-let OTM="",OTE="",otT=0;
+// ===== Mobile OTP (Firebase Phone Auth) → சொந்த PIN =====
+const FBC={apiKey:"AIzaSyBbd5y2GZYhpvYxupNLiCW_kqVK98OK_A4",authDomain:"jewellery-customer-app.firebaseapp.com",projectId:"jewellery-customer-app",storageBucket:"jewellery-customer-app.firebasestorage.app",messagingSenderId:"650940992753",appId:"1:650940992753:web:bf96d9ca6dbe8a6151ad50"};
+const FBV="13.0.0";let FB=null;
+async function fbLoad(){if(FB)return FB;const [m1,A]=await Promise.all([import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-app.js`),import(`https://www.gstatic.com/firebasejs/${FBV}/firebase-auth.js`)]);
+ const auth=A.getAuth(m1.initializeApp(FBC));auth.languageCode="ta";FB={A,auth};return FB}
+let OTM="",otT=0,OTC=null,RV=null,IDT="";
 const otErr=t=>$("oterr").textContent=t;
 function otStep(n){["ot1","ot2","ot3"].forEach((id,i)=>vis(id,i+1==n));otErr("")}
 function openOT(mode){$("oth").textContent=mode=="f"?"PIN மறந்துட்டீங்களா?":"முதல் தடவை: PIN அமைக்க";
- $("otm").value=$("lm").value.trim();otStep(1);vis("ot",true);$("ot").scrollTop=0}
+ $("otm").value=$("lm").value.trim();otStep(1);vis("ot",true);$("ot").scrollTop=0;fbLoad().catch(()=>{})}
 async function sendOT(){
- const m=$("otm").value.trim(),e=$("ote").value.trim().toLowerCase();
- if(!/^[0-9]{10}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))return otErr("சரியான Email போடுங்க");
+ const m=$("otm").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
  const left=Math.ceil((otT-Date.now())/1000);if(left>0)return otErr(left+" வினாடி கழித்து மறுபடி அனுப்பலாம்");
  otErr("அனுப்புகிறோம்…");$("otb1").disabled=true;
- try{const {data:ok,error:e1}=await sb.rpc("gold_email_ok",{p_mobile:m,p_email:e});if(e1)throw e1;
-  if(!ok){otErr("இந்த மொபைல் + Email கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.");return}
-  const {error}=await sbo.auth.signInWithOtp({email:e,options:{shouldCreateUser:true}});if(error)throw error;
-  OTM=m;OTE=e;otT=Date.now()+60000;$("otsh").textContent=e;$("otc").value="";otStep(2)}
- catch(x){otErr(/rate|limit|seconds|security purposes/i.test((x&&x.message)||"")?"ரொம்ப சீக்கிரம் மறுபடி கேக்கறீங்க. ஒரு நிமிடம் கழித்து முயற்சிக்கவும்.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.")}
+ try{const {data:ok,error:e1}=await sb.rpc("gold_mobile_ok",{p_mobile:m});if(e1)throw e1;
+  if(!ok){otErr("இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.");return}
+  const {A,auth}=await fbLoad();
+  if(!RV)RV=new A.RecaptchaVerifier(auth,"rcap",{size:"invisible"});
+  OTC=await A.signInWithPhoneNumber(auth,"+91"+m,RV);
+  OTM=m;otT=Date.now()+60000;$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
+ catch(x){const c=(x&&x.code)||"";try{RV&&RV.clear()}catch(e){}RV=null;$("rcap").innerHTML="";
+  otErr(/too-many-requests/.test(c)?"ரொம்ப அதிக முயற்சி. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.":/quota/.test(c)?"இன்று SMS அனுப்ப முடியல. கடைக்கு WhatsApp பண்ணுங்க.":/invalid-phone/.test(c)?"மொபைல் எண் சரியா இல்ல.":/unauthorized-domain|operation-not-allowed|billing/.test(c)?"OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.")}
  finally{$("otb1").disabled=false}}
-$("otb1").onclick=sendOT;$("otr").onclick=sendOT;$("otbk").onclick=()=>otStep(1);
+$("otb1").onclick=sendOT;$("otr").onclick=()=>{otStep(1);sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
 $("otac").onclick=()=>{vis("ot",false);$("avm").value=$("otm").value;vis("av",true)};
 $("otb2").onclick=async()=>{const t=$("otc").value.trim();
- if(!/^[0-9]{6,8}$/.test(t))return otErr("Email-ல வந்த OTP-ஐ போடுங்க");
- $("otb2").disabled=true;const {error}=await sbo.auth.verifyOtp({email:OTE,token:t,type:"email"});$("otb2").disabled=false;
- if(error)return otErr("OTP தவறு அல்லது காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.");
- $("otp1").value="";$("otp2").value="";otStep(3)};
+ if(!/^[0-9]{6}$/.test(t))return otErr("SMS-ல வந்த 6 இலக்க OTP-ஐ போடுங்க");
+ if(!OTC)return otStep(1);
+ $("otb2").disabled=true;otErr("சரிபார்க்கிறோம்…");
+ try{const cr=await OTC.confirm(t);IDT=await cr.user.getIdToken();$("otp1").value="";$("otp2").value="";otStep(3)}
+ catch(x){const c=(x&&x.code)||"";otErr(/expired/.test(c)?"OTP காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.":"OTP தவறு. சரியா பாத்து போடுங்க.")}
+ finally{$("otb2").disabled=false}};
 $("otb3").onclick=async()=>{const p=$("otp1").value.trim(),q=$("otp2").value.trim();
  if(!/^[0-9]{6}$/.test(p))return otErr("6 இலக்க PIN வைங்க");if(p!==q)return otErr("இரண்டு PIN-உம் ஒண்ணா இல்ல");
- $("otb3").disabled=true;const {data,error}=await sbo.rpc("gold_email_set_pin",{p_mobile:OTM,p_pin:p});$("otb3").disabled=false;
- if(error||!data||!data.ok)return otErr(data&&data.err=="nomatch"?"இந்த Email இந்த மொபைலோட பொருந்தல. கடையை தொடர்பு கொள்ளுங்க.":data&&data.err=="login"?"Session முடிஞ்சுடுச்சு. மறுபடி OTP அனுப்புங்க.":"PIN அமைக்க முடியல. மறுபடி முயற்சிக்கவும்.");
- try{await sbo.auth.signOut()}catch(e){}
- vis("ot",false);$("lm").value=OTM;$("lp").value=p;["otc","otp1","otp2"].forEach(i=>$(i).value="");doLogin()};
+ $("otb3").disabled=true;otErr("PIN அமைக்கிறோம்…");let d=null;
+ try{const r=await fetch(SB_URL+"/functions/v1/otp-pin",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({idToken:IDT,pin:p})});d=await r.json().catch(()=>null)}catch(e){}
+ $("otb3").disabled=false;
+ if(!d||!d.ok)return otErr(d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&(d.err=="expired"||d.err=="token")?"நேரம் முடிஞ்சுடுச்சு. மறுபடி OTP அனுப்புங்க.":"PIN அமைக்க முடியல. மறுபடி முயற்சிக்கவும்.");
+ try{await FB.A.signOut(FB.auth)}catch(e){}
+ IDT="";OTC=null;vis("ot",false);vis("av",false);$("lm").value=OTM;$("lp").value=p;["otc","otp1","otp2"].forEach(i=>$(i).value="");doLogin()};
 
 // Price trend chart (gold / silver history)
 let PTH=null,PTE=false,PTM="g",PTR=30,PTN=10,PTI=-1;
