@@ -1273,8 +1273,8 @@ async function sendOT(){
   if(!RV)RV=new A.RecaptchaVerifier(auth,"rcap",{size:"invisible"});
   OTC=await A.signInWithPhoneNumber(auth,"+91"+m,RV);
   OTM=m;otT=Date.now()+60000;$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
- catch(x){const c=(x&&x.code)||"";try{RV&&RV.clear()}catch(e){}RV=null;$("rcap").innerHTML="";
-  otErr(/too-many-requests/.test(c)?"ரொம்ப அதிக முயற்சி. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.":/quota/.test(c)?"இன்று SMS அனுப்ப முடியல. கடைக்கு WhatsApp பண்ணுங்க.":/invalid-phone/.test(c)?"மொபைல் எண் சரியா இல்ல.":/unauthorized-domain|operation-not-allowed|billing/.test(c)?"OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.");if(c)$("oterr").textContent+=" ("+c.replace("auth/","")+")"}
+ catch(x){const c=(x&&x.code)||"";try{RV&&RV.clear()}catch(e){}RV=null;const oc=document.getElementById("rcap");if(oc){const nc=document.createElement("div");nc.id="rcap";oc.replaceWith(nc)}
+  otErr(/too-many-requests/.test(c)?"ரொம்ப அதிக முயற்சி. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.":/quota/.test(c)?"இன்று SMS அனுப்ப முடியல. கடைக்கு WhatsApp பண்ணுங்க.":/invalid-phone/.test(c)?"மொபைல் எண் சரியா இல்ல.":/unauthorized-domain|operation-not-allowed|billing/.test(c)?"OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.");const why=c?c.replace("auth/",""):String((x&&x.message)||x||"").slice(0,90);if(why)$("oterr").textContent+=" ("+why+")"}
  finally{$("otb1").disabled=false}}
 $("otb1").onclick=sendOT;$("otr").onclick=()=>{otStep(1);sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
