@@ -723,17 +723,6 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 .ptl svg{width:14px;height:14px}
 @media (min-width:1024px){body header.hd .xbrand .logo{height:60px}body header.hd .pc{max-width:480px}}
 
-/* ===== biometric unlock ===== */
-.biob{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;margin:10px 0 0;border:1.5px solid var(--pm);border-radius:14px;background:#fff;color:var(--pm);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
-.biob svg,.bioi svg{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.biob svg{width:24px;height:24px}
-#bioq{background:rgba(30,15,10,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:70}
-.bioc{background:#fff;border-radius:20px;padding:22px 20px 16px;max-width:360px;width:100%;text-align:center;color:var(--pt)}
-.bioi{width:64px;height:64px;margin:0 auto 10px;border-radius:50%;background:var(--pmt);color:var(--pm);display:flex;align-items:center;justify-content:center}.bioi svg{width:36px;height:36px}
-.bioc h3{margin:0 0 6px;font-size:18px;line-height:1.5}.bioc p{margin:0 0 10px;font-size:14px;line-height:1.7;color:var(--pmu)}
-.bioc .xbtn{width:100%}.biono{width:100%;min-height:44px;margin-top:6px;border:0;background:none;color:var(--pmu);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
-.biooff{display:block;margin:10px auto 0;border:0;background:none;color:var(--pmu);font-family:inherit;font-size:13px;text-decoration:underline;min-height:40px;cursor:pointer}
-
 /* ===== Passbook page ===== */
 #p{padding-top:16px}
 .pbx{display:flex;flex-direction:column;gap:14px}
@@ -805,7 +794,6 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <label class="lbp">PIN*</label><input id="lp" type="password" inputmode="numeric" maxlength="6">
  <div class="err" id="le"></div>
  <button class="yb" id="lb">உள்நுழையவும்</button>
- <button type="button" class="biob hide" id="biob"><svg viewBox="0 0 24 24"><path d="M12 11v4M8.5 8.5A5 5 0 0 1 17 12v2M7 12.5V12a5 5 0 0 1 .4-2M12 7a5 5 0 0 0-1 .1M9.5 15.5c.3 1.6.3 3 0 4.5M14.5 14c.2 2 .1 4-.4 6M5 9a8 8 0 0 1 14 3v1M4.5 14v-2"/></svg>கைரேகையால் திற</button>
  </div>
  <div class="lk k1">கணக்கு இல்லையா? <a id="gr2">பதிவு செய்யவும்</a></div>
  <div class="lk k2"><a id="lac">முதல் தடவையா? Activation code போடுங்க</a></div>
@@ -891,9 +879,6 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
   <li>நகை வாங்கும்போது GST, செய்கூலி, சேதாரம், கடை விதிமுறைகள் காரணமாக விலை மாறுபடலாம்.</li>
   <li>பழைய விலைகள் எதிர்கால விலைக்கு உத்தரவாதம் அல்ல. வாங்கும் முன் கடையில் உறுதி செய்யவும்.</li></ul></div>
 </div></div>
-<div id="bioq" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="bioqh"><div class="bioc"><div class="bioi"><svg viewBox="0 0 24 24"><path d="M12 11v4M8.5 8.5A5 5 0 0 1 17 12v2M7 12.5V12a5 5 0 0 1 .4-2M12 7a5 5 0 0 0-1 .1M9.5 15.5c.3 1.6.3 3 0 4.5M14.5 14c.2 2 .1 4-.4 6M5 9a8 8 0 0 1 14 3v1M4.5 14v-2"/></svg></div>
- <h3 id="bioqh">அடுத்த முறை கைரேகையால் திறக்கலாமா?</h3><p>PIN type பண்ண வேண்டாம். இந்த phone-ல மட்டும் வேலை செய்யும். கைரேகை phone-க்குள்ளயே இருக்கும், எங்கும் அனுப்பப்படாது.</p>
- <div class="err" id="bioe"></div><button type="button" class="xbtn" id="bioy">சரி, ON பண்ணு</button><button type="button" class="biono" id="bion">இப்போ வேண்டாம்</button></div></div>
 <div id="tm" class="ov hide"><div>
  <h3>விதிமுறைகள் & நிபந்தனைகள்</h3>
  <ul><li>திட்ட காலம் 12 மாதங்கள்; தவணை ₹1,000 முதல் ₹1,00,000 வரை.</li>
@@ -965,7 +950,6 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <button class="btn" onclick="viewPB()">பார்</button></div>
  <div id="pb"></div>
  <button class="btn hide" id="lo" style="background:#777">🚪 வெளியேறு</button>
- <button type="button" class="biooff hide" id="biooff">கைரேகை திறப்பை நிறுத்து</button>
 </section>
 </div>
 <script>
@@ -975,7 +959,9 @@ const NOEL=document.createElement("div"),$=id=>document.getElementById(id)||NOEL
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
 const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
 $("waf").href=$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
-function openLn(){$("le").textContent="";const b=BIO.get();$("lm").value=(b&&b.m)||LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0;bioBtn();if(b&&b.m==$("lm").value.trim())bioUnlock()}
+function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0}
+// பழைய கைரேகை பதிவு இருந்தா phone-ல இருந்து அழி
+try{localStorage.removeItem("bio");Object.keys(localStorage).forEach(k=>{if(k.startsWith("bio_no_"))localStorage.removeItem(k)})}catch(e){}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){openLn();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
  document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
  b.classList.add("on");$(b.dataset.t).classList.add("on");scrollTo(0,0)});
@@ -1078,44 +1064,13 @@ let tx=0;$("obv").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{pass
 $("obv").addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(sl+(d<0?1:-1))});
 function enter(t){vis("ln",false);vis("rg",false);vis("app",true);document.querySelector(`nav button[data-t="${t}"]`).click()}
 async function doLogin(){
- const m=$("lm").value.trim(),p=$("lp").value.trim(),viaBio=!!window.BIOTRY;window.BIOTRY=false;
+ const m=$("lm").value.trim(),p=$("lp").value.trim();
  if(m.length<10||!/^[0-9]{4,6}$/.test(p)){$("le").textContent="மொபைல் எண், PIN போடுங்க";return}
  $("le").textContent="";
  const {data,error}=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});
  if(data&&data.locked){$("le").textContent=`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`;return}
- if(error||!data){if(viaBio){BIO.set(null);bioBtn();$("lp").value="";$("le").textContent="PIN மாறியிருக்கு. புது PIN போட்டு உள்நுழையவும்.";return}$("le").textContent="மொபைல் எண் / PIN தவறு";return}
- window.PBOK=true;vis("lo",true);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB();bioBtn();if(!viaBio)bioOffer(m,p)}
-// ===== Biometric (fingerprint / Face ID) unlock =====
-// முதல் தடவை PIN-ஓட login → கைரேகை ON. PIN phone-லயே, கைரேகையால மட்டும் திறக்கும் key-ஆல் பூட்டி வைக்கப்படும் (WebAuthn PRF).
-const B64={en:b=>btoa(String.fromCharCode(...new Uint8Array(b))),de:t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0))};
-const BIO={get(){try{return JSON.parse(localStorage.getItem("bio")||"null")}catch(e){return null}},set(v){try{v?localStorage.setItem("bio",JSON.stringify(v)):localStorage.removeItem("bio")}catch(e){}}};
-async function bioCan(){try{return !!(window.PublicKeyCredential&&window.isSecureContext&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())}catch(e){return false}}
-async function bioKey(prf){return crypto.subtle.importKey("raw",prf,"AES-GCM",false,["encrypt","decrypt"])}
-async function bioPRF(id,salt){const a=await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:"public-key",id}],userVerification:"required",timeout:60000,extensions:{prf:{eval:{first:salt}}}}});
- const r=a&&a.getClientExtensionResults&&a.getClientExtensionResults().prf;return r&&r.results&&r.results.first||null}
-async function bioEnroll(m,pin){
- const salt=crypto.getRandomValues(new Uint8Array(32));
- const c=await navigator.credentials.create({publicKey:{rp:{name:SHOP},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:m,displayName:"Passbook "+m},challenge:crypto.getRandomValues(new Uint8Array(32)),
-  pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},timeout:60000,extensions:{prf:{eval:{first:salt}}}}});
- const ex=c.getClientExtensionResults?c.getClientExtensionResults():{};if(!ex.prf||ex.prf.enabled===false)throw new Error("noprf");
- let prf=ex.prf.results&&ex.prf.results.first;if(!prf)prf=await bioPRF(c.rawId,salt);if(!prf)throw new Error("noprf");
- const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:"AES-GCM",iv},await bioKey(prf),new TextEncoder().encode(pin));
- BIO.set({m,id:B64.en(c.rawId),salt:B64.en(salt),iv:B64.en(iv),ct:B64.en(ct)})}
-async function bioUnlock(){const b=BIO.get();if(!b)return;$("le").textContent="";
- try{const prf=await bioPRF(B64.de(b.id),B64.de(b.salt));if(!prf)throw new Error("noprf");
-  const pin=new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:B64.de(b.iv)},await bioKey(prf),B64.de(b.ct)));
-  $("lm").value=b.m;$("lp").value=pin;window.BIOTRY=true;await doLogin()}
- catch(e){$("le").textContent=e&&e.name=="NotAllowedError"?"கைரேகை ரத்து ஆனது. மறுபடி முயற்சிக்கவும் அல்லது PIN போடுங்க.":"கைரேகை வேலை செய்யல. PIN போட்டு உள்நுழையவும்."}}
-function bioBtn(){const b=BIO.get();vis("biob",!!(b&&b.m==$("lm").value.trim()));vis("biooff",!!b&&!!window.PBOK)}
-async function bioOffer(m,pin){const b=BIO.get();if(b&&b.m==m)return;if(LS.get("bio_no_"+m))return;if(!await bioCan())return;
- window.BIOP={m,pin};$("bioe").textContent="";vis("bioq",true)}
-$("biob").onclick=bioUnlock;$("lm").addEventListener("input",bioBtn);
-$("bioy").onclick=async()=>{const x=window.BIOP;if(!x)return vis("bioq",false);$("bioe").textContent="";
- try{await bioEnroll(x.m,x.pin);window.BIOP=null;vis("bioq",false);bioBtn();alert("கைரேகை ON ஆனது ✅ அடுத்த முறை Passbook-ஐ கைரேகையால் திறக்கலாம்.")}
- catch(e){$("bioe").textContent=e&&e.message=="noprf"?"இந்த phone / browser-ல கைரேகை வசதி இல்ல. PIN மூலம் தொடருங்க.":e&&e.name=="NotAllowedError"?"ரத்து ஆனது. மறுபடி முயற்சிக்கலாம்.":"முடியல. பின்னர் முயற்சிக்கவும்."}};
-$("bion").onclick=()=>{const x=window.BIOP;if(x)LS.set("bio_no_"+x.m,"1");window.BIOP=null;vis("bioq",false)};
-$("biooff").onclick=()=>{if(confirm("இந்த phone-ல கைரேகை திறப்பை நிறுத்தவா?")){BIO.set(null);bioBtn()}};
-
+ if(error||!data){$("le").textContent="மொபைல் எண் / PIN தவறு";return}
+ window.PBOK=true;vis("lo",true);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
 $("lb").onclick=doLogin;$("lp").addEventListener("keydown",e=>{if(e.key=="Enter")doLogin()});
 $("gr2").onclick=()=>openEnrol("dhana");$("bk").onclick=()=>vis("rg",false);
 $("gst").onclick=()=>enter("s");
@@ -1173,7 +1128,7 @@ loadNotices();
 
 // Customer logout
 $("lo").onclick=()=>{$("pb").innerHTML="";$("cp").value="";$("cm").value="";$("lp").value="";$("le").textContent="";
- document.querySelector('nav button[data-t="s"]').click();window.PBOK=false;window.PBD=null;vis("lo",false);$("lm").value=LS.get("mob")||"";scrollTo(0,0);renderPS();vis("biooff",false)};
+ document.querySelector('nav button[data-t="s"]').click();window.PBOK=false;window.PBD=null;vis("lo",false);$("lm").value=LS.get("mob")||"";scrollTo(0,0);renderPS()};
 // Home: Passbook / savings summary (உண்மையான passbook data மட்டும்)
 function renderPS(){const e=$("pss"),d=window.PBOK&&window.PBD,IB='<svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6M9 12h6"/></svg>';
  if(!d){e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>என் சேமிப்பு Passbook</b><small>திட்டத்தில் சேர்ந்தவர்களுக்கு</small></div></div><p>உங்க மொத்த சேமிப்பு, கட்டிய தவணைகள், தங்க எடை எல்லாம் மொபைல்லயே பாருங்க.</p><div class="xbtns"><a class="xbtn" data-pb role="button" tabindex="0">Passbook திற</a><a class="xbtn xo" data-act role="button" tabindex="0">PIN அமைக்க</a></div>`;return}
