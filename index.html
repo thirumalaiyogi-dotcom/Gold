@@ -336,33 +336,61 @@ nav button svg{width:22px;height:22px}
 #ot .lk a{cursor:pointer}
 .lnbk{display:block;margin:12px 0 0;font-size:16px;color:#9b1b1b;font-weight:700;cursor:pointer}
 
-/* ===== Price trend chart ===== */
-#pt{--ln1:#b8860b;--ln2:#4f6bb5}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #pt{--ln1:#b07a1a;--ln2:#6680cc}}
-:root[data-theme="dark"] #pt{--ln1:#b07a1a;--ln2:#6680cc}
+/* ===== Price trend screen (premium) ===== */
+#pt{--pm:#781D2A;--pg:#D4B16A;--pi:#FBF8F1;--pw:#FFFFFF;--pt:#33251F;--pmu:#827666;--pb:#E9DFC6;--pup:#1F7A3A;--pdn:#B3261E;--ln1:#A67C2E;--ln2:#5F6B7A;
+ color-scheme:light;background:var(--pi);color:var(--pt);font-family:"Noto Sans Tamil","Latha",system-ui,sans-serif}
 .ptl{display:block;width:max-content;margin:10px auto 0;font-size:13px;font-weight:700;color:#7a0a0a;background:rgba(255,255,255,.8);border-radius:20px;padding:6px 14px;cursor:pointer;box-shadow:0 2px 6px rgba(110,50,0,.2)}
 header.hd .pc>div{cursor:pointer}
-#ptb b{color:var(--tx)}
-.ptseg{display:flex;background:var(--card);border:1px solid var(--ln);border-radius:30px;padding:4px;margin:2px 0 10px}
-.ptseg button,.ptrng button{flex:1;border:0;background:none;font:700 15px inherit;font-family:inherit;color:var(--tx);padding:10px 4px;border-radius:26px;cursor:pointer}
-.ptseg button.on{background:#9b1b1b;color:#fff}
-.ptrng{display:flex;gap:6px;margin-bottom:10px}
-.ptrng button{font-size:13px;border:1px solid var(--ln);background:var(--card);border-radius:20px;padding:8px 2px}
-.ptrng button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
-.ptcard{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:14px 12px 12px}
-.ptt{font-size:14px;color:var(--mut);font-weight:600}
-.ptv{margin:2px 0}.ptv b{font-size:26px;line-height:1.4}
-#pt .chg{position:static;display:inline-block;vertical-align:middle;font-size:12px;margin-left:6px;padding:2px 8px}
-#ptc{position:relative;margin:10px 0 6px;min-height:220px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+#pt .sdh{min-height:64px;box-sizing:border-box;padding:8px 16px;gap:8px;background:var(--pi);color:var(--pt);font-size:18px;font-weight:800;border-bottom:1px solid var(--pb)}
+#pt .sdh a{display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:-10px;padding:0;border-radius:50%;color:var(--pt);cursor:pointer}
+#pt .sdh a:active{background:var(--pb)}#pt .sdh svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+#pt .sdb{padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));background:var(--pi)}
+#pt b{color:inherit}
+#pt .ptseg{display:flex;background:var(--pw);border:1px solid var(--pb);border-radius:999px;padding:4px;margin:0 0 16px}
+#pt .ptseg button{flex:1;min-height:44px;border:0;background:none;font-family:inherit;font-size:15px;font-weight:700;color:var(--pt);border-radius:999px;cursor:pointer;transition:background .18s,color .18s}
+#pt .ptseg button.on{background:var(--pm);color:#fff;box-shadow:0 2px 6px rgba(120,29,42,.25)}
+#pt .ptrng{display:flex;gap:8px;margin:0 0 16px}
+#pt .ptrng button{flex:1;min-height:40px;padding:0 4px;border:1px solid var(--pg);background:var(--pw);color:var(--pt);font-family:inherit;font-size:13px;font-weight:700;border-radius:999px;cursor:pointer;transition:background .18s,color .18s}
+#pt .ptrng button.on{background:var(--pt);border-color:var(--pt);color:#fff}
+#pt .ptcard{background:var(--pw);border:1px solid var(--pb);border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(51,37,31,.04),0 4px 16px rgba(51,37,31,.05);margin:0 0 16px}
+#pt .ptt{font-size:13px;color:var(--pmu);font-weight:700}
+#pt .ptv{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:4px 0 4px}
+#pt .ptv b{font-size:32px;line-height:1.25;font-weight:800;color:var(--pt);font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+#pt .ptpc{font-size:13px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;background:#F4EFE3;color:var(--pt)}
+#pt .ptpc.up{background:#E8F3EC;color:var(--pup)}#pt .ptpc.dn{background:#FBEAE8;color:var(--pdn)}#pt .ptpc:empty{display:none}
+#pt .ptpc small{font-weight:600;opacity:.8;margin-left:2px}
+#pt .ptmeta{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;font-size:13px;color:var(--pmu)}
+#pt .ptfr{display:inline-flex;align-items:center;gap:6px;font-weight:700;border-radius:999px;padding:2px 10px;background:#F4EFE3;color:var(--pmu)}
+#pt .ptfr.ok{background:#E8F3EC;color:var(--pup)}#pt .ptfr i{width:7px;height:7px;border-radius:50%;background:currentColor}#pt .ptfr:empty{display:none}
+#pt .ptch{padding:12px 8px 8px}
+#ptc{position:relative;min-height:220px;touch-action:pan-y;-webkit-user-select:none;user-select:none;outline:none}
+#ptc:focus-visible{box-shadow:0 0 0 2px var(--pm);border-radius:8px}
 #ptc svg{display:block;overflow:visible}
-.pttip{position:absolute;display:none;transform:translate(-50%,-118%);background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:5px 10px;box-shadow:0 4px 12px rgba(0,0,0,.18);pointer-events:none;text-align:center;white-space:nowrap;z-index:2;line-height:1.4}
-.pttip small{display:block;color:var(--mut);font-size:11px}.pttip b{font-size:15px}
-.pts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--ln);padding-top:10px}
-.pts div{text-align:center}.pts small{display:block;color:var(--mut);font-size:12px}.pts b{font-size:15px}
-.ptempty{text-align:center;color:var(--mut);padding:36px 10px;font-size:14px;line-height:1.8}
-.ptlist{margin:12px 0;border:1px solid var(--ln);border-radius:12px;padding:12px;background:var(--card)}
-.ptlist summary{font-weight:700;cursor:pointer}
-.ptlist .row{font-size:14px}.ptlist .row span:last-child{text-align:right}
+#pt .pttip{position:absolute;display:none;transform:translate(-50%,-120%);background:var(--pt);color:#fff;border-radius:10px;padding:6px 10px;box-shadow:0 4px 12px rgba(51,37,31,.25);pointer-events:none;text-align:center;white-space:nowrap;z-index:2;line-height:1.35}
+#pt .pttip small{display:block;color:#E9DFC6;font-size:11px}#pt .pttip b{font-size:15px;color:#fff}
+#pt .ptnote{font-size:12px;color:var(--pmu);text-align:center;margin:4px 8px 0}#pt .ptnote:empty{display:none}
+#pt .pts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 16px}
+#pt .pts>div{background:var(--pw);border:1px solid var(--pb);border-radius:12px;padding:12px 8px;text-align:center;min-width:0}
+#pt .pts small{display:block;color:var(--pmu);font-size:12px;font-weight:600;line-height:1.4}
+#pt .pts b{display:block;font-size:15px;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#pt .pts em{display:block;font-style:normal;font-size:11px;color:var(--pmu);margin-top:2px}
+#pt .pts .up{color:var(--pup)}#pt .pts .dn{color:var(--pdn)}
+#pt .ptempty{text-align:center;color:var(--pmu);padding:40px 12px;font-size:14px;line-height:1.8}
+#pt .ptempty button{margin-top:8px;min-height:40px;padding:0 18px;border:1px solid var(--pm);background:var(--pw);color:var(--pm);font-family:inherit;font-weight:700;border-radius:999px;cursor:pointer}
+#pt .pth{background:var(--pw);border:1px solid var(--pb);border-radius:16px;margin:0 0 16px;overflow:hidden}
+#pt .pth h3{margin:0;padding:14px 16px 10px;font-size:16px;font-weight:800;color:var(--pt);border-bottom:1px solid var(--pb)}
+#pt .pthr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;min-height:44px;box-sizing:border-box;font-size:14px}
+#pt .pthr+.pthr{border-top:1px solid #F1EADB}
+#pt .pthr span{color:var(--pt)}#pt .pthr div{text-align:right;display:flex;align-items:center;gap:8px;justify-content:flex-end}
+#pt .pthr b{font-weight:800;font-variant-numeric:tabular-nums}
+#pt .pthr em{font-style:normal;font-size:12px;font-weight:700;min-width:56px;text-align:right;font-variant-numeric:tabular-nums}
+#pt .pthr em.up{color:var(--pup)}#pt .pthr em.dn{color:var(--pdn)}#pt .pthr em.eq{color:var(--pmu)}
+#pt .ptmore{display:block;width:100%;min-height:48px;border:0;border-top:1px solid var(--pb);background:none;color:var(--pm);font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+#pt .ptinfo{background:#F6F0E2;border:1px solid var(--pb);border-radius:16px;padding:14px 16px;font-size:13px;color:var(--pt);line-height:1.7}
+#pt .ptinfo h4{margin:0 0 6px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:6px}
+#pt .ptinfo h4 svg{width:18px;height:18px;fill:none;stroke:var(--pm);stroke-width:2}
+#pt .ptinfo ul{margin:0;padding-left:18px}#pt .ptinfo li+li{margin-top:2px}
+@media (prefers-reduced-motion:reduce){#pt *{transition:none!important}}
 
 /* ===== Round 10: scheme detail hero – clean card ===== */
 .sdb .hero2{position:relative;overflow:hidden;background:linear-gradient(180deg,#fffaf0,#fcefd2);border:1px solid #e6c365;border-radius:18px;padding:20px 18px 0;box-shadow:0 6px 18px rgba(120,70,0,.12)}
@@ -542,18 +570,22 @@ header.hd .pc>div{cursor:pointer}
  <div class="err" id="oterr"></div>
  <div class="lk" style="font-size:13px">Email பதிவு செய்யலையா? <a id="otw">கடைக்கு WhatsApp</a> · <a id="otac">கடையில் code கொடுத்தாங்களா?</a></div>
 </div>
-<div id="pt" class="ov sdv hide"><div class="sdh"><a id="ptback">‹</a><span>விலை நிலவரம்</span></div><div class="sdb" id="ptb">
- <div class="ptseg" id="ptm" role="tablist" aria-label="உலோகம்"><button data-m="g" class="on" role="tab">தங்கம் 22K</button><button data-m="s" role="tab">வெள்ளி</button></div>
- <div class="ptrng" id="ptr" aria-label="காலம்"><button data-r="7">7 நாள்</button><button data-r="30" class="on">1 மாதம்</button><button data-r="182">6 மாதம்</button><button data-r="365">1 வருடம்</button></div>
- <div class="ptcard">
+<div id="pt" class="ov sdv hide"><div class="sdh"><a id="ptback" role="button" aria-label="பின் செல்ல" tabindex="0"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><span>விலை நிலவரம்</span></div><div class="sdb" id="ptb">
+ <div class="ptseg" id="ptm" role="tablist" aria-label="உலோகம்"><button data-m="g" class="on" role="tab" aria-selected="true">தங்கம் 22K</button><button data-m="s" role="tab" aria-selected="false">வெள்ளி</button></div>
+ <div class="ptrng" id="ptr" role="group" aria-label="காலம்"><button data-r="7">7 நாட்கள்</button><button data-r="30" class="on">1 மாதம்</button><button data-r="182">6 மாதம்</button><button data-r="365">1 வருடம்</button></div>
+ <div class="ptcard" aria-live="polite">
   <div class="ptt" id="ptt">22K தங்கம் · ₹ / கிராம்</div>
-  <div class="ptv"><b id="ptv">—</b><em class="chg" id="ptchg"></em></div>
-  <small class="mut" id="ptd"></small>
-  <div id="ptc"></div>
-  <div class="pts" id="pts"></div>
+  <div class="ptv"><b id="ptv">—</b><span class="ptpc" id="ptchg"></span></div>
+  <div class="ptmeta"><span id="ptd"></span><span class="ptfr" id="ptfr"></span></div>
  </div>
- <details class="ptlist"><summary>தேதி வாரியா விலை</summary><div id="ptl"></div></details>
- <p class="mut" style="text-align:center;font-size:12px">கடையில் தினமும் update செய்யப்படும் விலை. வாங்கும் முன் கடையில் உறுதி செய்யவும்.</p>
+ <div class="ptcard ptch"><div id="ptc" tabindex="0" aria-label="விலை graph. இடது வலது அம்புக்குறியால் நாட்களை பார்க்கலாம்"></div><p class="ptnote" id="ptnote"></p></div>
+ <div class="pts" id="pts"></div>
+ <div class="pth" role="region" aria-labelledby="pthh"><h3 id="pthh">தேதி வாரியான விலை</h3><div id="ptl"></div><button type="button" class="ptmore hide" id="ptmore">மேலும் பார்க்க</button></div>
+ <div class="ptinfo"><h4><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>விலை பற்றிய தகவல்</h4><ul>
+  <li>எல்லா விலைகளும் <b>1 கிராமுக்கு</b>. தங்கம் <b>22K (916)</b>.</li>
+  <li>ஆதாரம்: சுப்புலட்சுமி தங்க மாளிகை கடையில் தினமும் update செய்யப்படும் விலை. இது நேரடி (live) சந்தை விலை அல்ல.</li>
+  <li>நகை வாங்கும்போது GST, செய்கூலி, சேதாரம், கடை விதிமுறைகள் காரணமாக விலை மாறுபடலாம்.</li>
+  <li>பழைய விலைகள் எதிர்கால விலைக்கு உத்தரவாதம் அல்ல. வாங்கும் முன் கடையில் உறுதி செய்யவும்.</li></ul></div>
 </div></div>
 <div id="tm" class="ov hide"><div>
  <h3>விதிமுறைகள் & நிபந்தனைகள்</h3>
@@ -668,7 +700,7 @@ const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI
 const sb=supabase.createClient(SB_URL,SB_KEY);
 // Read cache for public data: repeat opens read from the phone instead of Supabase (cuts egress)
 (function(){const TTL={gold_notices:15,gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
- const raw=sb.from.bind(sb);
+ const raw=sb.from.bind(sb);sb.from0=raw;
  try{const now=Date.now();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith("sbc:")){const c=JSON.parse(localStorage.getItem(k)||"{}");if(!c.t||now-c.t>864e5)localStorage.removeItem(k)}}}catch(e){}
  sb.from=function(t){if(!TTL[t])return raw(t);const calls=[];let write=false;
   const run=async()=>{const key="sbc:"+t+":"+JSON.stringify(calls);
@@ -698,6 +730,7 @@ async function loadRate(){
  // விலை மாறலைன்னா screen-ஐ தொடாது
  const sig=[data.rate22,data.silver,data.updated_on,data.prev_rate22,data.prev_silver].join("|");if(sig===window.RTS)return;window.RTS=sig;
  setRate(data.rate22,data.updated_on,data.silver,data.prev_rate22,data.prev_silver);window.RT=data;
+ if(data.updated_at)window.RTU=data.updated_at;else if(data.updated_on)ptTime(data.updated_on);
  // graph ஏற்கனவே load ஆகியிருந்தா இன்றைய புள்ளியை புது விலையால மாத்து
  try{if(PTH&&data.updated_on&&data.rate22){const r=PTH.find(x=>x.day==data.updated_on);if(r){r.rate22=data.rate22;r.silver=data.silver}else PTH.push({day:data.updated_on,rate22:data.rate22,silver:data.silver});if(!$("pt").classList.contains("hide"))drawPT()}}catch(e){}}
 // App-க்கு திரும்ப வந்தவுடனும், திறந்திருக்கும்போது ஒவ்வொரு நிமிடமும் புது விலை பார்க்கும்
@@ -922,65 +955,95 @@ $("otb3").onclick=async()=>{const p=$("otp1").value.trim(),q=$("otp2").value.tri
  vis("ot",false);$("lm").value=OTM;$("lp").value=p;["otc","otp1","otp2"].forEach(i=>$(i).value="");doLogin()};
 
 // Price trend chart (gold / silver history)
-let PTH=null,PTM="g",PTR=30;
+let PTH=null,PTE=false,PTM="g",PTR=30,PTN=10,PTI=-1;
+const PTRN={7:"7 நாட்கள்",30:"1 மாதம்",182:"6 மாதம்",365:"1 வருடம்"};
 const ptFmt=v=>PTM=="g"?"₹"+fmt(v):"₹"+Number(v).toFixed(2);
+const ptAbs=v=>PTM=="g"?fmt(Math.abs(v)):Math.abs(v).toFixed(2);
 const dl=d=>new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
 const nice=x=>{const e=Math.pow(10,Math.floor(Math.log10(x))),f=x/e;return (f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e};
-async function openPT(){vis("pt",true);$("ptb").scrollTop=0;
- if(!PTH){$("ptc").innerHTML='<div class="ptempty">ஏற்றுகிறது…</div>';
-  const since=new Date(Date.now()-370*864e5).toISOString().slice(0,10);
-  let rows=[];try{const {data,error}=await sb.from("gold_rate_history").select("day,rate22,silver").gte("day",since).order("day");if(!error&&data)rows=data}catch(e){}
-  if(window.RT&&RT.updated_on&&RT.rate22){const r=rows.find(x=>x.day==RT.updated_on);if(r){r.rate22=RT.rate22;r.silver=RT.silver}else rows.push({day:RT.updated_on,rate22:RT.rate22,silver:RT.silver})}
-  PTH=rows}
+const istDay=()=>new Date(Date.now()+19800000).toISOString().slice(0,10);
+const PTGAP=4*864e5; // 4 நாளுக்கு மேல் இடைவெளி = கோட்டை இணைக்காது
+function ptMerge(rows){if(window.RT&&RT.updated_on&&RT.rate22){const r=rows.find(x=>x.day==RT.updated_on);if(r){r.rate22=RT.rate22;r.silver=RT.silver}else rows.push({day:RT.updated_on,rate22:RT.rate22,silver:RT.silver})}return rows}
+async function ptLoad(){PTE=false;$("ptc").innerHTML='<div class="ptempty">விலை வரலாறு ஏற்றுகிறது…</div>';$("ptl").innerHTML='<div class="ptempty">ஏற்றுகிறது…</div>';
+ const since=new Date(Date.now()-370*864e5).toISOString().slice(0,10);
+ try{const {data,error}=await sb.from("gold_rate_history").select("day,rate22,silver").gte("day",since).order("day");if(error)throw error;PTH=ptMerge(data||[])}
+ catch(e){PTE=true;PTH=window.RT?ptMerge([]):null}
  drawPT()}
+async function openPT(){vis("pt",true);$("ptb").scrollTop=0;PTN=10;if(!PTH||PTE)await ptLoad();else drawPT()}
+// latest rate's update time (history row updated_at) — fresh, not cached
+async function ptTime(day){try{const q=sb.from0?sb.from0("gold_rate_history"):sb.from("gold_rate_history");const {data}=await q.select("updated_at").eq("day",day).maybeSingle();window.RTU=data&&data.updated_at||null}catch(e){window.RTU=null}
+ if(!$("pt").classList.contains("hide"))drawPT()}
+function ptSmooth(P){ // monotone cubic: no fake peaks between real points
+ if(P.length<2)return "";if(P.length==2)return `M${P[0][0].toFixed(1)} ${P[0][1].toFixed(1)}L${P[1][0].toFixed(1)} ${P[1][1].toFixed(1)}`;
+ const n=P.length,d=[],m=[];for(let i=0;i<n-1;i++)d.push((P[i+1][1]-P[i][1])/(P[i+1][0]-P[i][0]||1));
+ m[0]=d[0];m[n-1]=d[n-2];for(let i=1;i<n-1;i++)m[i]=d[i-1]*d[i]<=0?0:(d[i-1]+d[i])/2;
+ for(let i=0;i<n-1;i++){if(d[i]==0){m[i]=m[i+1]=0;continue}const a=m[i]/d[i],b=m[i+1]/d[i],s=a*a+b*b;if(s>9){const t=3/Math.sqrt(s);m[i]=t*a*d[i];m[i+1]=t*b*d[i]}}
+ let p=`M${P[0][0].toFixed(1)} ${P[0][1].toFixed(1)}`;for(let i=0;i<n-1;i++){const h=(P[i+1][0]-P[i][0])/3;p+=`C${(P[i][0]+h).toFixed(1)} ${(P[i][1]+m[i]*h).toFixed(1)} ${(P[i+1][0]-h).toFixed(1)} ${(P[i+1][1]-m[i+1]*h).toFixed(1)} ${P[i+1][0].toFixed(1)} ${P[i+1][1].toFixed(1)}`}return p}
 function drawPT(){
  document.querySelectorAll("#ptm button").forEach(b=>{const on=b.dataset.m==PTM;b.classList.toggle("on",on);b.setAttribute("aria-selected",on)});
- document.querySelectorAll("#ptr button").forEach(b=>b.classList.toggle("on",+b.dataset.r==PTR));
- const key=PTM=="g"?"rate22":"silver",col=PTM=="g"?"var(--ln1)":"var(--ln2)";
+ document.querySelectorAll("#ptr button").forEach(b=>{const on=+b.dataset.r==PTR;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
+ const key=PTM=="g"?"rate22":"silver",col=PTM=="g"?"var(--ln1)":"var(--ln2)",fill=PTM=="g"?"#D4B16A":"#9AA3AE";
  $("ptt").textContent=PTM=="g"?"22K தங்கம் · ₹ / கிராம்":"வெள்ளி · ₹ / கிராம்";
  const all=(PTH||[]).filter(r=>r[key]!=null&&+r[key]>0).map(r=>({d:r.day,t:new Date(r.day+"T00:00:00").getTime(),v:+r[key]})).sort((a,b)=>a.t-b.t);
- const lastAll=all[all.length-1],cut=lastAll?lastAll.t-PTR*864e5:0,pts=all.filter(p=>p.t>=cut);
- const last=pts[pts.length-1];
- $("ptv").textContent=last?ptFmt(last.v):"—";$("ptd").textContent=last?"கடைசி update: "+dl(last.d):"";
- $("ptl").innerHTML=pts.slice().reverse().slice(0,60).map((p,i,a)=>{const pr=a[i+1],df=pr?p.v-pr.v:0;
-  return `<div class="row"><span>${dl(p.d)}</span><span><b>${ptFmt(p.v)}</b>${df?` <em class="chg ${df>0?"up":"dn"}" style="position:static;display:inline-block">${df>0?"▲":"▼"} ${PTM=="g"?fmt(Math.abs(df)):Math.abs(df).toFixed(2)}</em>`:""}</span></div>`}).join("")||'<div class="mut">இன்னும் இல்ல</div>';
+ const lastAll=all[all.length-1],cut=lastAll?lastAll.t-PTR*864e5:0,pts=all.filter(p=>p.t>=cut),last=pts[pts.length-1];
+ // ---- current price card (கடையின் இன்றைய விலை = graph கடைசி புள்ளி) ----
+ const cur=lastAll;$("ptv").textContent=cur?ptFmt(cur.v):"—";
+ let meta="";if(cur){meta="கடைசி Update: "+dl(cur.d);if(window.RT&&RT.updated_on==cur.d&&window.RTU){const tm=new Date(new Date(RTU).getTime()+19800000);if(!isNaN(tm)){const h=tm.getUTCHours(),mi=String(tm.getUTCMinutes()).padStart(2,"0");meta+=" · "+(h<12?"காலை":h<16?"மதியம்":h<19?"மாலை":"இரவு")+" "+((h%12)||12)+":"+mi}}}
+ else meta=PTE?"விலை ஏற்ற முடியவில்லை":"விலை இன்னும் இல்லை";$("ptd").textContent=meta;
+ const fr=$("ptfr");if(cur){const old=Math.round((new Date(istDay()+"T00:00:00")-cur.t)/864e5);fr.className="ptfr"+(old<=0?" ok":"");fr.innerHTML=old<=0?"<i></i>இன்றைய விலை":old+" நாள் முன் update"}else{fr.className="ptfr";fr.textContent=""}
  const e=$("ptchg");
- if(pts.length<2){e.className="chg";e.textContent="";$("pts").innerHTML="";
-  $("ptc").innerHTML='<div class="ptempty">📈<br>இந்த காலத்துக்கு விலை வரலாறு இன்னும் சேகரிக்கப்படுகிறது.<br>தினமும் விலை update ஆக ஆக graph தெரியும்.</div>';return}
- const vs=pts.map(p=>p.v),hi=Math.max(...vs),lo=Math.min(...vs),first=pts[0].v,df=last.v-first,pc=df/first*100;
- e.className="chg "+(df>0?"up":df<0?"dn":"");e.textContent=df==0?"மாற்றம் இல்ல":(df>0?"▲ ":"▼ ")+Math.abs(pc).toFixed(2)+"%";
- $("pts").innerHTML=`<div><small>அதிகம்</small><b>${ptFmt(hi)}</b></div><div><small>குறைவு</small><b>${ptFmt(lo)}</b></div><div><small>மாற்றம்</small><b>${df>0?"+":df<0?"−":""}${ptFmt(Math.abs(df))}</b></div>`;
- const W=Math.max(260,$("ptc").clientWidth||340),H=220,L=48,R=10,T=12,B=26,iw=W-L-R,ih=H-T-B;
- let y0=lo,y1=hi;if(y0==y1){const k=Math.max(1,y0*.01);y0-=k;y1+=k}const pad=(y1-y0)*.12;y0-=pad;y1+=pad;
+ // ---- history list (selected metal + period, newest first) ----
+ const idx=new Map(all.map((p,i)=>[p.d,i])),rev=pts.slice().reverse();
+ if(PTE&&!all.length)$("ptl").innerHTML='<div class="ptempty">இணைய இணைப்பு சரியில்லை, விலை வரலாறு ஏற்ற முடியவில்லை.<br><button type="button" data-retry>மீண்டும் முயற்சி</button></div>';
+ else $("ptl").innerHTML=rev.slice(0,PTN).map(p=>{const i=idx.get(p.d),pr=i>0?all[i-1]:null;let mv="";
+   if(pr&&p.t-pr.t<=PTGAP){const df=p.v-pr.v;mv=df>0?`<em class="up" aria-label="உயர்வு">▲ ${ptAbs(df)}</em>`:df<0?`<em class="dn" aria-label="குறைவு">▼ ${ptAbs(df)}</em>`:`<em class="eq">மாற்றமில்லை</em>`}
+   return `<div class="pthr"><span>${dl(p.d)}</span><div><b>${ptFmt(p.v)}</b>${mv}</div></div>`}).join("")||'<div class="ptempty">இந்த காலத்துக்கு விலை பதிவு இல்லை</div>';
+ $("ptmore").classList.toggle("hide",rev.length<=PTN);
+ // ---- not enough data ----
+ if(pts.length<2){e.className="ptpc";e.textContent="";$("pts").innerHTML="";$("ptnote").textContent="";
+  $("ptc").innerHTML=PTE?'<div class="ptempty">விலை வரலாறு ஏற்ற முடியவில்லை.<br><button type="button" data-retry>மீண்டும் முயற்சி</button></div>'
+   :`<div class="ptempty">📈<br>${PTRN[PTR]} காலத்துக்கு graph போட போதுமான விலை பதிவு இன்னும் இல்லை.<br>தினமும் விலை update ஆக ஆக graph தெரியும்.</div>`;return}
+ const vs=pts.map(p=>p.v),hi=Math.max(...vs),lo=Math.min(...vs),first=pts[0],df=last.v-first.v,pc=df/first.v*100;
+ const hiP=pts.find(p=>p.v==hi),loP=pts.find(p=>p.v==lo),dir=df>0?"up":df<0?"dn":"";
+ e.className="ptpc "+dir;e.innerHTML=(df==0?"மாற்றமில்லை":(df>0?"▲ ":"▼ ")+Math.abs(pc).toFixed(2)+"%")+`<small> · ${PTRN[PTR]}</small>`;
+ const partial=first.t>cut+1.5*864e5,gaps=pts.some((p,i)=>i&&p.t-pts[i-1].t>PTGAP);
+ $("ptnote").textContent=[partial?`${dl(first.d)} முதல் உள்ள விலைகள் மட்டும் பதிவில் உள்ளன.`:"",gaps?"இடைவெளி உள்ள நாட்களுக்கு விலை பதிவு இல்லை (கோடு இணைக்கப்படவில்லை).":""].filter(Boolean).join(" ");
+ $("pts").innerHTML=`<div><small>அதிகபட்ச விலை</small><b>${ptFmt(hi)}</b><em>${dl(hiP.d)}</em></div><div><small>குறைந்தபட்ச விலை</small><b>${ptFmt(lo)}</b><em>${dl(loP.d)}</em></div><div><small>மாற்றம் (₹)</small><b class="${dir}">${df>0?"+":df<0?"−":""}${ptFmt(Math.abs(df))}</b><em>${dl(first.d)} முதல்</em></div>`;
+ // ---- chart ----
+ const W=Math.max(260,$("ptc").clientWidth||320),H=220,L=PTM=="g"?50:42,R=12,T=14,B=28,iw=W-L-R,ih=H-T-B;
+ let y0=lo,y1=hi;if(y0==y1){const k=Math.max(1,y0*.01);y0-=k;y1+=k}const pad=(y1-y0)*.15;y0-=pad;y1+=pad;
  const step=nice((y1-y0)/4),ticks=[];for(let v=Math.ceil(y0/step)*step;v<=y1+1e-9;v+=step)ticks.push(v);
- const x0=pts[0].t,x1=last.t,X=t=>L+(t-x0)/(x1-x0)*iw,Y=v=>T+(1-(v-y0)/(y1-y0))*ih;
- const line=pts.map((p,i)=>(i?"L":"M")+X(p.t).toFixed(1)+" "+Y(p.v).toFixed(1)).join("");
- const area=line+`L${X(x1).toFixed(1)} ${T+ih}L${X(x0).toFixed(1)} ${T+ih}Z`;
- const yl=v=>PTM=="g"||step>=1?fmt(v):v.toFixed(1);
- const span=(x1-x0)/864e5,xf=t=>new Date(t).toLocaleDateString("ta-IN",span>75?{month:"short"}:{day:"numeric",month:"short"});
- const nx=Math.min(4,pts.length),xt=[...Array(nx)].map((_,i)=>x0+(x1-x0)*i/(nx-1));
- const grid=ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" style="stroke:var(--ln);stroke-width:1"/><text x="${L-6}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" style="fill:var(--mut);font-size:11px">${yl(v)}</text>`).join("");
- const xs=xt.map((t,i)=>`<text x="${X(t).toFixed(1)}" y="${H-6}" text-anchor="${i==0?"start":i==nx-1?"end":"middle"}" style="fill:var(--mut);font-size:11px">${xf(t)}</text>`).join("");
+ const x0=first.t,x1=last.t,X=t=>L+(t-x0)/(x1-x0)*iw,Y=v=>T+(1-(v-y0)/(y1-y0))*ih;
+ const segs=[];let cs=[];pts.forEach((p,i)=>{if(i&&p.t-pts[i-1].t>PTGAP){segs.push(cs);cs=[]}cs.push(p)});segs.push(cs);
+ let lines="",areas="",dots="";segs.forEach(s=>{const P=s.map(p=>[X(p.t),Y(p.v)]);if(P.length==1){dots+=`<circle cx="${P[0][0].toFixed(1)}" cy="${P[0][1].toFixed(1)}" r="3" style="fill:${col}"/>`;return}
+  const ln=ptSmooth(P);lines+=`<path d="${ln}" style="fill:none;stroke:${col};stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round"/>`;
+  areas+=`<path d="${ln}L${P[P.length-1][0].toFixed(1)} ${T+ih}L${P[0][0].toFixed(1)} ${T+ih}Z" style="fill:url(#ptgr)"/>`});
+ const yl=v=>PTM=="g"?fmt(v):(step>=1?fmt(v):v.toFixed(1));
+ const span=(x1-x0)/864e5,xf=t=>new Date(t).toLocaleDateString("ta-IN",span>75?{month:"short",year:"2-digit"}:{day:"numeric",month:"short"});
+ const nx=Math.min(W<340?3:4,pts.length),xt=[...Array(nx)].map((_,i)=>x0+(x1-x0)*i/(nx-1));
+ const grid=ticks.map(v=>`<line x1="${L}" x2="${W-R}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" style="stroke:#EFE7D4;stroke-width:1"/><text x="${L-8}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" style="fill:var(--pmu);font-size:11px;font-variant-numeric:tabular-nums">${yl(v)}</text>`).join("");
+ const xs=xt.map((t,i)=>`<text x="${X(t).toFixed(1)}" y="${H-8}" text-anchor="${i==0?"start":i==nx-1?"end":"middle"}" style="fill:var(--pmu);font-size:11px">${xf(t)}</text>`).join("");
  const lx=X(x1),ly=Y(last.v);
- $("ptc").innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="${$("ptt").textContent} – ${pts.length} நாள் விலை. அதிகம் ${ptFmt(hi)}, குறைவு ${ptFmt(lo)}">
- <defs><linearGradient id="ptgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${col};stop-opacity:.22"/><stop offset="1" style="stop-color:${col};stop-opacity:0"/></linearGradient></defs>
- ${grid}<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" style="stroke:var(--mut);stroke-width:1;opacity:.5"/>${xs}
- <path d="${area}" style="fill:url(#ptgr)"/>
- <path d="${line}" style="fill:none;stroke:${col};stroke-width:2;stroke-linejoin:round;stroke-linecap:round"/>
- <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="4.5" style="fill:${col};stroke:var(--card);stroke-width:2"/>
- <g id="ptcross" style="display:none"><line id="ptx" y1="${T}" y2="${T+ih}" style="stroke:var(--mut);stroke-width:1;stroke-dasharray:3 3"/><circle id="ptdot" r="5" style="fill:${col};stroke:var(--card);stroke-width:2"/></g>
- <rect x="0" y="0" width="${W}" height="${H}" style="fill:transparent"/></svg><div class="pttip" id="pttip"></div>`;
- const svg=$("ptc").querySelector("svg"),tip=$("pttip"),cr=svg.querySelector("#ptcross"),cx=svg.querySelector("#ptx"),cd=svg.querySelector("#ptdot");
- const mv=ev=>{const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)*W/r.width;let b=pts[0],bd=1e9;for(const p of pts){const k=Math.abs(X(p.t)-sx);if(k<bd){bd=k;b=p}}
-  const px=X(b.t),py=Y(b.v);cx.setAttribute("x1",px);cx.setAttribute("x2",px);cd.setAttribute("cx",px);cd.setAttribute("cy",py);cr.style.display="";
+ $("ptc").innerHTML=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" role="img" aria-label="${$("ptt").textContent}, ${PTRN[PTR]}: ${pts.length} நாள் விலை. அதிகபட்சம் ${ptFmt(hi)}, குறைந்தபட்சம் ${ptFmt(lo)}, கடைசி ${ptFmt(last.v)}">
+ <defs><linearGradient id="ptgr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:${fill};stop-opacity:.28"/><stop offset="1" style="stop-color:${fill};stop-opacity:0"/></linearGradient></defs>
+ ${grid}<line x1="${L}" x2="${W-R}" y1="${T+ih}" y2="${T+ih}" style="stroke:#E9DFC6;stroke-width:1"/>${xs}${areas}${lines}${dots}
+ <circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="9" style="fill:${fill};opacity:.3"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="4.5" style="fill:${col};stroke:#fff;stroke-width:2"/>
+ <g id="ptcross" style="display:none"><line id="ptx" y1="${T}" y2="${T+ih}" style="stroke:var(--pmu);stroke-width:1;stroke-dasharray:3 3"/><circle id="ptdot" r="5" style="fill:${col};stroke:#fff;stroke-width:2"/></g>
+ <rect x="0" y="0" width="${W}" height="${H}" style="fill:transparent"/></svg><div class="pttip" id="pttip" role="status"></div>`;
+ const box=$("ptc"),svg=box.querySelector("svg"),tip=$("pttip"),cr=svg.querySelector("#ptcross"),cx=svg.querySelector("#ptx"),cd=svg.querySelector("#ptdot");
+ const show=i=>{PTI=i;const b=pts[i],r=svg.getBoundingClientRect(),px=X(b.t),py=Y(b.v);cx.setAttribute("x1",px);cx.setAttribute("x2",px);cd.setAttribute("cx",px);cd.setAttribute("cy",py);cr.style.display="";
   tip.innerHTML=`<small>${dl(b.d)}</small><b>${ptFmt(b.v)}</b>`;tip.style.display="block";
-  tip.style.left=Math.min(Math.max(px/W*r.width,64),r.width-64)+"px";tip.style.top=Math.max(py/H*r.height,40)+"px"};
- const hide=()=>{tip.style.display="none";cr.style.display="none"};
- svg.addEventListener("pointermove",mv);svg.addEventListener("pointerdown",mv);svg.addEventListener("pointerleave",hide);svg.addEventListener("pointercancel",hide)}
+  tip.style.left=Math.min(Math.max(px/W*r.width,64),r.width-64)+"px";tip.style.top=Math.max(py/H*r.height,44)+"px"};
+ const mv=ev=>{const r=svg.getBoundingClientRect(),sx=(ev.clientX-r.left)*W/r.width;let bi=0,bd=1e9;pts.forEach((p,i)=>{const k=Math.abs(X(p.t)-sx);if(k<bd){bd=k;bi=i}});show(bi)};
+ const hide=()=>{PTI=-1;tip.style.display="none";cr.style.display="none"};
+ svg.addEventListener("pointermove",mv);svg.addEventListener("pointerdown",mv);svg.addEventListener("pointerleave",ev=>{if(ev.pointerType=="mouse")hide()});svg.addEventListener("pointercancel",hide);
+ box.onkeydown=ev=>{if(ev.key=="ArrowLeft"||ev.key=="ArrowRight"){ev.preventDefault();const i=PTI<0?pts.length-1:Math.max(0,Math.min(pts.length-1,PTI+(ev.key=="ArrowLeft"?-1:1)));show(i)}else if(ev.key=="Escape")hide()};box.onblur=hide}
 $("ptopen").onclick=openPT;document.querySelectorAll("header.hd .pc>div").forEach((x,i)=>x.onclick=()=>{PTM=i?"s":"g";openPT()});
-$("ptback").onclick=()=>vis("pt",false);
-$("ptm").addEventListener("click",e=>{const m=e.target.closest("button");if(m){PTM=m.dataset.m;drawPT()}});
-$("ptr").addEventListener("click",e=>{const r=e.target.closest("button");if(r){PTR=+r.dataset.r;drawPT()}});
+$("ptback").onclick=()=>vis("pt",false);$("ptback").onkeydown=e=>{if(e.key=="Enter"||e.key==" "){e.preventDefault();vis("pt",false)}};
+$("ptm").addEventListener("click",e=>{const m=e.target.closest("button");if(m){PTM=m.dataset.m;PTN=10;drawPT()}});
+$("ptr").addEventListener("click",e=>{const r=e.target.closest("button");if(r){PTR=+r.dataset.r;PTN=10;drawPT()}});
+$("ptmore").onclick=()=>{PTN+=20;drawPT()};
+$("pt").addEventListener("click",e=>{if(e.target.closest("[data-retry]"))ptLoad();else if(!e.target.closest("#ptc")&&PTI>=0){const t=$("pttip"),c=$("ptcross");PTI=-1;if(t)t.style.display="none";if(c)c.style.display="none"}});
 let ptrz;window.addEventListener("resize",()=>{clearTimeout(ptrz);ptrz=setTimeout(()=>{if(!$("pt").classList.contains("hide"))drawPT()},150)});
 
 // Scheme card image/top → details
