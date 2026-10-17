@@ -667,7 +667,7 @@ const f=fmt;
 const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4";
 const sb=supabase.createClient(SB_URL,SB_KEY);
 // Read cache for public data: repeat opens read from the phone instead of Supabase (cuts egress)
-(function(){const TTL={gold_rate:15,gold_notices:15,gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
+(function(){const TTL={gold_notices:15,gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
  const raw=sb.from.bind(sb);
  try{const now=Date.now();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith("sbc:")){const c=JSON.parse(localStorage.getItem(k)||"{}");if(!c.t||now-c.t>864e5)localStorage.removeItem(k)}}}catch(e){}
  sb.from=function(t){if(!TTL[t])return raw(t);const calls=[];let write=false;
@@ -693,8 +693,17 @@ async function viewPB(){
 
 
 async function loadRate(){
- const {data}=await sb.from("gold_rate").select("*").eq("id",1).maybeSingle();
- if(!data)return;setRate(data.rate22,data.updated_on,data.silver,data.prev_rate22,data.prev_silver);window.RT=data}
+ let data=null;try{({data}=await sb.from("gold_rate").select("*").eq("id",1).maybeSingle())}catch(e){}
+ if(!data)return;
+ // விலை மாறலைன்னா screen-ஐ தொடாது
+ const sig=[data.rate22,data.silver,data.updated_on,data.prev_rate22,data.prev_silver].join("|");if(sig===window.RTS)return;window.RTS=sig;
+ setRate(data.rate22,data.updated_on,data.silver,data.prev_rate22,data.prev_silver);window.RT=data;
+ // graph ஏற்கனவே load ஆகியிருந்தா இன்றைய புள்ளியை புது விலையால மாத்து
+ try{if(PTH&&data.updated_on&&data.rate22){const r=PTH.find(x=>x.day==data.updated_on);if(r){r.rate22=data.rate22;r.silver=data.silver}else PTH.push({day:data.updated_on,rate22:data.rate22,silver:data.silver});if(!$("pt").classList.contains("hide"))drawPT()}}catch(e){}}
+// App-க்கு திரும்ப வந்தவுடனும், திறந்திருக்கும்போது ஒவ்வொரு நிமிடமும் புது விலை பார்க்கும்
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadRate()});
+window.addEventListener("online",loadRate);
+setInterval(()=>{if(document.visibilityState==="visible")loadRate()},60000);
 function setRate(r,d,sv,p1,p2){chg("gchg",r,p1,0);chg("schg",sv,p2,1);$("gr").textContent="₹"+fmt(r);$("gd").textContent="விலை புதுப்பிக்கப்பட்டது: "+String(d).split("-").reverse().join("-");
  $("rate").value=r;$("pr").value=r;$("gp").value=r;if(sv){$("sr").textContent="₹"+Number(sv).toFixed(2);$("sv").value=sv}calc()}
 loadRate();
@@ -921,7 +930,7 @@ async function openPT(){vis("pt",true);$("ptb").scrollTop=0;
  if(!PTH){$("ptc").innerHTML='<div class="ptempty">ஏற்றுகிறது…</div>';
   const since=new Date(Date.now()-370*864e5).toISOString().slice(0,10);
   let rows=[];try{const {data,error}=await sb.from("gold_rate_history").select("day,rate22,silver").gte("day",since).order("day");if(!error&&data)rows=data}catch(e){}
-  if(window.RT&&RT.updated_on&&RT.rate22&&!rows.some(r=>r.day==RT.updated_on))rows.push({day:RT.updated_on,rate22:RT.rate22,silver:RT.silver});
+  if(window.RT&&RT.updated_on&&RT.rate22){const r=rows.find(x=>x.day==RT.updated_on);if(r){r.rate22=RT.rate22;r.silver=RT.silver}else rows.push({day:RT.updated_on,rate22:RT.rate22,silver:RT.silver})}
   PTH=rows}
  drawPT()}
 function drawPT(){
