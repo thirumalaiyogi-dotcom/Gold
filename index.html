@@ -768,7 +768,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 @media print{.pbsum{background:#fff!important;color:#000!important;border:1px solid #ccc}.pbsum *{color:#000!important}.pbcard{box-shadow:none}}
 @media (prefers-reduced-motion:reduce){.pbsk{animation:none}}
 
-.tgb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:0 0 6px;border:1.5px solid #229ED9;border-radius:14px;background:#fff;color:#1c7fb0;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.tgb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:18px 0 6px;border:0;border-radius:14px;background:#229ED9;color:#fff;box-shadow:0 6px 16px rgba(34,158,217,.3);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
 .tgb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
 </style></head><body>
 <div id="ob" class="ov hide">
@@ -794,12 +794,12 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <p class="otp-note" style="margin:-8px 0 12px">சேமிப்பு திட்டத்தில் சேர்ந்தவர்களுக்கு மட்டும்</p>
  <div class="lcard">
  <label class="lbm">மொபைல் எண்ணை உள்ளிடவும்*</label><input id="lm" type="tel" inputmode="numeric" maxlength="10">
- <label class="lbp">PIN*</label><input id="lp" type="password" inputmode="numeric" maxlength="6">
+ <label class="lbp">mPIN*</label><input id="lp" type="password" inputmode="numeric" maxlength="6">
  <div class="err" id="le"></div>
  <button class="yb" id="lb">உள்நுழையவும்</button>
  </div>
  <div class="lk k1">கணக்கு இல்லையா? <a id="gr2">பதிவு செய்யவும்</a></div>
- <div class="lk k2"><a id="lac">முதல் தடவையா? OTP மூலம் PIN அமைக்க</a></div>
+ <div class="lk k2"><a id="lac">முதல் தடவையா? mPIN உருவாக்க (Telegram OTP)</a></div>
  <div class="lk k3"><a id="fgt">PIN மறந்துட்டீங்களா?</a></div>
  <div class="lk k4"><a id="gst">‹ முகப்புக்கு திரும்ப</a></div>
 </div>
@@ -845,7 +845,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <div class="lg"><span class="shopn"></span></div>
  <h2 id="oth">PIN அமைக்க</h2>
  <div id="ot1">
-  <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பருக்கு SMS-ல OTP வரும்.</p>
+  <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பரோட <b>Telegram</b>-க்கு 6 இலக்க code வரும்.</p>
   <label>மொபைல் எண்*</label><input id="otm" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national">
   <button class="yb" id="otb1">OTP அனுப்பு (SMS)</button>
   <button type="button" class="tgb" id="otbt"><svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l8-6"/></svg>Telegram-ல code அனுப்பு</button>
@@ -858,13 +858,13 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  </div>
  <div id="ot3" class="hide">
   <p class="otp-note">✅ மொபைல் சரிபார்க்கப்பட்டது. இனி login-க்கு உங்க சொந்த 6 இலக்க PIN வைங்க.</p>
-  <label>புது 6 இலக்க PIN*</label><input id="otp1" type="password" inputmode="numeric" maxlength="6">
-  <label>PIN மறுபடி*</label><input id="otp2" type="password" inputmode="numeric" maxlength="6">
+  <label>புது 6 இலக்க mPIN*</label><input id="otp1" type="password" inputmode="numeric" maxlength="6">
+  <label>mPIN மறுபடி*</label><input id="otp2" type="password" inputmode="numeric" maxlength="6">
   <button class="yb" id="otb3">PIN அமை</button>
  </div>
  <div class="err" id="oterr"></div>
  <div id="rcap"></div>
- <div class="lk" style="font-size:13px">SMS வரலையா? <a id="otw">கடைக்கு WhatsApp</a> · <a id="otac">கடையில் code கொடுத்தாங்களா?</a></div>
+ <div class="lk" style="font-size:13px">Telegram இல்லையா? <a id="otw">கடைக்கு WhatsApp</a> · <a id="otac">கடையில் code கொடுத்தாங்களா?</a></div>
 </div>
 <div id="pt" class="ov sdv hide"><div class="sdh"><a id="ptback" role="button" aria-label="பின் செல்ல" tabindex="0"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a><span>விலை நிலவரம்</span></div><div class="sdb" id="ptb">
  <div class="ptseg" id="ptm" role="tablist" aria-label="உலோகம்"><button data-m="g" class="on" role="tab" aria-selected="true">தங்கம் 22K</button><button data-m="s" role="tab" aria-selected="false">வெள்ளி</button></div>
@@ -963,7 +963,7 @@ const NOEL=document.createElement("div"),$=id=>document.getElementById(id)||NOEL
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
 const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
 $("waf").href=$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
-function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0}
+function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0;if($("lm").value.length==10)setTimeout(()=>{try{$("lp").focus()}catch(e){}},250)}
 // பழைய கைரேகை பதிவு இருந்தா phone-ல இருந்து அழி
 try{localStorage.removeItem("bio");Object.keys(localStorage).forEach(k=>{if(k.startsWith("bio_no_"))localStorage.removeItem(k)})}catch(e){}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){openLn();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
@@ -1006,10 +1006,15 @@ const PBI={u:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4
  wa:'<svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg>',
  pdf:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15l3 3 3-3"/></svg>'};
 const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNaN(x)?esc(String(d)):x.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})};
+// mPIN login: gold_login (5 முயற்சி வரம்பு). SQL ஓட்டாத நிலையில பழைய gold_get_passbook.
+async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
+ if(r.error&&/gold_login|PGRST202|function/i.test((r.error.code||"")+(r.error.message||"")))r=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});return r}
+const pbOK=d=>d&&!d.wrong&&!d.locked_otp&&!d.locked&&d.name!==undefined;
 async function viewPB(){
  $("pb").innerHTML='<div class="pbx"><div class="pbsk"></div><div class="pbsk" style="height:150px"></div><div class="pbsk" style="height:220px"></div><p class="pbmsg">Passbook ஏற்றுகிறது…</p></div>';
  let data=null,error=null;
- try{({data,error}=await sb.rpc("gold_get_passbook",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()}))}catch(e){error=e}
+ try{({data,error}=await pbRpc($("cm").value.trim(),$("cp").value.trim()))}catch(e){error=e}
+ if(data&&(data.wrong||data.locked_otp))data=null;
  if(data&&data.locked){$("pb").innerHTML=`<div class="pbx"><div class="pbcard pbstate"><b>பல தவறான முயற்சிகள்</b><p>${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.</p></div></div>`;return}
  if(error&&!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>Passbook ஏற்ற முடியவில்லை</b><p>இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</p><button type="button" class="pbbtn pbo" onclick="viewPB()">மீண்டும் முயற்சி</button></div></div>';return}
  if(!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>மொபைல் எண் / PIN தவறு</b><p>வெளியேறி மீண்டும் உள்நுழையவும்.</p></div></div>';return}
@@ -1071,7 +1076,9 @@ async function doLogin(){
  const m=$("lm").value.trim(),p=$("lp").value.trim();
  if(m.length<10||!/^[0-9]{4,6}$/.test(p)){$("le").textContent="மொபைல் எண், PIN போடுங்க";return}
  $("le").textContent="";
- const {data,error}=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});
+ const {data,error}=await pbRpc(m,p);
+ if(data&&data.locked_otp){$("lp").value="";$("le").innerHTML='5 தடவை தவறான PIN. பாதுகாப்புக்காக பூட்டப்பட்டது.<br><a id="lunlock" style="text-decoration:underline;font-weight:700">Telegram OTP மூலம் புது PIN அமைக்க ›</a>';$("lunlock").onclick=()=>{$("lm").value=m;openOT("f")};return}
+ if(data&&data.wrong){$("lp").value="";$("le").textContent=`PIN தவறு. இன்னும் ${data.left} முயற்சி மட்டும்.`;return}
  if(data&&data.locked){$("le").textContent=`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`;return}
  if(error||!data){$("le").textContent="மொபைல் எண் / PIN தவறு";return}
  window.PBOK=true;vis("lo",true);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
@@ -1295,7 +1302,8 @@ async function sendGW(){OTV="gw";const m=$("otm").value.trim();
  otErr("SMS அனுப்புகிறோம்…");$("otb1").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otb1").disabled=false;
  if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&d.err=="wait"?"ஒரு நிமிடம் கழித்து மறுபடி அனுப்பலாம்.":"SMS அனுப்ப முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.")+(d&&d.err?" ("+d.err+")":""));
  TGR=d.request_id;OTM=m;otT=Date.now()+60000;$("otvia").textContent="SMS";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
-const SMS_VIA="gw"; // "gw" = நம்ம Android phone gateway, "fb" = Firebase (billing ஆன பிறகு)
+const SMS_VIA="off"; // "off" = SMS பட்டன் மறைப்பு, "gw" = Android gateway, "fb" = Firebase (billing ஆன பிறகு)
+if(SMS_VIA=="off")vis("otb1",false); // "gw" = நம்ம Android phone gateway, "fb" = Firebase (billing ஆன பிறகு)
 $("otbt").onclick=()=>{OTV="tg";sendTG()};
 $("otb1").onclick=()=>SMS_VIA=="gw"?sendGW():sendOT();$("otr").onclick=()=>{otStep(1);OTV=="tg"?sendTG():OTV=="gw"?sendGW():sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
