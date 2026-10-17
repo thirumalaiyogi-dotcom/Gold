@@ -733,6 +733,51 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 .bioc h3{margin:0 0 6px;font-size:18px;line-height:1.5}.bioc p{margin:0 0 10px;font-size:14px;line-height:1.7;color:var(--pmu)}
 .bioc .xbtn{width:100%}.biono{width:100%;min-height:44px;margin-top:6px;border:0;background:none;color:var(--pmu);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .biooff{display:block;margin:10px auto 0;border:0;background:none;color:var(--pmu);font-family:inherit;font-size:13px;text-decoration:underline;min-height:40px;cursor:pointer}
+
+/* ===== Passbook page ===== */
+#p{padding-top:16px}
+.pbx{display:flex;flex-direction:column;gap:14px}
+.pbcard{background:#fff;border:1px solid var(--pb);border-radius:18px;box-shadow:0 1px 2px rgba(51,37,31,.05),0 6px 20px rgba(51,37,31,.06);padding:16px}
+.pbcard h3{margin:0 0 10px;font-size:16px;font-weight:800;color:var(--pt);display:flex;align-items:center;gap:8px}
+.pbx svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pbcust{display:flex;align-items:center;gap:12px}
+.pbav{flex:none;width:48px;height:48px;border-radius:50%;background:var(--pmt);color:var(--pm);display:flex;align-items:center;justify-content:center}.pbav svg{width:24px;height:24px}
+.pbcust b{display:block;font-size:18px;font-weight:800;color:var(--pt);line-height:1.4}.pbcust small{display:block;font-size:13px;color:var(--pmu);line-height:1.5}
+.pbsum{background:linear-gradient(160deg,var(--pm),var(--pm2));color:#fff;border:0}
+.pblab{font-size:13px;color:#F3E2BC;font-weight:700}
+.pbamt{font-size:34px;font-weight:800;line-height:1.25;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.pbg{font-size:14px;color:#F3E2BC;margin-top:2px}.pbg b{color:#fff}
+.pbbar{height:10px;border-radius:10px;background:rgba(255,255,255,.2);overflow:hidden;margin:14px 0 12px}.pbbar i{display:block;height:100%;border-radius:10px;background:linear-gradient(90deg,#E3C27E,#F6E2B0)}
+.pbbar.sm{height:6px;margin:6px 0 0;background:#F1EADB}.pbbar.sm i{background:linear-gradient(90deg,var(--pgd),var(--pg))}
+.pbst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.pbst.two{grid-template-columns:1fr 1fr;margin:10px 0 4px}
+.pbst span{background:rgba(255,255,255,.1);border-radius:12px;padding:8px 4px}
+.pbst b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}.pbst small{display:block;font-size:12px;opacity:.9}
+.pbref .pbst span{background:var(--pi);border:1px solid var(--pb)}.pbref .pbst small{color:var(--pmu);opacity:1}
+.pbmat{margin:12px 0 0;font-size:13.5px;color:#F3E2BC;line-height:1.6}.pbmat b{color:#fff}
+.pbrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid #F1EADB}.pbtx h3+.pbrow{border-top:0}
+.pbn{flex:none;width:34px;height:34px;border-radius:50%;background:var(--pi);border:1px solid var(--pb);color:var(--pt);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.pbd{flex:1;min-width:0}.pbd b{display:block;font-size:16px;font-weight:800;color:var(--pt);font-variant-numeric:tabular-nums}.pbd em{font-style:normal;font-size:12px;font-weight:700;color:var(--pgd);margin-left:4px}
+.pbd small{display:block;font-size:12.5px;color:var(--pmu)}
+.pbr{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.pbok{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:700;color:#1F7A3A;background:#E8F3EC;border-radius:999px;padding:2px 8px}.pbok svg{width:12px;height:12px;stroke-width:3}
+.pbrc{display:inline-flex;align-items:center;gap:4px;min-height:32px;padding:0 10px;border:1px solid var(--pb);border-radius:10px;background:#fff;color:var(--pm);font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer}.pbrc svg{width:15px;height:15px}
+.pbempty{text-align:center;color:var(--pmu);font-size:14px;line-height:1.8;padding:18px 8px}
+.pbgi{width:32px;height:32px;border-radius:10px;background:var(--pmt);color:var(--pm);display:inline-flex;align-items:center;justify-content:center}.pbgi svg{width:18px;height:18px}
+.pbcode{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pi);border:1.5px dashed var(--pg);border-radius:14px;padding:10px 12px}
+.pbcode small{display:block;font-size:12px;color:var(--pmu)}.pbcode b{font-size:22px;font-weight:800;letter-spacing:1px;color:var(--pt);font-variant-numeric:tabular-nums}
+.pbcopy{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 14px;border:0;border-radius:12px;background:var(--pm);color:#fff;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}.pbcopy svg{width:16px;height:16px}.pbcopy.done{background:#1F7A3A}
+.pbnote{margin:10px 0 0;font-size:13px;line-height:1.7;color:var(--pmu)}.pbnote.ok{color:#1F7A3A;font-weight:700}
+.pbms{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-top:10px;font-size:13px;color:var(--pt)}.pbms .pbbar{flex-basis:100%}
+.pbbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:12px;border:0;border-radius:14px;background:var(--pm);color:#fff;font-family:inherit;font-size:15px;font-weight:800;text-decoration:none;cursor:pointer}.pbbtn svg{width:20px;height:20px}
+.pbbtn.pbwa{background:#1F7A3A}.pbbtn.pbo{background:#fff;color:var(--pm);border:1.5px solid var(--pm)}
+.pbacts{display:grid;grid-template-columns:1fr 1fr;gap:10px}.pbacts .pbbtn{margin:0}
+.pbstate{text-align:center}.pbstate b{display:block;font-size:16px;color:var(--pt)}.pbstate p{margin:4px 0 0;font-size:14px;color:var(--pmu)}
+.pbsk{height:72px;border-radius:18px;background:linear-gradient(90deg,#F3ECDD 0,#FBF6EC 50%,#F3ECDD 100%);background-size:200% 100%;animation:pbsk 1.2s infinite linear}
+@keyframes pbsk{to{background-position:-200% 0}}
+.pbmsg{text-align:center;color:var(--pmu);font-size:13px;margin:0}
+#app #lo{margin-top:14px}
+@media print{.pbsum{background:#fff!important;color:#000!important;border:1px solid #ccc}.pbsum *{color:#000!important}.pbcard{box-shadow:none}}
+@media (prefers-reduced-motion:reduce){.pbsk{animation:none}}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -963,14 +1008,41 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
   return px}})();
 const SN=new Proxy({},{get:(t,k)=>SNM(k)});
 
+const PBI={u:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+ r:'<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>',
+ ok:'<svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg>',
+ cp:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
+ gift:'<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/></svg>',
+ wa:'<svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg>',
+ pdf:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15l3 3 3-3"/></svg>'};
+const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNaN(x)?esc(String(d)):x.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})};
 async function viewPB(){
- const {data,error}=await sb.rpc("gold_get_passbook",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()});
- if(data&&data.locked){$("pb").innerHTML=`<p class="mut">பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.</p>`;return}
- if(error||!data){$("pb").innerHTML='<p class="mut">மொபைல் எண் / PIN தவறு</p>';return}
- const sd=new Date(data.start);sd.setMonth(sd.getMonth()+MON(data.scheme));const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});const ps=data.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0);
- $("pb").innerHTML=`<div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div><div class="card"><h2>${data.name}</h2><div class="mut">${SN[data.scheme]} · தொடக்கம் ${data.start}</div>
- <div class="sum">மொத்த சேமிப்பு <b>₹${f(t)}</b>${GR(data.scheme)?`<br>தங்கம் <b>${g.toFixed(3)} கிராம்</b>`:""}</div><div style="background:var(--bg);border-radius:8px;height:10px;margin:8px 0"><div style="width:${Math.min(100,ps.length/MON(data.scheme)*100)}%;height:10px;border-radius:8px;background:var(--gold)"></div></div><span class="mut">${ps.length}/${MON(data.scheme)} தவணை · நகை வாங்கலாம்: ${bd}</span>
- ${ps.map(x=>`<div class="row"><span>${x.on}</span><span>₹${f(x.amount)}${x.grams?` · ${(+x.grams).toFixed(3)}g`:""}</span></div>`).join("")||'<p class="mut">இன்னும் தவணை இல்லை</p>'}</div>${refCard(data)}<div class="noprint"><button class="btn alt" onclick="sharePB()">💬 WhatsApp-ல் பகிர்</button><button class="btn" onclick="printPB()">📄 PDF-ஆ சேமி / Print</button></div>`;window.PBD=data;renderPS()}
+ $("pb").innerHTML='<div class="pbx"><div class="pbsk"></div><div class="pbsk" style="height:150px"></div><div class="pbsk" style="height:220px"></div><p class="pbmsg">Passbook ஏற்றுகிறது…</p></div>';
+ let data=null,error=null;
+ try{({data,error}=await sb.rpc("gold_get_passbook",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()}))}catch(e){error=e}
+ if(data&&data.locked){$("pb").innerHTML=`<div class="pbx"><div class="pbcard pbstate"><b>பல தவறான முயற்சிகள்</b><p>${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.</p></div></div>`;return}
+ if(error&&!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>Passbook ஏற்ற முடியவில்லை</b><p>இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</p><button type="button" class="pbbtn pbo" onclick="viewPB()">மீண்டும் முயற்சி</button></div></div>';return}
+ if(!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>மொபைல் எண் / PIN தவறு</b><p>வெளியேறி மீண்டும் உள்நுழையவும்.</p></div></div>';return}
+ const mo=MON(data.scheme),sd=new Date(data.start);sd.setMonth(sd.getMonth()+mo);const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});
+ const ps=data.payments||[],t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),gr=GR(data.scheme);
+ const paid=ps.length,left=Math.max(0,mo-paid),pct=Math.min(100,paid/mo*100);
+ const rows=ps.map((x,i)=>({x,n:i+1})).reverse();
+ $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
+ <div class="pbcard pbcust"><span class="pbav">${PBI.u}</span><div><b>${esc(data.name)}</b><small>${esc(SN[data.scheme])} திட்டம் · சேர்ந்த நாள் ${pbDate(data.start)}</small></div></div>
+ <div class="pbcard pbsum"><small class="pblab">மொத்த சேமிப்பு</small><div class="pbamt">₹${f(t)}</div>${gr?`<div class="pbg">சேர்ந்த தங்கம் <b>${g.toFixed(3)} கிராம்</b></div>`:""}
+  <div class="pbbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${paid}"><i style="width:${pct}%"></i></div>
+  <div class="pbst"><span><b>${paid}</b><small>கட்டிய தவணை</small></span><span><b>${left}</b><small>மீதி தவணை</small></span><span><b>${mo}</b><small>மொத்த தவணை</small></span></div>
+  <p class="pbmat">${left?`நகை / காயின் வாங்கலாம்: <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
+ <div class="pbcard pbtx"><h3>தவணை விவரம்</h3>${rows.map(({x,n})=>`<div class="pbrow"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
+ ${refCard(data)}
+ <div class="pbacts noprint"><button type="button" class="pbbtn pbwa" onclick="sharePB()">${PBI.wa}பகிர்</button><button type="button" class="pbbtn" onclick="printPB()">${PBI.pdf}PDF / Print</button></div></div>`;
+ window.PBD=data;renderPS()}
+// ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
+function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
+ const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
+ if(navigator.share)navigator.share({title:"தவணை ரசீது",text:t}).catch(()=>{});else open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-rc]");if(b)pbReceipt(+b.dataset.rc);const c=e.target.closest("[data-copy]");if(c){const v=c.dataset.copy,ok=()=>{c.classList.add("done");c.lastChild.textContent="Copied";setTimeout(()=>{c.classList.remove("done");c.lastChild.textContent="Copy"},1600)};
+ if(navigator.clipboard)navigator.clipboard.writeText(v).then(ok,()=>prompt("Code:",v));else prompt("Code:",v)}});
 
 
 
@@ -1128,7 +1200,13 @@ window.addEventListener("afterprint",()=>document.body.classList.remove("printpb
 // Refer & Earn
 function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count,earn=n*r.per+(r.bonus?r.per:0);
  const msg=`வணக்கம்! ${SHOP}-ல் தங்கநகை சேமிப்புத் திட்டத்தில் சேரும்போது என் code ${r.code} சொல்லுங்க. இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி கிடைக்கும்!`;
- return `<div class="card noprint"><h2>🎁 நண்பரை சேர்த்து பரிசு பெறுங்க</h2><p style="margin:4px 0">உங்க code: <b style="font-size:20px">${esc(r.code)}</b></p><p class="mut" style="margin:4px 0">நண்பர் சேர்ந்து முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி (13 ஆவது மாத நகை கொள்முதலில்).</p><div class="sum">சேர்த்தவங்க <b>${n}</b>${r.bonus?" · நண்பர் மூலம் வந்த பரிசு ✔":""}<br>மொத்த பரிசு <b>₹${f(earn)}</b><br><span class="mut">5 பேர்: ${esc(r.ms5||"")} (${Math.min(n,5)}/5)<br>10 பேர்: ${esc(r.ms10||"")} (${Math.min(n,10)}/10)</span></div><a class="btn alt" target="_blank" href="https://wa.me/?text=${encodeURIComponent(msg)}">💬 நண்பருக்கு அனுப்பு</a></div>`}
+ const ms=(lbl,k,max)=>k?`<div class="pbms"><span>${lbl}: ${esc(k)}</span><b>${Math.min(n,max)}/${max}</b><div class="pbbar sm"><i style="width:${Math.min(100,n/max*100)}%"></i></div></div>`:"";
+ return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>நண்பரை சேர்த்து பரிசு பெறுங்க</h3>
+ <div class="pbcode"><div><small>உங்க referral code</small><b>${esc(r.code)}</b></div><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button></div>
+ <p class="pbnote">நண்பர் சேர்ந்து முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி (13 ஆவது மாத நகை கொள்முதலில்).</p>
+ <div class="pbst two"><span><b>${n}</b><small>சேர்த்தவங்க</small></span><span><b>₹${f(earn)}</b><small>மொத்த பரிசு</small></span></div>${r.bonus?'<p class="pbnote ok">நண்பர் மூலம் வந்த பரிசு ✔</p>':""}
+ ${ms("5 பேர்",r.ms5,5)}${ms("10 பேர்",r.ms10,10)}
+ <a class="pbbtn pbwa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">${PBI.wa}நண்பருக்கு WhatsApp-ல் அனுப்பு</a></div>`}
 
 // Scheme detail pages
 const J=["சேர்ந்து Passbook பெறுங்க"];
