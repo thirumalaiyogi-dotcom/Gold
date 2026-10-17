@@ -697,6 +697,31 @@ body header.hd .hb,body header.hd.img .hb{display:none!important}
 #app .sc{border-radius:0;box-shadow:none;border:1px solid var(--pb)}
 #app .sct,#app .sct.img{border-radius:0}
 #app .hs{padding-bottom:8px}
+
+/* ===== Round 18: floating WhatsApp (home only) + compact header ===== */
+#app #wa1{display:none}
+.waf{position:fixed;right:16px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:15;width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.25);transition:transform .15s}
+.waf:active{transform:scale(.92)}.waf svg{width:32px;height:32px}
+@media (min-width:561px){.waf{right:calc(50% - 280px + 16px)}}
+@media (min-width:700px){.waf{right:calc(50% - 380px + 16px)}}
+@media (min-width:1024px){.waf{right:calc(50% - 560px + 16px);bottom:24px}}
+/* compact header so the background picture shows */
+body header.hd,body header.hd.img{padding:calc(8px + env(safe-area-inset-top,0px)) 20px 14px}
+body header.hd .xbrand .logo{height:50px}
+body header.hd .xrth,body header.hd.img .xrth{margin:4px 0 8px}
+body header.hd .hu,body header.hd.img .hu{font-size:11.5px}
+body header.hd .hu:after,body header.hd.img .hu:after{font-size:10px;margin-top:0}
+body header.hd .pc{gap:8px;max-width:400px;margin:0 auto;padding:0 22px}
+body header.hd .pc>div{padding:7px 10px 6px;border-radius:12px;gap:0;background:rgba(255,255,255,.9);box-shadow:0 4px 10px rgba(80,40,0,.18)}
+body header.hd .pc .ci{width:26px;height:26px;font-size:8.5px}
+.xrl{gap:6px}
+body header.hd .pc small.pl{font-size:11.5px}
+body header.hd .pc b{font-size:clamp(16px,4.8vw,19px);margin-top:2px}
+body header.hd .pc small.pu{font-size:10.5px}
+body header.hd .chg{font-size:10px;padding:0 6px}
+body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12px}
+.ptl svg{width:14px;height:14px}
+@media (min-width:1024px){body header.hd .xbrand .logo{height:60px}body header.hd .pc{max-width:480px}}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -850,6 +875,7 @@ body header.hd .hb,body header.hd.img .hb{display:none!important}
 <div class="xbtns"><a class="xbtn sb1" href="tel:+919791918344"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>கடைக்கு அழை</span></a><a class="xbtn xo sb2" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>வழி காட்டு</span></a></div></div></div>
 <a class="xwa" id="wa1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg><span><b>WhatsApp-ல் விசாரிக்க</b><small>+91 97919 18344</small></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
 <a class="shr hide" id="shr"></a>
+<a class="waf" id="waf" target="_blank" rel="noopener" aria-label="WhatsApp-ல் விசாரிக்க"><svg viewBox="0 0 32 32"><path fill="#fff" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-3.9-.5-5.5-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.6 14.6 0 0 0 5.6 4.9c2.1.9 2.9 1 4 .8a3.3 3.3 0 0 0 2.2-1.5 2.7 2.7 0 0 0 .2-1.5c-.1-.2-.3-.3-.7-.5z"/></svg></a>
 <div class="xcard xhelp"><b>உதவி வேண்டுமா?</b><p>சேமிப்பு திட்டம் பத்தி எந்த சந்தேகம் இருந்தாலும் எங்களை தொடர்பு கொள்ளுங்க.</p>
 <div class="xbtns"><a class="xbtn xo" href="tel:+919344395078"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>அழைக்க</span></a><a class="xbtn xo" href="mailto:stmgold2021@gmail.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>மின்னஞ்சல்</span></a></div></div>
 </div></div></section>
@@ -887,7 +913,7 @@ const SHOP="சுப்புலட்சுமி தங்க மாளிக
 const NOEL=document.createElement("div"),$=id=>document.getElementById(id)||NOEL, fmt=n=>Math.round(n).toLocaleString("en-IN");
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
 const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
-$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
+$("waf").href=$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
 function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0}
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){openLn();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
  document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
