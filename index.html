@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#b8860b"><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#781D2A"><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -475,6 +475,213 @@ header.hd .pc>div{cursor:pointer}
 #tm{z-index:60}
 #scx,#p,#n,#e{padding-top:20px}
 .sc .sct{cursor:pointer}
+/* ===== Round 14: premium redesign (cream · maroon · gold · brown) ===== */
+:root,:root[data-theme]{--pm:#781D2A;--pm2:#5A1520;--pg:#D4B16A;--pgd:#A67C2E;--pi:#FBF8F1;--pt:#33251F;--pmu:#827666;--pb:#E9DFC6;--pmt:#F5E9EB;
+ --bg:#FBF8F1;--card:#FFFFFF;--tx:#33251F;--mut:#827666;--gold:#A67C2E;--gold2:#F6EEDC;--ln:#E9DFC6;--ok:#1F7A3A;
+ --sh1:0 1px 2px rgba(51,37,31,.05),0 6px 20px rgba(51,37,31,.06);--rad:18px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#FBF8F1;--card:#FFFFFF;--tx:#33251F;--mut:#827666;--gold:#A67C2E;--gold2:#F6EEDC;--ln:#E9DFC6;--ok:#1F7A3A}}
+html{color-scheme:light;background:var(--pi);-webkit-text-size-adjust:100%}
+body{background:var(--pi);color:var(--pt);-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+a,button,[role=button]{cursor:pointer}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--pm);outline-offset:2px}
+#app{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+#app section{padding:16px}
+
+/* header + rate cards */
+body header.hd,body header.hd.img{position:relative;display:block;aspect-ratio:auto;text-align:left;color:#fff;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 18px;
+ background:radial-gradient(120% 90% at 85% 0,#9A2C3B 0,transparent 60%),linear-gradient(160deg,var(--pm),var(--pm2));border-radius:0 0 24px 24px;box-shadow:0 8px 24px rgba(90,21,32,.22);overflow:hidden}
+body header.hd.img{background-image:linear-gradient(180deg,rgba(90,21,32,.72),rgba(90,21,32,.92)),var(--hdimg,none);background-size:cover;background-position:center}
+body header.hd:before,body header.hd:not(.img):before{content:"";position:absolute;inset:auto -40px -60px auto;width:200px;height:200px;border-radius:50%;border:1px solid rgba(212,177,106,.22);box-shadow:0 0 0 18px rgba(212,177,106,.06);background:none;opacity:1;pointer-events:none}
+.xhd{position:relative;z-index:1}
+.xtop{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+.xbrand{line-height:0;background:var(--pi);border-radius:14px;padding:5px 10px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+body header.hd .xbrand .logo{height:44px;width:auto;margin:0}
+body header.hd .hb,body header.hd.img .hb{position:static;flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(212,177,106,.45);color:#F3E2BC;display:flex;align-items:center;justify-content:center}
+.hb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.xrth{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:2px 10px;margin:14px 2px 10px}
+.xrth b{font-size:15px;font-weight:800;color:#F3E2BC;letter-spacing:.2px}
+body header.hd .hu{margin:0;font-size:12px;font-weight:600;color:rgba(255,255,255,.82)}body header.hd .hu:after{content:none}
+body header.hd .pc{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body header.hd .pc>div{position:relative;display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 12px 10px;background:#fff;background-image:none;border:1px solid rgba(212,177,106,.55);border-radius:16px;box-shadow:0 6px 16px rgba(40,10,15,.18);color:var(--pt);min-width:0;transition:transform .15s}
+body header.hd .pc>div:active{transform:scale(.98)}
+.xrl{display:flex;align-items:center;gap:8px}
+body header.hd .pc .ci{position:relative;left:auto;top:auto;transform:none;flex:none;width:30px;height:30px;font-size:10px;border-radius:50%}
+body header.hd .pc .ci:after{animation:none;display:none}
+body header.hd .pc small.pl{display:block;font-size:13px;font-weight:700;color:var(--pt);white-space:nowrap;line-height:1.3}
+body header.hd .pc b{display:block;font-size:clamp(20px,6vw,26px);line-height:1.25;font-weight:800;color:var(--pt);margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:-.3px;white-space:nowrap}
+body header.hd .pc b::first-letter{font-size:inherit;vertical-align:baseline}
+.xrf{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+body header.hd .pc small.pu{display:block;background:none;padding:0;margin:0;font-size:12px;font-weight:600;color:var(--pmu)}
+body header.hd .chg{position:static;display:inline-block;font-size:11px;font-weight:800;border:0;border-radius:999px;padding:1px 8px;line-height:1.5}
+body header.hd .chg.up{color:#1F7A3A;background:#E8F3EC}body header.hd .chg.dn{color:#B3261E;background:#FBEAE8}
+body header.hd .ptl{display:flex;align-items:center;justify-content:center;gap:6px;width:auto;margin:12px auto 0;min-height:40px;padding:0 16px;max-width:max-content;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(212,177,106,.5);color:#F3E2BC;font-size:13px;font-weight:700;box-shadow:none}
+.ptl svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* generic cards + headings */
+.xcard{background:#fff;border:1px solid var(--pb);border-radius:var(--rad);box-shadow:var(--sh1);padding:16px;margin:0 0 16px}
+.xsh{margin:24px 0 12px}.xsh .sh{margin:0;font-size:20px;font-weight:800;color:var(--pt);line-height:1.4}.xsh p.mut{margin:2px 0 0;font-size:13px;color:var(--pmu)}
+#app .sh{color:var(--pt);font-weight:800}
+.xside{margin-top:16px}.xside>.xsh:first-of-type{margin-top:8px}
+
+/* banner */
+#bn{margin:0 0 16px}
+.bs img{border-radius:var(--rad);box-shadow:var(--sh1);background:var(--pb)}
+.dots2 i{background:var(--pb)}.dots2 i.on{background:var(--pm)}
+
+/* intro */
+#app .intro{margin:0 0 8px}#app .intro b{display:block;font-size:16px;font-weight:800;color:var(--pt);line-height:1.5}
+#app .intro p{margin:6px 0 10px;font-size:14px;line-height:1.7;color:var(--pmu)}
+#app #why{display:inline-flex;align-items:center;min-height:36px;color:var(--pm);font-weight:700;font-size:14px}
+#app #why i{background:var(--pm);color:#fff;width:20px;height:20px;font-size:12px}
+#whyl{margin:4px 0 0;padding-left:20px}#whyl li{font-size:14px;color:var(--pt)}
+
+/* plan cards */
+#app .hs.xplans,#app #hs2{display:grid;grid-template-columns:1fr;gap:16px;overflow:visible;scroll-snap-type:none;padding:0}
+#app .sc{flex:none;width:auto;display:flex;flex-direction:column;background:#fff;border:1px solid var(--pb);border-radius:20px;box-shadow:var(--sh1);overflow:hidden;align-self:stretch;transition:transform .18s,box-shadow .18s}
+#app .sct{position:relative;min-height:0;padding:18px 18px 20px;color:#fff;cursor:pointer;
+ background:radial-gradient(140% 120% at 100% 0,#9A2C3B 0,transparent 55%),linear-gradient(150deg,var(--pm),var(--pm2))}
+#app .sct:after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;border:1px solid rgba(212,177,106,.3);pointer-events:none}
+#app .sct small{display:inline-block;font-size:12px;font-weight:700;color:#F3E2BC;background:rgba(255,255,255,.1);border:1px solid rgba(212,177,106,.4);border-radius:999px;padding:2px 10px}
+#app .sct h3{margin:10px 0 2px;font-size:24px;font-weight:800;line-height:1.35;color:#fff}
+#app .sct>div{font-size:14px;color:rgba(255,255,255,.88);line-height:1.6}
+#app .sct .coin{right:16px;bottom:auto;top:50%;transform:translateY(-50%);width:54px;height:54px;font-size:14px;color:var(--pm2);background:radial-gradient(circle at 35% 30%,#FFF4D6,#E3C27E 55%,#B88E3E);box-shadow:0 0 0 4px rgba(212,177,106,.22)}
+#app .sct.img{padding:0;aspect-ratio:2/1;background-size:cover;background-position:center}#app .sct.img:after{display:none}
+.scbody{padding:14px 16px 4px;flex:1}
+.scf{list-style:none;margin:0;padding:0}
+.scf li{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;margin:0;font-size:14px;border-bottom:1px solid #F1EADB}
+.scf li:last-child{border-bottom:0}
+.scf span{color:var(--pmu);flex:none}.scf b{color:var(--pt);font-weight:700;text-align:right;line-height:1.5}
+.sctm{display:inline-flex;align-items:center;gap:6px;min-height:40px;font-size:13px;font-weight:700;color:var(--pm);text-decoration:underline;text-underline-offset:3px}
+#app .scb{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:8px 16px 16px;border:0}
+#app .scb a{display:flex;align-items:center;justify-content:center;min-height:46px;padding:0 8px;border-radius:14px;font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap;border:1.5px solid var(--pm);color:var(--pm);background:#fff}
+#app .scb a.jn{background:var(--pm);color:#fff;border-left:1.5px solid var(--pm)}
+@media (hover:hover){#app .sc:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(51,37,31,.06),0 12px 28px rgba(51,37,31,.1)}#app .scb a:hover{filter:brightness(1.06)}}
+
+/* passbook summary */
+.xpbh{display:flex;align-items:center;gap:12px;margin:0 0 10px}
+.xic{flex:none;width:44px;height:44px;border-radius:14px;background:var(--pmt);color:var(--pm);display:flex;align-items:center;justify-content:center}
+.xic svg,.xrow svg,.xbtn svg,.xwa svg{fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.xic svg{width:22px;height:22px}
+.xpbh b{display:block;font-size:16px;font-weight:800;line-height:1.4}.xpbh small{display:block;font-size:13px;color:var(--pmu);line-height:1.4}
+.xpb p{margin:0 0 12px;font-size:14px;line-height:1.7;color:var(--pmu)}
+.xstat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 12px}
+.xstat>span{background:var(--pi);border:1px solid var(--pb);border-radius:14px;padding:10px 12px}
+.xstat small{display:block;font-size:12px;color:var(--pmu);font-weight:600}.xstat b{display:block;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.xbar{height:8px;border-radius:8px;background:#F1EADB;overflow:hidden;margin:4px 0 6px}.xbar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--pgd),var(--pg))}
+.xmeta{font-size:13px;color:var(--pmu);margin:0 0 12px}
+.xlink{display:block;text-align:center;margin-top:10px;font-size:13px;font-weight:700;color:var(--pm);min-height:32px;line-height:32px}
+
+/* buttons */
+.xbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.xbtn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 12px;border-radius:14px;background:var(--pm);color:#fff;border:1.5px solid var(--pm);font-size:14px;font-weight:800;text-decoration:none;line-height:1.3;text-align:center}
+.xbtn.xo{background:#fff;color:var(--pm)}
+.xbtn svg{width:18px;height:18px;flex:none}
+.xbtn span{line-height:1.4}
+
+/* store */
+.xstore{padding:0;overflow:hidden}
+#app .xstore .simg{display:flex;width:100%;min-height:0;aspect-ratio:16/9;border-radius:0;background:var(--pb) center/cover no-repeat;font-size:44px;align-items:center;justify-content:center}
+.xsi{padding:16px}.xsi>b{display:block;font-size:17px;font-weight:800;line-height:1.5;margin:0 0 6px;color:var(--pt)}
+.xrow{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:14px;line-height:1.6;color:var(--pt)}
+.xrow svg{flex:none;width:18px;height:18px;margin-top:3px;color:var(--pm)}
+
+/* WhatsApp + help */
+.xwa{display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 16px;margin:0 0 16px;border-radius:var(--rad);background:#1F7A3A;color:#fff;text-decoration:none;box-shadow:0 6px 18px rgba(31,122,58,.25)}
+.xwa svg{width:26px;height:26px;flex:none}.xwa svg:last-child{width:18px;height:18px}
+.xwa span{flex:1;min-width:0}.xwa b{display:block;font-size:15px;line-height:1.4}.xwa small{display:block;font-size:12px;opacity:.9}
+.xhelp{background:linear-gradient(180deg,#FFFDF8,#F7EFDD)}.xhelp>b{display:block;font-size:16px;font-weight:800}.xhelp p{margin:4px 0 0;font-size:14px;line-height:1.7;color:var(--pmu)}
+
+/* bottom navigation */
+body nav{background:rgba(255,255,255,.97);border-top:1px solid var(--pb);box-shadow:0 -6px 20px rgba(51,37,31,.07);-webkit-backdrop-filter:saturate(1.4) blur(8px);backdrop-filter:saturate(1.4) blur(8px)}
+body nav button{color:var(--pmu);font-size:11px;font-weight:700;padding:6px 0 8px;gap:3px;min-height:60px}
+body nav button svg{width:44px;height:28px;padding:3px 10px;border-radius:999px;stroke-width:1.9;transition:background .18s}
+body nav button.on{color:var(--pm)}body nav button.on svg{background:var(--pmt);stroke-width:2.1}
+.dot{background:#B3261E;top:4px;left:calc(50% + 8px)}
+
+/* other tabs */
+#app .card{background:#fff;border:1px solid var(--pb);border-radius:var(--rad);box-shadow:var(--sh1);padding:16px}
+#app .card h2{color:var(--pm)}
+#app .btn{min-height:48px;border-radius:14px;background:var(--pm);font-weight:800}
+#app .btn.alt{background:#1F7A3A}
+#app .sum{background:var(--gold2);border:1px solid var(--pb);border-radius:14px}
+#app .row{border-bottom-color:#F1EADB}
+#app .ct{border:1px solid var(--pb);border-radius:var(--rad);box-shadow:var(--sh1);padding:14px 16px}
+#app .ci2{background:var(--pmt);color:var(--pm);width:48px;height:48px}
+#app .ct a{color:var(--pm)}
+#nl .card b{font-size:16px;color:var(--pt)}
+#app input,#app select{background:#fff;border:1px solid var(--pb);border-radius:12px;min-height:48px}
+
+/* login / register / activation */
+.lt{background:var(--pi);color:var(--pt)}
+.lt:before{background:var(--pm);height:4px}
+.lt h2{color:var(--pt);font-weight:800}
+.lt label{color:var(--pt);font-size:14px}
+.lt input,.lt select{background:#fff;color:var(--pt);border:1px solid var(--pb);border-radius:12px;min-height:48px}
+.lt input:focus,.lt select:focus,#app input:focus,#app select:focus{outline:none;border-color:var(--pm);box-shadow:0 0 0 3px rgba(120,29,42,.15)}
+.lt .yb{background:var(--pm);color:#fff;border-radius:14px;min-height:50px;box-shadow:0 6px 16px rgba(120,29,42,.25)}
+.lt .lk{color:var(--pmu)}.lt .lk a,.lnbk,.chk a{color:var(--pm)}
+.lcard{background:#fff;border:1px solid var(--pb);border-radius:var(--rad);box-shadow:var(--sh1);padding:4px 16px 16px}
+.err{color:#B3261E}
+#tm h3{color:var(--pm)}#tm>div{border-radius:var(--rad)}#tm .yb{background:var(--pm);color:#fff;border-radius:14px}
+
+/* onboarding */
+#ob{background:radial-gradient(circle at 50% 38%,#9A2C3B 0,var(--pm) 55%,#4A111A 100%)}
+#ob .yb{background:var(--pg);color:var(--pt);border-radius:14px}
+.s h1 em{color:#F0D79A}.stp i{background:var(--pg);color:var(--pm2)}.bub div{background:linear-gradient(135deg,#FFF6E0,#E3C27E);color:var(--pm2)}.mock{background:#FFF6E0;color:var(--pm2)}
+
+/* tablet */
+@media (min-width:700px){
+ body{max-width:760px}body nav{max-width:760px}
+ #app section{padding:20px 24px}
+ body header.hd{padding-left:24px;padding-right:24px}
+ #app .hs.xplans,#app #hs2{grid-template-columns:1fr 1fr}
+ .xstore{display:grid;grid-template-columns:42% 1fr}#app .xstore .simg{aspect-ratio:auto;height:100%;min-height:220px}
+}
+/* desktop */
+@media (min-width:1024px){
+ body{max-width:1120px}
+ body header.hd{border-radius:0 0 28px 28px;padding:16px 32px 22px}
+ .xhd{display:grid;grid-template-columns:1fr minmax(0,560px);grid-template-areas:"top pc" "rth pc" "lnk pc";column-gap:32px;align-items:center}
+ .xtop{grid-area:top}.xrth{grid-area:rth;margin:8px 0 0;justify-content:flex-start}body header.hd .ptl{grid-area:lnk;margin:12px 0 0}body header.hd .pc{grid-area:pc}
+ body header.hd .xbrand .logo{height:56px}
+ body nav{position:sticky;top:0;bottom:auto;left:auto;transform:none;max-width:none;width:100%;justify-content:center;gap:4px;border-top:0;border-bottom:1px solid var(--pb);box-shadow:0 4px 16px rgba(51,37,31,.05);padding:6px 0;margin-top:12px;border-radius:16px}
+ body nav button{flex:0 0 auto;flex-direction:row;gap:4px;min-height:44px;padding:0 16px 0 6px;font-size:14px;border-radius:999px}
+ body nav button.on{background:var(--pmt)}body nav button.on svg{background:none}
+ .dot{left:28px;top:6px}
+ #app{padding-bottom:40px}
+ #app section{padding:24px 0}
+ .xhome{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
+ .xside{position:sticky;top:84px;margin-top:0}
+ #e,#n,#p,#scx{max-width:760px;margin:0 auto}
+ #app #hs2{grid-template-columns:1fr 1fr}
+ .xstore{display:block}#app .xstore .simg{aspect-ratio:16/9;height:auto;min-height:0}
+}
+/* full-screen panels centred on wide screens */
+@media (min-width:760px){
+ .sdb{padding-left:max(16px,calc((100% - 720px)/2))!important;padding-right:max(16px,calc((100% - 720px)/2))!important}
+ .sdh{padding-left:max(16px,calc((100% - 720px)/2))!important;padding-right:max(16px,calc((100% - 720px)/2))!important}
+ .sdf{padding-left:max(16px,calc((100% - 720px)/2))!important;padding-right:max(16px,calc((100% - 720px)/2))!important}
+ .lt{padding-left:max(20px,calc((100% - 460px)/2));padding-right:max(20px,calc((100% - 460px)/2))}
+}
+
+/* login screen in brand colours */
+#ln{background:radial-gradient(circle at 85% 12%,rgba(212,177,106,.18) 0,transparent 42%),var(--pi)}
+#ln:before{height:4px;background:linear-gradient(90deg,var(--pm),var(--pg),var(--pm))}
+#ln:after{background:linear-gradient(180deg,var(--pm),var(--pm2));border-top:2px solid var(--pg)}
+#ln .lg small{color:var(--pmu)}
+#ln h2{color:var(--pt)}
+#ln .lcard{background:#fff;border:1px solid var(--pb);box-shadow:var(--sh1)}
+#ln .lcard label{color:var(--pt)}#ln .lcard label:before{background-color:var(--pm)}
+#ln .lcard input{border:1px solid var(--pb);border-radius:14px;height:48px}
+#ln .lcard input:focus{border-color:var(--pm);box-shadow:0 0 0 3px rgba(120,29,42,.15)}
+#ln .lcard .yb{background:var(--pm);border:0;border-radius:14px;color:#fff;font-size:17px;min-height:50px;box-shadow:0 6px 16px rgba(120,29,42,.25)}
+#ln .lcard .yb:before{content:none}
+#ln .lk{background:#fff;border:1px solid var(--pb);border-radius:14px;color:var(--pmu)}
+#ln .lk a{color:var(--pm)}
+.lt .yb{font-size:17px;font-weight:800;font-family:inherit}
+#app #lo{background:#fff!important;color:var(--pm);border:1.5px solid var(--pm)}
+@media (min-width:760px){#ln{padding-left:max(18px,calc((100% - 460px)/2));padding-right:max(18px,calc((100% - 460px)/2))}#ln:before,.lt:before{position:absolute;left:0;right:0;top:0;margin:0}#ln:after{display:none}}
+@media (prefers-reduced-motion:reduce){#app *,header.hd *{transition:none!important;animation:none!important}}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -600,49 +807,37 @@ header.hd .pc>div{cursor:pointer}
 <div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><button type="button" id="sdjoin" class="sdcta">இப்போதே சேரவும்</button></div></div>
 <div id="app" class="hide">
 
-<header class="hd"><a class="hb" id="hb">?</a><div class="hl"><span id="shop"></span></div>
-<div class="hu" id="gd"></div>
-<div class="pc"><div><span class="ci">22K</span><small class="pl">தங்க விலை<em class="chg" id="gchg"></em></small><b id="gr">—</b><small class="pu">22KT / கிராம்</small></div><div><span class="ci cis">Ag</span><small class="pl">வெள்ளி விலை<em class="chg" id="schg"></em></small><b id="sr">—</b><small class="pu">வெள்ளி / கிராம்</small></div></div>
-<a id="ptopen" class="ptl">📈 விலை நிலவரம் பார்க்க ›</a></header>
+<header class="hd"><div class="xhd">
+ <div class="xtop"><div class="xbrand"><span id="shop"></span></div><a class="hb" id="hb" role="button" tabindex="0" aria-label="தொடர்பு கொள்ள"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div>
+ <div class="xrth"><b>இன்றைய விலை</b><span class="hu" id="gd">விலை ஏற்றுகிறது…</span></div>
+ <div class="pc">
+  <div role="button" tabindex="0" aria-label="22K தங்க விலை நிலவரம்"><span class="xrl"><span class="ci">22K</span><small class="pl">தங்கம் 22K</small></span><b id="gr">—</b><span class="xrf"><small class="pu">1 கிராம்</small><em class="chg" id="gchg" title="முந்தைய விலையை விட"></em></span></div>
+  <div role="button" tabindex="0" aria-label="வெள்ளி விலை நிலவரம்"><span class="xrl"><span class="ci cis">Ag</span><small class="pl">வெள்ளி</small></span><b id="sr">—</b><span class="xrf"><small class="pu">1 கிராம்</small><em class="chg" id="schg" title="முந்தைய விலையை விட"></em></span></div>
+ </div>
+ <a id="ptopen" class="ptl" role="button" tabindex="0"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-8M15 7h5v5"/></svg>விலை நிலவரம் பார்க்க<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+</div></header>
 <nav><button class="on" data-t="s"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>சேமிப்பு</button><button data-t="scx"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6"/></svg>திட்டங்கள்</button><button data-t="p"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6"/></svg>Passbook</button><button data-t="n"><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span id="ndot" class="dot hide"></span>அறிவிப்பு</button><button data-t="e"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>தொடர்பு</button></nav>
 
-<section id="s" class="on">
+<section id="s" class="on"><div class="xhome"><div class="xmain">
 <div id="bn" class="hide"><div class="bs" id="bs"></div><div class="dots2" id="bd"></div></div>
-<div class="intro"><b>தங்கநகை சேமிப்புத் திட்டத்துக்கு வரவேற்கிறோம்</b><p>மாதம் சிறிது சிறிதாக சேமித்து, 13 ஆவது மாதம் உங்கள் கனவு தங்க நகையை எளிதாக வாங்குங்க.</p><a id="why">ஏன் தங்கத்தில் சேமிக்க வேண்டும்? <i>i</i></a>
+<div class="intro xcard"><b>தங்கநகை சேமிப்புத் திட்டத்துக்கு வரவேற்கிறோம்</b><p>மாதம் சிறிது சிறிதாக சேமித்து, 13 ஆவது மாதம் உங்கள் கனவு தங்க நகையை எளிதாக வாங்குங்க.</p><a id="why" role="button" tabindex="0">ஏன் தங்கத்தில் சேமிக்க வேண்டும்? <i>i</i></a>
 <ul id="whyl" class="hide"><li>மாதம் சிறு தொகை, பெரிய சுமை இல்ல</li><li>நகைக்கு சேதாரம், செய்கூலி தள்ளுபடி</li><li>13 ஆவது மாதம் அன்றைய விலையில் நகை அல்லது காயின்</li><li>சேமிப்பு Passbook-ல மொபைல்ல பார்க்கலாம்</li></ul></div>
-<h2 class="sh">சேமிப்பு திட்டங்கள்</h2><p class="mut" style="margin:0 0 10px">உங்கள் தேவைக்கேற்ற திட்டத்தை தேர்வு செய்யுங்க</p>
-<div class="hs" id="hs">
- <div class="sc"><div class="sct"><small>12 மாத திட்டம்</small><h3>தனலட்சுமி</h3><div>தவணை மாற்றலாம்<br>₹1,000 – ₹1,00,000</div><span class="coin">22K</span></div>
-  <div class="dtl hide"><ul>
-  <li>ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்தவும்.</li>
-  <li>தவணைத்தொகை உங்கள் விருப்பப்படி (எ.கா. 1000, 5000, 2500).</li>
-  <li>பாஸ்புக் QR Code மூலமாகவோ, கடைக்கு நேரில் வந்தோ செலுத்தலாம்.</li>
-  <li>13 ஆவது மாதம் அன்றைய தங்க விலைக்கு நகை அல்லது காயின் வாங்கலாம்.</li>
-  <li><b>காயின்:</b> சேதாரம், செய்கூலி, GST அனைத்தும் தள்ளுபடி.</li>
-  <li><b>நகை:</b> சேதாரம், செய்கூலி முழுமையாக தள்ளுபடி (GST மட்டும் உண்டு).</li></ul></div>
-  <div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn" target="_blank">இப்போது சேரவும்</a></div></div>
- <div class="sc"><div class="sct"><small>12 மாத திட்டம்</small><h3>குபேரலட்சுமி</h3><div>நிலையான தவணை<br>₹1,000 – ₹1,00,000</div><span class="coin">22K</span></div>
-  <div class="dtl hide"><ul>
-  <li>ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்தவும்.</li>
-  <li>முதல் மாதம் தேர்வு செய்த தொகையையே 12 மாதமும் செலுத்த வேண்டும் (மாற்ற இயலாது).</li>
-  <li>செலுத்தும் ஒவ்வொரு தொகையும் அன்றைய கிராம் விலைக்கு தங்கமாக மாற்றி உங்கள் கணக்கில் வரவு வைக்கப்படும்.</li>
-  <li>13 ஆவது மாதம் மொத்த தங்க எடைக்கு 22K 916 ஹால்மார்க் நகை அல்லது காயின் வாங்கலாம்.</li>
-  <li>நகைக்கு சேதாரம், செய்கூலி தள்ளுபடி; GST மட்டும் உண்டு.</li></ul></div>
-  <div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn" target="_blank">இப்போது சேரவும்</a></div></div>
-</div>
-<div class="dots2" id="d2"><i class="on"></i><i></i></div>
-<a class="btn alt" id="wa1" target="_blank">💬 WhatsApp-ல் விசாரிக்க</a>
-<a class="shr" id="shr"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg><div><b>WhatsApp-ல் பகிருங்கள்</b><small>இந்த கடையின் விவரங்களை உங்கள் நண்பர்களுடன் பகிருங்கள்</small></div><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6"/></svg></a>
-<div class="sec"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M3 10l2-6h14l2 6M3 10c0 2 4 2 4 0 0 2 4 2 5 0 1 2 5 2 5 0 0 2 4 2 4 0M9 20v-5h6v5"/></svg><span>எங்கள் கடை</span></div>
-<div class="lotd"><i></i><svg viewBox="0 0 24 24" fill="#c8932a" stroke="none"><path d="M12 3c2.2 3 2.2 7.5 0 11.5C9.8 10.5 9.8 6 12 3zM5 8c4 .2 7 3 7 7-4-.2-7-3-7-7zM19 8c0 4-3 6.8-7 7 0-4 3-6.8 7-7zM2.5 14c4 0 7.5 2 9.5 6-4.5 0-8.5-2-9.5-6zM21.5 14c-1 4-5 6-9.5 6 2-4 5.5-6 9.5-6z"/></svg><i></i></div>
-<div class="store"><div class="simg" id="simg">🏪</div><div class="sinfo"><b>சுப்புலட்சுமி தங்கமாளிகை</b>
-<div class="ad"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>51b, <em class="nw">கங்கை அம்மன் கோவில் தெரு,</em> காந்தி பஜார், <em class="nw">புளியங்குடி – 627855</em></span></div>
-<div class="ph"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>97919 18344</span></div>
-<a class="sb1" href="tel:+919791918344"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>கடைக்கு அழை</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
-<a class="sb2" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>வழி காட்டு</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a></div></div>
-<div class="help"><div class="ht"><svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="14" width="4" height="6" rx="2"/><rect x="17" y="14" width="4" height="6" rx="2"/><path d="M19 20c0 1.5-2 2-5 2"/></svg><h3>உதவி வேண்டுமா?</h3></div><div class="lotd lg"><i></i><svg viewBox="0 0 24 24" fill="#c8932a" stroke="none"><path d="M12 3c2.2 3 2.2 7.5 0 11.5C9.8 10.5 9.8 6 12 3zM5 8c4 .2 7 3 7 7-4-.2-7-3-7-7zM19 8c0 4-3 6.8-7 7 0-4 3-6.8 7-7zM2.5 14c4 0 7.5 2 9.5 6-4.5 0-8.5-2-9.5-6zM21.5 14c-1 4-5 6-9.5 6 2-4 5.5-6 9.5-6z"/></svg><i></i></div><p>சேமிப்பு திட்டம் பத்தி எந்த சந்தேகம் இருந்தாலும் எங்களை தொடர்பு கொள்ளுங்க.</p>
-<div class="hb2"><a class="h1" href="tel:+919344395078"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>அழைக்க</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a><a class="h2" href="mailto:stmgold2021@gmail.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>மின்னஞ்சல்</span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a></div></div>
-</section>
+<div class="xsh"><h2 class="sh">சேமிப்பு திட்டங்கள்</h2><p class="mut">உங்கள் தேவைக்கேற்ற திட்டத்தை தேர்வு செய்யுங்க</p></div>
+<div class="hs xplans" id="hs"></div>
+<div class="dots2 hide" id="d2"></div>
+</div><div class="xside">
+<div class="xcard xpb" id="pss"></div>
+<div class="xsh"><h2 class="sh">எங்கள் கடை</h2></div>
+<div class="xcard xstore"><div class="simg" id="simg" role="img" aria-label="கடை புகைப்படம்">🏪</div><div class="xsi"><b>சுப்புலட்சுமி தங்கமாளிகை</b>
+<p class="xrow"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>51b, கங்கை அம்மன் கோவில் தெரு, காந்தி பஜார், புளியங்குடி – 627855</span></p>
+<p class="xrow"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>97919 18344 · 93443 95078</span></p>
+<p class="xrow"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>திங்கள் – சனி: 9:00 AM – 9:00 PM<br>ஞாயிறு: 9:00 AM – 8:00 PM</span></p>
+<div class="xbtns"><a class="xbtn sb1" href="tel:+919791918344"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>கடைக்கு அழை</span></a><a class="xbtn xo sb2" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>வழி காட்டு</span></a></div></div></div>
+<a class="xwa" id="wa1" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg><span><b>WhatsApp-ல் விசாரிக்க</b><small>+91 97919 18344</small></span><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
+<a class="shr hide" id="shr"></a>
+<div class="xcard xhelp"><b>உதவி வேண்டுமா?</b><p>சேமிப்பு திட்டம் பத்தி எந்த சந்தேகம் இருந்தாலும் எங்களை தொடர்பு கொள்ளுங்க.</p>
+<div class="xbtns"><a class="xbtn xo" href="tel:+919344395078"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>அழைக்க</span></a><a class="xbtn xo" href="mailto:stmgold2021@gmail.com"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>மின்னஞ்சல்</span></a></div></div>
+</div></div></section>
 
 <section id="scx">
 <h2 class="sh">சேமிப்பு திட்டங்கள்</h2><p class="mut" style="margin:0 0 12px">ஒரு திட்டத்தை தொட்டால் அதைப் பற்றி முழுமையாக தெரிந்துகொள்ளலாம்</p>
@@ -676,8 +871,6 @@ const LOGO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAggAAAEGCAYAAAAAHm2OAA
 const SHOP="சுப்புலட்சுமி தங்க மாளிகை", WA="919791918344";
 const NOEL=document.createElement("div"),$=id=>document.getElementById(id)||NOEL, fmt=n=>Math.round(n).toLocaleString("en-IN");
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
-const RATE22=7000, RATE_DATE="15-10-2026"; // ← தினமும் இந்த 2 மதிப்பை மாத்துங்க
-$("gr").textContent="₹"+fmt(RATE22);$("gd").textContent="விலை புதுப்பிக்கப்பட்டது: "+RATE_DATE;$("rate").value=RATE22;
 const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
 $("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
 function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0}
@@ -720,10 +913,12 @@ async function viewPB(){
  const sd=new Date(data.start);sd.setMonth(sd.getMonth()+MON(data.scheme));const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});const ps=data.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0);
  $("pb").innerHTML=`<div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div><div class="card"><h2>${data.name}</h2><div class="mut">${SN[data.scheme]} · தொடக்கம் ${data.start}</div>
  <div class="sum">மொத்த சேமிப்பு <b>₹${f(t)}</b>${GR(data.scheme)?`<br>தங்கம் <b>${g.toFixed(3)} கிராம்</b>`:""}</div><div style="background:var(--bg);border-radius:8px;height:10px;margin:8px 0"><div style="width:${Math.min(100,ps.length/MON(data.scheme)*100)}%;height:10px;border-radius:8px;background:var(--gold)"></div></div><span class="mut">${ps.length}/${MON(data.scheme)} தவணை · நகை வாங்கலாம்: ${bd}</span>
- ${ps.map(x=>`<div class="row"><span>${x.on}</span><span>₹${f(x.amount)}${x.grams?` · ${(+x.grams).toFixed(3)}g`:""}</span></div>`).join("")||'<p class="mut">இன்னும் தவணை இல்லை</p>'}</div>${refCard(data)}<div class="noprint"><button class="btn alt" onclick="sharePB()">💬 WhatsApp-ல் பகிர்</button><button class="btn" onclick="printPB()">📄 PDF-ஆ சேமி / Print</button></div>`;window.PBD=data}
+ ${ps.map(x=>`<div class="row"><span>${x.on}</span><span>₹${f(x.amount)}${x.grams?` · ${(+x.grams).toFixed(3)}g`:""}</span></div>`).join("")||'<p class="mut">இன்னும் தவணை இல்லை</p>'}</div>${refCard(data)}<div class="noprint"><button class="btn alt" onclick="sharePB()">💬 WhatsApp-ல் பகிர்</button><button class="btn" onclick="printPB()">📄 PDF-ஆ சேமி / Print</button></div>`;window.PBD=data;renderPS()}
 
 
 
+function rtStamp(d){if(!d)return "";let t="கடைசி update: "+new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
+ if(window.RTU&&window.RT&&RT.updated_on==d){const tm=new Date(new Date(RTU).getTime()+19800000);if(!isNaN(tm)){const h=tm.getUTCHours();t+=" · "+(h<12?"காலை":h<16?"மதியம்":h<19?"மாலை":"இரவு")+" "+((h%12)||12)+":"+String(tm.getUTCMinutes()).padStart(2,"0")}}return t}
 async function loadRate(){
  let data=null;try{({data}=await sb.from("gold_rate").select("*").eq("id",1).maybeSingle())}catch(e){}
  if(!data)return;
@@ -737,7 +932,7 @@ async function loadRate(){
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadRate()});
 window.addEventListener("online",loadRate);
 setInterval(()=>{if(document.visibilityState==="visible")loadRate()},60000);
-function setRate(r,d,sv,p1,p2){chg("gchg",r,p1,0);chg("schg",sv,p2,1);$("gr").textContent="₹"+fmt(r);$("gd").textContent="விலை புதுப்பிக்கப்பட்டது: "+String(d).split("-").reverse().join("-");
+function setRate(r,d,sv,p1,p2){chg("gchg",r,p1,0);chg("schg",sv,p2,1);$("gr").textContent="₹"+fmt(r);$("gd").textContent=rtStamp(d);
  $("rate").value=r;$("pr").value=r;$("gp").value=r;if(sv){$("sr").textContent="₹"+Number(sv).toFixed(2);$("sv").value=sv}calc()}
 loadRate();
 
@@ -818,7 +1013,22 @@ loadNotices();
 
 // Customer logout
 $("lo").onclick=()=>{$("pb").innerHTML="";$("cp").value="";$("cm").value="";$("lp").value="";$("le").textContent="";
- document.querySelector('nav button[data-t="s"]').click();window.PBOK=false;window.PBD=null;vis("lo",false);$("lm").value=LS.get("mob")||"";scrollTo(0,0)};
+ document.querySelector('nav button[data-t="s"]').click();window.PBOK=false;window.PBD=null;vis("lo",false);$("lm").value=LS.get("mob")||"";scrollTo(0,0);renderPS()};
+// Home: Passbook / savings summary (உண்மையான passbook data மட்டும்)
+function renderPS(){const e=$("pss"),d=window.PBOK&&window.PBD,IB='<svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6M9 12h6"/></svg>';
+ if(!d){e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>என் சேமிப்பு Passbook</b><small>திட்டத்தில் சேர்ந்தவர்களுக்கு</small></div></div><p>உங்க மொத்த சேமிப்பு, கட்டிய தவணைகள், தங்க எடை எல்லாம் மொபைல்லயே பாருங்க.</p><div class="xbtns"><a class="xbtn" data-pb role="button" tabindex="0">Passbook திற</a><a class="xbtn xo" data-act role="button" tabindex="0">PIN அமைக்க</a></div>`;return}
+ const ps=d.payments||[],t=ps.reduce((a,x)=>a+x.amount,0),g=ps.reduce((a,x)=>a+(+x.grams||0),0),mo=MON(d.scheme),sd=new Date(d.start);sd.setMonth(sd.getMonth()+mo);
+ e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>${esc(d.name)}</b><small>${esc(SN[d.scheme])} திட்டம்</small></div></div>
+ <div class="xstat"><span><small>மொத்த சேமிப்பு</small><b>₹${f(t)}</b></span>${GR(d.scheme)?`<span><small>தங்க எடை</small><b>${g.toFixed(3)} கி</b></span>`:`<span><small>தவணை</small><b>${ps.length}/${mo}</b></span>`}</div>
+ <div class="xbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${ps.length}"><i style="width:${Math.min(100,ps.length/mo*100)}%"></i></div>
+ <p class="xmeta">${ps.length}/${mo} தவணை · நகை வாங்கலாம்: ${sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"})}</p>
+ <a class="xbtn" data-pb role="button" tabindex="0">முழு Passbook பார்க்க</a>`}
+$("pss").addEventListener("click",e=>{if(e.target.closest("[data-pb]"))document.querySelector('nav button[data-t="p"]').click();
+ else if(e.target.closest("[data-act]")){$("avm").value=LS.get("mob")||"";$("ave").textContent="";vis("av",true)}});
+document.addEventListener("click",e=>{if(e.target.closest("[data-tm]"))vis("tm",true)});
+// role=button: Enter / Space
+document.addEventListener("keydown",e=>{const t=e.target;if((e.key=="Enter"||e.key==" ")&&t.getAttribute&&t.getAttribute("role")=="button"&&t.tagName!="BUTTON"){e.preventDefault();t.click()}});
+renderPS();
 
 // Passbook share / PDF
 function pbText(d){const ps=d.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),k=GR(d.scheme);
@@ -972,6 +1182,7 @@ async function ptLoad(){PTE=false;$("ptc").innerHTML='<div class="ptempty">வ�
 async function openPT(){vis("pt",true);$("ptb").scrollTop=0;PTN=10;if(!PTH||PTE)await ptLoad();else drawPT()}
 // latest rate's update time (history row updated_at) — fresh, not cached
 async function ptTime(day){try{const q=sb.from0?sb.from0("gold_rate_history"):sb.from("gold_rate_history");const {data}=await q.select("updated_at").eq("day",day).maybeSingle();window.RTU=data&&data.updated_at||null}catch(e){window.RTU=null}
+ if(window.RT)$("gd").textContent=rtStamp(RT.updated_on);
  if(!$("pt").classList.contains("hide"))drawPT()}
 function ptSmooth(P){ // monotone cubic: no fake peaks between real points
  if(P.length<2)return "";if(P.length==2)return `M${P[0][0].toFixed(1)} ${P[0][1].toFixed(1)}L${P[1][0].toFixed(1)} ${P[1][1].toFixed(1)}`;
@@ -1054,7 +1265,7 @@ function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>
 async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA()}
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
- const hd=document.querySelector("header.hd");if(SIM.hdr){hd.classList.add("img");hd.style.backgroundImage=`url("${SIM.hdr.image_url}")`}else{hd.classList.remove("img");hd.style.backgroundImage=""}}
+ const hd=document.querySelector("header.hd");if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
 loadSIM();
 
 // Social links
@@ -1076,8 +1287,14 @@ const SNM=k=>schAny(k).name||k,GR=k=>!!schAny(k).grams,FX=k=>!!schAny(k).fixed,M
 function mkSch(r){const sp=t=>(t||"").split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf("|");return i<0?[esc(l),""]:[esc(l.slice(0,i).trim()),esc(l.slice(i+1).trim())]});
  return {n:esc(r.name),t:r.name,tag:esc(r.tagline||""),tags:[r.months+" மாதம்"].concat((r.tags||"").split(",").map(x=>x.trim()).filter(Boolean)).map(esc),why:esc(r.description||""),acc:sp(r.sections),faq:sp(r.faq).concat([["வேறு சந்தேகம்?",CT]])}}
 function fillSel(){const o=allSch().map(x=>`<option value="${x.key}">${esc(x.name)}</option>`).join(""),a=$("rgs").value,b=$("ns").value;$("rgs").innerHTML=o;$("ns").innerHTML=o;if(a)$("rgs").value=a;if(b)$("ns").value=b}
+// திட்ட அட்டை: கடையின் விதிமுறைகளில் உள்ள விவரங்கள் மட்டும்
+const SINFO={dhana:{tag:"தவணை உங்கள் விருப்பம்",amt:"₹1,000 – ₹1,00,000",type:"மாதா மாதம் மாற்றலாம்",mat:"13 ஆவது மாதம் அன்றைய தங்க விலைக்கு நகை / காயின்"},
+ kubera:{tag:"நிலையான தவணை · தங்க எடையில் சேமிப்பு",amt:"₹1,000 – ₹1,00,000",type:"நிலையானது (முதல் மாதத் தொகையே)",mat:"13 ஆவது மாதம் சேர்ந்த தங்க எடைக்கு நகை / காயின்"}};
+function schCard(x){const i=SINFO[x.key],r=(a,b)=>`<li><span>${a}</span><b>${b}</b></li>`;
+ const rows=i?r("மாத தவணை",i.amt)+r("தவணை முறை",i.type)+r("காலம்",x.months+" மாதம்")+r("செலுத்தும் நாள்","மாதம் 1 – 7 தேதி")+r("முதிர்வு",i.mat):r("காலம்",x.months+" மாதம்")+(x.card?r("விவரம்",x.card):"");
+ return `<div class="sc" data-k="${x.key}"><div class="sct" role="button" tabindex="0" aria-label="${esc(x.name)} திட்ட விவரங்கள்"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${i?i.tag:x.card}</div><span class="coin">${x.coin}</span></div><div class="scbody"><ul class="scf">${rows}</ul>${i?'<a class="sctm" data-tm role="button" tabindex="0">விதிமுறைகள் &amp; நிபந்தனைகள் ›</a>':""}</div><div class="scb"><a class="mo" role="button" tabindex="0">விவரங்கள்</a><a class="jn" role="button" tabindex="0">இப்போது சேரவும்</a></div></div>`}
 function renderSchemes(){const L=allSch();
- $("hs").innerHTML=L.map(x=>`<div class="sc" data-k="${x.key}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`).join("");
+ $("hs").innerHTML=L.map(schCard).join("");
  $("d2").innerHTML=L.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("");
  $("hs").querySelectorAll(".mo").forEach(a=>a.onclick=()=>openSD(a.closest(".sc").dataset.k));
  $("hs").querySelectorAll(".jn").forEach(a=>a.onclick=()=>openEnrol(a.closest(".sc").dataset.k));
@@ -1111,7 +1328,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
  function fill(){
   var box=document.getElementById("hs2");if(!box)return;
   var L=allSch();
-  box.innerHTML=L.map(function(x){return '<div class="sc" data-k="'+x.key+'"><div class="sct"><small>'+x.months+' மாத திட்டம்</small><h3>'+esc(x.name)+'</h3><div>'+x.card+'</div><span class="coin">'+x.coin+'</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>'}).join("");
+  box.innerHTML=L.map(schCard).join("");
   document.getElementById("d3").innerHTML=L.map(function(_,i){return '<i class="'+(i?'':'on')+'"></i>'}).join("");
   box.querySelectorAll(".mo").forEach(function(a){a.onclick=function(){openSD(a.closest(".sc").dataset.k)}});
   box.querySelectorAll(".jn").forEach(function(a){a.onclick=function(){openEnrol(a.closest(".sc").dataset.k)}});
