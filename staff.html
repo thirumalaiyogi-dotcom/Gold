@@ -386,7 +386,7 @@ nav button svg{width:22px;height:22px}
   <input id="ne" type="email" inputmode="email" placeholder="Email (விருப்பம்)">
   <select id="ns"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
   <input id="na" type="number" inputmode="numeric" placeholder="மாத தவணை (₹)">
-  <input id="nr" type="tel" inputmode="numeric" placeholder="யார் மூலமா வந்தாங்க? (அவங்க மொபைல், விருப்பம்)">
+  <input id="nr" type="tel" inputmode="numeric" placeholder="யார் மூலமா வந்தாங்க? (அவங்க referral code அல்லது மொபைல், விருப்பம்)">
   <button class="btn" onclick="addCust()">சேர்</button></div>
 
   <div class="card"><h2>தவணை பதிவு</h2>
@@ -427,7 +427,7 @@ async function load(){
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
  $("pc").innerHTML=data.map(c=>`<option value="${c.id}">${c.name} · ${c.mobile}</option>`).join("");
  $("cl").innerHTML=data.map(c=>{const t=c.gold_payments.reduce((s,x)=>s+x.amount,0);
-  return `<div class="row"><span>${c.name}<br><span class="mut">${SN[c.scheme]} · ${c.gold_payments.length}/${MON(c.scheme)}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:#2f6fd6">மாற்று</a></span></span><b>₹${f(t)}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
+  return `<div class="row"><span>${c.name}<br><span class="mut">${SN[c.scheme]} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:#2f6fd6">மாற்று</a></span></span><b>₹${f(t)}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
 function remind(data){
  const d=new Date(),ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
  const p=data.filter(c=>c.gold_payments.length<MON(c.scheme)&&!c.gold_payments.some(x=>String(x.paid_on).startsWith(ym)));
@@ -440,7 +440,7 @@ async function addCust(){
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("Email சரியா இல்ல");
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் வேண்டும்");
  const rf=$("nr").value.trim();
- if(rf){const {data:rr}=await sb.from("gold_customers").select("id").eq("mobile",rf).maybeSingle();if(!rr)return alert("அந்த மொபைல் customer இல்ல");r.ref_by=rr.id}
+ if(rf){const isMob=/^[0-9]{10}$/.test(rf);const {data:rr}=await sb.from("gold_customers").select("id").eq(isMob?"mobile":"ref_code",isMob?rf:rf.toUpperCase()).maybeSingle();if(!rr)return alert("அந்த referral code / மொபைல் உள்ள customer இல்ல");r.ref_by=rr.id}
  if(window.REQD){const q=REQD;Object.assign(r,{address:q.address+", "+q.city+" "+(q.pincode||""),nominee:q.nominee,nominee_rel:q.nominee_rel,email:r.email||(q.email?q.email.toLowerCase():null)})}
  const {error}=await sb.from("gold_customers").insert(r);if(error)return alert(error.code=="23505"?"இந்த மொபைல் / Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);
  if(window.REQD){await sb.from("gold_requests").update({status:"approved"}).eq("id",REQD.id);window.REQD=null;loadReq()}

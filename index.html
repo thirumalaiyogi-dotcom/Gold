@@ -826,7 +826,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <label>பின்கோடு</label><input id="rgp" type="tel" inputmode="numeric" maxlength="6">
  <label>திட்டம்*</label><select id="rgs"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
  <label>மாத தவணை (₹)</label><input id="rgq" type="number" inputmode="numeric" placeholder="₹1,000 – ₹1,00,000">
- <label>Referral code (நண்பரின் மொபைல், விருப்பம்)</label><input id="rgr" type="tel" inputmode="numeric" maxlength="10">
+ <label>Referral code (நண்பரின் code, விருப்பம்)</label><input id="rgr" type="text" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="உதா: SL4821" style="text-transform:uppercase">
  <label>Nominee பெயர்</label><input id="rgnn">
  <label>உறவு</label><select id="rgnr"><option value="">தேர்வு செய்யவும்</option><option>தந்தை</option><option>தாய்</option><option>கணவர் / மனைவி</option><option>மகன்</option><option>மகள்</option><option>சகோதரர்</option><option>சகோதரி</option><option>மற்றவர்</option></select>
  <div class="chk"><input type="checkbox" id="rgc"><span>நான் <a id="tml">விதிமுறைகளுக்கு</a> ஒப்புதல் அளிக்கிறேன்</span></div>
@@ -1274,7 +1274,7 @@ $("sdback").onclick=()=>vis("sd",false);
 // Enrol form + requests
 function openEnrol(k){$("rgs").value=k||"dhana";$("rgf").classList.remove("hide");$("rgok").classList.add("hide");vis("rg",true);$("rg").scrollTop=0}
 $("rgx").onclick=()=>vis("rg",false);
-$("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null};
+$("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim().toUpperCase()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null};
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் எண் போடுங்க");
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("சரியான Email போடுங்க");
  if(!r.address||!r.city)return alert("முகவரி, ஊர் போடுங்க");
