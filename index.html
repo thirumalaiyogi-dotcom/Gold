@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#781D2A"><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#FFE47F"><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -682,6 +682,17 @@ body nav button.on{color:var(--pm)}body nav button.on svg{background:var(--pmt);
 #app #lo{background:#fff!important;color:var(--pm);border:1.5px solid var(--pm)}
 @media (min-width:760px){#ln{padding-left:max(18px,calc((100% - 460px)/2));padding-right:max(18px,calc((100% - 460px)/2))}#ln:before,.lt:before{position:absolute;left:0;right:0;top:0;margin:0}#ln:after{display:none}}
 @media (prefers-reduced-motion:reduce){#app *,header.hd *{transition:none!important;animation:none!important}}
+
+/* ===== Round 15: header in yellow-gold, rest stays maroon ===== */
+body header.hd,body header.hd.img{color:var(--pt);background:linear-gradient(180deg,#FFE47F 0%,#FCD261 60%,#F7C14E 100%);box-shadow:0 8px 22px rgba(166,124,46,.22)}
+body header.hd.img{background-image:linear-gradient(180deg,rgba(255,228,127,.9),rgba(247,193,78,.94)),var(--hdimg,none);background-size:cover;background-position:center}
+body header.hd:before,body header.hd:not(.img):before{border-color:rgba(120,29,42,.12);box-shadow:0 0 0 18px rgba(120,29,42,.04)}
+.xbrand{background:transparent;box-shadow:none;padding:0}
+body header.hd .hb,body header.hd.img .hb{background:var(--pm);border:0;color:#F3E2BC;box-shadow:0 3px 8px rgba(120,29,42,.3)}
+.xrth b{color:var(--pm2)}
+body header.hd .hu{color:#5A3A12}
+body header.hd .pc>div{border:1px solid rgba(166,124,46,.3);box-shadow:0 6px 16px rgba(120,80,10,.16)}
+body header.hd .ptl{background:rgba(255,255,255,.75);border:1px solid rgba(120,29,42,.35);color:var(--pm)}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
