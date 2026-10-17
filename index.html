@@ -701,6 +701,17 @@ body header.hd.img .xrth{display:inline-flex;flex-direction:column;align-items:f
 body header.hd.img .xrth b{color:var(--pm2)}body header.hd.img .hu{color:#5A3A12}
 body header.hd.img .xbrand{background:rgba(255,255,255,.92);border-radius:14px;padding:5px 10px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 body header.hd.img .ptl{background:rgba(255,255,255,.9)}
+
+/* ===== Round 16: centred logo + small centred date line (like old reference) ===== */
+.xtop{position:relative;justify-content:center;min-height:0;padding-top:4px}
+body header.hd .xbrand,body header.hd.img .xbrand{background:transparent;box-shadow:none;padding:0;border-radius:0}
+body header.hd .xbrand .logo{height:72px;margin:0 auto;filter:drop-shadow(0 4px 8px rgba(90,20,10,.35))}
+body header.hd .hb,body header.hd.img .hb{position:absolute;left:auto;right:0;top:4px;width:40px;height:40px}
+body header.hd .xrth,body header.hd.img .xrth{display:block;text-align:center;background:none;border-radius:0;padding:0;margin:8px 0 14px}
+body header.hd .xrth b{display:none}
+body header.hd .hu,body header.hd.img .hu{display:block;font-size:13px;font-weight:700;color:#4A2A0C;text-shadow:0 0 6px rgba(255,248,225,.95),0 0 2px rgba(255,248,225,.95)}
+body header.hd .hu:after,body header.hd.img .hu:after{content:"— ✿ —";display:block;color:var(--pm);font-size:12px;font-weight:400;margin-top:2px;letter-spacing:2px}
+@media (min-width:1024px){.xhd{display:block}body header.hd .pc{max-width:640px;margin:0 auto}body header.hd .ptl{margin:14px auto 0}body header.hd .xbrand .logo{height:80px}}
 </style></head><body>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
@@ -936,7 +947,7 @@ async function viewPB(){
 
 
 
-function rtStamp(d){if(!d)return "";let t="கடைசி update: "+new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
+function rtStamp(d){if(!d)return "";let t="இன்றைய விலை · "+new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
  if(window.RTU&&window.RT&&RT.updated_on==d){const tm=new Date(new Date(RTU).getTime()+19800000);if(!isNaN(tm)){const h=tm.getUTCHours();t+=" · "+(h<12?"காலை":h<16?"மதியம்":h<19?"மாலை":"இரவு")+" "+((h%12)||12)+":"+String(tm.getUTCMinutes()).padStart(2,"0")}}return t}
 async function loadRate(){
  let data=null;try{({data}=await sb.from("gold_rate").select("*").eq("id",1).maybeSingle())}catch(e){}
