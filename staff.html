@@ -348,6 +348,17 @@ nav button svg{width:22px;height:22px}
   <input id="sv" type="number" inputmode="decimal" placeholder="வெள்ளி ₹ / கிராம்">
   <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-size:15px"><input type="checkbox" id="gpn" style="width:auto;margin:0"> 🔔 விலையை customer-களுக்கு notification-ஆ அனுப்பு</label>
   <button class="btn" onclick="saveRate()">விலை அப்டேட்</button></div>
+  <div class="card" id="popcard"><h2>📢 App திறக்கும்போது Poster</h2>
+  <div class="mut">Customer app திறந்ததும் ஒரு தடவை (நாளுக்கு ஒரு முறை) பெரிய poster-ஆ வரும். நீள்வாக்கு படம் (1080×1600 போல) நல்லது.</div>
+  <input type="file" id="ppf" accept="image/*"><div id="ppimg"></div>
+  <div class="mut">தொடக்க நாள் / முடிவு நாள் (காலியா விட்டா உடனே / எப்போதும்)</div>
+  <div style="display:flex;gap:8px"><input type="date" id="pps"><input type="date" id="ppe"></div>
+  <div class="mut">Poster-ஐ தொட்டா திறக்க வேண்டியது</div>
+  <select id="ppl"><option value="/">ஒன்னும் இல்ல (மூட மட்டும்)</option><option value="/#scx">திட்டங்கள்</option><option value="/#p">Passbook</option><option value="/#e">தொடர்பு</option><option value="/#n">அறிவிப்புகள்</option></select>
+  <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-size:15px"><input type="checkbox" id="ppn" style="width:auto;margin:0"> 🔔 இதையே notification-ஆவும் அனுப்பு</label>
+  <input id="ppt" maxlength="80" placeholder="Notification தலைப்பு (tick பண்ணினா மட்டும்)">
+  <button class="btn" id="ppgo">📢 Poster வெளியிடு</button>
+  <div class="mut" style="margin-top:10px">Posters:</div><div id="pplist"></div></div>
   <div class="card" id="pushcard"><h2>🔔 Notification அனுப்பு</h2>
   <div class="mut">அனுமதி கொடுத்த customer-களுக்கு phone-ல notification-ஆ போகும். லாபம் / “பணம் பெருகும்” மாதிரி வாக்குறுதி வேண்டாம். நாளுக்கு ஒன்னுக்கு மேல வேண்டாம்.</div>
   <input id="pnt" maxlength="80" placeholder="தலைப்பு (எ.கா. தீபாவளி வாழ்த்துகள் 🪔)">
@@ -436,7 +447,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop()}
 async function load(){
  const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
@@ -751,6 +762,29 @@ $("pnsend").onclick=async()=>{const title=$("pnt").value.trim();if(!title)return
 async function rateNotify(v,sv){const d=await pushFn({action:"send",title:"இன்றைய தங்க விலை",body:`22K தங்கம்: ₹${fmt(v)} / கிராம்`+(sv?`\nவெள்ளி: ₹${Number(sv).toFixed(2)} / கிராம்`:"")+`\nசுப்புலட்சுமி தங்க மாளிகை, புளியங்குடி`,url:"/",target:"all"});
  alert(d.ok?`விலை notification ✅ ${d.sent} phone-க்கு போச்சு`:"விலை notification போகல: "+(d.err||""));loadPushLog()}
 pnPrev();
+
+// ===== App Poster (popup) =====
+let PPIMG="";
+$("ppf").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;$("ppimg").textContent="படம் ஏற்றுகிறது…";
+ try{const blob=await shrink(f),path=`popup/${Date.now()}.jpg`;const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+  PPIMG=sb.storage.from("slides").getPublicUrl(path).data.publicUrl;$("ppimg").innerHTML=`<img src="${PPIMG}" style="max-height:260px;border-radius:10px;margin:8px 0;display:block">`}catch(x){$("ppimg").textContent="";alert(x.message||x)}});
+async function loadPop(){const {data,error}=await sb.from("gold_popup").select("*").order("created_at",{ascending:false}).limit(20);
+ if(error){$("pplist").innerHTML='<div class="mut">popup_setup.sql இன்னும் ஓட்டல</div>';return}
+ const t=new Date(Date.now()+330*60000).toISOString().slice(0,10);
+ $("pplist").innerHTML=(data||[]).map(r=>{const live=r.active&&(!r.starts_on||r.starts_on<=t)&&(!r.ends_on||r.ends_on>=t);
+  return `<div class="row"><span style="display:flex;gap:10px;align-items:center"><img src="${r.image_url}" style="width:54px;height:72px;object-fit:cover;border-radius:6px"><span>${live?"🟢 இப்போ வருது":r.active?"🕒 காத்திருக்கு / முடிஞ்சது":"⏸ நிறுத்தப்பட்டது"}<br><span class="mut">${r.starts_on||"இப்போ"} → ${r.ends_on||"எப்போதும்"}</span></span></span><span><a data-pa="${r.id}" data-on="${r.active?0:1}" style="color:${r.active?"#b00020":"#1f7a4d"};text-decoration:underline">${r.active?"நிறுத்து":"மீண்டும் போடு"}</a><br><a data-pd="${r.id}" style="color:#777;text-decoration:underline">நீக்கு</a></span></div>`}).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
+$("pplist").addEventListener("click",async e=>{const a=e.target.closest("[data-pa],[data-pd]");if(!a)return;
+ if(a.dataset.pd){if(!confirm("இந்த poster-ஐ நீக்கவா?"))return;await sb.from("gold_popup").delete().eq("id",+a.dataset.pd)}
+ else await sb.from("gold_popup").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.pa);loadPop()});
+$("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster படம் போடுங்க");
+ const s1=$("pps").value||null,e1=$("ppe").value||null;if(s1&&e1&&e1<s1)return alert("முடிவு நாள் தொடக்க நாளுக்கு முன்னாடி இருக்கக் கூடாது");
+ if($("ppn").checked&&!$("ppt").value.trim())return alert("Notification தலைப்பு போடுங்க");
+ const b=$("ppgo");b.disabled=true;
+ const {error}=await sb.from("gold_popup").insert({image_url:PPIMG,link:$("ppl").value,starts_on:s1,ends_on:e1,active:true});
+ b.disabled=false;if(error)return alert(error.message);
+ let msg="Poster வெளியாச்சு ✅";
+ if($("ppn").checked){const d=await pushFn({action:"send",title:$("ppt").value.trim(),body:"",image:PPIMG,url:$("ppl").value,target:"all"});msg+=d.ok?`\n🔔 ${d.sent} phone-க்கு notification போச்சு`:"\nNotification போகல: "+(d.err||"");loadPushLog()}
+ alert(msg);PPIMG="";$("ppf").value="";$("ppimg").innerHTML="";$("pps").value="";$("ppe").value="";$("ppn").checked=false;$("ppt").value="";loadPop()};
 
 </script>
 </body></html>

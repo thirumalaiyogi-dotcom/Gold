@@ -924,6 +924,14 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 .pushy{flex:1;border:0;background:linear-gradient(135deg,var(--pm),var(--pm2));color:#fff}.pushx{border:1.5px solid #E5D3B0;background:#fff;color:var(--pmu)}
 .pushm{display:block;margin-top:6px;font-size:12.5px;color:#B3261E}
 .pbx .pushc{margin:0}
+
+#pop{background:rgba(20,8,10,.72);display:flex;align-items:center;justify-content:center;padding:24px 16px;z-index:60}
+#pop.hide{display:none}
+.popc{position:relative;max-width:420px;width:100%;animation:popin .28s ease-out}
+.popc img{display:block;width:100%;max-height:78vh;object-fit:contain;border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.45);cursor:pointer;background:#fff}
+#popx{position:absolute;top:-14px;right:-10px;width:40px;height:40px;border-radius:50%;border:2px solid #fff;background:#781D2A;color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:1}
+@keyframes popin{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.popc{animation:none}}
 /* active tab: raised maroon pill */
 body nav button[data-t].on{color:#fff}
 body nav button[data-t].on svg{background:none}
@@ -1095,6 +1103,7 @@ body nav button{z-index:0}
  <li>மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</li></ul>
  <button class="yb" id="tmx" style="width:100%;margin:10px 0 0">சரி</button>
 </div></div>
+<div id="pop" class="ov hide" role="dialog" aria-modal="true" aria-label="அறிவிப்பு"><div class="popc"><button type="button" id="popx" aria-label="மூடு">✕</button><img id="popi" alt="அறிவிப்பு படம்"></div></div>
 <div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><button type="button" id="sdjoin" class="sdcta">இப்போதே சேரவும்</button></div></div>
 <div id="app" class="hide">
 
@@ -1273,6 +1282,20 @@ function openHash(h){const t=String(h||"").replace("#","");if(!["p","scx","e","n
 if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type=="open")openHash(e.data.hash)});
 (function(){const h=location.hash;if(!/^#(p|scx|e|n)$/.test(h))return;try{history.replaceState(history.state,"",location.pathname+location.search)}catch(e){}
  let n=0;const t=setInterval(()=>{n++;const lk=$("lock");if(lk&&!lk.classList.contains("hide")&&n<200)return;clearInterval(t);if(n<200)setTimeout(()=>openHash(h),400)},700)})();
+
+// ===== App திறக்கும்போது Poster =====
+const istToday=()=>new Date(Date.now()+330*60000).toISOString().slice(0,10);
+function closePop(){vis("pop",false);const p=window.POPR;if(p)LS.set("pop_"+p.id,istToday())}
+async function loadPop(){try{const t=istToday();
+ const q=sb.from0?sb.from0("gold_popup"):sb.from("gold_popup");
+ const {data}=await q.select("id,image_url,link,starts_on,ends_on").eq("active",true).order("created_at",{ascending:false}).limit(5);
+ const r=(data||[]).find(x=>(!x.starts_on||x.starts_on<=t)&&(!x.ends_on||x.ends_on>=t));if(!r||LS.get("pop_"+r.id)===t)return;
+ const img=new Image();img.onload=()=>{window.POPR=r;$("popi").src=r.image_url;
+  let n=0;const w=setInterval(()=>{n++;const lk=$("lock"),ob=$("ob");const busy=(lk&&!lk.classList.contains("hide"))||(ob&&!ob.classList.contains("hide"))||document.querySelector(".ov:not(.hide):not(#pop)");
+   if(busy&&n<400)return;clearInterval(w);if(n<400)setTimeout(()=>vis("pop",true),600)},700)};img.src=r.image_url}catch(e){}}
+$("popx").onclick=closePop;$("pop").addEventListener("click",e=>{if(e.target.id=="pop")closePop()});
+$("popi").onclick=()=>{const l=(window.POPR||{}).link||"/";closePop();if(l!="/")openHash(l.replace("/",""))};
+loadPop();
 async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
  if(r.error&&/gold_login|PGRST202|function/i.test((r.error.code||"")+(r.error.message||"")))r=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});return r}
 const pbOK=d=>d&&!d.wrong&&!d.locked_otp&&!d.locked&&d.name!==undefined;
@@ -1864,6 +1887,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
   if(window.PAYING)return true;                                   // payment நடக்கும்போது ஒன்னும் பண்ணாது
   var n=document.getElementById("note");if(n&&n.style.display=="block"){n.style.display="none"}
   if(on("lkok"))return true;
+  if(on("pop")){closePop();return true}
   if(on("sd")){clk("sdback");return true}
   if(on("tm")){clk("tmx");return true}
   if(on("pblk")){clk("pblkx");return true}
