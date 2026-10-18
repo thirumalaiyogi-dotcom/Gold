@@ -1606,7 +1606,7 @@ async function sendTG(){const m=$("otm").value.trim();
  if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
  const left=Math.ceil((otT-Date.now())/1000);if(left>0)return otErr(left+" வினாடி கழித்து மறுபடி அனுப்பலாம்");
  otErr("Telegram-ல அனுப்புகிறோம்…");$("otbt").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otbt").disabled=false;
- if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":"Telegram-ல code அனுப்ப முடியல. இந்த நம்பர்ல Telegram இருக்கா பாருங்க.")+(d&&d.err?" ("+d.err+")":""));
+ if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&d.err=="wait"?"1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.":d&&d.err=="too_many"?"இன்னைக்கு அதிக தடவை code கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.":"Telegram-ல code அனுப்ப முடியல. இந்த நம்பர்ல Telegram இருக்கா பாருங்க.")+(d&&d.err?" ("+d.err+")":""));
  OTV="tg";TGR=d.request_id;OTM=m;otT=Date.now()+60000;$("otvia").textContent="Telegram";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
 async function sendGW(){OTV="gw";const m=$("otm").value.trim();
  if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
