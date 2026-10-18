@@ -332,6 +332,7 @@ nav button svg{width:22px;height:22px}
 #hs2{flex-direction:column;overflow:visible;scroll-snap-type:none;gap:14px;padding:4px 2px 12px}
 #hs2 .sc{flex:none;width:100%}
 #d3{display:none}
+.mdb{min-height:44px;border:1.5px solid #e5d3b0;background:#fff;border-radius:10px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}.mdb.on{background:#7a1d2a;color:#fff;border-color:#7a1d2a}
 </style></head><body>
 <div id="app">
 <header class="hd"><div class="hl"><span id="shop"></span></div>
@@ -419,7 +420,12 @@ nav button svg{width:22px;height:22px}
   <select id="pc"></select>
   <input id="pa" type="number" inputmode="numeric" placeholder="தொகை (₹)">
   <input id="pr" type="number" inputmode="numeric" placeholder="இன்றைய 22K விலை/கிராம் (குபேரலட்சுமிக்கு)">
+  <div class="mut">பணம் எப்படி வந்தது?*</div>
+  <div id="pmd" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:6px 0 10px">
+   <button type="button" data-md="cash" class="mdb">💵 பணம்</button><button type="button" data-md="upi" class="mdb">📱 UPI</button><button type="button" data-md="card" class="mdb">💳 Card</button><button type="button" data-md="bank" class="mdb">🏦 Bank</button></div>
+  <input id="pref" maxlength="60" placeholder="UPI / Card / Bank Ref எண் (விருப்பம்)" class="hide">
   <button class="btn" onclick="addPay()">பதிவு செய்</button><div id="rc"></div></div>
+  <div class="card"><h2>💰 வசூல் விவரம்</h2><div class="mut">இன்று / இந்த மாதம் · பணம் vs UPI vs Online</div><div id="col"></div></div>
 
   <div class="card"><h2>Customers</h2><div id="cl"></div>
   <button class="btn" onclick="out()" style="background:#777">Logout</button></div>
@@ -447,7 +453,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol()}
 async function load(){
  const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
@@ -476,14 +482,17 @@ async function addPay(){
  if(!c||!a)return alert("Customer, தொகை வேண்டும்");
  const {data:cu}=await sb.from("gold_customers").select("scheme,name,mobile,pin_set").eq("id",c).single();
  if(GR(cu.scheme)&&!r)return alert("இந்த திட்டத்துக்கு தங்க விலை வேண்டும்");
- const {error}=await sb.from("gold_payments").insert({customer_id:c,amount:a,gold_rate:GR(cu.scheme)?r:null,grams:GR(cu.scheme)?a/r:null});
+ if(!PMODE)return alert("பணம் எப்படி வந்தது? (பணம் / UPI / Card / Bank) தேர்ந்தெடுங்க");
+ const row={customer_id:c,amount:a,gold_rate:GR(cu.scheme)?r:null,grams:GR(cu.scheme)?a/r:null,mode:PMODE,ref:PMODE=="cash"?null:($("pref").value.trim()||null)};
+ let {error}=await sb.from("gold_payments").insert(row);
+ if(error&&/mode|ref/.test(error.message||"")){delete row.mode;delete row.ref;({error}=await sb.from("gold_payments").insert(row))}   // SQL இன்னும் ஓட்டலைன்னா பழைய மாதிரி பதியும்
  if(error)return alert(error.message);
  const {data:ps}=await sb.from("gold_payments").select("amount,grams").eq("customer_id",c);
  const tot=ps.reduce((x,y)=>x+y.amount,0),g=ps.reduce((x,y)=>x+(+y.grams||0),0),k=GR(cu.scheme);
  let act="";if(cu.pin_set===false){const ac=gen6();const u=await sb.from("gold_customers").update({act_code:ac}).eq("id",c);if(!u.error)act=`\n\n🔑 உங்க Passbook Activation code: ${ac}\nApp: ${APPURL}\nApp-ல Passbook → "முதல் தடவையா?" அழுத்தி, மொபைல் எண் + இந்த code போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க.\nஇந்த code-ஐ யாருக்கும் சொல்லாதீங்க.`}
- const msg=`வணக்கம் ${cu.name},\nசுப்புலட்சுமி தங்க மாளிகை\nதவணை ரசீது ✅\nதொகை: ₹${f(a)}`+(k?`\nவிலை: ₹${f(r)}/கிராம்\nதங்கம்: ${(a/r).toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(cu.scheme)}\nமொத்த சேமிப்பு: ₹${f(tot)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+act+"\nநன்றி 🙏";
+ const msg=`வணக்கம் ${cu.name},\nசுப்புலட்சுமி தங்க மாளிகை\nதவணை ரசீது ✅\nதொகை: ₹${f(a)} (${MDN[PMODE]})`+(k?`\nவிலை: ₹${f(r)}/கிராம்\nதங்கம்: ${(a/r).toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(cu.scheme)}\nமொத்த சேமிப்பு: ₹${f(tot)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+act+"\nநன்றி 🙏";
  $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://wa.me/91${cu.mobile.slice(-10)}?text=${encodeURIComponent(msg)}">💬 ${cu.name}-க்கு WhatsApp ரசீது</a>${act?`<div class="mut" style="margin-top:6px">🔑 Activation code இந்த ரசீதுல சேர்ந்திருக்கு. கட்டாயம் அனுப்புங்க.</div>`:""}`;
- $("pa").value="";load()}
+ $("pa").value="";$("pref").value="";setMode(null);load();loadCol()}
 sb.auth.getSession().then(({data})=>{if(data.session)show()});
 
 
@@ -762,6 +771,19 @@ $("pnsend").onclick=async()=>{const title=$("pnt").value.trim();if(!title)return
 async function rateNotify(v,sv){const d=await pushFn({action:"send",title:"இன்றைய தங்க விலை",body:`22K தங்கம்: ₹${fmt(v)} / கிராம்`+(sv?`\nவெள்ளி: ₹${Number(sv).toFixed(2)} / கிராம்`:"")+`\nசுப்புலட்சுமி தங்க மாளிகை, புளியங்குடி`,url:"/",target:"all"});
  alert(d.ok?`விலை notification ✅ ${d.sent} phone-க்கு போச்சு`:"விலை notification போகல: "+(d.err||""));loadPushLog()}
 pnPrev();
+
+// ===== பணம் வந்த முறை + வசூல் விவரம் =====
+let PMODE=null;const MDN={cash:"பணம்",upi:"UPI",card:"Card",bank:"Bank",online:"Online (app)",null:"பதியல"};
+function setMode(m){PMODE=m;document.querySelectorAll("#pmd .mdb").forEach(b=>b.classList.toggle("on",b.dataset.md===m));$("pref").classList.toggle("hide",!m||m=="cash")}
+$("pmd").addEventListener("click",e=>{const b=e.target.closest("[data-md]");if(b)setMode(b.dataset.md)});
+async function loadCol(){const ist=new Date(Date.now()+330*60000).toISOString(),day=ist.slice(0,10),mon=ist.slice(0,7)+"-01";
+ const {data,error}=await sb.from("gold_payments").select("amount,mode,paid_on").gte("paid_on",mon+"T00:00:00+05:30");
+ if(error){$("col").innerHTML='<div class="mut">payment_mode_setup.sql இன்னும் ஓட்டல</div>';return}
+ const dayOf=x=>new Date(new Date(x.paid_on).getTime()+330*60000).toISOString().slice(0,10);
+ const sum=(L)=>{const g={};L.forEach(x=>{const k=x.mode||"null";g[k]=g[k]||{n:0,t:0};g[k].n++;g[k].t+=+x.amount});return g};
+ const tbl=(title,L)=>{const g=sum(L),tot=L.reduce((a,x)=>a+ +x.amount,0);
+  return `<div style="margin:10px 0"><b>${title}</b> · மொத்தம் ₹${fmt(tot)} (${L.length})`+["cash","upi","card","bank","online","null"].filter(k=>g[k]).map(k=>`<div class="row"><span>${MDN[k]}</span><b>₹${fmt(g[k].t)} <span class="mut">(${g[k].n})</span></b></div>`).join("")+(L.length?"":'<div class="mut">இன்னும் இல்ல</div>')+"</div>"};
+ const L=data||[];$("col").innerHTML=tbl("இன்று",L.filter(x=>dayOf(x)===day))+tbl("இந்த மாதம்",L)}
 
 // ===== App Poster (popup) =====
 let PPIMG="";
