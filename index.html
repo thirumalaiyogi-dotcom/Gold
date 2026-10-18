@@ -856,6 +856,62 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 @keyframes pbshk{0%{transform:translateY(-6px)}35%{transform:translateY(0)}100%{transform:translateY(0)}}
 .pblkc h3{margin:0 0 6px;font-size:19px;color:var(--pt)}.pblkc p{margin:0 0 14px;font-size:14px;line-height:1.7;color:var(--pmu)}.pblkc .xbtn{width:100%}.pblkc .biono{width:100%;min-height:46px;margin-top:6px;border:0;background:none;color:var(--pmu);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.pblki,.pblki .shk,.pblkc{animation:none}}
+
+/* ===== Passbook v2 (mockup) ===== */
+#p{padding-top:0}
+.pbtop{display:flex;align-items:center;gap:14px;margin:0 -16px 2px;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 14px;background:linear-gradient(135deg,var(--pm),var(--pm2));color:#fff;border-radius:0 0 18px 18px;position:relative;overflow:hidden}
+.pbtop:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--pg),#F6E2B0,var(--pg))}
+.pbback{font-size:26px;color:#fff;padding:2px 12px 2px 0;border-right:1px solid rgba(255,255,255,.35);cursor:pointer;line-height:1}
+.pbtop b{display:block;font-size:20px;font-weight:800}.pbtop small{display:block;font-size:13px;color:#F3E2BC}
+.pbtop>div{flex:1}.pbtopi{width:40px;height:40px;border:1.5px solid var(--pg);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--pg)}.pbtopi svg{width:22px;height:22px}
+.pbx .ic{width:15px;height:15px;vertical-align:-2px;margin-right:5px}
+.pbcust{align-items:flex-start;position:relative}
+.pbav{position:relative;width:64px;height:64px;border:2px solid #F0D9A8;background:#F8E9EC}.pbav svg{width:30px;height:30px}
+.pbav i{position:absolute;right:-4px;bottom:-4px;width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF4D6,#E3C27E 55%,#B88E3E);display:flex;align-items:center;justify-content:center;border:2px solid #fff}.pbav i svg{width:13px;height:13px;fill:#781D2A;stroke:none}
+.pbcd{flex:1;min-width:0}.pbcd small{margin-top:2px}
+.pbdet{flex:none;min-height:36px;padding:0 12px;border:1.5px solid var(--pg);border-radius:999px;background:#fff;color:var(--pm);font-family:inherit;font-weight:800;font-size:13px;cursor:pointer}
+.pbsh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pblab{display:inline-flex;align-items:center;gap:8px;font-size:15px}.pblab svg{width:22px;height:22px;color:#E3C27E}
+.pbsum .pbamt{font-size:38px;background:linear-gradient(180deg,#FFF4D6,#E3C27E);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pbring{position:relative;flex:none;width:96px;text-align:center}.pbring svg{width:78px;height:78px;transform:rotate(-90deg);display:block;margin:0 auto}
+.pbring circle{fill:none;stroke:rgba(255,255,255,.18);stroke-width:7}.pbring circle.pg{stroke:#E3C27E;stroke-linecap:round;transition:stroke-dashoffset .8s}
+.pbring b{position:absolute;top:24px;left:0;right:0;font-size:18px;color:#fff}.pbring small{display:block;font-size:11.5px;color:#F3E2BC;margin-top:2px}
+.pbst3{display:grid;grid-template-columns:repeat(3,1fr);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 4px}
+.pbst3 span{text-align:center;padding:2px 4px}.pbst3 span+span{border-left:1px solid rgba(255,255,255,.15)}
+.pbst3 i{display:inline-flex;width:30px;height:30px;border-radius:50%;background:rgba(227,194,126,.22);color:#F3E2BC;align-items:center;justify-content:center}.pbst3 i svg{width:17px;height:17px}
+.pbst3 b{display:block;font-size:20px;font-weight:800;color:#fff;margin-top:2px}.pbst3 small{font-size:11.5px;color:#F3E2BC}
+.pbmat{display:flex;align-items:center}
+.pbag{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pbag button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 4px;border-radius:14px;border:1px solid transparent;font-family:inherit;cursor:pointer;text-align:center}
+.pbag button:disabled{opacity:.5;cursor:default}
+.pbag i{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff}.pbag i svg{width:22px;height:22px}
+.pbag b{font-size:13px;font-weight:800;line-height:1.3}.pbag small{font-size:11px;color:var(--pmu);line-height:1.3}
+.pbag .t1{background:#FBEFF1;border-color:#F3D6DB}.pbag .t1 i{background:#9A2C3B}.pbag .t1 b{color:#781D2A}
+.pbag .t2{background:#FBF4E6;border-color:#F0DFBB}.pbag .t2 i{background:#B88E3E}.pbag .t2 b{color:#7A5414}
+.pbag .t3{background:#ECF7F0;border-color:#CDEBD8}.pbag .t3 i{background:#1F7A3A}.pbag .t3 b{color:#1F6A35}
+.pbag .t4{background:#F1EFFB;border-color:#DAD4F3}.pbag .t4 i{background:#5B4FC4}.pbag .t4 b{color:#3F358F}
+.pbtx h3{justify-content:flex-start}.pball{margin-left:auto;font-size:13px;color:var(--pm);font-weight:700;cursor:pointer}
+.pbtx .pbrow.more{display:none}.pbtx.all .pbrow.more{display:flex}
+.pbn{background:linear-gradient(160deg,var(--pm),var(--pm2));color:#fff;border:2px solid #F0D9A8}
+.pbnx{display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#FBEFF1,#FFF8F2)}
+.pbnxi{flex:none;width:46px;height:46px;border-radius:50%;background:#F3D6DB;color:var(--pm);display:flex;align-items:center;justify-content:center}.pbnxi svg{width:22px;height:22px}
+.pbnx>div{flex:1;min-width:0}.pbnx small{display:block;font-size:12.5px;color:var(--pmu)}.pbnx b{display:block;font-size:20px;font-weight:800;color:var(--pt)}
+.pbnxr{text-align:right;border-left:1px solid #EAD6D9;padding-left:10px}.pbnxr em{display:inline-block;margin-top:4px;font-style:normal;font-size:12px;font-weight:800;border-radius:999px;padding:2px 10px}
+.pbnxr em.due{background:#FCEFD3;color:#8A5A00}.pbnxr em.late{background:#FBEAE8;color:#B3261E}.pbnxr em.up{background:#E8F3EC;color:#1F7A3A}
+.pbcust{gap:12px}.pbav{width:56px;height:56px}
+.pbcd small{font-size:12.5px}.pbcd b{padding-right:92px}
+.pbdet{position:absolute;top:14px;right:14px;min-height:32px;padding:0 10px;font-size:12px}
+.pbag{gap:6px}.pbag button{padding:10px 2px;gap:3px}.pbag i{width:38px;height:38px}.pbag b{font-size:12px}.pbag small{font-size:10.5px}
+.pbnx b.flex{font-size:15px}
+@media (min-width:768px){.pbtop{margin:8px 0 2px;border-radius:18px}}
+@media (max-width:360px){.pbag{grid-template-columns:repeat(2,1fr)}}
+/* active tab: raised maroon pill */
+body nav button[data-t].on{color:#fff}
+body nav button[data-t].on svg{background:none}
+body nav button[data-t].on:before{content:"";position:absolute;inset:-10px 6px 4px;background:linear-gradient(160deg,var(--pm),var(--pm2));border-radius:18px 18px 14px 14px;box-shadow:0 -4px 14px rgba(120,29,42,.3);z-index:-1}
+body nav button{z-index:0}
+@media (min-width:1024px){body nav button[data-t].on:before{inset:0;border-radius:999px;box-shadow:none}}
+@media print{.pbsum .pbamt{-webkit-text-fill-color:#000;color:#000}.pbring circle{stroke:#ccc}}
 </style></head><body>
 <div id="lock" class="ov hide" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div>
@@ -1131,7 +1187,15 @@ const PBI={u:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4
  cp:'<svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>',
  gift:'<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/></svg>',
  wa:'<svg viewBox="0 0 24 24"><path d="M4 20l1.3-4.2A8 8 0 1 1 8.4 18.8z"/><path d="M9 9c0 3 2 5 5 5l1-1.5-2-1-1 .8c-.8-.4-1.5-1.1-1.9-1.9l.8-1-1-2z"/></svg>',
- pdf:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15l3 3 3-3"/></svg>'};
+ pdf:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM14 3v6h6M12 12v6M9 15l3 3 3-3"/></svg>',
+ cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>',
+ cal2:'<svg class="ic" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+ crown:'<svg viewBox="0 0 24 24"><path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/></svg>',
+ coins:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>',
+ wal:'<svg viewBox="0 0 24 24"><path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM4 7l11-3v3M16 13h2"/></svg>',
+ tgt:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 12l8-8M17 4h3v3"/></svg>',
+ sh:'<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6"/></svg>',
+ list:'<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>'};
 const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNaN(x)?esc(String(d)):x.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})};
 // mPIN login: gold_login (5 முயற்சி வரம்பு). SQL ஓட்டாத நிலையில பழைய gold_get_passbook.
 async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
@@ -1146,18 +1210,32 @@ async function viewPB(){
  if(error&&!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>Passbook ஏற்ற முடியவில்லை</b><p>இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</p><button type="button" class="pbbtn pbo" onclick="viewPB()">மீண்டும் முயற்சி</button></div></div>';return}
  if(!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>மொபைல் எண் / PIN தவறு</b><p>வெளியேறி மீண்டும் உள்நுழையவும்.</p></div></div>';return}
  const mo=MON(data.scheme),sd=new Date(data.start);sd.setMonth(sd.getMonth()+mo);const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});
- const ps=data.payments||[],t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),gr=GR(data.scheme);
- const paid=ps.length,left=Math.max(0,mo-paid),pct=Math.min(100,paid/mo*100);
+ const ps=data.payments||[],t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),gr=GR(data.scheme),fx=FX(data.scheme);
+ const paid=ps.length,left=Math.max(0,mo-paid),pct=Math.min(100,Math.round(paid/mo*100));
  const rows=ps.map((x,i)=>({x,n:i+1})).reverse();
+ // அடுத்த தவணை: மாதம் 1–7 தேதி
+ let nx="";if(left){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
+  const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
+  const st=paidThis?["வர இருக்கு","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
+  const amt=fx&&ps.length?"₹"+f(ps[ps.length-1].amount):"உங்க விருப்பத் தொகை";
+  nx=`<div class="pbcard pbnx"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>`}
+ const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
- <div class="pbcard pbcust"><span class="pbav">${PBI.u}</span><div><b>${esc(data.name)}</b><small>${esc(SN[data.scheme])} திட்டம் · சேர்ந்த நாள் ${pbDate(data.start)}</small></div></div>
- <div class="pbcard pbsum"><small class="pblab">மொத்த சேமிப்பு</small><div class="pbamt">₹${f(t)}</div>${gr?`<div class="pbg">சேர்ந்த தங்கம் <b>${g.toFixed(3)} கிராம்</b></div>`:""}
+ <div class="pbtop noprint"><a class="pbback" role="button" tabindex="0" onclick="document.querySelector('nav button[data-t=&quot;s&quot;]').click()" aria-label="முகப்பு">←</a><div><b>Passbook</b><small>உங்கள் சேமிப்பு பயணம்</small></div><span class="pbtopi">${PBI.r}</span></div>
+ <div class="pbcard pbcust"><span class="pbav">${PBI.u}<i>${PBI.crown}</i></span><div class="pbcd"><b>${esc(data.name)} 👋</b><small>${esc(SN[data.scheme])} திட்டம்</small>${data.refer&&data.refer.code?`<small>உறுப்பினர் எண் : ${esc(data.refer.code)}</small>`:""}<small>${PBI.cal2}சேர்ந்த நாள் : ${pbDate(data.start)}</small></div><button type="button" class="pbdet noprint" onclick="openSD('${data.scheme}')">விவரங்கள் ›</button></div>
+ <div class="pbcard pbsum"><div class="pbsh"><div><span class="pblab">${PBI.coins}மொத்த சேமிப்பு</span><div class="pbamt">₹${f(t)}</div>${gr?`<div class="pbg">சேர்ந்த தங்கம் <b>${g.toFixed(3)} கிராம்</b></div>`:""}</div>
+  <div class="pbring" role="img" aria-label="${pct}% முன்னேற்றம்"><svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="30"/><circle class="pg" cx="36" cy="36" r="30" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><b>${pct}%</b><small>முன்னேற்றம்</small></div></div>
   <div class="pbbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${paid}"><i style="width:${pct}%"></i></div>
-  <div class="pbst"><span><b>${paid}</b><small>கட்டிய தவணை</small></span><span><b>${left}</b><small>மீதி தவணை</small></span><span><b>${mo}</b><small>மொத்த தவணை</small></span></div>
-  <p class="pbmat">${left?`நகை / காயின் வாங்கலாம்: <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
- <div class="pbcard pbtx"><h3>தவணை விவரம்</h3>${rows.map(({x,n})=>`<div class="pbrow"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
- ${refCard(data)}
- <div class="pbacts noprint"><button type="button" class="pbbtn pbwa" onclick="sharePB()">${PBI.wa}பகிர்</button><button type="button" class="pbbtn" onclick="printPB()">${PBI.pdf}PDF / Print</button></div></div>`;
+  <div class="pbst3"><span><i>${PBI.wal}</i><b>${paid}</b><small>கட்டிய தவணை</small></span><span><i>${PBI.coins}</i><b>${left}</b><small>மீதி தவணை</small></span><span><i>${PBI.tgt}</i><b>${mo}</b><small>மொத்த தவணை</small></span></div>
+  <p class="pbmat">${PBI.cal2}${left?`முடிவு / நகை வாங்கலாம் : <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
+ <div class="pbcard pbacts4 noprint"><h3><span class="pbgi">${PBI.r}</span>உங்கள் சேமிப்புக் கணக்கு</h3><div class="pbag">
+  <button type="button" class="t1" onclick="printPB()"><i>${PBI.pdf}</i><b>Passbook PDF</b><small>பதிவிறக்கம்</small></button>
+  <button type="button" class="t2" ${ps.length?`data-rc="${ps.length}"`:"disabled"}><i>${PBI.r}</i><b>ரசீது</b><small>கடைசி தவணை</small></button>
+  <button type="button" class="t3" onclick="sharePB()"><i>${PBI.sh}</i><b>பகிர்</b><small>WhatsApp</small></button>
+  <button type="button" class="t4" onclick="document.getElementById('pbtx').scrollIntoView({behavior:'smooth',block:'start'})"><i>${PBI.list}</i><b>முழு விவரம்</b><small>தவணை வரலாறு</small></button></div></div>
+ <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
+ ${nx}
+ ${refCard(data)}</div>`;
  window.PBD=data;renderPS()}
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
