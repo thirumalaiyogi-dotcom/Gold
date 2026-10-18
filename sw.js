@@ -1,0 +1,34 @@
+// சுப்புலட்சுமி தங்க மாளிகை · Service Worker — Push Notification மட்டும் (cache எதுவும் இல்ல)
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
+
+self.addEventListener("push", (e) => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { title: e.data ? e.data.text() : "" }; }
+  const title = d.title || "சுப்புலட்சுமி தங்க மாளிகை";
+  const opt = {
+    body: d.body || "",
+    icon: "icon-192.png",
+    data: { url: d.url || "/" },
+    tag: d.tag || undefined,
+  };
+  if (d.image) opt.image = d.image;
+  e.waitUntil(self.registration.showNotification(title, opt));
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const path = (e.notification.data && e.notification.data.url) || "/";
+  const target = new URL(path, self.registration.scope).href;
+  e.waitUntil((async () => {
+    const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const c of all) {
+      if (c.url.startsWith(self.registration.scope)) {
+        await c.focus();
+        c.postMessage({ type: "open", hash: new URL(target).hash });
+        return;
+      }
+    }
+    await self.clients.openWindow(target);
+  })());
+});

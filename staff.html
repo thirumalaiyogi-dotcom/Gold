@@ -346,7 +346,22 @@ nav button svg{width:22px;height:22px}
   <div class="card"><h2>இன்றைய 22K விலை</h2>
   <input id="gp" type="number" inputmode="numeric" placeholder="₹ / கிராம்">
   <input id="sv" type="number" inputmode="decimal" placeholder="வெள்ளி ₹ / கிராம்">
+  <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-size:15px"><input type="checkbox" id="gpn" style="width:auto;margin:0"> 🔔 விலையை customer-களுக்கு notification-ஆ அனுப்பு</label>
   <button class="btn" onclick="saveRate()">விலை அப்டேட்</button></div>
+  <div class="card" id="pushcard"><h2>🔔 Notification அனுப்பு</h2>
+  <div class="mut">அனுமதி கொடுத்த customer-களுக்கு phone-ல notification-ஆ போகும். லாபம் / “பணம் பெருகும்” மாதிரி வாக்குறுதி வேண்டாம். நாளுக்கு ஒன்னுக்கு மேல வேண்டாம்.</div>
+  <input id="pnt" maxlength="80" placeholder="தலைப்பு (எ.கா. தீபாவளி வாழ்த்துகள் 🪔)">
+  <textarea id="pnb" maxlength="240" placeholder="செய்தி (240 எழுத்து வரை)"></textarea>
+  <div class="mut">படம் (விருப்பம் · அகல படம் 2:1 நல்லது)</div><input type="file" id="pnf" accept="image/*"><div id="pnimg"></div>
+  <div class="mut">Click பண்ணா திறக்க வேண்டியது</div>
+  <select id="pnu"><option value="/">முகப்பு</option><option value="/#p">Passbook</option><option value="/#scx">திட்டங்கள்</option><option value="/#n">அறிவிப்புகள்</option><option value="/#e">தொடர்பு</option></select>
+  <div class="mut">யாருக்கு</div>
+  <select id="pntg"><option value="all">அனுமதி கொடுத்த எல்லாருக்கும்</option><option value="customers">Passbook உள்ள customer-களுக்கு மட்டும்</option><option value="due">இந்த மாசம் தவணை கட்டாதவங்களுக்கு மட்டும்</option></select>
+  <div class="mut" id="pncnt"></div>
+  <div class="mut" style="margin-top:8px">முன்னோட்டம்:</div>
+  <div id="pnprev" style="border:1px solid #ddd;border-radius:14px;padding:12px;background:#f6f6f6;margin:6px 0 10px"></div>
+  <button class="btn" id="pnsend">🔔 அனுப்பு</button>
+  <div class="mut" style="margin-top:10px">அனுப்பியவை:</div><div id="pnlog"></div></div>
   <div class="card"><h2>பழைய விலை சேர்க்க (Graph-க்கு)</h2><div class="mut">இன்றைய விலை மேல "விலை அப்டேட்" பண்ணும்போதே தானா graph-ல சேரும். முந்தைய நாட்களின் விலை தெரிஞ்சா இங்க சேருங்க.</div>
   <input id="hd" type="date"><input id="hg" type="number" inputmode="numeric" placeholder="22K ₹ / கிராம்"><input id="hs" type="number" inputmode="decimal" placeholder="வெள்ளி ₹ / கிராம் (விருப்பம்)">
   <button class="btn" id="hadd">சேர்</button><div class="mut" style="margin-top:10px">சமீபத்திய 10:</div><div id="hl"></div></div>
@@ -421,7 +436,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount()}
 async function load(){
  const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
@@ -471,7 +486,7 @@ async function saveRate(){
  const d=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10),old=window.RT||{},same=old.updated_on===d,sv2=+$("sv").value||null;
  const p1=(same?old.prev_rate22:old.rate22)??null,p2=(same?old.prev_silver:old.silver)??null;
  const {error}=await sb.from("gold_rate").upsert({id:1,rate22:v,silver:sv2,prev_rate22:p1,prev_silver:p2,updated_on:d});
- if(error)return alert(error.message);window.RT={id:1,rate22:v,silver:sv2,prev_rate22:p1,prev_silver:p2,updated_on:d};setRate(v,d,sv2,p1,p2);alert("விலை அப்டேட் ✅");loadHist()}
+ if(error)return alert(error.message);window.RT={id:1,rate22:v,silver:sv2,prev_rate22:p1,prev_silver:p2,updated_on:d};setRate(v,d,sv2,p1,p2);alert("விலை அப்டேட் ✅");loadHist();if($("gpn").checked){$("gpn").checked=false;rateNotify(v,sv2)}}
 loadRate();
 
 // Onboarding + Login
@@ -712,5 +727,30 @@ $("sha").addEventListener("click",async e=>{if(!e.target.dataset.sh)return;await
 const m={name:SHOP+" Staff",short_name:"STM Staff",start_url:location.href.split("#")[0],display:"standalone",background_color:"#fffaf0",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
 const l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"}));document.head.appendChild(l);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+// ===== Push Notification அனுப்பு =====
+let PNIMG="";
+async function pushFn(b){const {data}=await sb.auth.getSession();const t=data&&data.session&&data.session.access_token;if(!t)return {ok:false,err:"login"};
+ try{const r=await fetch(SB_URL+"/functions/v1/push",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+t},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
+function pnPrev(){const t=$("pnt").value.trim()||"தலைப்பு",b=$("pnb").value.trim();
+ $("pnprev").innerHTML=`<div style="display:flex;gap:10px;align-items:flex-start"><img src="icon-192.png" style="width:36px;height:36px;border-radius:8px" alt=""><div style="flex:1;min-width:0"><div style="font-size:12px;color:#666">${esc(SHOP)}</div><b>${esc(t)}</b><div style="white-space:pre-wrap;font-size:14px">${esc(b)}</div></div></div>${PNIMG?`<img src="${PNIMG}" style="width:100%;border-radius:10px;margin-top:8px" alt="">`:""}`}
+async function pnCount(){$("pncnt").textContent="எண்ணிக்கை பார்க்கிறோம்…";const d=await pushFn({action:"count",target:$("pntg").value});$("pncnt").textContent=d.ok?`இப்போ ${d.count} phone-க்கு போகும்`:"எண்ணிக்கை தெரியல ("+(d.err||"")+")"}
+async function loadPushLog(){const {data}=await sb.from("gold_push_log").select("*").order("created_at",{ascending:false}).limit(10);
+ $("pnlog").innerHTML=(data||[]).map(r=>`<div class="row"><span>${esc(r.title)}<br><span class="mut">${new Date(r.created_at).toLocaleString("ta-IN")} · ✅ ${r.sent} · ❌ ${r.failed}</span></span></div>`).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
+["pnt","pnb"].forEach(i=>$(i).addEventListener("input",pnPrev));$("pntg").addEventListener("change",pnCount);
+$("pnf").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;$("pnimg").textContent="படம் ஏற்றுகிறது…";
+ try{const blob=await shrink(f),path=`push/${Date.now()}.jpg`;const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+  PNIMG=sb.storage.from("slides").getPublicUrl(path).data.publicUrl;$("pnimg").innerHTML='<a style="color:#b00020;text-decoration:underline" id="pnimgx">படத்தை நீக்கு</a>';$("pnimgx").onclick=()=>{PNIMG="";$("pnf").value="";$("pnimg").innerHTML="";pnPrev()};pnPrev()}catch(x){$("pnimg").textContent="";alert(x.message||x)}});
+$("pnsend").onclick=async()=>{const title=$("pnt").value.trim();if(!title)return alert("தலைப்பு போடுங்க");
+ if(!confirm("இந்த notification-ஐ அனுப்பவா?\n\n"+title))return;
+ const b=$("pnsend");b.disabled=true;b.textContent="அனுப்புகிறோம்…";
+ const d=await pushFn({action:"send",title,body:$("pnb").value.trim(),image:PNIMG,url:$("pnu").value,target:$("pntg").value});
+ b.disabled=false;b.textContent="🔔 அனுப்பு";
+ if(!d.ok)return alert("அனுப்ப முடியல: "+(d.err||""));
+ alert(`அனுப்பியாச்சு ✅\n${d.sent} phone-க்கு போச்சு`+(d.failed?`, ${d.failed} போகல (app நீக்கியவங்க)`:""));
+ $("pnt").value="";$("pnb").value="";PNIMG="";$("pnf").value="";$("pnimg").innerHTML="";pnPrev();loadPushLog()};
+async function rateNotify(v,sv){const d=await pushFn({action:"send",title:"இன்றைய தங்க விலை",body:`22K தங்கம்: ₹${fmt(v)} / கிராம்`+(sv?`\nவெள்ளி: ₹${Number(sv).toFixed(2)} / கிராம்`:"")+`\nசுப்புலட்சுமி தங்க மாளிகை, புளியங்குடி`,url:"/",target:"all"});
+ alert(d.ok?`விலை notification ✅ ${d.sent} phone-க்கு போச்சு`:"விலை notification போகல: "+(d.err||""));loadPushLog()}
+pnPrev();
+
 </script>
 </body></html>

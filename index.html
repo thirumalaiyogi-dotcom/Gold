@@ -916,6 +916,14 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 .pbpm{margin:8px 0 0;font-size:13px;min-height:1em;color:var(--pmu)}.pbpm.ok{color:#1F7A3A;font-weight:700}.pbpm.bad{color:#B3261E;font-weight:700}
 #note{display:none;position:fixed;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));z-index:9999;padding:14px 16px;border-radius:14px;font-weight:700;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:520px;margin:0 auto}
 #note.ok{background:#E8F3EC;color:#1F6A35;border:1px solid #BFE0CA}#note.bad{background:#FBEAE8;color:#8C1D18;border:1px solid #F1C7C2}
+
+.pushc{background:#fff;border:1px solid #F0D9A8;border-radius:16px;padding:14px 16px;margin:0 0 12px;box-shadow:0 2px 10px rgba(120,29,42,.06)}
+.pushc.on{border-color:#BFE0CA;background:#F3FAF5}
+.pushc b{display:block;font-size:15.5px;color:var(--pt)}.pushc p{margin:4px 0 0;font-size:13.5px;color:var(--pmu);line-height:1.5}
+.pushb{display:flex;gap:8px;margin-top:10px}.pushb button{min-height:42px;border-radius:12px;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;padding:0 16px}
+.pushy{flex:1;border:0;background:linear-gradient(135deg,var(--pm),var(--pm2));color:#fff}.pushx{border:1.5px solid #E5D3B0;background:#fff;color:var(--pmu)}
+.pushm{display:block;margin-top:6px;font-size:12.5px;color:#B3261E}
+.pbx .pushc{margin:0}
 /* active tab: raised maroon pill */
 body nav button[data-t].on{color:#fff}
 body nav button[data-t].on svg{background:none}
@@ -1140,7 +1148,7 @@ body nav button{z-index:0}
 <div id="soc"></div>
 </section>
 
-<section id="n"><h2 class="sh">அறிவிப்புகள்</h2><div id="nl"></div></section>
+<section id="n"><h2 class="sh">அறிவிப்புகள்</h2><div id="pushn"></div><div id="nl"></div></section>
 <section id="p">
  <div class="card hide"><h2>Passbook பார்க்க</h2>
  <input id="cm" type="tel" inputmode="numeric" placeholder="மொபைல் எண்">
@@ -1234,6 +1242,37 @@ function payWire(){const go=$("paygo");if(!go)return;
    msg.textContent="சரிபார்க்கிறோம்…";await cfSettle(d.order_id,msg)}catch(e){window.PAYING=false;await cfSettle(d.order_id,msg)}
   go.disabled=false}}
 (function(){try{const u=new URL(location.href),o=u.searchParams.get("cfo");if(!o)return;u.searchParams.delete("cfo");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);setTimeout(()=>cfSettle(o,null),800)}catch(e){}})();
+
+// ===== Push Notification =====
+const PUSH_OK=()=>"serviceWorker" in navigator&&"PushManager" in window&&"Notification" in window;
+async function pushCall(b){try{const r=await fetch(SB_URL+"/functions/v1/push",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false}))}catch(e){return {ok:false,err:"net"}}}
+function b64u8(s){const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function pushSync(ask){if(!PUSH_OK())return "nosup";
+ if(ask&&Notification.permission==="default"){const r=await Notification.requestPermission();if(r!=="granted")return r}
+ if(Notification.permission!=="granted")return Notification.permission;
+ const reg=await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+ if(!sub){const k=await pushCall({action:"key"});if(!k.ok)return "err";sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u8(k.key)})}
+ const b={action:"sub",sub:sub.toJSON()};if(window.PBOK){b.mobile=$("cm").value.trim();b.pin=$("cp").value.trim()}
+ const d=await pushCall(b);if(d.ok){LS.set("pushon","1");if(window.PBOK)window.PUSHLINKED=true}return d.ok?"granted":"err"}
+const PUSHTXT="விலை மாற்றம், தவணை நினைவூட்டல், கடை அறிவிப்புகள் உங்க phone-க்கு notification-ஆ வரும்.";
+function pushCardHTML(where){if(!PUSH_OK())return where=="n"?'<div class="pushc"><b>🔔 Notification</b><p>இந்த browser-ல notification வசதி இல்ல. iPhone-னா app-ஐ “Add to Home Screen” பண்ணி அங்க இருந்து திறங்க.</p></div>':"";
+ const p=Notification.permission;
+ if(p==="granted")return where=="n"?'<div class="pushc on"><b>🔔 Notification ON ✅</b><p>'+PUSHTXT+'</p></div>':"";
+ if(p==="denied")return where=="n"?'<div class="pushc"><b>🔕 Notification தடுக்கப்பட்டிருக்கு</b><p>Phone Settings → Apps → Chrome (அல்லது இந்த app) → Notifications-ல ON பண்ணுங்க.</p></div>':"";
+ if(where=="pb"&&LS.get("pushno"))return "";
+ return `<div class="pushc"><b>🔔 Notification வேணுமா?</b><p>${PUSHTXT}</p><div class="pushb"><button type="button" class="pushy" data-push="on">ON பண்ணு</button>${where=="pb"?'<button type="button" class="pushx" data-push="no">வேண்டாம்</button>':""}</div><small class="pushm" role="status"></small></div>`}
+function pushUI(){const a=$("pushpb"),n=$("pushn");if(a)a.innerHTML=pushCardHTML("pb");if(n)n.innerHTML=pushCardHTML("n");
+ if(window.PBOK&&!window.PUSHLINKED&&PUSH_OK()&&Notification.permission==="granted")pushSync(false).catch(()=>{})}
+document.addEventListener("click",async e=>{const b=e.target.closest("[data-push]");if(!b)return;
+ if(b.dataset.push=="no"){LS.set("pushno","1");pushUI();return}
+ const m=b.closest(".pushc").querySelector(".pushm");b.disabled=true;m.textContent="அனுமதி கேட்கிறோம்…";
+ let r="err";try{r=await pushSync(true)}catch(x){r="err"}
+ if(r==="granted"){note("Notification ON ஆச்சு 🔔",1);pushUI()}else if(r==="denied"){pushUI()}else{b.disabled=false;m.textContent=r==="default"?"அனுமதி கொடுக்கல. மறுபடி முயற்சிக்கலாம்.":"ON பண்ண முடியல. மீண்டும் முயற்சிக்கவும்."}});
+// Notification click → சரியான tab
+function openHash(h){const t=String(h||"").replace("#","");if(!["p","scx","e","n"].includes(t))return;const b=document.querySelector(`nav button[data-t="${t}"]`);if(b)b.click()}
+if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type=="open")openHash(e.data.hash)});
+(function(){const h=location.hash;if(!/^#(p|scx|e|n)$/.test(h))return;try{history.replaceState(history.state,"",location.pathname+location.search)}catch(e){}
+ let n=0;const t=setInterval(()=>{n++;const lk=$("lock");if(lk&&!lk.classList.contains("hide")&&n<200)return;clearInterval(t);if(n<200)setTimeout(()=>openHash(h),400)},700)})();
 async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
  if(r.error&&/gold_login|PGRST202|function/i.test((r.error.code||"")+(r.error.message||"")))r=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});return r}
 const pbOK=d=>d&&!d.wrong&&!d.locked_otp&&!d.locked&&d.name!==undefined;
@@ -1273,8 +1312,9 @@ async function viewPB(){
   <button type="button" class="t4" onclick="document.getElementById('pbtx').scrollIntoView({behavior:'smooth',block:'start'})"><i>${PBI.list}</i><b>முழு விவரம்</b><small>தவணை வரலாறு</small></button></div></div>
  <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
  ${nx}
+ <div id="pushpb" class="noprint"></div>
  ${refCard(data)}</div>`;
- window.PBD=data;renderPS();payWire()}
+ window.PBD=data;renderPS();payWire();pushUI()}
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
  const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
@@ -1377,7 +1417,7 @@ async function loadNotices(){
  $("nadm").innerHTML=NT.map(n=>`<div class="row"><span>${esc(n.title)}</span><a data-nd="${n.id}" style="color:#b00020;text-decoration:underline">நீக்கு</a></div>`).join("");
  const seen=+(LS.get("nseen")||0),last=NT.length?new Date(NT[0].created_at).getTime():0;
  $("ndot").classList.toggle("hide",!(last>seen)||document.querySelector('nav button[data-t="n"]').classList.contains("on"))}
-document.querySelector('nav button[data-t="n"]').addEventListener("click",()=>{if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
+document.querySelector('nav button[data-t="n"]').addEventListener("click",()=>{pushUI();if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
 loadNotices();
 
 
