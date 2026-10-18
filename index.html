@@ -1208,7 +1208,7 @@ async function doLogin(){
  if(data&&data.wrong){$("lp").value="";$("le").textContent=`PIN தவறு. இன்னும் ${data.left} முயற்சி மட்டும்.`;return}
  if(data&&data.locked){$("le").textContent=`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`;return}
  if(error||!data){$("le").textContent="மொபைல் எண் / PIN தவறு";return}
- window.PBOK=true;vis("lo",true);vis("lock",false);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
+ window.PBOK=true;vis("lo",true);vis("lock",false);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("s");viewPB()}
 $("lb").onclick=doLogin;$("lp").addEventListener("keydown",e=>{if(e.key=="Enter")doLogin()});
 $("gr2").onclick=()=>openEnrol("dhana");$("bk").onclick=()=>vis("rg",false);
 $("gst").onclick=()=>enter("s");
@@ -1287,7 +1287,7 @@ async function lkVerify(){const m=LS.get("mob"),p=LKV;$("lkpad").classList.add("
  if(data&&data.locked)return lkFail(`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`);
  if(error||!data)return lkFail(error?"இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.":"mPIN தவறு.");
  window.PBOK=true;window.GUEST=false;vis("lo",true);$("cm").value=m;$("cp").value=p;$("lp").value="";$("lm").value=m;viewPB();
- vis("lkok",true);setTimeout(()=>{vis("lkok",false);vis("lock",false);LKV="";document.querySelector('nav button[data-t="p"]').click()},1300)}
+ vis("lkok",true);setTimeout(()=>{vis("lkok",false);vis("lock",false);LKV="";document.querySelector('nav button[data-t="s"]').click()},1300)}
 async function lkMobNext(){const m=LKV;if(!/^[6-9][0-9]{9}$/.test(m))return lkFail("சரியான 10 இலக்க மொபைல் எண் போடுங்க");
  $("lknx").disabled=true;let ok=null;try{const r=await sb.rpc("gold_mobile_ok",{p_mobile:m});ok=r.data}catch(e){}$("lknx").disabled=false;
  if(ok!==true)return lkFail(ok===false?"இந்த எண் கடையில பதிவு ஆகல. ‘திட்டங்களை பார்க்க’ போய் ‘இப்போது சேரவும்’ அழுத்துங்க.":"இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.");
