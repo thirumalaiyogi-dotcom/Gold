@@ -804,6 +804,22 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 @keyframes lkshake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}.lkbox.shake{animation:lkshake .3s}
 .xhi{position:absolute;left:-8px;top:2px;font-size:11.5px;font-weight:700;color:#4A2A0C;background:rgba(255,255,255,.75);border-radius:999px;padding:3px 9px;max-width:calc(50% - 64px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xhi:empty{display:none}
 @media (prefers-reduced-motion:reduce){.lkok>div,.lkbox.shake{animation:none}}
+
+/* ===== Join form: 4 steps ===== */
+.wzp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:-8px 0 6px}.wzp i{height:6px;border-radius:6px;background:#E9DFC6}.wzp i.on{background:var(--pm)}
+.wzt{margin:0 0 6px;text-align:center;color:var(--pmu);font-size:14px;font-weight:700}
+.wzsc{display:grid;gap:10px}
+.wzsc button{display:flex;align-items:center;gap:12px;text-align:left;width:100%;padding:12px 14px;border:1.5px solid var(--pb);border-radius:14px;background:#fff;font-family:inherit;cursor:pointer;color:var(--pt)}
+.wzsc button.on{border-color:var(--pm);background:#FBF3F4;box-shadow:0 0 0 3px rgba(120,29,42,.1)}
+.wzsc b{display:block;font-size:17px}.wzsc small{display:block;font-size:13px;color:var(--pmu);line-height:1.5}
+.wzsc .rd{flex:none;width:22px;height:22px;border-radius:50%;border:2px solid #C9BFAE}.wzsc button.on .rd{border:7px solid var(--pm)}
+.wzam{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 8px}
+.wzam button{min-height:44px;border:1.5px solid var(--pb);border-radius:12px;background:#fff;font-family:inherit;font-weight:800;font-size:14px;color:var(--pt);cursor:pointer}.wzam button.on{border-color:var(--pm);background:var(--pm);color:#fff}
+.wzsum{background:var(--pi);border:1px solid var(--pb);border-radius:14px;padding:12px 14px;margin:16px 0 4px;font-size:14px;line-height:1.8}
+.wzsum b{color:var(--pt)}.wzsum span{color:var(--pmu)}.wzsum a{color:var(--pm);font-weight:700;text-decoration:underline;cursor:pointer;margin-left:6px;font-size:13px}
+.wznav{display:flex;gap:10px;margin-top:16px}.wznav .yb{margin:0!important;flex:1}
+.wzb{flex:0 0 32%;min-height:50px;border:1.5px solid var(--pm);border-radius:14px;background:#fff;color:var(--pm);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
+#rgf .err{min-height:20px;margin-top:10px}
 </style></head><body>
 <div id="lock" class="ov hide" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div>
@@ -868,19 +884,35 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
  <div class="lg"><span class="shopn"></span></div>
  <div id="rgf">
  <h2>சேர விண்ணப்பம்</h2>
- <label>பெயர்*</label><input id="rgn">
- <label>மொபைல் எண்*</label><input id="rgm" type="tel" inputmode="numeric" maxlength="10">
- <label>Email (விருப்பம்)</label><input id="rge" type="email" inputmode="email" autocomplete="email">
- <label>முகவரி*</label><input id="rga">
- <label>ஊர்*</label><input id="rgt">
- <label>பின்கோடு</label><input id="rgp" type="tel" inputmode="numeric" maxlength="6">
- <label>திட்டம்*</label><select id="rgs"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
- <label>மாத தவணை (₹)</label><input id="rgq" type="number" inputmode="numeric" placeholder="₹1,000 – ₹1,00,000">
- <label>Referral code (நண்பரின் code, விருப்பம்)</label><input id="rgr" type="text" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="உதா: SL4821" style="text-transform:uppercase">
- <label>Nominee பெயர்</label><input id="rgnn">
- <label>உறவு</label><select id="rgnr"><option value="">தேர்வு செய்யவும்</option><option>தந்தை</option><option>தாய்</option><option>கணவர் / மனைவி</option><option>மகன்</option><option>மகள்</option><option>சகோதரர்</option><option>சகோதரி</option><option>மற்றவர்</option></select>
- <div class="chk"><input type="checkbox" id="rgc"><span>நான் <a id="tml">விதிமுறைகளுக்கு</a> ஒப்புதல் அளிக்கிறேன்</span></div>
- <button class="yb" id="rgb">விண்ணப்பம் அனுப்பு</button>
+ <div class="wzp" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+ <p class="wzt" id="wzt">படி 1 / 4 · உங்க விவரம்</p>
+ <div class="wzs" data-s="1">
+  <label for="rgn">உங்க பெயர்*</label><input id="rgn" autocomplete="name" placeholder="உதா: முருகன்">
+  <label for="rgm">மொபைல் எண்*</label><input id="rgm" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="10 இலக்க எண்">
+  <label for="rge">Email (விருப்பம்)</label><input id="rge" type="email" inputmode="email" autocomplete="email">
+ </div>
+ <div class="wzs hide" data-s="2">
+  <label for="rga">வீட்டு முகவரி*</label><input id="rga" autocomplete="street-address" placeholder="கதவு எண், தெரு">
+  <label for="rgt">ஊர்*</label><input id="rgt" autocomplete="address-level2" placeholder="உதா: புளியங்குடி">
+  <label for="rgp">பின்கோடு</label><input id="rgp" type="tel" inputmode="numeric" maxlength="6" placeholder="6 இலக்கம்">
+ </div>
+ <div class="wzs hide" data-s="3">
+  <label>எந்த திட்டம்?*</label>
+  <div class="wzsc" id="wzsc"></div>
+  <select id="rgs" class="hide" aria-hidden="true"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
+  <label for="rgq">மாத தவணை (₹)</label>
+  <div class="wzam" id="wzam"><button type="button" data-a="1000">₹1,000</button><button type="button" data-a="2000">₹2,000</button><button type="button" data-a="5000">₹5,000</button><button type="button" data-a="10000">₹10,000</button></div>
+  <input id="rgq" type="number" inputmode="numeric" placeholder="அல்லது தொகை போடுங்க (₹1,000 – ₹1,00,000)">
+  <label for="rgr">Referral code (நண்பரின் code, விருப்பம்)</label><input id="rgr" type="text" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="உதா: SL4821" style="text-transform:uppercase">
+ </div>
+ <div class="wzs hide" data-s="4">
+  <label for="rgnn">Nominee பெயர்</label><input id="rgnn" placeholder="உங்களுக்கு பின் யாருக்கு?">
+  <label for="rgnr">உறவு</label><select id="rgnr"><option value="">தேர்வு செய்யவும்</option><option>தந்தை</option><option>தாய்</option><option>கணவர் / மனைவி</option><option>மகன்</option><option>மகள்</option><option>சகோதரர்</option><option>சகோதரி</option><option>மற்றவர்</option></select>
+  <div class="wzsum" id="wzsum"></div>
+  <div class="chk"><input type="checkbox" id="rgc"><span>நான் <a id="tml">விதிமுறைகளுக்கு</a> ஒப்புதல் அளிக்கிறேன்</span></div>
+ </div>
+ <div class="err" id="wze"></div>
+ <div class="wznav"><button type="button" class="wzb" id="wzprev">‹ பின்</button><button type="button" class="yb wzn" id="wznext">அடுத்து ›</button><button class="yb wzn hide" id="rgb">விண்ணப்பம் அனுப்பு</button></div>
  <div class="lk" style="font-size:13px">ஆதார் போன்ற ID proof-ஐ ஆப்-ல கொடுக்க வேண்டாம். கடைக்கு நேரில் வரும்போது காட்டினா போதும்.</div>
  </div>
  <div id="rgok" class="hide" style="text-align:center"><div style="font-size:60px;margin-top:20px">✅</div><h2>விண்ணப்பம் சென்றது</h2><p>கடையில் ID proof காட்டி முதல் தவணை கட்டுங்க. உடனே உங்க WhatsApp-க்கு Activation code வரும். அதை வச்சு நீங்களே PIN வைக்கலாம்.</p><button class="yb" id="rgx">சரி</button></div>
@@ -1329,7 +1361,32 @@ function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera
 $("sdback").onclick=()=>vis("sd",false);
 
 // Enrol form + requests
-function openEnrol(k){$("rgs").value=k||"dhana";$("rgf").classList.remove("hide");$("rgok").classList.add("hide");vis("rg",true);$("rg").scrollTop=0}
+function openEnrol(k){$("rgs").value=k||"dhana";$("rgf").classList.remove("hide");$("rgok").classList.add("hide");vis("rg",true);$("rg").scrollTop=0;wzShow(1)}
+// ===== Join form wizard (4 steps) =====
+let WZ=1;const WZT=["உங்க விவரம்","முகவரி","திட்டம் & தவணை","Nominee & உறுதி"];
+function wzSch(){const L=allSch(),cur=$("rgs").value;$("wzsc").innerHTML=L.map(x=>{const i=(typeof SINFO!="undefined"&&SINFO[x.key])||null;
+ return `<button type="button" data-k="${x.key}" class="${x.key==cur?"on":""}" aria-pressed="${x.key==cur}"><span class="rd"></span><span><b>${esc(x.name)}</b><small>${x.months} மாதம் · ${i?esc(i.tag):String(x.card||"").replace(/<br>/g," · ")}</small></span></button>`}).join("")}
+function wzAm(){const v=+$("rgq").value;$("wzam").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.a===v))}
+function wzSum(){const sch=allSch().find(x=>x.key==$("rgs").value)||{},q=+$("rgq").value;
+ $("wzsum").innerHTML=`<div><span>பெயர்:</span> <b>${esc($("rgn").value.trim())}</b> · ${esc($("rgm").value.trim())}<a data-go="1">மாற்று</a></div>
+ <div><span>முகவரி:</span> <b>${esc($("rga").value.trim())}, ${esc($("rgt").value.trim())} ${esc($("rgp").value.trim())}</b><a data-go="2">மாற்று</a></div>
+ <div><span>திட்டம்:</span> <b>${esc(sch.name||"")}</b>${q?` · மாதம் <b>₹${fmt(q)}</b>`:""}${$("rgr").value.trim()?` · Code ${esc($("rgr").value.trim().toUpperCase())}`:""}<a data-go="3">மாற்று</a></div>`}
+function wzShow(n){WZ=n;document.querySelectorAll("#rgf .wzs").forEach(d=>d.classList.toggle("hide",+d.dataset.s!==n));
+ $("rgf").querySelectorAll(".wzp i").forEach((d,i)=>d.classList.toggle("on",i<n));$("wzt").textContent=`படி ${n} / 4 · ${WZT[n-1]}`;$("wze").textContent="";
+ vis("wzprev",n>1);vis("wznext",n<4);vis("rgb",n==4);if(n==3){wzSch();wzAm()}if(n==4)wzSum();$("rg").scrollTop=0;
+ setTimeout(()=>{const f=document.querySelector(`#rgf .wzs[data-s="${n}"] input:not([type=checkbox])`);if(f&&!f.value)try{f.focus()}catch(e){}},200)}
+function wzCheck(n){const e=t=>{$("wze").textContent=t;return false};
+ if(n==1){if(!$("rgn").value.trim())return e("உங்க பெயர் போடுங்க");if(!/^[0-9]{10}$/.test($("rgm").value.trim()))return e("10 இலக்க மொபைல் எண் போடுங்க");const em=$("rge").value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return e("சரியான Email போடுங்க, இல்லைன்னா காலியா விடுங்க")}
+ if(n==2){if(!$("rga").value.trim())return e("முகவரி போடுங்க");if(!$("rgt").value.trim())return e("ஊர் பெயர் போடுங்க");const pc=$("rgp").value.trim();if(pc&&!/^[0-9]{6}$/.test(pc))return e("பின்கோடு 6 இலக்கம்")}
+ if(n==3){if(!$("rgs").value)return e("ஒரு திட்டத்தை தேர்வு செய்யுங்க");const q=$("rgq").value.trim();if(q&&(+q<1000||+q>100000))return e("மாத தவணை ₹1,000 முதல் ₹1,00,000 வரை")}
+ return true}
+$("wznext").onclick=()=>{if(wzCheck(WZ))wzShow(WZ+1)};$("wzprev").onclick=()=>wzShow(Math.max(1,WZ-1));
+$("wzsc").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(!b)return;$("rgs").value=b.dataset.k;wzSch()});
+$("wzam").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;$("rgq").value=b.dataset.a;wzAm()});
+$("rgq").addEventListener("input",wzAm);
+$("wzsum").addEventListener("click",e=>{const a=e.target.closest("[data-go]");if(a)wzShow(+a.dataset.go)});
+document.querySelectorAll("#rgf .wzs input").forEach(i=>i.addEventListener("keydown",e=>{if(e.key=="Enter"&&WZ<4){e.preventDefault();$("wznext").click()}}));
+
 $("rgx").onclick=()=>vis("rg",false);
 $("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim().toUpperCase()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null};
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் எண் போடுங்க");
