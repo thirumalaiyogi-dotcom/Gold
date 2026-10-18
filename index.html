@@ -905,6 +905,17 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 .pbnx b.flex{font-size:15px}
 @media (min-width:768px){.pbtop{margin:8px 0 2px;border-radius:18px}}
 @media (max-width:360px){.pbag{grid-template-columns:repeat(2,1fr)}}
+
+.pbnx{display:block}.pbnxt{display:flex;align-items:center;gap:12px}
+.pbpay{margin-top:12px;padding-top:12px;border-top:1px dashed #EAD6D9}
+.pbpay label{display:block;font-size:12.5px;color:var(--pmu);margin-bottom:6px}
+.pbpq{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.pbpq button{flex:1;min-width:64px;min-height:36px;border:1.5px solid #F0D9A8;background:#fff;border-radius:999px;font-family:inherit;font-weight:700;color:var(--pm);cursor:pointer}
+.pbpay input{width:100%;box-sizing:border-box;min-height:46px;border:1.5px solid #E5D3B0;border-radius:12px;padding:0 14px;font:inherit;font-size:17px;font-weight:700;margin-bottom:8px;background:#fff}
+.pbpaybtn{width:100%;min-height:50px;border:0;border-radius:14px;background:linear-gradient(135deg,#1F7A3A,#16612D);color:#fff;font-family:inherit;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.pbpaybtn svg{width:20px;height:20px}.pbpaybtn:disabled{opacity:.6}
+.pbpm{margin:8px 0 0;font-size:13px;min-height:1em;color:var(--pmu)}.pbpm.ok{color:#1F7A3A;font-weight:700}.pbpm.bad{color:#B3261E;font-weight:700}
+#note{display:none;position:fixed;left:16px;right:16px;top:calc(14px + env(safe-area-inset-top,0px));z-index:9999;padding:14px 16px;border-radius:14px;font-weight:700;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:520px;margin:0 auto}
+#note.ok{background:#E8F3EC;color:#1F6A35;border:1px solid #BFE0CA}#note.bad{background:#FBEAE8;color:#8C1D18;border:1px solid #F1C7C2}
 /* active tab: raised maroon pill */
 body nav button[data-t].on{color:#fff}
 body nav button[data-t].on svg{background:none}
@@ -1198,6 +1209,31 @@ const PBI={u:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4
  list:'<svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>'};
 const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNaN(x)?esc(String(d)):x.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})};
 // mPIN login: gold_login (5 முயற்சி வரம்பு). SQL ஓட்டாத நிலையில பழைய gold_get_passbook.
+
+// ===== Online தவணை (Cashfree) =====
+function note(t,ok){let e=document.getElementById("note");if(!e){e=document.createElement("div");e.id="note";e.setAttribute("role","status");document.body.appendChild(e)}e.className=ok?"ok":"bad";e.textContent=t;e.style.display="block";clearTimeout(note.t);note.t=setTimeout(()=>e.style.display="none",6000)}
+function cfLoad(){return window.Cashfree?Promise.resolve():new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://sdk.cashfree.com/js/v3/cashfree.js";sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
+async function cfCall(b){try{const r=await fetch(SB_URL+"/functions/v1/cf-pay",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
+const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்."};
+async function cfSettle(oid,el){const show=(t,ok)=>{if(el){el.textContent=t;el.className="pbpm "+(ok?"ok":"bad")}note(t,ok)};
+ for(let i=0;i<4;i++){const d=await cfCall({action:"verify",order_id:oid});
+  if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);if(window.PBOK)setTimeout(viewPB,1200);return true}
+  if(d.ok&&!d.paid&&d.status!=="ACTIVE")break;await new Promise(r=>setTimeout(r,2500))}
+ show("பணம் இன்னும் உறுதியாகல. பணம் போயிருந்தா சில நிமிஷத்துல தானா பதியும்; இல்லைன்னா கடையை அணுகவும்.",0);return false}
+function payWire(){const go=$("paygo");if(!go)return;
+ document.querySelectorAll("[data-pq]").forEach(b=>b.onclick=()=>{$("payam").value=b.dataset.pq});
+ go.onclick=async()=>{const a=Math.round(+$("payam").value),msg=$("paymsg");msg.className="pbpm";
+  if(!(a>=1000&&a<=100000)){msg.textContent=PAYERR.amount;msg.className="pbpm bad";return}
+  go.disabled=true;msg.textContent="தயார் செய்கிறோம்…";
+  const d=await cfCall({action:"create",mobile:$("cm").value.trim(),pin:$("cp").value.trim(),amount:a,return_url:location.origin+location.pathname});
+  if(!d.ok){go.disabled=false;msg.textContent=PAYERR[d.err]||("Payment தொடங்க முடியல ("+d.err+")");msg.className="pbpm bad";return}
+  try{await cfLoad()}catch(e){go.disabled=false;msg.textContent=PAYERR.net;msg.className="pbpm bad";return}
+  msg.textContent="Payment பக்கம் திறக்கிறது…";
+  try{const cf=Cashfree({mode:d.env==="production"?"production":"sandbox"});
+   const r=await cf.checkout({paymentSessionId:d.session,redirectTarget:"_modal"});
+   msg.textContent="சரிபார்க்கிறோம்…";await cfSettle(d.order_id,msg)}catch(e){await cfSettle(d.order_id,msg)}
+  go.disabled=false}}
+(function(){try{const u=new URL(location.href),o=u.searchParams.get("cfo");if(!o)return;u.searchParams.delete("cfo");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);setTimeout(()=>cfSettle(o,null),800)}catch(e){}})();
 async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
  if(r.error&&/gold_login|PGRST202|function/i.test((r.error.code||"")+(r.error.message||"")))r=await sb.rpc("gold_get_passbook",{p_mobile:m,p_pin:p});return r}
 const pbOK=d=>d&&!d.wrong&&!d.locked_otp&&!d.locked&&d.name!==undefined;
@@ -1217,8 +1253,10 @@ async function viewPB(){
  let nx="";if(left){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
   const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
   const st=paidThis?["வர இருக்கு","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
-  const amt=fx&&ps.length?"₹"+f(ps[ps.length-1].amount):"உங்க விருப்பத் தொகை";
-  nx=`<div class="pbcard pbnx"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>`}
+  const amt=fx&&ps.length?"₹"+f(ps[0].amount):"உங்க விருப்பத் தொகை";
+  const fa=fx&&ps.length?Math.round(ps[0].amount):0;
+  const pay=paidThis?"":`<div class="pbpay noprint">${fa?`<input type="hidden" id="payam" value="${fa}">`:`<label for="payam">தொகை (₹1,000 – ₹1,00,000)</label><div class="pbpq">${[1000,2000,5000,10000].map(v=>`<button type="button" data-pq="${v}">₹${f(v)}</button>`).join("")}</div><input id="payam" type="number" inputmode="numeric" min="1000" max="100000" step="1" placeholder="தொகை ₹" value="${ps.length?Math.round(ps[ps.length-1].amount):""}">`}<button type="button" class="pbpaybtn" id="paygo">${PBI.wal}${fa?`₹${f(fa)} `:""}இப்போ online-ல கட்டு</button><p class="pbpm" id="paymsg" role="status"></p></div>`;
+  nx=`<div class="pbcard pbnx"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>${pay}</div>`}
  const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
  <div class="pbtop noprint"><a class="pbback" role="button" tabindex="0" onclick="document.querySelector('nav button[data-t=&quot;s&quot;]').click()" aria-label="முகப்பு">←</a><div><b>Passbook</b><small>உங்கள் சேமிப்பு பயணம்</small></div><span class="pbtopi">${PBI.r}</span></div>
@@ -1236,7 +1274,7 @@ async function viewPB(){
  <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
  ${nx}
  ${refCard(data)}</div>`;
- window.PBD=data;renderPS()}
+ window.PBD=data;renderPS();payWire()}
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
  const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
