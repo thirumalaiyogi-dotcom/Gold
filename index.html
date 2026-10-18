@@ -1230,8 +1230,8 @@ function payWire(){const go=$("paygo");if(!go)return;
   try{await cfLoad()}catch(e){go.disabled=false;msg.textContent=PAYERR.net;msg.className="pbpm bad";return}
   msg.textContent="Payment பக்கம் திறக்கிறது…";
   try{const cf=Cashfree({mode:d.env==="production"?"production":"sandbox"});
-   const r=await cf.checkout({paymentSessionId:d.session,redirectTarget:"_modal"});
-   msg.textContent="சரிபார்க்கிறோம்…";await cfSettle(d.order_id,msg)}catch(e){await cfSettle(d.order_id,msg)}
+   window.PAYING=true;const r=await cf.checkout({paymentSessionId:d.session,redirectTarget:"_modal"});window.PAYING=false;
+   msg.textContent="சரிபார்க்கிறோம்…";await cfSettle(d.order_id,msg)}catch(e){window.PAYING=false;await cfSettle(d.order_id,msg)}
   go.disabled=false}}
 (function(){try{const u=new URL(location.href),o=u.searchParams.get("cfo");if(!o)return;u.searchParams.delete("cfo");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);setTimeout(()=>cfSettle(o,null),800)}catch(e){}})();
 async function pbRpc(m,p){let r=await sb.rpc("gold_login",{p_mobile:m,p_pin:p});
@@ -1811,6 +1811,43 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
  document.getElementById("hs2").addEventListener("scroll",function(){var h=this,i=Math.round(h.scrollLeft/(h.clientWidth*.85));Array.prototype.forEach.call(document.getElementById("d3").children,function(d,k){d.classList.toggle("on",k==i)})});
  var _rs=renderSchemes;renderSchemes=function(){var r=_rs.apply(this,arguments);fill();return r};
  fill();
+})();
+</script>
+<script>
+// ===== Android / browser Back பட்டன் =====
+(function(){
+ var on=function(id){var e=document.getElementById(id);return !!e&&!e.classList.contains("hide")&&e.getClientRects().length>0};
+ var clk=function(id){var e=document.getElementById(id);if(e)e.click()};
+ var tab=function(){var b=document.querySelector("nav button.on");return b?b.dataset.t:"s"};
+ var rearmT=0;
+ function back(){
+  if(window.PAYING)return true;                                   // payment நடக்கும்போது ஒன்னும் பண்ணாது
+  var n=document.getElementById("note");if(n&&n.style.display=="block"){n.style.display="none"}
+  if(on("lkok"))return true;
+  if(on("sd")){clk("sdback");return true}
+  if(on("tm")){clk("tmx");return true}
+  if(on("pblk")){clk("pblkx");return true}
+  if(on("pt")){clk("ptback");return true}
+  if(on("ot")){if(!on("ot1")&&on("ot2")){otStep(1);return true}clk("otk");return true}
+  if(on("av")){clk("avk");return true}
+  if(on("rg")){if(typeof WZ=="number"&&WZ>1){wzShow(WZ-1);return true}clk("rgx");return true}
+  if(on("ln")){clk("lnk");return true}
+  if(on("lock")){
+   if(on("lkB")){if(window.GUEST){vis("lock",false);return true}lkStage("A");return true}
+   return false}                                                    // பூட்டுத் திரை முதல் பக்கம் → வெளியேறு
+  if(on("ob"))return false;
+  if(tab()!="s"){var h=document.querySelector('nav button[data-t="s"]');if(h)h.click();scrollTo(0,0);return true}
+  if(scrollY>200){scrollTo({top:0,behavior:"smooth"});return true}
+  return false}
+ function arm(){try{history.pushState({stmb:1},"")}catch(e){}}
+ try{history.replaceState({stmb:0},"")}catch(e){}
+ arm();
+ addEventListener("popstate",function(){
+  clearTimeout(rearmT);
+  if(back()){arm();return}
+  // முதல் பக்கத்துல: ஒரு தடவை எச்சரிக்கை; 2 விநாடிக்குள் மீண்டும் அழுத்தினா app மூடும்
+  if(typeof note=="function")note("வெளியேற மீண்டும் Back அழுத்தவும்",1);
+  rearmT=setTimeout(arm,2200)});
 })();
 </script>
 </body></html>
