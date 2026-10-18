@@ -770,7 +770,66 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 
 .tgb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;margin:18px 0 6px;border:0;border-radius:14px;background:#229ED9;color:#fff;box-shadow:0 6px 16px rgba(34,158,217,.3);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
 .tgb svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+
+/* ===== App-start mPIN lock ===== */
+#lock{background:#fff;display:flex;flex-direction:column;overflow:auto}
+.lkhero{position:relative;flex:none;height:min(38vh,300px);display:flex;align-items:center;justify-content:center;padding-top:env(safe-area-inset-top,0px);
+ background:radial-gradient(120% 90% at 50% 0,#9A2C3B 0,transparent 60%),linear-gradient(160deg,var(--pm),var(--pm2));background-size:cover;background-position:center}
+#lock.img .lkhero{background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.35)),var(--hdimg)}
+.lkhero .logo{height:84px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+.lksheet{flex:1;position:relative;margin-top:-28px;background:#fff;border-radius:28px 28px 0 0;padding:26px 24px calc(24px + env(safe-area-inset-bottom,0px));max-width:520px;width:100%;align-self:center;box-sizing:border-box}
+.lksheet h2{margin:0;font-size:26px;font-weight:800;color:var(--pt)}
+.lksub{margin:4px 0 14px;color:var(--pmu);font-size:15px}
+.lkwho{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pi);border:1px solid var(--pb);border-radius:12px;padding:8px 12px;margin:0 0 16px;font-weight:700;color:var(--pt);font-size:15px;font-variant-numeric:tabular-nums}
+.lkwho a{color:var(--pm);font-size:13px;text-decoration:underline;cursor:pointer;min-height:32px;display:flex;align-items:center}
+.lklab{display:block;font-size:14px;font-weight:700;color:var(--pt);margin:0 0 8px}
+.lkbox{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-width:360px}
+.lkbox i{height:56px;border:1.5px solid #D9D2C3;border-radius:12px;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:26px;color:var(--pt);background:#fff;transition:border-color .15s}
+.lkbox i.f{border-color:var(--pg)}.lkbox i.c{border-color:var(--pm);box-shadow:0 0 0 3px rgba(120,29,42,.12)}
+.lkbox input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;font-size:16px;caret-color:transparent}
+.lkin{width:100%;min-height:52px;border:1.5px solid #D9D2C3;border-radius:12px;padding:0 14px;font-size:18px;font-family:inherit;box-sizing:border-box;letter-spacing:1px}
+.lkin:focus{outline:none;border-color:var(--pm);box-shadow:0 0 0 3px rgba(120,29,42,.12)}
+#lock .err{text-align:left;margin:10px 0 0;min-height:20px}
+.lkbtn{width:100%;min-height:54px;margin-top:14px;border:0;border-radius:14px;background:var(--pm);color:#fff;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 16px rgba(120,29,42,.25)}
+.lkbtn:disabled{background:#E2E0DC;color:#8a8580;box-shadow:none;cursor:default}
+.lkfg{display:block;text-align:right;margin:14px 0 0;color:var(--pm);font-weight:700;text-decoration:underline;cursor:pointer;min-height:36px;line-height:36px}
+.lknote{margin:18px 0 0;font-size:13px;line-height:1.7;color:var(--pmu)}
+.lkalt{display:flex;flex-direction:column;gap:4px;margin-top:14px}.lkalt a{color:var(--pm);font-weight:700;font-size:14px;cursor:pointer;min-height:40px;display:flex;align-items:center}
+.lkalt a#lkskip{color:var(--pmu);font-weight:600}
+.lkok{position:fixed;inset:0;z-index:5;background:rgba(30,15,10,.55);display:flex;align-items:center;justify-content:center;padding:24px}
+.lkok>div{background:#fff;border-radius:22px;padding:28px 22px;text-align:center;max-width:340px;width:100%;animation:lkpop .25s ease-out}
+.lkck{width:84px;height:84px;margin:0 auto 12px;border-radius:50%;background:#2E9E4F;display:flex;align-items:center;justify-content:center}.lkck svg{width:48px;height:48px;fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.lkok b{display:block;font-size:24px;color:var(--pt)}.lkok p{margin:8px 0 0;color:var(--pt);font-size:15px;line-height:1.6}
+@keyframes lkpop{from{transform:scale(.9);opacity:0}to{transform:none;opacity:1}}
+@keyframes lkshake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}.lkbox.shake{animation:lkshake .3s}
+.xhi{position:absolute;left:0;top:6px;font-size:12.5px;font-weight:700;color:#4A2A0C;background:rgba(255,255,255,.75);border-radius:999px;padding:3px 10px;max-width:42%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.xhi:empty{display:none}
+@media (prefers-reduced-motion:reduce){.lkok>div,.lkbox.shake{animation:none}}
 </style></head><body>
+<div id="lock" class="ov hide" aria-modal="true" role="dialog" aria-labelledby="lkh">
+ <div class="lkhero"><span class="shopn"></span></div>
+ <div class="lksheet">
+  <div id="lk1">
+   <h2 id="lkh">mPIN</h2><p class="lksub">உங்க 6 இலக்க mPIN போடுங்க</p>
+   <div class="lkwho"><span id="lkmob"></span><a id="lksw" role="button" tabindex="0">வேற நம்பர்</a></div>
+   <label class="lklab" for="lkp">உங்க mPIN</label>
+   <div class="lkbox" id="lkbox"><i></i><i></i><i></i><i></i><i></i><i></i><input id="lkp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" aria-label="6 இலக்க mPIN"></div>
+   <div class="err" id="lke"></div>
+   <button type="button" class="lkbtn" id="lkgo" disabled>mPIN சரிபார்</button>
+   <a class="lkfg" id="lkfg" role="button" tabindex="0">mPIN மறந்துட்டீங்களா?</a>
+  </div>
+  <div id="lk2" class="hide">
+   <h2>வரவேற்கிறோம்</h2><p class="lksub">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க</p>
+   <label class="lklab" for="lkm">மொபைல் எண்</label>
+   <input id="lkm" class="lkin" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" placeholder="10 இலக்க எண்">
+   <div class="err" id="lke2"></div>
+   <button type="button" class="lkbtn" id="lknx">தொடரவும்</button>
+   <p class="lknote">முதல் தடவை: உங்க Telegram-க்கு வர்ற code மூலம் mPIN உருவாக்கலாம்.</p>
+   <div class="lkalt"><a id="lkjoin" role="button" tabindex="0">திட்டத்தில் சேர விண்ணப்பம் ›</a><a id="lkskip" role="button" tabindex="0">இப்போதைக்கு பார்வையிட மட்டும் ›</a></div>
+  </div>
+  <p class="lknote">குறிப்பு: உங்க mPIN-ஐ யாரிடமும் சொல்ல வேண்டாம். 5 தடவை தவறா போட்டா பாதுகாப்புக்காக பூட்டப்படும்; Telegram OTP மூலம் புது mPIN வைக்கலாம்.</p>
+ </div>
+ <div id="lkok" class="lkok hide" role="status"><div><span class="lkck"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><b>வெற்றி!</b><p>உள்ளே வந்துட்டீங்க. இனி app-ஐ பயன்படுத்தலாம்.</p></div></div>
+</div>
 <div id="ob" class="ov hide">
  <div class="obt"><b class="shopn"></b><a id="obs">Skip</a></div>
  <div class="obv" id="obv"><div id="sl">
@@ -897,7 +956,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 <div id="app" class="hide">
 
 <header class="hd"><div class="xhd">
- <div class="xtop"><div class="xbrand"><span id="shop"></span></div><a class="hb" id="hb" role="button" tabindex="0" aria-label="தொடர்பு கொள்ள"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div>
+ <div class="xtop"><span class="xhi" id="xhi"></span><div class="xbrand"><span id="shop"></span></div><a class="hb" id="hb" role="button" tabindex="0" aria-label="தொடர்பு கொள்ள"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div>
  <div class="xrth"><b>இன்றைய விலை</b><span class="hu" id="gd">விலை ஏற்றுகிறது…</span></div>
  <div class="pc">
   <div role="button" tabindex="0" aria-label="22K தங்க விலை நிலவரம்"><span class="xrl"><span class="ci">22K</span><small class="pl">தங்கம் 22K</small></span><b id="gr">—</b><span class="xrf"><small class="pu">1 கிராம்</small><em class="chg" id="gchg" title="முந்தைய விலையை விட"></em></span></div>
@@ -1067,7 +1126,7 @@ const vis=(id,on)=>$(id).classList.toggle("hide",!on);
 let sl=0;
 function go(n){sl=Math.max(0,Math.min(3,n));$("sl").style.transform=`translateX(-${sl*100}%)`;
  [...$("dt").children].forEach((d,i)=>d.classList.toggle("on",i==sl));$("obn").textContent=sl==3?"தொடங்கு":"அடுத்து"}
-function endOb(){LS.set("ob","1");vis("ob",false)}
+function endOb(){LS.set("ob","1");vis("ob",false);showLock()}
 $("obn").onclick=()=>sl==3?endOb():go(sl+1);$("obs").onclick=endOb;
 let tx=0;$("obv").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
 $("obv").addEventListener("touchend",e=>{const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)go(sl+(d<0?1:-1))});
@@ -1081,14 +1140,14 @@ async function doLogin(){
  if(data&&data.wrong){$("lp").value="";$("le").textContent=`PIN தவறு. இன்னும் ${data.left} முயற்சி மட்டும்.`;return}
  if(data&&data.locked){$("le").textContent=`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`;return}
  if(error||!data){$("le").textContent="மொபைல் எண் / PIN தவறு";return}
- window.PBOK=true;vis("lo",true);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
+ window.PBOK=true;vis("lo",true);vis("lock",false);LS.set("mob",m);$("cm").value=m;$("cp").value=p;$("lp").value="";enter("p");viewPB()}
 $("lb").onclick=doLogin;$("lp").addEventListener("keydown",e=>{if(e.key=="Enter")doLogin()});
 $("gr2").onclick=()=>openEnrol("dhana");$("bk").onclick=()=>vis("rg",false);
 $("gst").onclick=()=>enter("s");
 $("tml").onclick=()=>vis("tm",true);$("tmx").onclick=()=>vis("tm",false);
 
 $("lm").value=LS.get("mob")||"";
-vis("app",true);if(!LS.get("ob"))vis("ob",true);
+vis("app",true);if(!LS.get("ob"))vis("ob",true);else showLock();
 $("lnk").onclick=()=>vis("ln",false);
 
 // Onboarding images (admin)
@@ -1137,11 +1196,43 @@ async function loadNotices(){
 document.querySelector('nav button[data-t="n"]').addEventListener("click",()=>{if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
 loadNotices();
 
+
+// ===== App-start mPIN lock (Pothys style) =====
+function fmtMob(m){return "+91 "+m.slice(0,5)+" "+m.slice(5)}
+function lkDraw(){const v=$("lkp").value,bx=$("lkbox").querySelectorAll("i");bx.forEach((b,i)=>{b.textContent=i<v.length?"•":"";b.classList.toggle("f",i<v.length);b.classList.toggle("c",i==Math.min(v.length,5)&&document.activeElement===$("lkp"))});$("lkgo").disabled=v.length!=6}
+function showLock(){if(window.PBOK)return;const m=LS.get("mob");$("lke").textContent="";$("lke2").textContent="";$("lkp").value="";
+ const hd=window.SIM&&SIM.hdr;$("lock").classList.toggle("img",!!hd);if(hd)$("lock").style.setProperty("--hdimg",`url("${hd.image_url}")`);
+ if(m&&/^[0-9]{10}$/.test(m)){$("lkmob").textContent=fmtMob(m);vis("lk1",true);vis("lk2",false)}else{$("lkm").value="";vis("lk1",false);vis("lk2",true)}
+ vis("lock",true);$("lock").scrollTop=0;lkDraw();setTimeout(()=>{try{(m?$("lkp"):$("lkm")).focus()}catch(e){}},300)}
+async function lkVerify(){const m=LS.get("mob"),p=$("lkp").value;if(!/^[0-9]{6}$/.test(p))return;
+ $("lkgo").disabled=true;$("lkgo").textContent="சரிபார்க்கிறோம்…";$("lke").textContent="";
+ let data=null,error=null;try{({data,error}=await pbRpc(m,p))}catch(e){error=e}
+ $("lkgo").textContent="mPIN சரிபார்";
+ const fail=t=>{$("lke").innerHTML=t;$("lkp").value="";lkDraw();const b=$("lkbox");b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake")};
+ if(data&&data.locked_otp)return fail('5 தடவை தவறான mPIN. பாதுகாப்புக்காக பூட்டப்பட்டது.<br><a id="lkun" style="text-decoration:underline;font-weight:700;cursor:pointer">Telegram OTP மூலம் புது mPIN அமைக்க ›</a>'),$("lkun").onclick=()=>{$("lm").value=m;openOT("f")};
+ if(data&&data.wrong)return fail(`mPIN தவறு. இன்னும் ${data.left} முயற்சி மட்டும்.`);
+ if(data&&data.locked)return fail(`பல தவறான முயற்சிகள். ${data.minutes} நிமிடம் கழித்து முயற்சிக்கவும்.`);
+ if(error||!data)return fail(error?"இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.":"mPIN தவறு.");
+ window.PBOK=true;vis("lo",true);$("cm").value=m;$("cp").value=p;$("lp").value="";$("lm").value=m;viewPB();
+ vis("lkok",true);setTimeout(()=>{vis("lkok",false);vis("lock",false);$("lkp").value="";document.querySelector('nav button[data-t="s"]').click()},1300)}
+$("lkp").addEventListener("input",()=>{$("lkp").value=$("lkp").value.replace(/\D/g,"").slice(0,6);$("lke").textContent="";lkDraw();if($("lkp").value.length==6)lkVerify()});
+$("lkp").addEventListener("focus",lkDraw);$("lkp").addEventListener("blur",lkDraw);
+$("lkgo").onclick=lkVerify;
+$("lkfg").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("f")};
+$("lksw").onclick=()=>{LS.set("mob","");vis("lk1",false);vis("lk2",true);$("lkm").value="";setTimeout(()=>{try{$("lkm").focus()}catch(e){}},100)};
+$("lknx").onclick=async()=>{const m=$("lkm").value.trim();if(!/^[6-9][0-9]{9}$/.test(m)){$("lke2").textContent="10 இலக்க மொபைல் எண் போடுங்க";return}
+ $("lknx").disabled=true;$("lke2").textContent="";let ok=null;try{const r=await sb.rpc("gold_mobile_ok",{p_mobile:m});ok=r.data}catch(e){}$("lknx").disabled=false;
+ if(ok!==true){$("lke2").textContent=ok===false?"இந்த மொபைல் கடையில பதிவு ஆகல. கீழே விண்ணப்பம் அனுப்பலாம், அல்லது கடையை தொடர்பு கொள்ளுங்க.":"இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.";return}
+ LS.set("mob",m);$("lm").value=m;showLock()};
+$("lkm").addEventListener("keydown",e=>{if(e.key=="Enter")$("lknx").click()});
+$("lkjoin").onclick=()=>openEnrol("dhana");
+$("lkskip").onclick=()=>vis("lock",false);
+
 // Customer logout
-$("lo").onclick=()=>{$("pb").innerHTML="";$("cp").value="";$("cm").value="";$("lp").value="";$("le").textContent="";
+$("lo").onclick=()=>{setTimeout(showLock,50);$("pb").innerHTML="";$("cp").value="";$("cm").value="";$("lp").value="";$("le").textContent="";
  document.querySelector('nav button[data-t="s"]').click();window.PBOK=false;window.PBD=null;vis("lo",false);$("lm").value=LS.get("mob")||"";scrollTo(0,0);renderPS()};
 // Home: Passbook / savings summary (உண்மையான passbook data மட்டும்)
-function renderPS(){const e=$("pss"),d=window.PBOK&&window.PBD,IB='<svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6M9 12h6"/></svg>';
+function renderPS(){const e=$("pss"),d=window.PBOK&&window.PBD;$("xhi").textContent=d&&d.name?"வணக்கம், "+d.name:"";const IB='<svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6M9 12h6"/></svg>';
  if(!d){e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>என் சேமிப்பு Passbook</b><small>திட்டத்தில் சேர்ந்தவர்களுக்கு</small></div></div><p>உங்க மொத்த சேமிப்பு, கட்டிய தவணைகள், தங்க எடை எல்லாம் மொபைல்லயே பாருங்க.</p><div class="xbtns"><a class="xbtn" data-pb role="button" tabindex="0">Passbook திற</a><a class="xbtn xo" data-act role="button" tabindex="0">PIN அமைக்க</a></div>`;return}
  const ps=d.payments||[],t=ps.reduce((a,x)=>a+x.amount,0),g=ps.reduce((a,x)=>a+(+x.grams||0),0),mo=MON(d.scheme),sd=new Date(d.start);sd.setMonth(sd.getMonth()+mo);
  e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>${esc(d.name)}</b><small>${esc(SN[d.scheme])} திட்டம்</small></div></div>
@@ -1428,7 +1519,8 @@ function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>
 async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA()}
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
- const hd=document.querySelector("header.hd");if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
+ const hd=document.querySelector("header.hd");{const lk=document.getElementById("lock");if(lk){lk.classList.toggle("img",!!SIM.hdr);if(SIM.hdr)lk.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}}
+ if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
 loadSIM();
 
 // Social links
