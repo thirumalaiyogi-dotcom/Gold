@@ -457,6 +457,7 @@ html:root[data-style="2"]{--ok:#237547}
   <input id="lkl" placeholder="காட்ட வேண்டிய பெயர் (எ.கா. @shopname)"><input id="lku" type="url" placeholder="https://...">
   <button class="btn" id="lkadd">சேர்</button><div id="lkm"></div></div>
   <div class="card"><h2>கடை புகைப்படம் (Home)</h2><div class="mut">கடையின் புகைப்படம் (நீளவாக்கு அல்லது சதுரம், 800×1000 நல்லது). Home-ல "எங்கள் கடை" card-ல வரும்.</div><div id="sha"></div></div>
+  <div class="card"><h2>Maroon பின்னணி படம் (Style 2)</h2><div class="mut">எழுத்து, காயின், நகை இல்லாத maroon velvet / texture படம் மட்டும் (சதுரம், 2048×2048 நல்லது). Customer app-ல maroon நிறம் உள்ள பெரிய இடங்கள்ல (Home banner, Passbook மேல் பகுதி, மொத்த சேமிப்பு, திட்ட card, Login card) இந்த படம் வரும். நீக்கினா சாதாரண maroon நிறம் திரும்ப வரும்.</div><div id="mba"></div></div>
   <div class="card"><h2>Header பின்னணி படம்</h2><div class="mut">எழுத்து, logo, விலை card இல்லாத அலங்கார பின்னணி மட்டும் (1080×770). விலை, logo ஆப்பே மேல போடும்.</div><div id="hda"></div></div>
   <div class="card"><h2>திட்ட card படங்கள்</h2><div class="mut">அகல படம் 1080×540 (2:1). படம் போட்டா card-ன் மேல பகுதி முழுக்க அந்த படம் வரும்.</div><div id="sia"></div></div>
   <div class="card"><h2>Banner படங்கள் (Home)</h2><div class="mut">அகல படம் 1080×500, 5 வரை. தானா மாறி மாறி வரும்.</div><div id="ba"></div></div>
@@ -719,7 +720,7 @@ $("hl").addEventListener("click",async e=>{const d=e.target.dataset.hx;if(!d||!c
 // Scheme card images
 let SIM={};
 function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>{const r=SIM[k];return `<div style="margin:12px 0"><div class="mut">${esc(SNM(k))} ${r?`· <a data-sd="${k}" style="color:#b00020;text-decoration:underline">நீக்கு</a>`:"· இயல்பு"}</div>${r?`<img src="${r.image_url}" style="height:60px;border-radius:8px;margin:4px 0">`:""}<input type="file" accept="image/*" data-sk="${k}"></div>`}).join("")}
-async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA()}
+async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA();renderMBA()}
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
  const hd=document.querySelector("header.hd");if(SIM.hdr){hd.classList.add("img");hd.style.backgroundImage=`url("${SIM.hdr.image_url}")`}else{hd.classList.remove("img");hd.style.backgroundImage=""}}
@@ -782,6 +783,16 @@ $("hda").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)ret
   const d=await sb.from("gold_scheme_img").upsert({scheme:"hdr",image_url:url});if(d.error)throw d.error;
   await loadSIM();alert("Header படம் சேர்ந்தது ✅")}catch(x){alert(x.message||x)}});
 $("hda").addEventListener("click",async e=>{if(!e.target.dataset.hd)return;await sb.from("gold_scheme_img").delete().eq("scheme","hdr");loadSIM()});
+
+// Maroon background (Style 2)
+function renderMBA(){const r=SIM.mbg;$("mba").innerHTML=(r?`<div style="height:120px;border-radius:12px;margin:6px 0;background:linear-gradient(rgba(60,10,18,.32),rgba(60,10,18,.32)),url('${r.image_url}') center/cover;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">மாதிரி எழுத்து · ₹10,000</div><div><a data-mb="1" style="color:#b00020;text-decoration:underline">நீக்கு</a></div>`:'<div class="mut">படம் இல்ல (சாதாரண maroon நிறம்)</div>')+'<input type="file" accept="image/*">'}
+$("mba").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;
+ try{const blob=await shrink(f);
+  const u=await sb.storage.from("slides").upload("mbg.jpg",blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+  const url=sb.storage.from("slides").getPublicUrl("mbg.jpg").data.publicUrl+"?v="+Date.now();
+  const d=await sb.from("gold_scheme_img").upsert({scheme:"mbg",image_url:url});if(d.error)throw d.error;
+  await loadSIM();alert("Maroon பின்னணி படம் சேர்ந்தது ✅")}catch(x){alert(x.message||x)}});
+$("mba").addEventListener("click",async e=>{if(!e.target.dataset.mb)return;if(!confirm("Maroon பின்னணி படத்தை நீக்கவா?"))return;await sb.from("gold_scheme_img").delete().eq("scheme","mbg");loadSIM()});
 
 // Price change badge
 function chg(id,n,p,dec){const e=$(id);if(n==null||p==null||+p==+n){e.textContent="";e.className="chg";return}

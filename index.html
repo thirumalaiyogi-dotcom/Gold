@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2")v=D;document.documentElement.setAttribute("data-style",v);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1245,6 +1245,9 @@ html:root[data-style="2"]{--b2161D1:#781D2A;--b174A9C:#5B1420;--b163E9A:#5B1420;
 html[data-style="2"] .pbtabs button.on{background:#781D2A;box-shadow:0 3px 10px rgba(120,29,42,.25),inset 0 -2px 0 #C9A34E}
 @media (max-width:359px){.pbtabs button{flex-direction:column;gap:2px;font-size:12.5px;min-height:54px}}
 @media print{.pbx{display:flex;flex-direction:column}.pbx>.onlyprint{order:-2}.pbpan{display:flex!important;flex-direction:column;gap:14px;animation:none}.pbpan[data-pp="me"]{order:-1}.pbtabs{display:none!important}}
+/* ===== Style 2: staff upload செய்த maroon texture படம் (இல்லைன்னா சாதாரண maroon) ===== */
+html.mbg[data-style="2"] .intro.xcard,html.mbg[data-style="2"] .pbtop,html.mbg[data-style="2"] .pbcard.pbsum,html.mbg[data-style="2"] .sc .sct:not(.img),html.mbg[data-style="2"] #lock .lkt.lkt1{background:linear-gradient(rgba(58,10,18,.30),rgba(58,10,18,.30)),var(--mbg) center/cover no-repeat,#5B1420!important}
+html.mbg[data-style="2"] .pbcard.pbsum{background:linear-gradient(rgba(58,10,18,.42),rgba(58,10,18,.42)),var(--mbg) center/cover no-repeat,#5B1420!important}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
@@ -2271,6 +2274,7 @@ async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
  const hd=document.querySelector("header.hd");{const lk=document.getElementById("lock");if(lk){lk.classList.toggle("img",!!SIM.hdr);if(SIM.hdr)lk.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}}
+ {const R=document.documentElement,mb=SIM.mbg&&SIM.mbg.image_url;R.classList.toggle("mbg",!!mb);if(mb)R.style.setProperty("--mbg",`url("${mb}")`);else R.style.removeProperty("--mbg");try{mb?localStorage.setItem("stm_mbg",mb):localStorage.removeItem("stm_mbg")}catch(e){}}
  if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
 loadSIM();
 
