@@ -1168,6 +1168,47 @@ body header.hd .xtop .xhi:empty{display:none}
 body .intro.xcard:before{top:18px;bottom:auto!important;right:18px;width:46px!important;height:46px!important}
 body .intro.xcard b{padding-right:56px}
 .intact{padding-right:0!important}
+
+/* ===== Passbook v4: பிரிவுகள் ===== */
+.pbnx.s-due{border:1.5px solid #F2C46D!important;background:linear-gradient(90deg,#FFF8E8,#FFFDF7)!important}
+.pbnx.s-late{border:1.5px solid #F3A6A6!important;background:linear-gradient(90deg,#FDECEC,#FFF8F8)!important}
+.pbnx.s-up{border:1.5px solid #9ED8B7!important;background:linear-gradient(90deg,#EAF7F0,#F8FDFA)!important}
+.pbnx.s-due .pbnxi{background:#FCE7B8;color:#92600A}.pbnx.s-late .pbnxi{background:#FAD4D4;color:#B42318}.pbnx.s-up .pbnxi{background:#CDEEDB;color:#16834A}
+.pbnxr em.due{background:#FCE7B8!important;color:#7A4E00!important}.pbnxr em.late{background:#FAD4D4!important;color:#9B1C1C!important}.pbnxr em.up{background:#CDEEDB!important;color:#11683A!important}
+.pbdn{margin:10px 0 0;font-size:14px;color:#11683A;font-weight:600}
+.mesec{margin-top:8px}
+.mesh{font-size:18px;font-weight:800;margin:20px 0 12px;color:#172033}
+.mecard,.menom,.medc,.meacc{background:#fff;border:1px solid #E1E8F3!important;box-shadow:0 1px 2px rgba(23,32,51,.05),0 2px 10px rgba(23,32,51,.06)!important}
+.mehd{display:flex;align-items:center;gap:12px}.mehd>div{flex:1;min-width:0}
+.mehd small,.medc>small{display:block;font-size:13px;color:#687386}
+.mehd b,.medc>b{display:block;font-size:17px;color:#172033;line-height:1.35;margin-top:2px}
+.mehd i,.medc i,.merow i{font-style:normal;color:#9AA6BA;font-weight:600}
+.medi{width:44px;height:44px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#E8F1FF;color:#174A9C}
+.medi svg,.meed svg,.merow span svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.merel{flex:none;font-style:normal;font-size:13px;font-weight:700;color:#174A9C;background:#E8F1FF;border-radius:999px;padding:4px 12px}
+.megrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.medc{margin:0!important;padding:14px!important}
+.medh{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.mebd .medi{background:#FDF1F4;color:#B4235A}.mean .medi{background:#FBF3DA;color:#9A7417}
+.meed{min-height:36px;display:inline-flex;align-items:center;gap:4px;border:1px solid #D5E2F7;background:#fff;color:#2161D1;border-radius:999px;padding:0 10px;font:700 12.5px inherit;font-family:inherit;cursor:pointer}
+.meed svg{width:16px;height:16px}
+.medf{margin-top:10px}.medf input{width:100%;box-sizing:border-box;min-height:44px;border:1.5px solid #D5E0F0;border-radius:12px;padding:0 10px;font:inherit;font-size:15px}
+.medb{display:flex;gap:6px;margin-top:8px}.medb .mebtn{margin:0!important;min-height:40px;font-size:13.5px}
+.meacc{margin-top:12px;padding:0!important;overflow:hidden}
+.meacc summary{list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:52px;padding:0 16px;font-weight:700;font-size:15.5px;cursor:pointer}
+.meacc summary::-webkit-details-marker{display:none}
+.meacc summary span{transition:transform .2s;font-size:18px;color:#687386}.meacc[open] summary span{transform:rotate(180deg)}
+.meacc .merow{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;border-top:1px solid #EDF2F9;font-size:14.5px}
+.meacc .merow span{color:#687386;display:inline-flex;align-items:center;gap:6px;flex:none}.meacc .merow b{text-align:right;font-weight:700;color:#172033}
+.meacc .menote{padding:0 16px 14px}
+.meerr b{display:block;font-size:16px}.meerr p{color:#687386;margin:4px 0 0}
+@media (max-width:340px){.megrid{grid-template-columns:1fr}}
+
+.pbrsub{margin:-6px 0 12px;font-size:13.5px;color:#687386}
+.pbcodeb{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pbcopy.pbshare{background:#fff!important;color:#2161D1!important;border:1.5px solid #C9DCFB!important}
+.pbref{border:1px solid #E1E8F3!important}
+.pbdone .pbnxt b{font-size:17px!important;line-height:1.35}
 </style></head><body>
 <div id="lock" class="ov hide" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div>
@@ -1521,22 +1562,40 @@ if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("messag
 
 // ===== Passbook: என் விவரங்கள் (முகவரி, Nominee, பிறந்தநாள், திருமண நாள்) =====
 const tDate=d=>d?new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"long",year:"numeric"}):"";
+
+document.addEventListener("click",e=>{const b=e.target.closest("[data-rshare]");if(!b)return;const t=decodeURIComponent(b.dataset.rshare);
+ if(navigator.share)navigator.share({title:SHOP,text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")});
 async function loadMe(){const el=$("pbme");if(!el)return;
- let d=null;try{({data:d}=await sb.rpc("gold_profile",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()}))}catch(e){}
- if(!d||!d.ok){el.innerHTML="";return}window.ME=d;
- const row=(k,v,emp)=>`<div class="merow"><span>${k}</span><b>${v?esc(v):`<i>${emp}</i>`}</b></div>`;
- el.innerHTML=`<div class="pbcard mecard"><h3><span class="pbgi">${PBI.u}</span>என் விவரங்கள்</h3>
-  ${row("முகவரி",d.address,"பதியல")}${row("Nominee",d.nominee?d.nominee+(d.nominee_rel?" ("+d.nominee_rel+")":""):"","பதியல")}
-  ${row("பிறந்தநாள் 🎂",tDate(d.dob),"சேர்க்கல")}${row("திருமண நாள் 💐",tDate(d.anniv),"சேர்க்கல")}
-  <button type="button" class="mebtn" id="meedit">${d.dob||d.anniv?"தேதிகளை மாற்ற":"பிறந்தநாள் / திருமண நாள் சேர்க்க"}</button>
-  <div id="meform" class="hide"><label for="medob">பிறந்தநாள்</label><input type="date" id="medob" value="${d.dob||""}" max="${istToday()}">
-  <label for="meanv">திருமண நாள் (விருப்பம்)</label><input type="date" id="meanv" value="${d.anniv||""}" max="${istToday()}">
-  <button type="button" class="mebtn on" id="mesave">சேமி</button><small class="pushm" id="memsg" role="status"></small></div>
-  <p class="menote">அந்த நாள்ல உங்களுக்கு வாழ்த்து notification வரும். முகவரி / Nominee மாற்ற கடையை அணுகவும்.</p></div>`;
- $("meedit").onclick=()=>{$("meform").classList.toggle("hide")};
- $("mesave").onclick=async()=>{const b=$("mesave"),m=$("memsg");b.disabled=true;m.textContent="சேமிக்கிறோம்…";
-  let r=null;try{({data:r}=await sb.rpc("gold_set_dates",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim(),p_dob:$("medob").value||null,p_anniv:$("meanv").value||null}))}catch(e){}
-  b.disabled=false;if(r&&r.ok){note("சேமிச்சாச்சு ✅",1);loadMe()}else m.textContent=r&&r.err=="dob"||r&&r.err=="anniv"?"தேதி சரியா இல்ல":"சேமிக்க முடியல. மீண்டும் முயற்சிக்கவும்."}}
+ el.innerHTML=`<div class="mesec"><h3 class="mesh">என் விவரங்கள்</h3><div class="pbsk" style="height:88px"></div><div class="megrid"><div class="pbsk" style="height:110px"></div><div class="pbsk" style="height:110px"></div></div></div>`;
+ let d=null,err=false;try{const r=await sb.rpc("gold_profile",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()});d=r.data;if(r.error)err=true}catch(e){err=true}
+ if(!d||!d.ok){el.innerHTML=err?`<div class="pbcard mecard meerr"><b>விவரங்களை ஏற்ற முடியல</b><p>இணைய இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.</p><button type="button" class="mebtn" id="meretry">மீண்டும் முயற்சி</button></div>`:"";const rt=document.getElementById("meretry");if(rt)rt.onclick=loadMe;return}
+ window.ME=d;
+ const I={u:'<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-3-5.5"/></svg>',
+  cake:'<svg viewBox="0 0 24 24"><path d="M4 21h16M5 21v-7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v7M5 16c2 1.3 3.5 1.3 5 0s3.5-1.3 5 0 3 1.3 4 0M12 12V8M12 5.5c.8-.7 1-1.6.6-2.5-.8.6-1.4 1.4-.6 2.5z"/></svg>',
+  ring:'<svg viewBox="0 0 24 24"><circle cx="12" cy="15" r="6"/><path d="M9 6l1.5-3h3L15 6l-3 3z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  ed:'<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg>'};
+ const pb=window.PBD||{},mo=MON(pb.scheme);const sd=pb.start?new Date(pb.start):null;if(sd)sd.setMonth(sd.getMonth()+mo);
+ const dcard=(k,lbl,ic,val,cls)=>`<div class="pbcard medc ${cls}"><div class="medh"><span class="medi">${ic}</span><button type="button" class="meed" data-ed="${k}" aria-label="${lbl} ${val?"மாற்ற":"சேர்க்க"}">${I.ed}<span>${val?"மாற்று":"சேர்"}</span></button></div><small>${lbl}</small><b>${val?tDate(val):'<i>சேர்க்கல</i>'}</b>
+  <div class="medf hide" id="medf_${k}"><input type="date" id="med_${k}" value="${val||""}" max="${istToday()}" aria-label="${lbl}"><div class="medb"><button type="button" class="mebtn on" data-sv="${k}">சேமி</button><button type="button" class="mebtn" data-cx="${k}">ரத்து</button></div><small class="pushm" id="medm_${k}" role="status"></small></div></div>`;
+ el.innerHTML=`<div class="mesec"><h3 class="mesh">என் விவரங்கள்</h3>
+  <div class="pbcard menom"><div class="mehd"><span class="medi">${I.u}</span><div><small>Nominee (வாரிசு)</small><b>${d.nominee?esc(d.nominee):'<i>பதியல</i>'}</b></div>${d.nominee_rel?`<em class="merel">${esc(d.nominee_rel)}</em>`:""}</div><p class="menote">Nominee மாற்ற கடையை அணுகவும்.</p></div>
+  <div class="megrid">${dcard("dob","பிறந்தநாள்",I.cake,d.dob,"mebd")}${dcard("anniv","திருமண நாள்",I.ring,d.anniv,"mean")}</div>
+  <p class="menote">இந்த நாட்கள்ல உங்களுக்கு வாழ்த்து notification வரும்.</p>
+  <details class="pbcard meacc"><summary>மேலும் விவரங்கள்<span aria-hidden="true">⌄</span></summary>
+   <div class="merow"><span>${I.pin}முகவரி</span><b>${d.address?esc(d.address):'<i>பதியல</i>'}</b></div>
+   <div class="merow"><span>திட்டம்</span><b>${esc(SN[pb.scheme]||"")} · ${mo} மாதம்</b></div>
+   ${pb.refer&&pb.refer.code?`<div class="merow"><span>உறுப்பினர் எண்</span><b>${esc(pb.refer.code)}</b></div>`:""}
+   <div class="merow"><span>சேர்ந்த நாள்</span><b>${pb.start?pbDate(pb.start):"-"}</b></div>
+   ${sd?`<div class="merow"><span>முடிவு / நகை வாங்கலாம்</span><b>${sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"})}</b></div>`:""}
+   <p class="menote">முகவரி மாற்ற கடையை அணுகவும்.</p></details></div>`;
+ el.onclick=async e=>{const ed=e.target.closest("[data-ed]"),cx=e.target.closest("[data-cx]"),sv=e.target.closest("[data-sv]");
+  if(ed){$("medf_"+ed.dataset.ed).classList.toggle("hide");return}
+  if(cx){$("medf_"+cx.dataset.cx).classList.add("hide");return}
+  if(sv){const k=sv.dataset.sv,m=$("medm_"+k),v=$("med_"+k).value||null;sv.disabled=true;m.textContent="சேமிக்கிறோம்…";
+   const dob=k=="dob"?v:(window.ME.dob||null),anniv=k=="anniv"?v:(window.ME.anniv||null);
+   let r=null;try{({data:r}=await sb.rpc("gold_set_dates",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim(),p_dob:dob,p_anniv:anniv}))}catch(x){}
+   sv.disabled=false;if(r&&r.ok){note("சேமிச்சாச்சு ✅",1);loadMe()}else m.textContent=r&&(r.err=="dob"||r.err=="anniv")?"தேதி சரியா இல்ல":"சேமிக்க முடியல. மீண்டும் முயற்சிக்கவும்."}}}
 // ===== App திறந்ததும் Notification அனுமதி popup =====
 function closeAsk(later){vis("pask",false);if(later)LS.set("pushlater",String(Date.now()))}
 $("paskl").onclick=()=>closeAsk(true);$("pask").addEventListener("click",e=>{if(e.target.id=="pask")closeAsk(true)});
@@ -1636,11 +1695,12 @@ async function viewPB(){
  // அடுத்த தவணை: மாதம் 1–7 தேதி
  let nx="";if(left){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
   const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
-  const st=paidThis?["வர இருக்கு","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
+  const st=paidThis?["இந்த மாசம் செலுத்தியாச்சு ✓","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
   const amt=fx&&ps.length?"₹"+f(ps[0].amount):"உங்க விருப்பத் தொகை";
   const fa=fx&&ps.length?Math.round(ps[0].amount):0;
   const pay=paidThis?"":`<div class="pbpay noprint">${fa?`<input type="hidden" id="payam" value="${fa}">`:`<label for="payam">தொகை (₹1,000 – ₹1,00,000)</label><div class="pbpq">${[1000,2000,5000,10000].map(v=>`<button type="button" data-pq="${v}">₹${f(v)}</button>`).join("")}</div><input id="payam" type="number" inputmode="numeric" min="1000" max="100000" step="1" placeholder="தொகை ₹" value="${ps.length?Math.round(ps[ps.length-1].amount):""}">`}<button type="button" class="pbpaybtn" id="paygo">${PBI.wal}${fa?`₹${f(fa)} `:""}இப்போ online-ல கட்டு</button><p class="pbpm" id="paymsg" role="status"></p></div>`;
-  nx=`<div class="pbcard pbnx"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>${pay}</div>`}
+  nx=`<div class="pbcard pbnx s-${st[1]}" aria-label="அடுத்த தவணை நிலை: ${st[0]}"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>${pay}</div>`}
+ if(!left&&paid)nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>எல்லா ${mo} தவணையும் முடிந்தது</b></div><div class="pbnxr"><em class="up">முடிந்தது ✓</em></div></div><p class="pbdn">நகை / காயின் வாங்க கடைக்கு வாருங்க.</p></div>`;
  const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
  <div class="pbtop noprint"><a class="pbback" role="button" tabindex="0" onclick="document.querySelector('nav button[data-t=&quot;s&quot;]').click()" aria-label="முகப்பு">←</a><div><b>Passbook</b><small>உங்கள் சேமிப்பு பயணம்</small></div><span class="pbtopi">${PBI.r}</span></div>
@@ -1650,16 +1710,16 @@ async function viewPB(){
   <div class="pbbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${paid}"><i style="width:${pct}%"></i></div>
   <div class="pbst3"><span><i>${PBI.wal}</i><b>${paid}</b><small>கட்டிய தவணை</small></span><span><i>${PBI.coins}</i><b>${left}</b><small>மீதி தவணை</small></span><span><i>${PBI.tgt}</i><b>${mo}</b><small>மொத்த தவணை</small></span></div>
   <p class="pbmat">${PBI.cal2}${left?`முடிவு / நகை வாங்கலாம் : <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
+ ${nx}
  <div class="pbcard pbacts4 noprint"><h3><span class="pbgi">${PBI.r}</span>உங்கள் சேமிப்புக் கணக்கு</h3><div class="pbag">
   <button type="button" class="t1" onclick="printPB()"><i>${PBI.pdf}</i><b>Passbook PDF</b><small>பதிவிறக்கம்</small></button>
   <button type="button" class="t2" ${ps.length?`data-rc="${ps.length}"`:"disabled"}><i>${PBI.r}</i><b>ரசீது</b><small>கடைசி தவணை</small></button>
   <button type="button" class="t3" onclick="sharePB()"><i>${PBI.sh}</i><b>பகிர்</b><small>WhatsApp</small></button>
   <button type="button" class="t4" onclick="document.getElementById('pbtx').scrollIntoView({behavior:'smooth',block:'start'})"><i>${PBI.list}</i><b>முழு விவரம்</b><small>தவணை வரலாறு</small></button></div></div>
  <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
- ${nx}
- <div id="pbme" class="noprint"></div>
- <div id="pushpb" class="noprint"></div>
- ${refCard(data)}</div>`;
+ ${refCard(data)}
+ <div id="pbme" class="noprint" aria-live="polite"></div>
+ <div id="pushpb" class="noprint"></div></div>`;
  window.PBD=data;renderPS();payWire();pushUI();loadMe()}
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
@@ -1847,8 +1907,8 @@ window.addEventListener("afterprint",()=>document.body.classList.remove("printpb
 function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count,earn=n*r.per+(r.bonus?r.per:0);
  const msg=`வணக்கம்! ${SHOP}-ல் தங்கநகை சேமிப்புத் திட்டத்தில் சேரும்போது என் code ${r.code} சொல்லுங்க. இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி கிடைக்கும்!`;
  const ms=(lbl,k,max)=>k?`<div class="pbms"><span>${lbl}: ${esc(k)}</span><b>${Math.min(n,max)}/${max}</b><div class="pbbar sm"><i style="width:${Math.min(100,n/max*100)}%"></i></div></div>`:"";
- return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>நண்பரை சேர்த்து பரிசு பெறுங்க</h3>
- <div class="pbcode"><div><small>உங்க referral code</small><b>${esc(r.code)}</b></div><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button></div>
+ return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>Referral விவரம்</h3><p class="pbrsub">நண்பரை சேர்த்து பரிசு பெறுங்க</p>
+ <div class="pbcode"><div><small>உங்க referral code</small><b>${esc(r.code)}</b></div><div class="pbcodeb"><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button><button type="button" class="pbcopy pbshare" data-rshare="${encodeURIComponent(msg)}">${PBI.sh}<span>பகிர்</span></button></div></div>
  <p class="pbnote">நண்பர் சேர்ந்து முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி (13 ஆவது மாத நகை கொள்முதலில்).</p>
  <div class="pbst two"><span><b>${n}</b><small>சேர்த்தவங்க</small></span><span><b>₹${f(earn)}</b><small>மொத்த பரிசு</small></span></div>${r.bonus?'<p class="pbnote ok">நண்பர் மூலம் வந்த பரிசு ✔</p>':""}
  ${ms("5 பேர்",r.ms5,5)}${ms("10 பேர்",r.ms10,10)}
