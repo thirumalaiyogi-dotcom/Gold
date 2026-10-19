@@ -333,6 +333,39 @@ nav button svg{width:22px;height:22px}
 #hs2 .sc{flex:none;width:100%}
 #d3{display:none}
 .mdb{min-height:44px;border:1.5px solid #e5d3b0;background:#fff;border-radius:10px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}.mdb.on{background:#7a1d2a;color:#fff;border-color:#7a1d2a}
+
+/* ===================== DESIGN SYSTEM v2 (Staff) ===================== */
+:root{--c-maroon:#781D2A;--c-maroon-2:#5E1520;--c-maroon-50:#FBF1F2;--c-gold:#B88E3E;--c-gold-300:#E3C27E;--c-gold-50:#FBF6EA;
+ --c-ink:#2A1A12;--c-muted:#7A6656;--c-line:#EADFCB;--c-bg:#FBF7F0;--c-ok:#1F7A3A;--c-err:#B3261E;--c-focus:#C9A24B;
+ --r-md:12px;--r-lg:16px;--sh-1:0 1px 2px rgba(42,26,18,.06),0 2px 8px rgba(42,26,18,.05);--tap:44px}
+body{background:var(--c-bg);color:var(--c-ink)}
+:where(button,a,input,select,textarea,[role=button]):focus-visible{outline:3px solid var(--c-focus);outline-offset:2px}
+.card{border-radius:var(--r-lg)!important;border:1px solid var(--c-line)!important;box-shadow:var(--sh-1);padding:16px!important;margin-bottom:16px!important;background:#fff}
+.card h2{font-size:18px!important;color:var(--c-ink)!important;margin:0 0 12px!important;line-height:1.35}
+.card .mut,.mut{color:var(--c-muted)}
+#adm input:not([type=checkbox]):not([type=file]),#adm select,#adm textarea,#lg input{min-height:48px;border-radius:var(--r-md)!important;border:1.5px solid var(--c-line)!important;background:#fff!important;font-size:16px!important;margin:6px 0 10px!important}
+#adm textarea{min-height:96px}
+#adm input:focus,#adm select:focus,#adm textarea:focus{border-color:var(--c-gold)!important;box-shadow:0 0 0 3px rgba(201,162,75,.2);outline:none}
+#adm input[type=file]{font-size:14px;padding:10px;border:1.5px dashed var(--c-line);border-radius:var(--r-md);width:100%;box-sizing:border-box;background:var(--c-gold-50);margin:6px 0 10px}
+.btn{min-height:48px;border-radius:var(--r-md)!important;background:var(--c-maroon)!important;font-weight:700!important;box-shadow:0 2px 6px rgba(120,29,42,.18);transition:transform .12s,filter .15s}
+.btn:active{transform:scale(.98)}.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.55}
+.btn.alt,a.btn[style*="1f7a4d"]{background:var(--c-ok)!important}
+.row{min-height:var(--tap)}
+.row a{min-height:var(--tap);display:inline-flex;align-items:center}
+/* மேல் tab bar */
+label.flab{display:block;font-size:13px;font-weight:600;color:var(--c-muted);margin:6px 0 -2px}
+#stabs{position:sticky;top:0;z-index:30;display:flex;gap:6px;align-items:center;padding:10px 0;margin:0 0 12px;background:linear-gradient(var(--c-bg) 80%,rgba(251,247,240,0));overflow-x:auto;scrollbar-width:none}
+#stabs::-webkit-scrollbar{display:none}
+#stabs button{flex:none;min-height:var(--tap);padding:0 16px;border-radius:999px;border:1.5px solid var(--c-line);background:#fff;color:var(--c-ink);font:700 14px inherit;font-family:inherit;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+#stabs button.on{background:var(--c-maroon);border-color:var(--c-maroon);color:#fff}
+#stabs .sp{flex:1}
+#stabs #slo{border-color:transparent;background:transparent;color:var(--c-muted);font-weight:600}
+.sgrp{display:none}.sgrp.on{display:block}
+@media (min-width:1024px){
+ body{max-width:1160px!important}
+ .sgrp.on{columns:2;column-gap:16px}
+ .sgrp.on>.card{break-inside:avoid;display:inline-block;width:100%}
+}
 </style></head><body>
 <div id="app">
 <header class="hd"><div class="hl"><span id="shop"></span></div>
@@ -345,7 +378,7 @@ nav button svg{width:22px;height:22px}
 
  <div id="adm" class="hide">
   <div class="card"><h2>இன்றைய 22K விலை</h2>
-  <input id="gp" type="number" inputmode="numeric" placeholder="₹ / கிராம்">
+  <input id="gp" type="number" inputmode="numeric" placeholder="22K தங்கம் ₹ / கிராம்">
   <input id="sv" type="number" inputmode="decimal" placeholder="வெள்ளி ₹ / கிராம்">
   <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-size:15px"><input type="checkbox" id="gpn" style="width:auto;margin:0"> 🔔 விலையை customer-களுக்கு notification-ஆ அனுப்பு</label>
   <button class="btn" onclick="saveRate()">விலை அப்டேட்</button></div>
@@ -773,6 +806,34 @@ $("pnsend").onclick=async()=>{const title=$("pnt").value.trim();if(!title)return
 async function rateNotify(v,sv){const d=await pushFn({action:"send",title:"இன்றைய தங்க விலை",body:`22K தங்கம்: ₹${fmt(v)} / கிராம்`+(sv?`\nவெள்ளி: ₹${Number(sv).toFixed(2)} / கிராம்`:"")+`\nசுப்புலட்சுமி தங்க மாளிகை, புளியங்குடி`,url:"/",target:"all"});
  alert(d.ok?`விலை notification ✅ ${d.sent} phone-க்கு போச்சு`:"விலை notification போகல: "+(d.err||""));loadPushLog()}
 pnPrev();
+
+
+// ===== Staff: placeholder மட்டும் இருக்கற input-களுக்கு மேல label (மதிப்பு போட்ட பிறகும் தெரியும்) =====
+(function(){const adm=document.getElementById("adm");if(!adm)return;
+ adm.querySelectorAll("input[placeholder],textarea[placeholder]").forEach((el,i)=>{if(el.type=="checkbox"||el.type=="file")return;
+  const prev=el.previousElementSibling;if(prev&&(prev.tagName=="LABEL"||prev.classList.contains("mut")||prev.classList.contains("flab")))return;
+  if(!el.id)el.id="fld"+i;const l=document.createElement("label");l.className="flab";l.htmlFor=el.id;l.textContent=el.placeholder.replace(/\s*\(.*?\)\s*$/,"")||el.placeholder;el.before(l)})})();
+// ===== Staff: பகுதிகளை tab-ஆ பிரிக்க =====
+(function(){const adm=document.getElementById("adm");if(!adm||document.getElementById("stabs"))return;
+ const G=[["today","📋 இன்று",["இன்றைய 22K விலை","தவணை பதிவு","வசூல் விவரம்","புதிய கோரிக்கைகள்","இந்த மாத நினைவூட்டல்"]],
+  ["cust","👥 Customers",["புதிய Customer","Customers","Refer & Earn அமைப்பு","Refer பரிசுகள்"]],
+  ["notify","🔔 அறிவிப்பு",["Notification அனுப்பு","App திறக்கும்போது Poster","புதிய அறிவிப்பு"]],
+  ["set","⚙️ App அமைப்பு",[]]];
+ const cards=[...adm.children].filter(e=>e.classList&&e.classList.contains("card"));
+ const bar=document.createElement("div");bar.id="stabs";bar.setAttribute("role","tablist");
+ const box={};G.forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.dataset.g=k;b.setAttribute("role","tab");b.textContent=l;bar.appendChild(b);
+  const d=document.createElement("div");d.className="sgrp";d.id="g_"+k;d.setAttribute("role","tabpanel");box[k]=d});
+ const sp=document.createElement("span");sp.className="sp";bar.appendChild(sp);
+ const lo=document.createElement("button");lo.type="button";lo.id="slo";lo.textContent="வெளியேறு";lo.onclick=()=>out();bar.appendChild(lo);
+ const old=[...adm.querySelectorAll('button.btn')].find(b=>/out\(\)/.test(b.getAttribute("onclick")||""));if(old)old.remove();
+ const norm=t=>t.replace(/[^஀-௿A-Za-z0-9& ]/g,"").trim();
+ G.forEach(([k,,names])=>names.forEach(n=>{const c=cards.find(c=>{const h=c.querySelector("h2");return h&&norm(h.textContent)===norm(n)});if(c)box[k].appendChild(c)}));
+ cards.forEach(c=>{if(!c.parentNode||c.parentNode===adm)box.set.appendChild(c)});
+ adm.prepend(bar);G.forEach(([k])=>adm.appendChild(box[k]));
+ function pick(k){bar.querySelectorAll("[data-g]").forEach(b=>{b.classList.toggle("on",b.dataset.g===k);b.setAttribute("aria-selected",b.dataset.g===k)});Object.entries(box).forEach(([g,d])=>d.classList.toggle("on",g===k));LS.set("stab",k);scrollTo({top:0})}
+ bar.addEventListener("click",e=>{const b=e.target.closest("[data-g]");if(b)pick(b.dataset.g)});
+ pick(LS.get("stab")||"today");
+ window.staffTab=pick;})();
 
 // ===== பணம் வந்த முறை + வசூல் விவரம் =====
 let PMODE=null;const MDN={cash:"பணம்",upi:"UPI",card:"Card",bank:"Bank",online:"Online (app)",null:"பதியல"};
