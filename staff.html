@@ -440,7 +440,8 @@ const calc=()=>{};
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
 const RATE22=7000, RATE_DATE="15-10-2026"; // ← தினமும் இந்த 2 மதிப்பை மாத்துங்க
 $("gr").textContent="₹"+fmt(RATE22);$("gd").textContent="விலை புதுப்பிக்கப்பட்டது: "+RATE_DATE;$("rate").value=RATE22;
-const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
+const waT=t=>String(t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,"").replace(/[ \t]+\n/g,"\n").replace(/\n[ \t]+/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+const wa=t=>"https://api.whatsapp.com/send?phone="+WA+"&text="+encodeURIComponent(waT(t));
 $("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
 
 const f=fmt;
@@ -466,7 +467,7 @@ function remind(data){
  $("rm").innerHTML=p.length?`<div class="mut">இந்த மாதம் தவணை பாக்கி: ${p.length}</div>`+p.map(c=>{
   const n=c.gold_payments.length+1;
   const m=`வணக்கம் ${c.name},\nசுப்புலட்சுமி தங்க மாளிகை 🙏\nஉங்கள் ${SN[c.scheme]} தங்கநகை சேமிப்புத் திட்டத்தின் ${n} ஆவது தவணையை இந்த மாதம் 1 முதல் 7 ஆம் தேதிக்குள் செலுத்தவும்.`+(FX(c.scheme)&&c.monthly_amount?`\nதவணைத் தொகை: ₹${f(c.monthly_amount)}`:"")+"\nநன்றி ✨";
-  return `<div class="row"><span>${c.name}<br><span class="mut">${n}/${MON(c.scheme)} · ${SN[c.scheme]}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://wa.me/91${c.mobile.slice(-10)}?text=${encodeURIComponent(m)}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
+  return `<div class="row"><span>${c.name}<br><span class="mut">${n}/${MON(c.scheme)} · ${SN[c.scheme]}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://api.whatsapp.com/send?phone=91${c.mobile.slice(-10)}&text=${encodeURIComponent(waT(m))}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
 async function addCust(){
  const code=gen6();const r={name:$("nn").value.trim(),mobile:$("nm").value.trim(),pin:genPin(),act_code:null,pin_set:false,scheme:$("ns").value,monthly_amount:+$("na").value||null,email:$("ne").value.trim().toLowerCase()||null};
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("Email சரியா இல்ல");
@@ -491,7 +492,7 @@ async function addPay(){
  const tot=ps.reduce((x,y)=>x+y.amount,0),g=ps.reduce((x,y)=>x+(+y.grams||0),0),k=GR(cu.scheme);
  let act="";if(cu.pin_set===false){const ac=gen6();const u=await sb.from("gold_customers").update({act_code:ac}).eq("id",c);if(!u.error)act=`\n\n🔑 உங்க Passbook Activation code: ${ac}\nApp: ${APPURL}\nApp-ல Passbook → "முதல் தடவையா?" அழுத்தி, மொபைல் எண் + இந்த code போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க.\nஇந்த code-ஐ யாருக்கும் சொல்லாதீங்க.`}
  const msg=`வணக்கம் ${cu.name},\nசுப்புலட்சுமி தங்க மாளிகை\nதவணை ரசீது ✅\nதொகை: ₹${f(a)} (${MDN[PMODE]})`+(k?`\nவிலை: ₹${f(r)}/கிராம்\nதங்கம்: ${(a/r).toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(cu.scheme)}\nமொத்த சேமிப்பு: ₹${f(tot)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+act+"\nநன்றி 🙏";
- $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://wa.me/91${cu.mobile.slice(-10)}?text=${encodeURIComponent(msg)}">💬 ${cu.name}-க்கு WhatsApp ரசீது</a>${act?`<div class="mut" style="margin-top:6px">🔑 Activation code இந்த ரசீதுல சேர்ந்திருக்கு. கட்டாயம் அனுப்புங்க.</div>`:""}`;
+ $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://api.whatsapp.com/send?phone=91${cu.mobile.slice(-10)}&text=${encodeURIComponent(waT(msg))}">💬 ${cu.name}-க்கு WhatsApp ரசீது</a>${act?`<div class="mut" style="margin-top:6px">🔑 Activation code இந்த ரசீதுல சேர்ந்திருக்கு. கட்டாயம் அனுப்புங்க.</div>`:""}`;
  $("pa").value="";$("pref").value="";setMode(null);load();loadCol()}
 sb.auth.getSession().then(({data})=>{if(data.session)show()});
 
@@ -636,7 +637,7 @@ $("rq").addEventListener("click",async e=>{const ap=e.target.dataset.ap,rj=e.tar
 const gen6=()=>String(crypto.getRandomValues(new Uint32Array(1))[0]%900000+100000);
 const genPin=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>"abcdefghjkmnpqrstuvwxyz23456789"[b%31]).join("");
 function showCode(n,m,c){const msg=`வணக்கம் ${n}, ${SHOP} Passbook ஆப்-ல உள்நுழைய: "முதல் தடவையா? Activation code" பகுதியில உங்க மொபைல் எண் + இந்த code ${c} போட்டு, உங்க சொந்த 6 இலக்க PIN வைங்க.`;
- $("acb").innerHTML=`<div class="card" style="border:2px solid #1f7a4d"><h2>🔑 Activation code</h2><div>${esc(n)} · ${esc(m)}</div><div style="font-size:36px;font-weight:800;letter-spacing:8px;text-align:center;margin:10px 0">${c}</div><div class="mut">இந்த code இப்போ மட்டும் தான் தெரியும். Customer ஆப்-ல "முதல் தடவையா?" பகுதியில மொபைல் + இந்த code போட்டு தன் PIN வைப்பார்.</div><a class="btn alt" target="_blank" href="https://wa.me/91${m}?text=${encodeURIComponent(msg)}">💬 WhatsApp-ல் அனுப்பு</a><button class="btn" style="background:#777" onclick="document.getElementById('acb').innerHTML=''">மூடு</button></div>`;
+ $("acb").innerHTML=`<div class="card" style="border:2px solid #1f7a4d"><h2>🔑 Activation code</h2><div>${esc(n)} · ${esc(m)}</div><div style="font-size:36px;font-weight:800;letter-spacing:8px;text-align:center;margin:10px 0">${c}</div><div class="mut">இந்த code இப்போ மட்டும் தான் தெரியும். Customer ஆப்-ல "முதல் தடவையா?" பகுதியில மொபைல் + இந்த code போட்டு தன் PIN வைப்பார்.</div><a class="btn alt" target="_blank" href="https://api.whatsapp.com/send?phone=91${m}&text=${encodeURIComponent(waT(msg))}">💬 WhatsApp-ல் அனுப்பு</a><button class="btn" style="background:#777" onclick="document.getElementById('acb').innerHTML=''">மூடு</button></div>`;
  $("acb").scrollIntoView({block:"center"})}
 $("cl").addEventListener("click",async e=>{const id=e.target.dataset.ac;if(!id)return;const c=(window.CU||[]).find(x=>x.id==id);if(!c||!confirm(c.name+"-க்கு புது Activation code உருவாக்கவா? பழைய PIN வேலை செய்யாது."))return;
  const code=gen6(),{error}=await sb.from("gold_customers").update({act_code:code,pin_set:false,pin:genPin()}).eq("id",id);
@@ -649,7 +650,7 @@ $("cl").addEventListener("click",async e=>{const id=e.target.dataset.em;if(!id)r
  const {error}=await sb.from("gold_customers").update({email:em}).eq("id",id);
  if(error)return alert(error.code=="23505"?"இந்த Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);load()});
 
-const APPURL=location.href.split("#")[0].split("?")[0].replace(/staff\.html$/,"");
+const APPURL=location.origin+location.pathname.replace(/staff(\.html)?\/?$/,"");   // customer app முகவரி (staff இல்ல)
 // Rate history (for customer price chart)
 async function loadHist(){const {data}=await sb.from("gold_rate_history").select("*").order("day",{ascending:false}).limit(10);
  $("hl").innerHTML=(data||[]).map(r=>`<div class="row"><span>${String(r.day).split("-").reverse().join("-")}</span><span>₹${fmt(r.rate22)}${r.silver?" · வெ ₹"+(+r.silver).toFixed(2):""} &nbsp;<a data-hx="${r.day}" style="color:#b00020;text-decoration:underline">நீக்கு</a></span></div>`).join("")||'<div class="mut">இன்னும் இல்ல</div>'}

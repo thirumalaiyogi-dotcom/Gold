@@ -932,6 +932,14 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 #popx{position:absolute;top:-14px;right:-10px;width:40px;height:40px;border-radius:50%;border:2px solid #fff;background:#781D2A;color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:1}
 @keyframes popin{from{transform:scale(.92);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.popc{animation:none}}
+
+#pask{background:rgba(20,8,10,.6);display:flex;align-items:center;justify-content:center;padding:24px 16px;z-index:61}#pask.hide{display:none}
+.paskc{max-width:380px;width:100%;text-align:center;padding:22px 20px 18px;border-radius:20px;animation:popin .28s ease-out}
+.paskc b{font-size:19px;margin-top:6px}.paskc p{font-size:14.5px}
+.paskbell{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF4D6,#E3C27E 60%,#B88E3E);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(184,142,62,.35)}
+.paskbell svg{width:32px;height:32px;fill:none;stroke:#781D2A;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:ring 1.6s ease-in-out .4s 2}
+@keyframes ring{0%,100%{transform:rotate(0)}15%{transform:rotate(14deg)}30%{transform:rotate(-12deg)}45%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}}
+@media (prefers-reduced-motion:reduce){.paskbell svg,.paskc{animation:none}}
 /* active tab: raised maroon pill */
 body nav button[data-t].on{color:#fff}
 body nav button[data-t].on svg{background:none}
@@ -1103,6 +1111,7 @@ body nav button{z-index:0}
  <li>மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</li></ul>
  <button class="yb" id="tmx" style="width:100%;margin:10px 0 0">சரி</button>
 </div></div>
+<div id="pask" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="paskh"><div class="paskc pushc"><div class="paskbell" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div><b id="paskh">அறிவிப்புகளை ON பண்ணுங்க</b><p>இன்றைய தங்க விலை, தவணை நினைவூட்டல், பண்டிகை சலுகைகள் எல்லாம் உங்க phone-க்கு உடனே வரும்.</p><div class="pushb"><button type="button" class="pushy" data-push="on">ON பண்ணு</button><button type="button" class="pushx" id="paskl">பிறகு</button></div><small class="pushm" role="status"></small></div></div>
 <div id="pop" class="ov hide" role="dialog" aria-modal="true" aria-label="அறிவிப்பு"><div class="popc"><button type="button" id="popx" aria-label="மூடு">✕</button><img id="popi" alt="அறிவிப்பு படம்"></div></div>
 <div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><button type="button" id="sdjoin" class="sdcta">இப்போதே சேரவும்</button></div></div>
 <div id="app" class="hide">
@@ -1172,7 +1181,8 @@ const LOGO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAggAAAEGCAYAAAAAHm2OAA
 const SHOP="சுப்புலட்சுமி தங்க மாளிகை", WA="919791918344";
 const NOEL=document.createElement("div"),$=id=>document.getElementById(id)||NOEL, fmt=n=>Math.round(n).toLocaleString("en-IN");
 $("shop").innerHTML=`<img class="logo" src="${LOGO}" alt="${SHOP}">`;
-const wa=t=>"https://wa.me/"+WA+"?text="+encodeURIComponent(t);
+const waT=t=>String(t).replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu,"").replace(/[ \t]+\n/g,"\n").replace(/\n[ \t]+/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+const wa=t=>"https://api.whatsapp.com/send?phone="+WA+"&text="+encodeURIComponent(waT(t));
 $("waf").href=$("wa1").href=$("wa2").href=wa("வணக்கம், தங்கநகை சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்.");
 function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0;if($("lm").value.length==10)setTimeout(()=>{try{$("lp").focus()}catch(e){}},250)}
 // பழைய கைரேகை பதிவு இருந்தா phone-ல இருந்து அழி
@@ -1276,13 +1286,22 @@ document.addEventListener("click",async e=>{const b=e.target.closest("[data-push
  if(b.dataset.push=="no"){LS.set("pushno","1");pushUI();return}
  const m=b.closest(".pushc").querySelector(".pushm");b.disabled=true;m.textContent="அனுமதி கேட்கிறோம்…";
  let r="err";try{r=await pushSync(true)}catch(x){r="err"}
- if(r==="granted"){note("Notification ON ஆச்சு 🔔",1);pushUI()}else if(r==="denied"){pushUI()}else{b.disabled=false;m.textContent=r==="default"?"அனுமதி கொடுக்கல. மறுபடி முயற்சிக்கலாம்.":"ON பண்ண முடியல. மீண்டும் முயற்சிக்கவும்."}});
+ if(r==="granted"){vis("pask",false);note("Notification ON ஆச்சு 🔔",1);pushUI()}else if(r==="denied"){vis("pask",false);pushUI()}else{b.disabled=false;m.textContent=r==="default"?"அனுமதி கொடுக்கல. மறுபடி முயற்சிக்கலாம்.":"ON பண்ண முடியல. மீண்டும் முயற்சிக்கவும்."}});
 // Notification click → சரியான tab
 function openHash(h){const t=String(h||"").replace("#","");if(!["p","scx","e","n"].includes(t))return;const b=document.querySelector(`nav button[data-t="${t}"]`);if(b)b.click()}
 if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type=="open")openHash(e.data.hash)});
 (function(){const h=location.hash;if(!/^#(p|scx|e|n)$/.test(h))return;try{history.replaceState(history.state,"",location.pathname+location.search)}catch(e){}
  let n=0;const t=setInterval(()=>{n++;const lk=$("lock");if(lk&&!lk.classList.contains("hide")&&n<200)return;clearInterval(t);if(n<200)setTimeout(()=>openHash(h),400)},700)})();
 
+
+// ===== App திறந்ததும் Notification அனுமதி popup =====
+function closeAsk(later){vis("pask",false);if(later)LS.set("pushlater",String(Date.now()))}
+$("paskl").onclick=()=>closeAsk(true);$("pask").addEventListener("click",e=>{if(e.target.id=="pask")closeAsk(true)});
+setTimeout(function(){if(!PUSH_OK()||Notification.permission!=="default")return;
+ const l=+(LS.get("pushlater")||0);if(l&&Date.now()-l<3*864e5)return;      // "பிறகு" சொன்னா 3 நாள் கழிச்சு தான் மறுபடி
+ let n=0,ok=0;const t=setInterval(()=>{n++;if(n>500){clearInterval(t);return}
+  const busy=document.querySelector(".ov:not(.hide)");if(busy){ok=0;return}
+  if(++ok<4)return;clearInterval(t);if(Notification.permission==="default")vis("pask",true)},700)},0);
 // ===== App திறக்கும்போது Poster =====
 const istToday=()=>new Date(Date.now()+330*60000).toISOString().slice(0,10);
 function closePop(){vis("pop",false);const p=window.POPR;if(p)LS.set("pop_"+p.id,istToday())}
@@ -1341,7 +1360,7 @@ async function viewPB(){
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
  const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
- if(navigator.share)navigator.share({title:"தவணை ரசீது",text:t}).catch(()=>{});else open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}
+ if(navigator.share)navigator.share({title:"தவணை ரசீது",text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-rc]");if(b)pbReceipt(+b.dataset.rc);const c=e.target.closest("[data-copy]");if(c){const v=c.dataset.copy,ok=()=>{c.classList.add("done");c.lastChild.textContent="Copied";setTimeout(()=>{c.classList.remove("done");c.lastChild.textContent="Copy"},1600)};
  if(navigator.clipboard)navigator.clipboard.writeText(v).then(ok,()=>prompt("Code:",v));else prompt("Code:",v)}});
 
@@ -1509,7 +1528,7 @@ renderPS();
 // Passbook share / PDF
 function pbText(d){const ps=d.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),k=GR(d.scheme);
  return `${SHOP}\nPassbook\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதொடக்கம்: ${d.start}\n\n`+ps.map((x,i)=>`${i+1}. ${x.on} – ₹${f(x.amount)}${x.grams?` (${(+x.grams).toFixed(3)} கிராம்)`:""}`).join("\n")+`\n\nமொத்த சேமிப்பு: ₹${f(t)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(d.scheme)}`}
-function sharePB(){const t=pbText(window.PBD);if(navigator.share)navigator.share({text:t}).catch(()=>{});else open("https://wa.me/?text="+encodeURIComponent(t),"_blank")}
+function sharePB(){const t=pbText(window.PBD);if(navigator.share)navigator.share({text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")}
 function printPB(){document.body.classList.add("printpb");setTimeout(()=>window.print(),80)}
 window.addEventListener("afterprint",()=>document.body.classList.remove("printpb"));
 
@@ -1522,7 +1541,7 @@ function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count,earn=n*r.per
  <p class="pbnote">நண்பர் சேர்ந்து முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி (13 ஆவது மாத நகை கொள்முதலில்).</p>
  <div class="pbst two"><span><b>${n}</b><small>சேர்த்தவங்க</small></span><span><b>₹${f(earn)}</b><small>மொத்த பரிசு</small></span></div>${r.bonus?'<p class="pbnote ok">நண்பர் மூலம் வந்த பரிசு ✔</p>':""}
  ${ms("5 பேர்",r.ms5,5)}${ms("10 பேர்",r.ms10,10)}
- <a class="pbbtn pbwa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">${PBI.wa}நண்பருக்கு WhatsApp-ல் அனுப்பு</a></div>`}
+ <a class="pbbtn pbwa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=${encodeURIComponent(waT(msg))}">${PBI.wa}நண்பருக்கு WhatsApp-ல் அனுப்பு</a></div>`}
 
 // Scheme detail pages
 const J=["சேர்ந்து Passbook பெறுங்க"];
@@ -1854,7 +1873,7 @@ function renderSHA(){const r=SIM.shop;$("sha").innerHTML=(r?`<img src="${r.image
 
 // Share shop
 $("shr").onclick=()=>{const t=`${SHOP}\n📍 51b, கங்கை அம்மன் கோவில் தெரு, காந்தி பஜார், புளியங்குடி\n📞 97919 18344\n\nதங்கநகை சேமிப்புத் திட்டம் பாருங்க: ${location.href.split("#")[0]}`;
- if(navigator.share)navigator.share({title:SHOP,text:t}).catch(()=>{});else open("https://wa.me/?text="+encodeURIComponent(t),"_blank")};
+ if(navigator.share)navigator.share({title:SHOP,text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")};
 // PWA
 (function(){const ic=ICON;
 const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#fffaf0",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
@@ -1888,6 +1907,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
   var n=document.getElementById("note");if(n&&n.style.display=="block"){n.style.display="none"}
   if(on("lkok"))return true;
   if(on("pop")){closePop();return true}
+  if(on("pask")){closeAsk(true);return true}
   if(on("sd")){clk("sdback");return true}
   if(on("tm")){clk("tmx");return true}
   if(on("pblk")){clk("pblkx");return true}
