@@ -1229,6 +1229,22 @@ body .sct>div{padding-right:78px}
 /* ===== STYLE 2 tokens (maroon · gold · ivory) ===== */
 html:root[data-style="2"]{--b2161D1:#781D2A;--b174A9C:#5B1420;--b163E9A:#5B1420;--b0F2F73:#3F0D16;--b2F6FE4:#8E2A38;--b3D7BEA:#8E2A38;--b2F6FD6:#8E2A38;--b4A86E0:#9A3A47;--b6FA0F2:#C9A34E;--b7FA8F5:#C9A34E;--b9CC0FF:#E7D3A0;--b172033:#33251F;--b3B4A66:#5A4638;--b687386:#756A60;--b5F6B7A:#6A5D52;--b9AA6BA:#A89A8A;--bB7C3D6:#CDBFA8;--bCBD5E3:#DCCFB8;--bE1E8F3:#E9DFCF;--bD5E0F0:#E2D5BF;--bD5E2F7:#E7D3A0;--bD9E4F7:#E7D3A0;--bD6E4FB:#E7D3A0;--bC9DCFB:#E7D3A0;--bC3D6F8:#E7D3A0;--bE3ECFF:#F6EDDA;--bE8F1FF:#F6EDDA;--bE4EEFF:#F6EDDA;--bCFE0FF:#F1E3C4;--bE8EEF7:#F3ECDF;--bEEF4FE:#F8F1E4;--bEDF2F9:#F5EEE2;--bF1F6FE:#F9F3E8;--bEAF1FE:#F8F1E4;--bEEF3FB:#F7F0E3;--bEEF2F8:#F5EEE2;--bF2F6FD:#F9F4EA;--bF2F5FA:#F8F3EA;--bF5F7FC:#FBF8F1;--r31_95_209:120,29,42;--r33_97_209:120,29,42;--r20_33_61:51,37,31;--r22_62_154:91,20,32;}
 
+
+/* ===== Passbook tabs ===== */
+.pbtabs{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:0;padding:4px;background:var(--card,#fff);border:1px solid var(--c-line,var(--ln));border-radius:16px;box-shadow:0 4px 14px rgba(var(--r20_33_61),.08)}
+.pbtabs button{min-height:48px;display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 4px;border:0;border-radius:12px;background:transparent;color:var(--c-muted,var(--mut));font:inherit;font-size:14px;font-weight:700;line-height:1.2;cursor:pointer;transition:background .15s,color .15s;-webkit-tap-highlight-color:transparent}
+.pbtabs button i{display:inline-flex;width:20px;height:20px;flex:none}
+.pbtabs button i svg{width:20px;height:20px}
+.pbtabs button span{overflow-wrap:anywhere;text-align:center}
+.pbtabs button.on{background:var(--pm);color:#fff;box-shadow:0 3px 10px rgba(var(--r31_95_209),.25)}
+.pbtabs button:focus-visible{outline:2px solid var(--c-focus);outline-offset:2px}
+.pbpan{display:none}
+.pbpan.on{display:flex;flex-direction:column;gap:14px;animation:pbIn .18s ease}
+@keyframes pbIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+#p.pbt-sv #lo,#p.pbt-rf #lo{display:none!important}
+html[data-style="2"] .pbtabs button.on{background:#781D2A;box-shadow:0 3px 10px rgba(120,29,42,.25),inset 0 -2px 0 #C9A34E}
+@media (max-width:359px){.pbtabs button{flex-direction:column;gap:2px;font-size:12.5px;min-height:54px}}
+@media print{.pbx{display:flex;flex-direction:column}.pbx>.onlyprint{order:-2}.pbpan{display:flex!important;flex-direction:column;gap:14px;animation:none}.pbpan[data-pp="me"]{order:-1}.pbtabs{display:none!important}}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
@@ -1693,10 +1709,10 @@ setTimeout(function(){if(!PUSH_OK()||Notification.permission!=="default")return;
  const sync=()=>{if(w&&w.href)document.getElementById("qwa").href=w.href;if(m)document.getElementById("qmap").href=m.href};sync();setTimeout(sync,1500);
  main.addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;const q=b.dataset.q;
   if(q=="pb")nav("p");
-  else if(q=="pay"){if(!window.PBOK){nav("p");return}nav("p");setTimeout(()=>{const t=document.getElementById("paygo")||document.querySelector(".pbnx");if(t){t.scrollIntoView({behavior:"smooth",block:"center"})}else note("இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு ✅",1)},900)}
+  else if(q=="pay"){if(!window.PBOK){nav("p");return}nav("p");window.PBTAB="sv";pbTab("sv");setTimeout(()=>{const t=document.getElementById("paygo")||document.querySelector(".pbnx");if(t){t.scrollIntoView({behavior:"smooth",block:"center"})}else note("இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு ✅",1)},900)}
   else if(q=="sch")nav("scx");
   else if(q=="rate"){const p=document.getElementById("ptopen");if(p)p.click()}
-  else if(q=="ref"){if(!window.PBOK){nav("p");return}nav("p");setTimeout(()=>{const r=document.querySelector(".pbref,.refcard,[data-copy]");if(r)r.scrollIntoView({behavior:"smooth",block:"center"})},900)}});
+  else if(q=="ref"){if(!window.PBOK){nav("p");return}nav("p");window.PBTAB="rf";pbTab("rf");setTimeout(()=>{pbTab("rf");scrollTo(0,0)},900)}});
 })();
 // ===== App திறக்கும்போது Poster =====
 const istToday=()=>new Date(Date.now()+330*60000).toISOString().slice(0,10);
@@ -1754,7 +1770,34 @@ async function viewPB(){
  ${refCard(data)}
  <div id="pbme" class="noprint" aria-live="polite"></div>
  <div id="pushpb" class="noprint"></div></div>`;
- window.PBD=data;renderPS();payWire();pushUI();loadMe()}
+ window.PBD=data;pbTabs();renderPS();payWire();pushUI();loadMe()}
+
+// ===== Passbook: 3 tab (சேமிப்பு / என் விவரம் / Referral) =====
+window.PBTAB=window.PBTAB||"sv";
+function pbTab(k,focus){const x=document.querySelector("#pb .pbx");if(!x||!x.querySelector(".pbtabs"))return;if(!["sv","me","rf"].includes(k))k="sv";window.PBTAB=k;
+ x.querySelectorAll(".pbtabs [data-pt]").forEach(b=>{const on=b.dataset.pt==k;b.classList.toggle("on",on);b.setAttribute("aria-selected",on);b.tabIndex=on?0:-1;if(on&&focus)b.focus()});
+ x.querySelectorAll(".pbpan").forEach(p=>p.classList.toggle("on",p.dataset.pp==k));
+ const sec=document.getElementById("p");if(sec){sec.classList.remove("pbt-sv","pbt-me","pbt-rf");sec.classList.add("pbt-"+k)}}
+function pbTabs(){const x=document.querySelector("#pb .pbx");if(!x||x.querySelector(".pbtabs"))return;
+ const top=x.querySelector(":scope>.pbtop");if(!top)return;
+ const mk=k=>{const d=document.createElement("div");d.className="pbpan";d.dataset.pp=k;d.id="pbp-"+k;d.setAttribute("role","tabpanel");d.setAttribute("aria-labelledby","pbt-"+k);return d};
+ const P={sv:mk("sv"),me:mk("me"),rf:mk("rf")};
+ const put=(k,sels)=>sels.forEach(sl=>{const e=x.querySelector(":scope>"+sl);if(e)P[k].appendChild(e)});
+ put("me",[".pbcust"]);put("sv",[".pbsum",".pbnx",".pbacts4",".pbtx"]);put("rf",[".pbref"]);put("me",["#pbme","#pushpb"]);
+ if(!P.rf.children.length)P.rf.innerHTML='<div class="pbcard pbstate"><b>Referral விவரம் இன்னும் இல்ல</b><p>உங்க referral code பற்றி கடையில் கேளுங்க.</p></div>';
+ const bar=document.createElement("div");bar.className="pbtabs noprint";bar.setAttribute("role","tablist");bar.setAttribute("aria-label","Passbook பகுதிகள்");
+ bar.innerHTML=[["sv",PBI.coins,"சேமிப்பு"],["me",PBI.u,"என் விவரம்"],["rf",PBI.gift,"Referral"]].map(([k,i,t])=>`<button type="button" role="tab" id="pbt-${k}" data-pt="${k}" aria-controls="pbp-${k}"><i>${i}</i><span>${t}</span></button>`).join("");
+ top.after(bar);bar.after(P.sv,P.me,P.rf);
+ bar.addEventListener("click",e=>{const b=e.target.closest("[data-pt]");if(!b)return;pbTab(b.dataset.pt);const r=bar.getBoundingClientRect();if(r.top<0)bar.scrollIntoView({block:"start"})});
+ bar.addEventListener("keydown",e=>{const o=["sv","me","rf"],i=o.indexOf(window.PBTAB);if(e.key=="ArrowRight"){pbTab(o[(i+1)%3],1);e.preventDefault()}if(e.key=="ArrowLeft"){pbTab(o[(i+2)%3],1);e.preventDefault()}});
+ // இடது / வலது swipe
+ let sx=0,sy=0,tr=false;
+ x.addEventListener("touchstart",e=>{const t=e.touches[0];sx=t.clientX;sy=t.clientY;tr=!e.target.closest("input,textarea,.pbpq,.pbtabs")},{passive:true});
+ x.addEventListener("touchend",e=>{if(!tr)return;const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.6)return;
+  const o=["sv","me","rf"],i=o.indexOf(window.PBTAB),j=dx<0?i+1:i-1;if(j<0||j>2)return;pbTab(o[j]);const r=bar.getBoundingClientRect();if(r.top<0)bar.scrollIntoView({block:"start"})},{passive:true});
+ pbTab(window.PBTAB||"sv")}
+// வேற tab-க்கு போனா அடுத்த தடவை Passbook "சேமிப்பு"லயே திறக்கும்
+document.addEventListener("click",e=>{const b=e.target.closest("nav button[data-t]");if(b&&b.dataset.t!="p"){window.PBTAB="sv";pbTab("sv")}},true);
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
  const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
@@ -2326,6 +2369,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
    if(on("lkB")){if(window.GUEST){vis("lock",false);return true}lkStage("A");return true}
    return false}                                                    // பூட்டுத் திரை முதல் பக்கம் → வெளியேறு
   if(on("ob"))return false;
+  if(tab()=="p"&&window.PBTAB&&window.PBTAB!="sv"&&document.querySelector("#pb .pbtabs")){pbTab("sv");scrollTo(0,0);return true}  // Passbook உள் tab → முதல்ல "சேமிப்பு"
   if(tab()!="s"){var h=document.querySelector('nav button[data-t="s"]');if(h)h.click();scrollTo(0,0);return true}
   if(scrollY>200){scrollTo({top:0,behavior:"smooth"});return true}
   return false}
