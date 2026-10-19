@@ -778,7 +778,7 @@ body header.hd .ptl{min-height:32px;margin-top:10px;padding:0 12px;font-size:12p
 #lock{background:#fff;display:flex;flex-direction:column;overflow:auto}
 .lkhero{position:relative;flex:none;height:min(38vh,300px);display:flex;align-items:center;justify-content:center;padding-top:env(safe-area-inset-top,0px);
  background:radial-gradient(120% 90% at 50% 0,var(--b2F6FE4) 0,transparent 60%),linear-gradient(160deg,var(--pm),var(--pm2));background-size:cover;background-position:center}
-#lock.img .lkhero{background-image:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.35)),var(--hdimg)}
+#lock.img .lkhero{background:linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.30)),var(--hdimg) center/cover no-repeat,#5B1420!important}
 .lkhero .logo{height:84px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
 .lksheet{flex:1;position:relative;margin-top:-28px;background:#fff;border-radius:28px 28px 0 0;padding:26px 24px calc(24px + env(safe-area-inset-bottom,0px));max-width:520px;width:100%;align-self:center;box-sizing:border-box}
 .lksheet h2{margin:0;font-size:26px;font-weight:800;color:var(--pt)}
@@ -1116,7 +1116,7 @@ body nav button[data-t].on svg{background:var(--c-blue-100)!important;stroke:var
 :root{--c-maroon:var(--b2161D1);--c-maroon-2:var(--b174A9C);--c-blue-50:var(--bE8F1FF);--c-blue-100:var(--bE8F1FF);--c-blue-200:var(--bC9DCFB);--c-bg:var(--bF5F7FC);--c-ink:var(--b172033);--c-muted:var(--b687386);
  --c-gold:#D4AF37;--c-gold-300:#E6C766;--c-ok:#16834A;--c-err:#DC2626;--pm:var(--b2161D1);--pm2:var(--b174A9C);--pt:var(--b172033);--pmu:var(--b687386);--pmt:var(--bE8F1FF);--bg:var(--bF5F7FC);--tx:var(--b172033);--mut:var(--b687386)}
 /* Login: பாரம்பரிய தங்க பின்னணி (staff header படம் இருந்தா அதுவே) */
-#lock .lkhero:not([style*="url"]){background:
+#lock:not(.img) .lkhero{background:
   radial-gradient(circle at 50% 120%,rgba(255,255,255,.35) 0 18%,transparent 19%),
   repeating-radial-gradient(circle at 50% 120%,transparent 0 22px,rgba(122,79,10,.08) 22px 24px),
   linear-gradient(160deg,#F7E3A1 0%,#E2B957 45%,#C79A2E 100%)!important}
@@ -1248,6 +1248,8 @@ html[data-style="2"] .pbtabs button.on{background:#781D2A;box-shadow:0 3px 10px 
 /* ===== Style 2: staff upload செய்த maroon texture படம் (இல்லைன்னா சாதாரண maroon) ===== */
 html.mbg[data-style="2"] .intro.xcard,html.mbg[data-style="2"] .pbtop,html.mbg[data-style="2"] .pbcard.pbsum,html.mbg[data-style="2"] .sc .sct:not(.img),html.mbg[data-style="2"] #lock .lkt.lkt1{background:linear-gradient(rgba(58,10,18,.30),rgba(58,10,18,.30)),var(--mbg) center/cover no-repeat,#5B1420!important}
 html.mbg[data-style="2"] .pbcard.pbsum{background:linear-gradient(rgba(58,10,18,.42),rgba(58,10,18,.42)),var(--mbg) center/cover no-repeat,#5B1420!important}
+/* Login முதல் பக்கத்துல mPIN மறந்துட்டீங்களா தேவையில்ல — PIN போடும் பக்கத்துல மட்டும் */
+#lock.stA #lkfg{display:none!important}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
@@ -1263,8 +1265,8 @@ html[data-style="2"] .pc>div:first-child{box-shadow:inset 0 3px 0 #C9A34E,0 1px 
 html[data-style="2"] .pc>div+div{box-shadow:inset 0 3px 0 #B9B4AC,0 1px 2px rgba(51,37,31,.05),0 6px 18px rgba(51,37,31,.06)!important}
 html[data-style="2"] .sb2,html[data-style="2"] .xbtn.xo{border-color:#E9DFCF!important;color:#781D2A!important;background:#fff!important}
 </style></head><body>
-<div id="lock" class="ov hide" aria-modal="true" role="dialog" aria-labelledby="lkh">
- <div class="lkhero"><span class="shopn"></span></div>
+<div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
+ <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
  <div class="lksheet">
   <div id="lkA">
    <h2>வணக்கம், வருக!</h2><p class="lksub">உங்க தங்க சேமிப்பை பார்க்கவோ, புது திட்டங்களை தெரிஞ்சுக்கவோ கீழே தேர்ந்தெடுங்க.</p>
@@ -1915,7 +1917,7 @@ var LKV="",LKM="pin"; // LKM: "mob" = நம்பர் போடுதல், 
 function lkDraw(){const d=$("lkdots");
  if(LKM=="mob"){d.className="lkdots num";d.innerHTML=LKV?esc(LKV.replace(/^(\d{5})(\d)/,"$1 $2")):'<span class="ph">10 இலக்க மொபைல் எண்</span>';vis("lknx",LKV.length==10)}
  else{d.className="lkdots";d.innerHTML=[0,1,2,3,4,5].map(i=>`<i class="${i<LKV.length?"f":""}"></i>`).join("");vis("lknx",false)}}
-function lkStage(stage){vis("lkA",stage=="A");vis("lkB",stage!="A");$("lke").textContent="";LKV="";
+function lkStage(stage){vis("lkA",stage=="A");vis("lkB",stage!="A");{const lk=document.getElementById("lock");if(lk)lk.classList.toggle("stA",stage=="A")}$("lke").textContent="";LKV="";
  if(stage=="mob"){LKM="mob";$("lkh").textContent="மொபைல் எண்";$("lksub").textContent="கடையில் பதிவு செய்த எண்ணை போடுங்க";vis("lkwho",false)}
  if(stage=="pin"){LKM="pin";$("lkh").textContent="mPIN";$("lksub").textContent="உங்க 6 இலக்க mPIN போடுங்க";$("lkmob").textContent=maskMob(LS.get("mob"));vis("lkwho",true)}
  lkDraw()}
@@ -2273,7 +2275,7 @@ function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>
 async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA()}
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
- const hd=document.querySelector("header.hd");{const lk=document.getElementById("lock");if(lk){lk.classList.toggle("img",!!SIM.hdr);if(SIM.hdr)lk.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}}
+ const hd=document.querySelector("header.hd");{const lk=document.getElementById("lock");if(lk){lk.classList.toggle("img",!!SIM.hdr);if(SIM.hdr)lk.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}try{SIM.hdr?localStorage.setItem("stm_hdr",SIM.hdr.image_url):localStorage.removeItem("stm_hdr")}catch(e){}}
  {const R=document.documentElement,mb=SIM.mbg&&SIM.mbg.image_url;R.classList.toggle("mbg",!!mb);if(mb)R.style.setProperty("--mbg",`url("${mb}")`);else R.style.removeProperty("--mbg");try{mb?localStorage.setItem("stm_mbg",mb):localStorage.removeItem("stm_mbg")}catch(e){}}
  if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
 loadSIM();
