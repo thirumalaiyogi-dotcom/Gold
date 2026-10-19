@@ -414,6 +414,7 @@ nav button svg{width:22px;height:22px}
   <select id="ns"><option value="dhana">தனலட்சுமி</option><option value="kubera">குபேரலட்சுமி</option></select>
   <input id="na" type="number" inputmode="numeric" placeholder="மாத தவணை (₹)">
   <input id="nr" type="tel" inputmode="numeric" placeholder="யார் மூலமா வந்தாங்க? (அவங்க referral code அல்லது மொபைல், விருப்பம்)">
+  <div class="mut">பிறந்தநாள் / திருமண நாள் (விருப்பம் · வாழ்த்து notification-க்கு)</div><div style="display:flex;gap:8px"><input id="ndob" type="date"><input id="nanv" type="date"></div>
   <button class="btn" onclick="addCust()">சேர்</button></div>
 
   <div class="card"><h2>தவணை பதிவு</h2>
@@ -469,15 +470,15 @@ function remind(data){
   const m=`வணக்கம் ${c.name},\nசுப்புலட்சுமி தங்க மாளிகை 🙏\nஉங்கள் ${SN[c.scheme]} தங்கநகை சேமிப்புத் திட்டத்தின் ${n} ஆவது தவணையை இந்த மாதம் 1 முதல் 7 ஆம் தேதிக்குள் செலுத்தவும்.`+(FX(c.scheme)&&c.monthly_amount?`\nதவணைத் தொகை: ₹${f(c.monthly_amount)}`:"")+"\nநன்றி ✨";
   return `<div class="row"><span>${c.name}<br><span class="mut">${n}/${MON(c.scheme)} · ${SN[c.scheme]}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://api.whatsapp.com/send?phone=91${c.mobile.slice(-10)}&text=${encodeURIComponent(waT(m))}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
 async function addCust(){
- const code=gen6();const r={name:$("nn").value.trim(),mobile:$("nm").value.trim(),pin:genPin(),act_code:null,pin_set:false,scheme:$("ns").value,monthly_amount:+$("na").value||null,email:$("ne").value.trim().toLowerCase()||null};
+ const code=gen6();const r={name:$("nn").value.trim(),mobile:$("nm").value.trim(),pin:genPin(),act_code:null,pin_set:false,scheme:$("ns").value,monthly_amount:+$("na").value||null,email:$("ne").value.trim().toLowerCase()||null,dob:$("ndob").value||null,anniv:$("nanv").value||null};
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("Email சரியா இல்ல");
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் வேண்டும்");
  const rf=$("nr").value.trim();
  if(rf){const isMob=/^[0-9]{10}$/.test(rf);const {data:rr}=await sb.from("gold_customers").select("id").eq(isMob?"mobile":"ref_code",isMob?rf:rf.toUpperCase()).maybeSingle();if(!rr)return alert("அந்த referral code / மொபைல் உள்ள customer இல்ல");r.ref_by=rr.id}
- if(window.REQD){const q=REQD;Object.assign(r,{address:q.address+", "+q.city+" "+(q.pincode||""),nominee:q.nominee,nominee_rel:q.nominee_rel,email:r.email||(q.email?q.email.toLowerCase():null)})}
- const {error}=await sb.from("gold_customers").insert(r);if(error)return alert(error.code=="23505"?"இந்த மொபைல் / Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);
+ if(window.REQD){const q=REQD;Object.assign(r,{address:q.address+", "+q.city+" "+(q.pincode||""),nominee:q.nominee,nominee_rel:q.nominee_rel,email:r.email||(q.email?q.email.toLowerCase():null),dob:r.dob||q.dob||null,anniv:r.anniv||q.anniv||null})}
+ let {error}=await sb.from("gold_customers").insert(r);if(error&&/dob|anniv/.test(error.message||"")){delete r.dob;delete r.anniv;({error}=await sb.from("gold_customers").insert(r))}if(error)return alert(error.code=="23505"?"இந்த மொபைல் / Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);
  if(window.REQD){await sb.from("gold_requests").update({status:"approved"}).eq("id",REQD.id);window.REQD=null;loadReq()}
- ["nn","nm","ne","na","nr"].forEach(i=>$(i).value="");alert("Customer சேர்ந்தாச்சு ✅\nமுதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல தானா போகும்.");load()}
+ ["nn","nm","ne","na","nr","ndob","nanv"].forEach(i=>$(i).value="");alert("Customer சேர்ந்தாச்சு ✅\nமுதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல தானா போகும்.");load()}
 async function addPay(){
  const a=+$("pa").value,r=+$("pr").value||null,c=$("pc").value;
  if(!c||!a)return alert("Customer, தொகை வேண்டும்");
@@ -631,7 +632,7 @@ async function loadReq(){const {data,error}=await sb.from("gold_requests").selec
  $("rq").innerHTML=RQ.length?RQ.map(q=>`<div style="border-bottom:1px solid var(--ln);padding:10px 0"><b>${esc(q.name)}</b> · ${esc(q.mobile)}${q.email?" · "+esc(q.email):""}<div class="mut">${SN[q.scheme]||""} · ₹${q.monthly_amount||"-"}<br>${esc(q.address||"")}, ${esc(q.city||"")} ${esc(q.pincode||"")}${q.nominee?`<br>Nominee: ${esc(q.nominee)} (${esc(q.nominee_rel||"")})`:""}${q.ref_code?`<br>Refer code: ${esc(q.ref_code)}`:""}</div><a data-ap="${q.id}" style="color:#1f7a4d;font-weight:700">ஒப்புக்கொள் →</a> &nbsp;&nbsp; <a data-rj="${q.id}" style="color:#b00020">நிராகரி</a></div>`).join(""):'<div class="mut">புதிய கோரிக்கை இல்ல</div>'}
 $("rq").addEventListener("click",async e=>{const ap=e.target.dataset.ap,rj=e.target.dataset.rj;
  if(rj){if(!confirm("நிராகரிக்கவா?"))return;await sb.from("gold_requests").update({status:"rejected"}).eq("id",rj);loadReq();return}
- if(ap){const q=RQ.find(x=>x.id==ap);window.REQD=q;$("nn").value=q.name;$("nm").value=q.mobile;$("ne").value=q.email||"";$("ns").value=q.scheme;$("na").value=q.monthly_amount||"";$("nr").value=q.ref_code||"";$("nn").scrollIntoView({block:"center"});alert("ID proof பார்த்து 'சேர்' அழுத்துங்க. முதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல போகும்.")}});
+ if(ap){const q=RQ.find(x=>x.id==ap);window.REQD=q;$("nn").value=q.name;$("nm").value=q.mobile;$("ne").value=q.email||"";$("ns").value=q.scheme;$("na").value=q.monthly_amount||"";$("nr").value=q.ref_code||"";$("ndob").value=q.dob||"";$("nanv").value=q.anniv||"";$("nn").scrollIntoView({block:"center"});alert("ID proof பார்த்து 'சேர்' அழுத்துங்க. முதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல போகும்.")}});
 
 // Activation code flow
 const gen6=()=>String(crypto.getRandomValues(new Uint32Array(1))[0]%900000+100000);

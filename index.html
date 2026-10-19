@@ -940,6 +940,20 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 .paskbell svg{width:32px;height:32px;fill:none;stroke:#781D2A;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:ring 1.6s ease-in-out .4s 2}
 @keyframes ring{0%,100%{transform:rotate(0)}15%{transform:rotate(14deg)}30%{transform:rotate(-12deg)}45%{transform:rotate(8deg)}60%{transform:rotate(-5deg)}}
 @media (prefers-reduced-motion:reduce){.paskbell svg,.paskc{animation:none}}
+
+.mecard .merow{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #F2E6D6;font-size:14px}
+.mecard .merow span{color:var(--pmu);flex:none}.mecard .merow b{text-align:right;color:var(--pt);font-weight:700}.mecard .merow i{font-style:normal;color:#B9A58A;font-weight:600}
+.mebtn{width:100%;min-height:44px;margin-top:12px;border:1.5px solid var(--pg);background:#fff;color:var(--pm);border-radius:12px;font-family:inherit;font-weight:800;font-size:14.5px;cursor:pointer}
+.mebtn.on{background:linear-gradient(135deg,var(--pm),var(--pm2));color:#fff;border:0}
+#meform label{display:block;font-size:13px;color:var(--pmu);margin:10px 0 4px}#meform input{width:100%;box-sizing:border-box;min-height:44px;border:1.5px solid #E5D3B0;border-radius:12px;padding:0 12px;font:inherit;background:#fff}
+.menote{margin:10px 0 0;font-size:12.5px;color:var(--pmu)}
+
+#inst{background:rgba(20,8,10,.55);display:flex;align-items:flex-end;justify-content:center;padding:0;z-index:59}#inst.hide{display:none}
+.instc{width:100%;max-width:520px;background:#fff;border-radius:22px 22px 0 0;padding:22px 20px calc(18px + env(safe-area-inset-bottom,0px));text-align:center;animation:sheet .28s ease-out;box-shadow:0 -10px 30px rgba(0,0,0,.2)}
+.insti{width:64px;height:64px;border-radius:16px;box-shadow:0 4px 14px rgba(120,29,42,.2);display:block;margin:0 auto 8px}
+.instc b{display:block;font-size:18.5px;color:var(--pt)}.instc p{margin:6px 0 0;font-size:14px;color:var(--pmu);line-height:1.55}
+@keyframes sheet{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.instc{animation:none}}
 /* active tab: raised maroon pill */
 body nav button[data-t].on{color:#fff}
 body nav button[data-t].on svg{background:none}
@@ -1029,6 +1043,8 @@ body nav button{z-index:0}
   <label for="rgr">Referral code (நண்பரின் code, விருப்பம்)</label><input id="rgr" type="text" autocapitalize="characters" autocomplete="off" maxlength="12" placeholder="உதா: SL4821" style="text-transform:uppercase">
  </div>
  <div class="wzs hide" data-s="4">
+  <label for="rgdob">பிறந்தநாள் (விருப்பம் · அன்னைக்கு வாழ்த்து அனுப்புவோம்)</label><input id="rgdob" type="date">
+  <label for="rganv">திருமண நாள் (விருப்பம்)</label><input id="rganv" type="date">
   <label for="rgnn">Nominee பெயர்</label><input id="rgnn" placeholder="உங்களுக்கு பின் யாருக்கு?">
   <label for="rgnr">உறவு</label><select id="rgnr"><option value="">தேர்வு செய்யவும்</option><option>தந்தை</option><option>தாய்</option><option>கணவர் / மனைவி</option><option>மகன்</option><option>மகள்</option><option>சகோதரர்</option><option>சகோதரி</option><option>மற்றவர்</option></select>
   <div class="wzsum" id="wzsum"></div>
@@ -1111,6 +1127,7 @@ body nav button{z-index:0}
  <li>மேலும் விபரங்களுக்கு: 9791918344 / 9344395078</li></ul>
  <button class="yb" id="tmx" style="width:100%;margin:10px 0 0">சரி</button>
 </div></div>
+<div id="inst" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="insth"><div class="instc"><img src="icon-192.png" alt="" class="insti"><b id="insth">App-ஆ install பண்ணுங்க</b><p id="instp">Home screen-ல icon வரும். ஒரே தொடுதல்ல இன்றைய விலை, Passbook பார்க்கலாம்.</p><div class="pushb"><button type="button" class="pushy" id="instgo">📲 Install</button><button type="button" class="pushx" id="instl">பிறகு</button></div></div></div>
 <div id="pask" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="paskh"><div class="paskc pushc"><div class="paskbell" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div><b id="paskh">அறிவிப்புகளை ON பண்ணுங்க</b><p>இன்றைய தங்க விலை, தவணை நினைவூட்டல், பண்டிகை சலுகைகள் எல்லாம் உங்க phone-க்கு உடனே வரும்.</p><div class="pushb"><button type="button" class="pushy" data-push="on">ON பண்ணு</button><button type="button" class="pushx" id="paskl">பிறகு</button></div><small class="pushm" role="status"></small></div></div>
 <div id="pop" class="ov hide" role="dialog" aria-modal="true" aria-label="அறிவிப்பு"><div class="popc"><button type="button" id="popx" aria-label="மூடு">✕</button><img id="popi" alt="அறிவிப்பு படம்"></div></div>
 <div id="sd" class="ov sdv hide"><div class="sdh"><a id="sdback">‹</a><span id="sdt"></span></div><div class="sdb" id="sdb"></div><div class="sdf"><button type="button" id="sdjoin" class="sdcta">இப்போதே சேரவும்</button></div></div>
@@ -1294,6 +1311,25 @@ if("serviceWorker" in navigator)navigator.serviceWorker.addEventListener("messag
  let n=0;const t=setInterval(()=>{n++;const lk=$("lock");if(lk&&!lk.classList.contains("hide")&&n<200)return;clearInterval(t);if(n<200)setTimeout(()=>openHash(h),400)},700)})();
 
 
+
+// ===== Passbook: என் விவரங்கள் (முகவரி, Nominee, பிறந்தநாள், திருமண நாள்) =====
+const tDate=d=>d?new Date(d+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"long",year:"numeric"}):"";
+async function loadMe(){const el=$("pbme");if(!el)return;
+ let d=null;try{({data:d}=await sb.rpc("gold_profile",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim()}))}catch(e){}
+ if(!d||!d.ok){el.innerHTML="";return}window.ME=d;
+ const row=(k,v,emp)=>`<div class="merow"><span>${k}</span><b>${v?esc(v):`<i>${emp}</i>`}</b></div>`;
+ el.innerHTML=`<div class="pbcard mecard"><h3><span class="pbgi">${PBI.u}</span>என் விவரங்கள்</h3>
+  ${row("முகவரி",d.address,"பதியல")}${row("Nominee",d.nominee?d.nominee+(d.nominee_rel?" ("+d.nominee_rel+")":""):"","பதியல")}
+  ${row("பிறந்தநாள் 🎂",tDate(d.dob),"சேர்க்கல")}${row("திருமண நாள் 💐",tDate(d.anniv),"சேர்க்கல")}
+  <button type="button" class="mebtn" id="meedit">${d.dob||d.anniv?"தேதிகளை மாற்ற":"பிறந்தநாள் / திருமண நாள் சேர்க்க"}</button>
+  <div id="meform" class="hide"><label for="medob">பிறந்தநாள்</label><input type="date" id="medob" value="${d.dob||""}" max="${istToday()}">
+  <label for="meanv">திருமண நாள் (விருப்பம்)</label><input type="date" id="meanv" value="${d.anniv||""}" max="${istToday()}">
+  <button type="button" class="mebtn on" id="mesave">சேமி</button><small class="pushm" id="memsg" role="status"></small></div>
+  <p class="menote">அந்த நாள்ல உங்களுக்கு வாழ்த்து notification வரும். முகவரி / Nominee மாற்ற கடையை அணுகவும்.</p></div>`;
+ $("meedit").onclick=()=>{$("meform").classList.toggle("hide")};
+ $("mesave").onclick=async()=>{const b=$("mesave"),m=$("memsg");b.disabled=true;m.textContent="சேமிக்கிறோம்…";
+  let r=null;try{({data:r}=await sb.rpc("gold_set_dates",{p_mobile:$("cm").value.trim(),p_pin:$("cp").value.trim(),p_dob:$("medob").value||null,p_anniv:$("meanv").value||null}))}catch(e){}
+  b.disabled=false;if(r&&r.ok){note("சேமிச்சாச்சு ✅",1);loadMe()}else m.textContent=r&&r.err=="dob"||r&&r.err=="anniv"?"தேதி சரியா இல்ல":"சேமிக்க முடியல. மீண்டும் முயற்சிக்கவும்."}}
 // ===== App திறந்ததும் Notification அனுமதி popup =====
 function closeAsk(later){vis("pask",false);if(later)LS.set("pushlater",String(Date.now()))}
 $("paskl").onclick=()=>closeAsk(true);$("pask").addEventListener("click",e=>{if(e.target.id=="pask")closeAsk(true)});
@@ -1302,6 +1338,22 @@ setTimeout(function(){if(!PUSH_OK()||Notification.permission!=="default")return;
  let n=0,ok=0;const t=setInterval(()=>{n++;if(n>500){clearInterval(t);return}
   const busy=document.querySelector(".ov:not(.hide)");if(busy){ok=0;return}
   if(++ok<4)return;clearInterval(t);if(Notification.permission==="default")vis("pask",true)},700)},0);
+
+// ===== "App-ஆ install பண்ணுங்க" =====
+(function(){let DEF=null;const standalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!/crios|fxios/i.test(navigator.userAgent);
+ setTimeout(()=>{try{LS.set("visits",String(+(LS.get("visits")||0)+1))}catch(e){}},0);
+ function close(later){vis("inst",false);if(later)LS.set("instlater",String(Date.now()))}
+ window.closeInst=close;
+ function want(){if(standalone()||LS.get("installed"))return false;const l=+(LS.get("instlater")||0);return !(l&&Date.now()-l<7*864e5)}
+ function schedule(){let n=0,ok=0;const t=setInterval(()=>{n++;if(n>600||!want()){clearInterval(t);return}
+  if(document.querySelector(".ov:not(.hide)")){ok=0;return}if(++ok<6)return;clearInterval(t);vis("inst",true)},1000)}
+ addEventListener("beforeinstallprompt",e=>{e.preventDefault();DEF=e;if(want()&&+(LS.get("visits")||0)>=2)schedule()});
+ addEventListener("appinstalled",()=>{LS.set("installed","1");close(false)});
+ $("instl").onclick=()=>close(true);$("inst").addEventListener("click",e=>{if(e.target.id=="inst")close(true)});
+ $("instgo").onclick=async()=>{if(DEF){DEF.prompt();const c=await DEF.userChoice.catch(()=>({}));DEF=null;close(c&&c.outcome!=="accepted")}else close(true)};
+ if(ios&&!standalone())setTimeout(()=>{if(want()&&+(LS.get("visits")||0)>=2){$("instp").innerHTML="Safari கீழே <b>Share ⬆️</b> அழுத்தி <b>“Add to Home Screen”</b> தேர்ந்தெடுங்க. Notification-உம் அப்போ தான் வரும்.";$("instgo").textContent="சரி";schedule()}},0);
+})();
 // ===== App திறக்கும்போது Poster =====
 const istToday=()=>new Date(Date.now()+330*60000).toISOString().slice(0,10);
 function closePop(){vis("pop",false);const p=window.POPR;if(p)LS.set("pop_"+p.id,istToday())}
@@ -1354,9 +1406,10 @@ async function viewPB(){
   <button type="button" class="t4" onclick="document.getElementById('pbtx').scrollIntoView({behavior:'smooth',block:'start'})"><i>${PBI.list}</i><b>முழு விவரம்</b><small>தவணை வரலாறு</small></button></div></div>
  <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
  ${nx}
+ <div id="pbme" class="noprint"></div>
  <div id="pushpb" class="noprint"></div>
  ${refCard(data)}</div>`;
- window.PBD=data;renderPS();payWire();pushUI()}
+ window.PBD=data;renderPS();payWire();pushUI();loadMe()}
 // ஒரு தவணையின் ரசீது (உண்மையான payment data மட்டும்)
 function pbReceipt(n){const d=window.PBD;if(!d)return;const x=(d.payments||[])[n-1];if(!x)return;
  const t=`${SHOP}\nதவணை ரசீது\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதவணை எண்: ${n}/${MON(d.scheme)}\nதேதி: ${x.on}\nதொகை: ₹${f(x.amount)}`+(x.grams?`\nதங்கம்: ${(+x.grams).toFixed(3)} கிராம்`:"")+`\nநிலை: செலுத்தப்பட்டது`;
@@ -1634,12 +1687,12 @@ $("wzsum").addEventListener("click",e=>{const a=e.target.closest("[data-go]");if
 document.querySelectorAll("#rgf .wzs input").forEach(i=>i.addEventListener("keydown",e=>{if(e.key=="Enter"&&WZ<4){e.preventDefault();$("wznext").click()}}));
 
 $("rgx").onclick=()=>vis("rg",false);
-$("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim().toUpperCase()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null};
+$("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim().toUpperCase()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null,dob:$("rgdob").value||null,anniv:$("rganv").value||null};
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் எண் போடுங்க");
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("சரியான Email போடுங்க");
  if(!r.address||!r.city)return alert("முகவரி, ஊர் போடுங்க");
  if(!$("rgc").checked)return alert("விதிமுறைகளுக்கு ஒப்புதல் தேவை");
- if($("rgb").disabled)return;$("rgb").disabled=true;const _rt=$("rgb").textContent;$("rgb").textContent="அனுப்புகிறோம்…";let error;try{({error}=await sb.from("gold_requests").insert(r))}catch(x){error={message:"Internet இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்"}}$("rgb").disabled=false;$("rgb").textContent=_rt;
+ if($("rgb").disabled)return;$("rgb").disabled=true;const _rt=$("rgb").textContent;$("rgb").textContent="அனுப்புகிறோம்…";let error;try{({error}=await sb.from("gold_requests").insert(r));if(error&&/dob|anniv/.test(error.message||"")){delete r.dob;delete r.anniv;({error}=await sb.from("gold_requests").insert(r))}}catch(x){error={message:"Internet இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்"}}$("rgb").disabled=false;$("rgb").textContent=_rt;
  if(error)return alert(error.code=="23505"?"இந்த மொபைலுக்கு விண்ணப்பம் ஏற்கனவே உள்ளது. கடையை தொடர்பு கொள்ளுங்க.":error.message);
  $("rgf").classList.add("hide");$("rgok").classList.remove("hide");["rgn","rgm","rge","rga","rgt","rgp","rgq","rgr","rgnn"].forEach(i=>$(i).value="");$("rgc").checked=false;$("rg").scrollTop=0};
 // Activation code flow
@@ -1877,7 +1930,7 @@ $("shr").onclick=()=>{const t=`${SHOP}\n📍 51b, கங்கை அம்ம�
 // PWA
 (function(){const ic=ICON;
 const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#fffaf0",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
-const l=document.createElement("link");l.rel="manifest";l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"}));document.head.appendChild(l);
+const l=document.createElement("link");l.rel="manifest";l.href=location.protocol=="file:"?URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"})):"manifest.webmanifest";document.head.appendChild(l);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
 </script><script>
 (function(){
@@ -1908,6 +1961,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
   if(on("lkok"))return true;
   if(on("pop")){closePop();return true}
   if(on("pask")){closeAsk(true);return true}
+  if(on("inst")){closeInst(true);return true}
   if(on("sd")){clk("sdback");return true}
   if(on("tm")){clk("tmx");return true}
   if(on("pblk")){clk("pblkx");return true}

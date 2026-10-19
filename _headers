@@ -9,3 +9,5 @@
   X-Robots-Tag: noindex, nofollow
 /staff.html
   X-Robots-Tag: noindex, nofollow
+/manifest.webmanifest
+  Content-Type: application/manifest+json

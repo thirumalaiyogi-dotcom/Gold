@@ -1,0 +1,33 @@
+{
+ "id": "/",
+ "name": "சுப்புலட்சுமி தங்க மாளிகை",
+ "short_name": "தங்க மாளிகை",
+ "description": "தங்க சேமிப்புத் திட்டம் · Passbook · இன்றைய விலை",
+ "start_url": "/",
+ "scope": "/",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#fffaf0",
+ "theme_color": "#781D2A",
+ "lang": "ta",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-maskable.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
