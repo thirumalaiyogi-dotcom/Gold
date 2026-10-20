@@ -1250,6 +1250,16 @@ html.mbg[data-style="2"] .intro.xcard,html.mbg[data-style="2"] .pbtop,html.mbg[d
 html.mbg[data-style="2"] .pbcard.pbsum{background:linear-gradient(rgba(58,10,18,.42),rgba(58,10,18,.42)),var(--mbg) center/cover no-repeat,#5B1420!important}
 /* Login முதல் பக்கத்துல mPIN மறந்துட்டீங்களா தேவையில்ல — PIN போடும் பக்கத்துல மட்டும் */
 #lock.stA #lkfg{display:none!important}
+/* mPIN பக்கம்: keypad + "மறந்துட்டீங்களா" எல்லாம் ஒரே screen-ல (scroll இல்லாம) */
+#lock:not(.stA) .lkhero{height:clamp(84px,21vh,200px)!important;transition:height .2s ease}
+#lock:not(.stA) .lkhero .shopn img,#lock:not(.stA) .lkhero .logo{max-height:clamp(48px,9vh,84px)!important;width:auto!important}
+#lock:not(.stA) .lksheet{padding-top:clamp(12px,2.4vh,22px)!important}
+#lock:not(.stA) #lkB{padding-top:0}
+#lock:not(.stA) #lkB h2{margin:0 0 2px!important;line-height:1.2}
+#lock:not(.stA) #lkB .lksub{margin:0 0 6px!important}
+#lock:not(.stA) .lkpad{gap:clamp(6px,1.2vh,10px);margin-top:clamp(4px,1vh,8px)}
+#lock:not(.stA) .lkpad button{height:clamp(44px,8vh,62px)}
+#lock:not(.stA) #lkfg{margin-top:clamp(2px,1vh,10px)!important}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
