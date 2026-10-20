@@ -515,16 +515,16 @@ async function show(){$("lg").classList.add("hide");$("adm").classList.remove("h
 async function load(){
  const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
- $("pc").innerHTML=data.map(c=>`<option value="${c.id}">${c.name} · ${c.mobile}</option>`).join("");
+ $("pc").innerHTML=data.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.mobile)}</option>`).join("");
  $("cl").innerHTML=data.map(c=>{const t=c.gold_payments.reduce((s,x)=>s+x.amount,0);
-  return `<div class="row"><span>${c.name}<br><span class="mut">${SN[c.scheme]} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b>₹${f(t)}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
+  return `<div class="row"><span>${esc(c.name)}<br><span class="mut">${esc(SN[c.scheme])} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b>₹${f(t)}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
 function remind(data){
  const d=new Date(),ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
  const p=data.filter(c=>c.gold_payments.length<MON(c.scheme)&&!c.gold_payments.some(x=>String(x.paid_on).startsWith(ym)));
  $("rm").innerHTML=p.length?`<div class="mut">இந்த மாதம் தவணை பாக்கி: ${p.length}</div>`+p.map(c=>{
   const n=c.gold_payments.length+1;
   const m=`வணக்கம் ${c.name},\nசுப்புலட்சுமி தங்க மாளிகை 🙏\nஉங்கள் ${SN[c.scheme]} தங்கநகை சேமிப்புத் திட்டத்தின் ${n} ஆவது தவணையை இந்த மாதம் 1 முதல் 7 ஆம் தேதிக்குள் செலுத்தவும்.`+(FX(c.scheme)&&c.monthly_amount?`\nதவணைத் தொகை: ₹${f(c.monthly_amount)}`:"")+"\nநன்றி ✨";
-  return `<div class="row"><span>${c.name}<br><span class="mut">${n}/${MON(c.scheme)} · ${SN[c.scheme]}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://api.whatsapp.com/send?phone=91${c.mobile.slice(-10)}&text=${encodeURIComponent(waT(m))}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
+  return `<div class="row"><span>${esc(c.name)}<br><span class="mut">${n}/${MON(c.scheme)} · ${esc(SN[c.scheme])}</span></span><a target="_blank" style="color:#1f7a4d;font-weight:700;text-decoration:none" href="https://api.whatsapp.com/send?phone=91${c.mobile.slice(-10)}&text=${encodeURIComponent(waT(m))}">💬 அனுப்பு</a></div>`}).join(""):'<div class="mut">எல்லாரும் இந்த மாதம் செலுத்திட்டாங்க ✅</div>'}
 async function addCust(){
  const code=gen6();const r={name:$("nn").value.trim(),mobile:$("nm").value.trim(),pin:genPin(),act_code:null,pin_set:false,scheme:$("ns").value,monthly_amount:+$("na").value||null,email:$("ne").value.trim().toLowerCase()||null,dob:$("ndob").value||null,anniv:$("nanv").value||null};
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("Email சரியா இல்ல");
@@ -549,7 +549,7 @@ async function addPay(){
  const tot=ps.reduce((x,y)=>x+y.amount,0),g=ps.reduce((x,y)=>x+(+y.grams||0),0),k=GR(cu.scheme);
  let act="";if(cu.pin_set===false){const ac=gen6();const u=await sb.from("gold_customers").update({act_code:ac}).eq("id",c);if(!u.error)act=`\n\n🔑 உங்க Passbook Activation code: ${ac}\nApp: ${APPURL}\nApp-ல Passbook → "முதல் தடவையா?" அழுத்தி, மொபைல் எண் + இந்த code போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க.\nஇந்த code-ஐ யாருக்கும் சொல்லாதீங்க.`}
  const msg=`வணக்கம் ${cu.name},\nசுப்புலட்சுமி தங்க மாளிகை\nதவணை ரசீது ✅\nதொகை: ₹${f(a)} (${MDN[PMODE]})`+(k?`\nவிலை: ₹${f(r)}/கிராம்\nதங்கம்: ${(a/r).toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(cu.scheme)}\nமொத்த சேமிப்பு: ₹${f(tot)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+act+"\nநன்றி 🙏";
- $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://api.whatsapp.com/send?phone=91${cu.mobile.slice(-10)}&text=${encodeURIComponent(waT(msg))}">💬 ${cu.name}-க்கு WhatsApp ரசீது</a>${act?`<div class="mut" style="margin-top:6px">🔑 Activation code இந்த ரசீதுல சேர்ந்திருக்கு. கட்டாயம் அனுப்புங்க.</div>`:""}`;
+ $("rc").innerHTML=`<a class="btn" style="background:#1f7a4d" target="_blank" href="https://api.whatsapp.com/send?phone=91${cu.mobile.slice(-10)}&text=${encodeURIComponent(waT(msg))}">💬 ${esc(cu.name)}-க்கு WhatsApp ரசீது</a>${act?`<div class="mut" style="margin-top:6px">🔑 Activation code இந்த ரசீதுல சேர்ந்திருக்கு. கட்டாயம் அனுப்புங்க.</div>`:""}`;
  $("pa").value="";$("pref").value="";setMode(null);load();loadCol()}
 sb.auth.getSession().then(({data})=>{if(data.session)show()});
 
@@ -688,7 +688,7 @@ function openEnrol(k){$("rgs").value=k||"dhana";$("rgf").classList.remove("hide"
 async function loadReq(){const {data,error}=await sb.from("gold_requests").select("*").eq("status","pending").order("created_at");
  if(error){$("rq").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
  window.RQ=data||[];
- $("rq").innerHTML=RQ.length?RQ.map(q=>`<div style="border-bottom:1px solid var(--ln);padding:10px 0"><b>${esc(q.name)}</b> · ${esc(q.mobile)}${q.email?" · "+esc(q.email):""}<div class="mut">${SN[q.scheme]||""} · ₹${q.monthly_amount||"-"}<br>${esc(q.address||"")}, ${esc(q.city||"")} ${esc(q.pincode||"")}${q.nominee?`<br>Nominee: ${esc(q.nominee)} (${esc(q.nominee_rel||"")})`:""}${q.ref_code?`<br>Refer code: ${esc(q.ref_code)}`:""}</div><a data-ap="${q.id}" style="color:#1f7a4d;font-weight:700">ஒப்புக்கொள் →</a> &nbsp;&nbsp; <a data-rj="${q.id}" style="color:#b00020">நிராகரி</a></div>`).join(""):'<div class="mut">புதிய கோரிக்கை இல்ல</div>'}
+ $("rq").innerHTML=RQ.length?RQ.map(q=>`<div style="border-bottom:1px solid var(--ln);padding:10px 0"><b>${esc(q.name)}</b> · ${esc(q.mobile)}${q.email?" · "+esc(q.email):""}<div class="mut">${esc(SN[q.scheme]||"")} · ₹${esc(q.monthly_amount||"-")}<br>${esc(q.address||"")}, ${esc(q.city||"")} ${esc(q.pincode||"")}${q.nominee?`<br>Nominee: ${esc(q.nominee)} (${esc(q.nominee_rel||"")})`:""}${q.ref_code?`<br>Refer code: ${esc(q.ref_code)}`:""}</div><a data-ap="${q.id}" style="color:#1f7a4d;font-weight:700">ஒப்புக்கொள் →</a> &nbsp;&nbsp; <a data-rj="${q.id}" style="color:#b00020">நிராகரி</a></div>`).join(""):'<div class="mut">புதிய கோரிக்கை இல்ல</div>'}
 $("rq").addEventListener("click",async e=>{const ap=e.target.dataset.ap,rj=e.target.dataset.rj;
  if(rj){if(!confirm("நிராகரிக்கவா?"))return;await sb.from("gold_requests").update({status:"rejected"}).eq("id",rj);loadReq();return}
  if(ap){const q=RQ.find(x=>x.id==ap);window.REQD=q;$("nn").value=q.name;$("nm").value=q.mobile;$("ne").value=q.email||"";$("ns").value=q.scheme;$("na").value=q.monthly_amount||"";$("nr").value=q.ref_code||"";$("ndob").value=q.dob||"";$("nanv").value=q.anniv||"";$("nn").scrollIntoView({block:"center"});alert("ID proof பார்த்து 'சேர்' அழுத்துங்க. முதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல போகும்.")}});
@@ -759,14 +759,14 @@ const schAny=k=>BASE.concat(EXTRA).find(x=>x.key==k)||{};
 const SNM=k=>schAny(k).name||k,GR=k=>!!schAny(k).grams,FX=k=>!!schAny(k).fixed,MON=k=>schAny(k).months||12;
 function mkSch(r){const sp=t=>(t||"").split("\n").map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf("|");return i<0?[esc(l),""]:[esc(l.slice(0,i).trim()),esc(l.slice(i+1).trim())]});
  return {n:esc(r.name),t:r.name,tag:esc(r.tagline||""),tags:[r.months+" மாதம்"].concat((r.tags||"").split(",").map(x=>x.trim()).filter(Boolean)).map(esc),why:esc(r.description||""),acc:sp(r.sections),faq:sp(r.faq).concat([["வேறு சந்தேகம்?",CT]])}}
-function fillSel(){const o=allSch().map(x=>`<option value="${x.key}">${esc(x.name)}</option>`).join(""),a=$("rgs").value,b=$("ns").value;$("rgs").innerHTML=o;$("ns").innerHTML=o;if(a)$("rgs").value=a;if(b)$("ns").value=b}
+function fillSel(){const o=allSch().map(x=>`<option value="${esc(x.key)}">${esc(x.name)}</option>`).join(""),a=$("rgs").value,b=$("ns").value;$("rgs").innerHTML=o;$("ns").innerHTML=o;if(a)$("rgs").value=a;if(b)$("ns").value=b}
 function renderSchemes(){const L=allSch();
- $("hs").innerHTML=L.map(x=>`<div class="sc" data-k="${x.key}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`).join("");
+ $("hs").innerHTML=L.map(x=>`<div class="sc" data-k="${esc(x.key)}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`).join("");
  $("d2").innerHTML=L.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("");
  $("hs").querySelectorAll(".mo").forEach(a=>a.onclick=()=>openSD(a.closest(".sc").dataset.k));
  $("hs").querySelectorAll(".jn").forEach(a=>a.onclick=()=>openEnrol(a.closest(".sc").dataset.k));
  applySIM();fillSel();
- $("sxl").innerHTML=EXTRA.map(x=>`<div class="row"><span>${esc(x.name)}${x.active?"":" (நிறுத்தப்பட்டது)"}</span><a data-sa="${x.key}" style="color:${x.active?"#b00020":"#1f7a4d"};text-decoration:underline">${x.active?"நிறுத்து":"செயல்படுத்து"}</a></div>`).join("")}
+ $("sxl").innerHTML=EXTRA.map(x=>`<div class="row"><span>${esc(x.name)}${x.active?"":" (நிறுத்தப்பட்டது)"}</span><a data-sa="${esc(x.key)}" style="color:${x.active?"#b00020":"#1f7a4d"};text-decoration:underline">${x.active?"நிறுத்து":"செயல்படுத்து"}</a></div>`).join("")}
 async function loadSchemes(){const {data}=await sb.from("gold_schemes").select("*").order("created_at");
  EXTRA=(data||[]).map(r=>({key:r.key,name:r.name,months:r.months||12,grams:r.grams,fixed:r.fixed,card:esc(r.tagline||""),coin:"★",active:r.active}));
  (data||[]).forEach(r=>{SCH[r.key]=mkSch(r)});renderSchemes();renderSIA()}
