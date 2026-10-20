@@ -1535,7 +1535,7 @@ const f=fmt;
 const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4";
 const sb=supabase.createClient(SB_URL,SB_KEY);
 // Read cache for public data: repeat opens read from the phone instead of Supabase (cuts egress)
-(function(){const TTL={gold_notices:15,gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
+(function(){const TTL={gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
  const raw=sb.from.bind(sb);sb.from0=raw;
  try{const now=Date.now();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith("sbc:")){const c=JSON.parse(localStorage.getItem(k)||"{}");if(!c.t||now-c.t>864e5)localStorage.removeItem(k)}}}catch(e){}
  sb.from=function(t){if(!TTL[t])return raw(t);const calls=[];let write=false;
@@ -1916,8 +1916,10 @@ async function loadNotices(){
  $("nadm").innerHTML=NT.map(n=>`<div class="row"><span>${esc(n.title)}</span><a data-nd="${n.id}" style="color:#b00020;text-decoration:underline">நீக்கு</a></div>`).join("");
  const seen=+(LS.get("nseen")||0),last=NT.length?new Date(NT[0].created_at).getTime():0;
  $("ndot").classList.toggle("hide",!(last>seen)||document.querySelector('nav button[data-t="n"]').classList.contains("on"))}
-document.querySelector('nav button[data-t="n"]').addEventListener("click",()=>{pushUI();if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
+document.querySelector('nav button[data-t="n"]').addEventListener("click",()=>{pushUI();loadNotices();if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
 loadNotices();
+// App மறுபடி திறந்தா அறிவிப்புகள் புதுசா
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")loadNotices()});
 
 
 // ===== App-start: ATM style (choose → mPIN keypad) =====

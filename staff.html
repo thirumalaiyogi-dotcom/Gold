@@ -441,6 +441,7 @@ html:root[data-style="2"]{--ok:#237547}
   <div class="card"><h2>Refer பரிசுகள்</h2><div id="rl"></div></div>
   <div class="card"><h2>புதிய அறிவிப்பு</h2>
   <input id="nt" placeholder="தலைப்பு (எ.கா. தீபாவளி சிறப்பு திட்டம்)"><textarea id="nb" placeholder="செய்தி"></textarea>
+  <label style="display:flex;gap:8px;align-items:center;margin:6px 0 10px;font-size:15px"><input type="checkbox" id="npn" checked style="width:auto;margin:0"> 🔔 Customer-களுக்கு notification-ஆவும் அனுப்பு</label>
   <button class="btn" id="npost">வெளியிடு</button>
   <div class="mut" style="margin-top:10px">வெளியிட்டவை:</div><div id="nadm"></div></div>
   <div class="card"><h2>புதிய திட்டம் சேர்க்க</h2>
@@ -628,7 +629,10 @@ async function loadNotices(){
 $("_none").addEventListener("click",()=>{if(NT.length)LS.set("nseen",new Date(NT[0].created_at).getTime());$("ndot").classList.add("hide")});
 $("npost").onclick=async()=>{const t=$("nt").value.trim(),b=$("nb").value.trim();if(!t)return alert("தலைப்பு வேண்டும்");
  const {error}=await sb.from("gold_notices").insert({title:t,body:b});if(error)return alert(error.message);
- $("nt").value="";$("nb").value="";await loadNotices();alert("வெளியிடப்பட்டது ✅")};
+ $("nt").value="";$("nb").value="";await loadNotices();
+ if($("npn").checked){const d=await pushFn({action:"send",title:t,body:b||t,url:"/#n",target:"all"});
+  alert(d.ok?`வெளியிடப்பட்டது ✅\nNotification ${d.sent} phone-க்கு போச்சு`+(d.failed?`, ${d.failed} போகல (app நீக்கியவங்க)`:""):"வெளியிடப்பட்டது ✅\nஆனா notification போகல: "+(d.err||""));if(typeof loadPushLog=="function")loadPushLog()}
+ else alert("வெளியிடப்பட்டது ✅")};
 $("nadm").addEventListener("click",async e=>{const id=e.target.dataset.nd;if(!id||!confirm("நீக்கவா?"))return;await sb.from("gold_notices").delete().eq("id",id);loadNotices()});
 loadNotices();
 
