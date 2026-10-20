@@ -2343,6 +2343,10 @@ $("shr").onclick=()=>{const t=`${SHOP}\n📍 51b, கங்கை அம்ம�
 const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#FBF8F1",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
 const l=document.createElement("link");l.rel="manifest";l.href=location.protocol=="file:"?URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"})):"manifest.webmanifest";document.head.appendChild(l);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+// App திறந்தா: படிக்காத notification-களை நீக்கி ஐகான் எண்ணை 0 ஆக்கு (WhatsApp மாதிரி)
+(function(){async function clr(){try{if("clearAppBadge" in navigator)navigator.clearAppBadge().catch(()=>{});
+ if(!("serviceWorker" in navigator))return;const r=await navigator.serviceWorker.getRegistration();if(!r||!r.getNotifications)return;(await r.getNotifications()).forEach(n=>n.close())}catch(e){}}
+ addEventListener("load",()=>setTimeout(clr,1500));document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")setTimeout(clr,800)})})();
 </script><script>
 (function(){
  function fill(){
