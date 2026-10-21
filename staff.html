@@ -387,6 +387,10 @@ body{background:var(--bF5F7FC)!important}
 /* ===== STYLE 2 tokens (maroon · gold · ivory) ===== */
 html:root[data-style="2"]{--b2161D1:#781D2A;--b174A9C:#5B1420;--b163E9A:#5B1420;--b0F2F73:#3F0D16;--b2F6FE4:#8E2A38;--b3D7BEA:#8E2A38;--b2F6FD6:#8E2A38;--b4A86E0:#9A3A47;--b6FA0F2:#C9A34E;--b7FA8F5:#C9A34E;--b9CC0FF:#E7D3A0;--b172033:#33251F;--b3B4A66:#5A4638;--b687386:#756A60;--b5F6B7A:#6A5D52;--b9AA6BA:#A89A8A;--bB7C3D6:#CDBFA8;--bCBD5E3:#DCCFB8;--bE1E8F3:#E9DFCF;--bD5E0F0:#E2D5BF;--bD5E2F7:#E7D3A0;--bD9E4F7:#E7D3A0;--bD6E4FB:#E7D3A0;--bC9DCFB:#E7D3A0;--bC3D6F8:#E7D3A0;--bE3ECFF:#F6EDDA;--bE8F1FF:#F6EDDA;--bE4EEFF:#F6EDDA;--bCFE0FF:#F1E3C4;--bE8EEF7:#F3ECDF;--bEEF4FE:#F8F1E4;--bEDF2F9:#F5EEE2;--bF1F6FE:#F9F3E8;--bEAF1FE:#F8F1E4;--bEEF3FB:#F7F0E3;--bEEF2F8:#F5EEE2;--bF2F6FD:#F9F4EA;--bF2F5FA:#F8F3EA;--bF5F7FC:#FBF8F1;--r31_95_209:120,29,42;--r33_97_209:120,29,42;--r20_33_61:51,37,31;--r22_62_154:91,20,32;}
 html:root[data-style="2"]{--ok:#237547}
+.cdv{position:fixed;inset:0;z-index:90;background:rgba(15,27,61,.45);display:flex;align-items:flex-end;justify-content:center}
+.cdv.hide{display:none}
+.cdvs{background:#fff;width:100%;max-width:560px;max-height:86vh;overflow:auto;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box;color:#0f1b3d}
+.cdk{background:#f3f6fb;border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}.cdk small{font-size:11.5px;color:#5b6885}.cdk b{font-size:15px}
 /* ===== STYLE 3 (staff: navy) ===== */
 html:root[data-style="3"]{--b2161D1:#1D5FD8;--b174A9C:#0D3FA6;--b163E9A:#0D3FA6;--b0F2F73:#0A2F7A;--b2F6FE4:#3B82F0;--b3D7BEA:#3B82F0;--b2F6FD6:#3B82F0;--b4A86E0:#3B82F0;--b172033:#0F1B3D;--b3B4A66:#34405A;--b687386:#5B6885;--b5F6B7A:#5B6885;--bE1E8F3:#E3EBF8;--bF5F7FC:#EEF4FF;--bE3ECFF:#E6EFFF;--bE8F1FF:#E6EFFF;--bE4EEFF:#E6EFFF;--bCFE0FF:#D9E6FF;--r31_95_209:29,95,216;--r33_97_209:29,95,216;--r20_33_61:13,63,166;--r22_62_154:13,63,166;--ok:#157F4A;--c-maroon:#0B1B3F;--c-maroon-2:#13306B;--pm:#1D5FD8}
 html[data-style="3"] header.hd,html[data-style="3"] header.hd.img{background:linear-gradient(165deg,#0B1B3F,#13306B)!important;border-radius:0 0 26px 26px;box-shadow:0 10px 24px rgba(11,27,63,.2)}
@@ -400,6 +404,7 @@ html[data-style="3"] header.hd .pc>div{background:#fff!important;border:0!import
 <header class="hd"><div class="hl"><span id="shop"></span></div>
 <div class="hu" id="gd"></div>
 <div class="pc"><div><span class="ci">22K</span><small class="pl">தங்க விலை<em class="chg" id="gchg"></em></small><b id="gr">—</b><small class="pu">22KT / கிராம்</small></div><div><span class="ci cis">Ag</span><small class="pl">வெள்ளி விலை<em class="chg" id="schg"></em></small><b id="sr">—</b><small class="pu">வெள்ளி / கிராம்</small></div></div></header>
+<div id="cdv" class="cdv hide" role="dialog" aria-modal="true" aria-label="Customer விவரம்"></div>
 <section id="st" class="on">
  <div id="lg" class="card"><h2>Staff Login</h2>
  <input id="se" type="email" placeholder="Email"><input id="sp" type="password" placeholder="Password">
@@ -483,6 +488,7 @@ html[data-style="3"] header.hd .pc>div{background:#fff!important;border:0!import
 
   <div class="card"><h2>தவணை பதிவு</h2>
   <select id="pc"></select>
+  <div id="pcinfo" class="mut" aria-live="polite" style="margin:-2px 0 8px;font-size:13.5px;line-height:1.5"></div>
   <input id="pa" type="number" inputmode="numeric" placeholder="தொகை (₹)">
   <input id="pr" type="number" inputmode="numeric" placeholder="இன்றைய 22K விலை/கிராம் (குபேரலட்சுமிக்கு)">
   <div class="mut">பணம் எப்படி வந்தது?*</div>
@@ -521,11 +527,13 @@ async function login(){
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
 async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol()}
 async function load(){
- const {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name");
- if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();
+ let {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name");
+ if(error&&/mode|gold_rate/.test(error.message||""))({data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name"));
+ if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();setTimeout(pcInfo,0);
  $("pc").innerHTML=data.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.mobile)}</option>`).join("");
  $("cl").innerHTML=data.map(c=>{const t=c.gold_payments.reduce((s,x)=>s+x.amount,0);
-  return `<div class="row"><span>${esc(c.name)}<br><span class="mut">${esc(SN[c.scheme])} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b>₹${f(t)}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
+  const gm=GR(c.scheme)?c.gold_payments.reduce((s,x)=>s+(+x.grams||0),0):null;
+  return `<div class="row"><span><a data-cd="${esc(c.id)}" style="color:inherit;font-weight:700;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer">${esc(c.name)}</a><br><span class="mut">${esc(SN[c.scheme])} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b style="text-align:right">₹${f(t)}${gm!=null?`<br><small style="color:#8a5a00;font-weight:700">${gm.toFixed(3)} கி</small>`:""}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
 function remind(data){
  const d=new Date(),ym=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
  const p=data.filter(c=>c.gold_payments.length<MON(c.scheme)&&!c.gold_payments.some(x=>String(x.paid_on).startsWith(ym)));
@@ -710,6 +718,29 @@ function showCode(n,m,c){const msg=`வணக்கம் ${n}, ${SHOP} Passbook
 $("cl").addEventListener("click",async e=>{const id=e.target.dataset.ac;if(!id)return;const c=(window.CU||[]).find(x=>x.id==id);if(!c||!confirm(c.name+"-க்கு புது Activation code உருவாக்கவா? பழைய PIN வேலை செய்யாது."))return;
  const code=gen6(),{error}=await sb.from("gold_customers").update({act_code:code,pin_set:false,pin:genPin()}).eq("id",id);
  if(error)return alert(error.message);showCode(c.name,c.mobile,code);load()});
+
+
+// ===== Customer விவரம் (தவணை வாரியா எடை) + தவணை பதியும்போது இதுவரை / இதோட சேர்த்து =====
+const MDL={cash:"பணம்",upi:"UPI",card:"Card",bank:"Bank",online:"Online"};
+const pdate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNaN(x)?String(d||""):x.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})};
+function cuSum(c){const ps=(c.gold_payments||[]).slice().sort((a,b)=>String(a.paid_on).localeCompare(String(b.paid_on)));
+ return {ps,n:ps.length,tot:ps.reduce((s,x)=>s+(+x.amount||0),0),g:ps.reduce((s,x)=>s+(+x.grams||0),0),k:GR(c.scheme),mo:MON(c.scheme)}}
+function pcInfo(){const el=document.getElementById("pcinfo");if(!el)return;const c=(window.CU||[]).find(x=>String(x.id)==String($("pc").value));if(!c){el.textContent="";return}
+ const s=cuSum(c),a=+$("pa").value,r=+$("pr").value;
+ let t=`${esc(SN[c.scheme])} · இதுவரை ${s.n}/${s.mo} தவணை · ₹${f(s.tot)}`;
+ if(s.k){t+=` · <b style="color:#8a5a00">${s.g.toFixed(3)} கி</b>`;if(a>0&&r>0)t+=`<br>இந்த தவணை ${(a/r).toFixed(3)} கி → மொத்தம் <b style="color:#8a5a00">${(s.g+a/r).toFixed(3)} கி</b> ஆகும்`}
+ el.innerHTML=t}
+["pc","pa","pr"].forEach(i=>{const e=$(i);if(e){e.addEventListener("change",pcInfo);e.addEventListener("input",pcInfo)}});
+function openCD(id){const c=(window.CU||[]).find(x=>String(x.id)==String(id));if(!c)return;const s=cuSum(c);
+ const rows=s.ps.map((p,i)=>`<div style="display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eef2f8"><span style="width:30px;height:30px;border-radius:50%;background:#eef4ff;color:#1d5fd8;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none">${i+1}</span><div style="flex:1;line-height:1.45"><b>₹${f(+p.amount||0)}</b>${p.mode?` <span style="font-size:12px;padding:1px 8px;border-radius:999px;background:#f1f4f9">${esc(MDL[p.mode]||p.mode)}</span>`:""}<br><span style="font-size:12.5px;color:#5b6885">${esc(pdate(p.paid_on))}${s.k&&p.gold_rate?` · ₹${f(+p.gold_rate)}/கி`:""}</span></div>${s.k?`<b style="color:#8a5a00">${(+p.grams||0).toFixed(3)} கி</b>`:""}</div>`).join("")||'<div class="mut" style="padding:14px 0">இன்னும் தவணை இல்ல</div>';
+ const box=document.getElementById("cdv");
+ box.innerHTML=`<div class="cdvs" role="document"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><div style="flex:1"><b style="font-size:18px">${esc(c.name)}</b><div class="mut">${esc(SN[c.scheme])} · ${esc(String(c.mobile||"").slice(-10))}</div></div><button type="button" id="cdx" aria-label="மூடு" style="width:44px;height:44px;border-radius:12px;border:0;background:#f1f4f9;font-size:20px;cursor:pointer">✕</button></div>
+  <div style="display:grid;grid-template-columns:repeat(${s.k?3:2},1fr);gap:8px;margin-bottom:8px"><div class="cdk"><small>தவணை</small><b>${s.n}/${s.mo}</b></div><div class="cdk"><small>மொத்த தொகை</small><b>₹${f(s.tot)}</b></div>${s.k?`<div class="cdk" style="background:#fff8e6"><small>மொத்த தங்கம்</small><b style="color:#8a5a00">${s.g.toFixed(3)} கி</b></div>`:""}</div>
+  <div>${rows}</div>${s.k&&s.n?`<div style="display:flex;justify-content:space-between;padding:12px 0 4px;font-weight:700"><span>மொத்தம்</span><span style="color:#8a5a00">${s.g.toFixed(3)} கிராம்</span></div>`:""}</div>`;
+ box.classList.remove("hide");document.getElementById("cdx").onclick=closeCD}
+function closeCD(){const b=document.getElementById("cdv");if(b)b.classList.add("hide")}
+$("cl").addEventListener("click",e=>{const a=e.target.closest("[data-cd]");if(a)openCD(a.dataset.cd)});
+document.getElementById("cdv").addEventListener("click",e=>{if(e.target.id=="cdv")closeCD()});
 
 // Customer email edit (needed for Email OTP login)
 $("cl").addEventListener("click",async e=>{const id=e.target.dataset.em;if(!id)return;const c=(window.CU||[]).find(x=>x.id==id);if(!c)return;
