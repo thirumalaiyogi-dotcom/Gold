@@ -2151,7 +2151,12 @@ async function loadBanners(){
  $("bs").innerHTML=l.map((r,i)=>`<img src="${r.image_url}" alt="" decoding="async"${i?' loading="lazy"':""}>`).join("");
  $("bd").innerHTML=l.length>1?l.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join(""):"";
  renderBA();clearInterval(bt);
- if(l.length>1)bt=setInterval(()=>{const b=$("bs"),w=b.clientWidth+10,i=(Math.round(b.scrollLeft/w)+1)%l.length;b.scrollTo({left:i*w,behavior:"smooth"})},4000)}
+ if(l.length>1)bt=setInterval(()=>{const b=$("bs");if(document.hidden||Date.now()-(window.BST||0)<5000||!b.clientWidth)return;const w=b.clientWidth+10,i=(Math.round(b.scrollLeft/w)+1)%l.length;b.scrollTo({left:i*w,behavior:"smooth"});setTimeout(bsAlign,900)},4000)}
+// Banner பாதியில நிக்காம: நகர்வு முடிஞ்சதும் / தொட்டு விட்டதும் சரியான இடத்துக்கு
+function bsAlign(){const b=$("bs");if(!b||!b.clientWidth)return;const w=b.clientWidth+10,k=Math.round(b.scrollLeft/w),x=k*w;if(Math.abs(b.scrollLeft-x)>2)b.scrollTo({left:x,behavior:"smooth"})}
+["touchstart","pointerdown","wheel"].forEach(ev=>$("bs").addEventListener(ev,()=>{window.BST=Date.now()},{passive:true}));
+{let st;$("bs").addEventListener("scroll",()=>{clearTimeout(st);st=setTimeout(bsAlign,250)},{passive:true})}
+addEventListener("scroll",()=>{window.BST=Date.now()},{passive:true});
 $("bs").addEventListener("scroll",()=>{const b=$("bs"),i=Math.round(b.scrollLeft/(b.clientWidth+10));[...$("bd").children].forEach((d,k)=>d.classList.toggle("on",k==i))});
 loadBanners();
 
