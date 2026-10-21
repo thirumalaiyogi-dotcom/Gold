@@ -1486,7 +1486,11 @@ html[data-style="3"] .qchip{font:600 14px/1.25 'Noto Sans Tamil',system-ui,sans-
 html[data-style="3"] #gd{font-size:12px!important;font-weight:500!important;color:rgba(255,255,255,.72)!important;text-shadow:none!important}
 html.dhdr[data-style="3"] header.hd,html.dhdr[data-style="3"] header.hd.img{background-size:auto 112px,58px 58px,auto!important;background-position:left -18px top -4px,center top,0 0!important}
 @media (max-width:359px){html.dhdr[data-style="3"] header.hd{background-size:auto 92px,58px 58px,auto!important;background-position:left -18px top -4px,center top,0 0!important}}
-html[data-style="3"] .qchips{display:grid!important;grid-template-columns:1fr 1fr;gap:12px!important;overflow:visible!important;padding:2px 0 4px!important}
+html[data-style="3"] .qchips{display:flex!important;flex-wrap:nowrap!important;gap:10px!important;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:2px 2px 6px!important;scroll-padding:0 2px;-webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 28px),transparent)}
+html[data-style="3"] .qchips.qend{-webkit-mask-image:none;mask-image:none}
+html[data-style="3"] .qchips>.qchip{flex:0 0 calc(44% - 5px)!important;scroll-snap-align:start;white-space:nowrap!important}
+@media (min-width:600px){html[data-style="3"] .qchips>.qchip{flex-basis:calc(30% - 7px)!important}}
+@media (max-width:359px){html[data-style="3"] .qchips>.qchip{flex-basis:calc(47% - 5px)!important;white-space:normal!important}}
 html[data-style="3"] .qchip{min-width:0;min-height:52px;justify-content:center;padding:6px 12px 6px 6px!important;white-space:normal;line-height:1.25;text-align:left}
 html[data-style="3"] .waf{width:48px!important;height:48px!important;bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}html[data-style="3"] .waf svg{width:26px!important;height:26px!important}
 html[data-style="3"] nav button[data-t="p"].lockd:after{display:none!important}
@@ -2031,6 +2035,11 @@ function pbTab(k,focus){const x=document.querySelector("#pb .pbx");if(!x||!x.que
  x.querySelectorAll(".pbpan").forEach(p=>p.classList.toggle("on",p.dataset.pp==k));
  const sec=document.getElementById("p");if(sec){sec.classList.remove("pbt-sv","pbt-me","pbt-rf");sec.classList.add("pbt-"+k)}}
 // ===== Style 3: 12 தவணை முடிஞ்சதும் ஒரு முறை வாழ்த்து =====
+// Style 3: பக்கவாட்டு chips — முடிவுல fade மறைக்க, முதல் தடவை லேசா நகர்த்தி காட்ட
+(function(){const go=()=>{const q=document.querySelector(".qchips");if(!q){return setTimeout(go,500)}let hinted=false;
+ const upd=()=>{if(!q.clientWidth)return;q.classList.toggle("qend",q.scrollLeft+q.clientWidth>=q.scrollWidth-4);
+  if(!hinted&&q.scrollWidth>q.clientWidth+8){hinted=true;try{if(document.documentElement.getAttribute("data-style")==="3"&&!localStorage.getItem("stm_qhint")&&!matchMedia("(prefers-reduced-motion: reduce)").matches){setTimeout(()=>{q.scrollTo({left:70,behavior:"smooth"});setTimeout(()=>q.scrollTo({left:0,behavior:"smooth"}),700)},1200);localStorage.setItem("stm_qhint","1")}}catch(e){}}};
+ q.addEventListener("scroll",upd,{passive:true});if(window.ResizeObserver)new ResizeObserver(upd).observe(q);addEventListener("resize",upd);upd()};go()})();
 function pbCelebrate(mo){try{if(document.documentElement.getAttribute("data-style")!=="3")return;const k="stm_done_"+(LS.get("mob")||"");if(LS.get(k))return;LS.set(k,"1");
  const o=document.createElement("div");o.id="pbcel";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-labelledby","pbcelt");
  let sp="";for(let i=0;i<26;i++)sp+=`<i style="left:${(i*37)%100}%;animation-delay:${(i%9)*.18}s;animation-duration:${2.4+(i%5)*.35}s;width:${6+(i%3)*3}px;height:${6+(i%3)*3}px"></i>`;
