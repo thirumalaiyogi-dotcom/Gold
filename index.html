@@ -1305,7 +1305,13 @@ html[data-style="3"] #lock .lkt.lkt1{background:#1D5FD8!important;box-shadow:0 8
 html[data-style="3"] #lock .lkpad button{background:#fff;box-shadow:0 4px 10px rgba(29,95,216,.08),inset 0 0 0 1px #DCE6F7}
 /* கீழ் Nav: வெள்ளை, வளைந்த மேல் ஓரம் (5 tab பழைய மாதிரியே) */
 @media (max-width:799px){
- html[data-style="3"] nav{border-radius:22px 22px 0 0!important;border-top:0!important;box-shadow:0 -6px 20px rgba(13,63,166,.10)!important}
+ html[data-style="3"] nav{border-radius:22px 22px 0 0!important;border-top:0!important;box-shadow:0 -6px 20px rgba(13,63,166,.10)!important;overflow:visible!important}
+ /* Passbook: நடுவுல மேல தூக்கின வட்ட button */
+ html[data-style="3"] nav button[data-t="p"]{position:relative;overflow:visible!important;color:#1D5FD8!important;background:transparent!important;font-weight:700!important}
+ html[data-style="3"] nav button[data-t="p"] svg{width:58px!important;height:58px!important;padding:16px!important;margin-top:-30px!important;box-sizing:border-box!important;border-radius:50%!important;background:linear-gradient(160deg,#1D5FD8,#0D3FA6)!important;stroke:#fff!important;stroke-width:2!important;box-shadow:0 8px 18px rgba(29,95,216,.4),0 0 0 5px #fff!important}
+ html[data-style="3"] nav button[data-t="p"].on svg{background:linear-gradient(160deg,#F4C54A,#C98A12)!important;stroke:#0D3FA6!important}
+ html[data-style="3"] nav button[data-t="p"].lockd{padding-right:2px!important}
+ html[data-style="3"] nav button[data-t="p"].lockd:after{top:-26px!important;left:calc(50% + 14px)!important;right:auto!important;transform:none!important;box-shadow:0 0 0 2px #fff}
 }
 html[data-style="3"] nav button.on{color:#1D5FD8!important}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
