@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([123])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#0D3FA6":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([123])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1318,6 +1318,43 @@ html[data-style="3"] nav button.on{color:#1D5FD8!important}
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
 .intro.xcard #whyl li::marker{color:#E7D3A0}
+
+/* ===================== STYLE 3 LUXURY BLUE + GOLD polish (visual-only; existing logic untouched) ===================== */
+html:root[data-style="3"]{--b2161D1:#174B9B;--b174A9C:#092A63;--b163E9A:#092A63;--b0F2F73:#061D49;--b2F6FE4:#2B66B8;--b3D7BEA:#2B66B8;--b2F6FD6:#2B66B8;--b4A86E0:#2B66B8;--b172033:#10254D;--b3B4A66:#354563;--b687386:#5C687F;--b5F6B7A:#5C687F;--bE1E8F3:#E8DAB8;--bF5F7FC:#FBF8F0;--bE3ECFF:#F2E8D1;--bE8F1FF:#F2E8D1;--bE4EEFF:#F2E8D1;--bCFE0FF:#E8DAB8;--r31_95_209:23,75,155;--r33_97_209:23,75,155;--r20_33_61:9,42,99;--r22_62_154:9,42,99;--ok:#157447;--c-ok:#157447}
+html[data-style="3"] body{background:#F8F4EA!important}
+html[data-style="3"] header.hd,html[data-style="3"] header.hd.img{background:linear-gradient(155deg,#061D49 0%,#092A63 52%,#174B9B 100%)!important;border-radius:0 0 30px 30px!important;box-shadow:0 12px 30px rgba(6,29,73,.24),inset 0 -2px 0 rgba(222,184,85,.85)!important;color:#fff!important}
+html[data-style="3"] #xhi{color:#fff!important}
+html[data-style="3"] #gd,html[data-style="3"] .xrth,html[data-style="3"] .xrth *{color:#F5E3A5!important;text-shadow:0 1px 3px rgba(0,0,0,.18)!important;-webkit-text-stroke:0!important}
+html[data-style="3"] .hbtn{background:rgba(255,255,255,.12)!important;color:#F5D77D!important;border:1px solid rgba(231,194,92,.72)!important;box-shadow:0 3px 12px rgba(0,0,0,.12)!important}
+html[data-style="3"] .hbtn svg{stroke:#F5D77D!important}
+html[data-style="3"] .hbtn.pro{background:linear-gradient(145deg,#FFE9A0,#D7A936)!important;color:#092A63!important;border:1px solid #FFF0B7!important}
+html[data-style="3"] .pc>div{background:linear-gradient(145deg,#fffefa,#F8F0DC)!important;border:1px solid #D7B65D!important;border-radius:22px!important;box-shadow:0 9px 22px rgba(103,74,15,.15),inset 0 0 0 2px rgba(255,255,255,.8)!important}
+html[data-style="3"] #ptopen{background:linear-gradient(110deg,#092A63,#174B9B)!important;color:#FFE49A!important;border:1.5px solid #D9B451!important;box-shadow:0 5px 15px rgba(6,29,73,.2)!important}
+html[data-style="3"] #ptopen *{color:#FFE49A!important;stroke:#FFE49A!important}
+html[data-style="3"] #qa.qa{background:linear-gradient(145deg,#fffefa,#FBF6E9)!important;border:1px solid rgba(207,171,79,.55)!important;border-radius:24px!important;box-shadow:0 12px 28px rgba(103,74,15,.10),inset 0 0 0 2px #fff!important}
+html[data-style="3"] .qa .qi{background:#EDF2FA!important;border:1px solid rgba(201,164,72,.4)!important;box-shadow:0 3px 9px rgba(9,42,99,.06)!important;color:#174B9B!important}
+html[data-style="3"] .qa button:nth-child(4n+1) .qi{background:#E8F5EC!important;color:#157447!important}
+html[data-style="3"] .qa button:nth-child(4n+3) .qi{background:#FFF0C8!important;color:#A87512!important}
+html[data-style="3"] .qchip{background:#FFFEFA!important;border:1px solid rgba(207,171,79,.42)!important;box-shadow:0 5px 14px rgba(103,74,15,.07)!important}
+html[data-style="3"] .intro.xcard{background:linear-gradient(125deg,#650F19 0%,#8F1E25 52%,#3D0A12 100%)!important;border:1.5px solid #D5AD4C!important;box-shadow:0 12px 26px rgba(82,18,19,.22),inset 0 0 0 1px rgba(255,225,151,.18)!important;border-radius:22px!important}
+html[data-style="3"] .intro.xcard .intk{color:#FFE18A!important}
+html[data-style="3"] .intro .intb.on{background:linear-gradient(145deg,#FFE9A0,#D7A936)!important;color:#10254D!important;border-color:#FFE6A0!important}
+html[data-style="3"] .xcard,html[data-style="3"] .pbcard{border-radius:21px!important}
+html[data-style="3"] .recent{background:#FFFEFA!important;box-shadow:0 7px 18px rgba(103,74,15,.07),inset 0 0 0 1px #E8DAB8!important;border:0!important}
+html[data-style="3"] .sc{border-radius:22px!important;overflow:hidden;box-shadow:0 9px 22px rgba(103,74,15,.10),inset 0 0 0 1px #D7B65D!important}
+html[data-style="3"] .sc .sct:not(.img){background:linear-gradient(130deg,#123E82,#2364B6)!important}
+html[data-style="3"] .sc[data-k="kubera"] .sct:not(.img){background:linear-gradient(130deg,#8A5A00,#D2A12F)!important}
+html[data-style="3"] .pbtop{background:linear-gradient(155deg,#061D49,#092A63 58%,#174B9B)!important;border-radius:0 0 28px 28px!important;box-shadow:inset 0 -2px 0 rgba(222,184,85,.8)!important}
+html[data-style="3"] .pbcard.pbsum{background:linear-gradient(135deg,#092A63,#174B9B 62%,#2B66B8)!important;border:1px solid #D7B65D!important;box-shadow:0 10px 24px rgba(6,29,73,.2)!important}
+html[data-style="3"] .pbtabs{border-radius:18px;box-shadow:0 10px 24px rgba(103,74,15,.10);border:1px solid #E8DAB8}
+html[data-style="3"] .pbtabs button.on{background:linear-gradient(145deg,#174B9B,#092A63);box-shadow:0 4px 10px rgba(9,42,99,.25);border:1px solid #D7B65D;color:#FFE49A!important}
+html[data-style="3"] #lock .lkhero,html[data-style="3"] #lock.img .lkhero{background:radial-gradient(circle at 88% 8%,rgba(255,224,144,.14) 0 70px,transparent 71px),linear-gradient(155deg,#061D49 0%,#092A63 55%,#174B9B 100%)!important}
+html[data-style="3"] #lock .lksheet{background:#F8F4EA!important}
+html[data-style="3"] #lock .lkt.lkt1{background:linear-gradient(145deg,#174B9B,#092A63)!important;box-shadow:0 8px 18px rgba(9,42,99,.3)!important;border:1px solid #D7B65D!important}
+html[data-style="3"] #lock .lkpad button{background:#FFFEFA;box-shadow:0 4px 10px rgba(103,74,15,.07),inset 0 0 0 1px #E8DAB8}
+@media(max-width:799px){html[data-style="3"] nav{background:rgba(255,254,250,.98)!important;border-radius:24px 24px 0 0!important;border-top:1px solid #E8DAB8!important;box-shadow:0 -7px 22px rgba(103,74,15,.10)!important;overflow:visible!important}html[data-style="3"] nav button[data-t="p"]{color:#174B9B!important}html[data-style="3"] nav button[data-t="p"] svg{background:linear-gradient(155deg,#174B9B,#061D49)!important;stroke:#FFE49A!important;box-shadow:0 8px 18px rgba(9,42,99,.3),0 0 0 5px #FFFEFA!important;border:1px solid #D7B65D!important}html[data-style="3"] nav button[data-t="p"].on svg{background:linear-gradient(145deg,#FFE9A0,#D7A936)!important;stroke:#092A63!important}html[data-style="3"] nav button[data-t="p"].lockd:after{box-shadow:0 0 0 2px #FFFEFA}}
+html[data-style="3"] nav button.on{color:#174B9B!important}
+
 /* ===== STYLE 2 polish (maroon · gold · ivory) — Style 1-ஐ தொடாது ===== */
 html:root[data-style="2"]{--gold:#8A6A1F;--pgd:#8A6A1F;--c-ok:#237547;--ok:#237547;--c-err:#B3261E}
 html[data-style="2"] .intro.xcard{background:linear-gradient(150deg,#5B1420 0%,#781D2A 100%)!important;border:1px solid rgba(201,163,78,.55)!important;box-shadow:0 8px 20px rgba(91,20,32,.22)!important}
