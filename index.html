@@ -1347,9 +1347,12 @@ html[data-style="3"] .sc .sct small{background:linear-gradient(145deg,#FFE9A0,#D
 @media (prefers-reduced-motion:reduce){html[data-style="3"] .pc .ci::after{animation:none;display:none}html[data-style="3"] *{transition:none!important}}
 /* ===== Style 3: staff upload செய்த நகை படங்கள் (இல்லைன்னா எதுவும் மாறாது) ===== */
 html.dhdr[data-style="3"] header.hd,html.dhdr[data-style="3"] header.hd.img{background:var(--dhdr) left -26px top -8px/auto 168px no-repeat,linear-gradient(155deg,#061D49 0%,#092A63 52%,#174B9B 100%)!important}
-html.dgold[data-style="3"] .pc>div:first-child{background:var(--dgold) right -4px bottom 26px/auto 58px no-repeat,linear-gradient(145deg,#fffefa,#F8F0DC)!important}
-html.dsilver[data-style="3"] .pc>div+div{background:var(--dsilver) right -4px bottom 26px/auto 58px no-repeat,linear-gradient(145deg,#fffefa,#F2F2F0)!important}
-@media (max-width:359px){html.dhdr[data-style="3"] header.hd{background-size:auto 130px,auto!important;background-position:left -30px top -6px,0 0!important}html.dgold[data-style="3"] .pc>div:first-child,html.dsilver[data-style="3"] .pc>div+div{background-size:auto 44px,auto!important}}
+/* விலை card: நகை படம் card-ன் மேல் வலது மூலையில வெளியே எட்டிப் பார்க்கும் (எண்களை மறைக்காது) */
+html.dgold[data-style="3"] .pc>div:first-child,html.dsilver[data-style="3"] .pc>div+div{position:relative;overflow:visible!important}
+html.dgold[data-style="3"] .pc>div:first-child::after,html.dsilver[data-style="3"] .pc>div+div::after{content:"";position:absolute;right:-8px;top:-30px;width:78px;height:48px;background:center/contain no-repeat;filter:drop-shadow(0 6px 8px rgba(0,0,0,.28));pointer-events:none;z-index:2}
+html.dgold[data-style="3"] .pc>div:first-child::after{background-image:var(--dgold)}
+html.dsilver[data-style="3"] .pc>div+div::after{background-image:var(--dsilver)}
+@media (max-width:359px){html.dhdr[data-style="3"] header.hd{background-size:auto 130px,auto!important;background-position:left -30px top -6px,0 0!important}html.dgold[data-style="3"] .pc>div:first-child::after,html.dsilver[data-style="3"] .pc>div+div::after{width:62px;height:38px;top:-24px;right:-6px}}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
