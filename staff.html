@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#2161D1"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2")v=D;document.documentElement.setAttribute("data-style",v);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#5B1420":"#2161D1"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#2161D1"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([123])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3")v=D;document.documentElement.setAttribute("data-style",v);var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#5B1420":v==="3"?"#0B1B3F":"#2161D1"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <title>Staff · சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
 /* ===== THEME TOKENS: Style 1 (blue) values; Style 2 (maroon) below ===== */
@@ -387,6 +387,14 @@ body{background:var(--bF5F7FC)!important}
 /* ===== STYLE 2 tokens (maroon · gold · ivory) ===== */
 html:root[data-style="2"]{--b2161D1:#781D2A;--b174A9C:#5B1420;--b163E9A:#5B1420;--b0F2F73:#3F0D16;--b2F6FE4:#8E2A38;--b3D7BEA:#8E2A38;--b2F6FD6:#8E2A38;--b4A86E0:#9A3A47;--b6FA0F2:#C9A34E;--b7FA8F5:#C9A34E;--b9CC0FF:#E7D3A0;--b172033:#33251F;--b3B4A66:#5A4638;--b687386:#756A60;--b5F6B7A:#6A5D52;--b9AA6BA:#A89A8A;--bB7C3D6:#CDBFA8;--bCBD5E3:#DCCFB8;--bE1E8F3:#E9DFCF;--bD5E0F0:#E2D5BF;--bD5E2F7:#E7D3A0;--bD9E4F7:#E7D3A0;--bD6E4FB:#E7D3A0;--bC9DCFB:#E7D3A0;--bC3D6F8:#E7D3A0;--bE3ECFF:#F6EDDA;--bE8F1FF:#F6EDDA;--bE4EEFF:#F6EDDA;--bCFE0FF:#F1E3C4;--bE8EEF7:#F3ECDF;--bEEF4FE:#F8F1E4;--bEDF2F9:#F5EEE2;--bF1F6FE:#F9F3E8;--bEAF1FE:#F8F1E4;--bEEF3FB:#F7F0E3;--bEEF2F8:#F5EEE2;--bF2F6FD:#F9F4EA;--bF2F5FA:#F8F3EA;--bF5F7FC:#FBF8F1;--r31_95_209:120,29,42;--r33_97_209:120,29,42;--r20_33_61:51,37,31;--r22_62_154:91,20,32;}
 html:root[data-style="2"]{--ok:#237547}
+/* ===== STYLE 3 (staff: navy) ===== */
+html:root[data-style="3"]{--b2161D1:#1D5FD8;--b174A9C:#0D3FA6;--b163E9A:#0D3FA6;--b0F2F73:#0A2F7A;--b2F6FE4:#3B82F0;--b3D7BEA:#3B82F0;--b2F6FD6:#3B82F0;--b4A86E0:#3B82F0;--b172033:#0F1B3D;--b3B4A66:#34405A;--b687386:#5B6885;--b5F6B7A:#5B6885;--bE1E8F3:#E3EBF8;--bF5F7FC:#EEF4FF;--bE3ECFF:#E6EFFF;--bE8F1FF:#E6EFFF;--bE4EEFF:#E6EFFF;--bCFE0FF:#D9E6FF;--r31_95_209:29,95,216;--r33_97_209:29,95,216;--r20_33_61:13,63,166;--r22_62_154:13,63,166;--ok:#157F4A;--c-maroon:#0B1B3F;--c-maroon-2:#13306B;--pm:#1D5FD8}
+html[data-style="3"] header.hd,html[data-style="3"] header.hd.img{background:linear-gradient(165deg,#0B1B3F,#13306B)!important;border-radius:0 0 26px 26px;box-shadow:0 10px 24px rgba(11,27,63,.2)}
+html[data-style="3"] header.hd::before,html[data-style="3"] header.hd::after{display:none!important}
+html[data-style="3"] #stabs button.on{background:#0B1B3F;border-color:#0B1B3F;color:#F4C54A}
+html[data-style="3"] .btn{background:#1D5FD8}
+html[data-style="3"] header.hd #gd,html[data-style="3"] header.hd .hu,html[data-style="3"] header.hd .hu *{color:#DCE8FF!important;text-shadow:none!important}
+html[data-style="3"] header.hd .pc>div{background:#fff!important;border:0!important;box-shadow:0 8px 20px rgba(11,27,63,.25)!important}
 </style></head><body>
 <div id="app">
 <header class="hd"><div class="hl"><span id="shop"></span></div>

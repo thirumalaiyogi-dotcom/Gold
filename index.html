@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="2",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([123])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#0D3FA6":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1260,6 +1260,61 @@ html.mbg[data-style="2"] .pbcard.pbsum{background:linear-gradient(rgba(58,10,18,
 #lock:not(.stA) .lkpad{gap:clamp(6px,1.2vh,10px);margin-top:clamp(4px,1vh,8px)}
 #lock:not(.stA) .lkpad button{height:clamp(44px,8vh,62px)}
 #lock:not(.stA) #lkfg{margin-top:clamp(2px,1vh,10px)!important}
+
+/* ===================== STYLE 3 (நீலம் · card design, UNPIX reference) — Style 1/2-ஐ தொடாது ===================== */
+html:root[data-style="3"]{--b2161D1:#1D5FD8;--b174A9C:#0D3FA6;--b163E9A:#0D3FA6;--b0F2F73:#0A2F7A;--b2F6FE4:#3B82F0;--b3D7BEA:#3B82F0;--b2F6FD6:#3B82F0;--b4A86E0:#3B82F0;--b172033:#0F1B3D;--b3B4A66:#34405A;--b687386:#5B6885;--b5F6B7A:#5B6885;--bE1E8F3:#E3EBF8;--bF5F7FC:#EEF4FF;--bE3ECFF:#E6EFFF;--bE8F1FF:#E6EFFF;--bE4EEFF:#E6EFFF;--bCFE0FF:#D9E6FF;--r31_95_209:29,95,216;--r33_97_209:29,95,216;--r20_33_61:13,63,166;--r22_62_154:13,63,166;--ok:#157F4A;--c-ok:#157F4A}
+html[data-style="3"] body{background:#EEF4FF!important}
+/* Header: நீல gradient, வளைந்த கீழ் பகுதி (staff header படம் இருந்தாலும் Style 3-ல நீலமே) */
+html[data-style="3"] header.hd,html[data-style="3"] header.hd.img{background:linear-gradient(165deg,#0D3FA6 0%,#1D5FD8 58%,#3B82F0 100%)!important;border-radius:0 0 28px 28px!important;box-shadow:0 10px 26px rgba(13,63,166,.18)!important;color:#fff!important}
+html[data-style="3"] header.hd::before,html[data-style="3"] header.hd::after{display:none!important}
+html[data-style="3"] #xhi{color:#fff!important}
+html[data-style="3"] #gd,html[data-style="3"] .xrth,html[data-style="3"] .xrth *{color:#DCE8FF!important;text-shadow:none!important;-webkit-text-stroke:0!important}
+html[data-style="3"] .hbtn{background:rgba(255,255,255,.16)!important;color:#fff!important;box-shadow:none!important;border:0!important}
+html[data-style="3"] .hbtn svg{stroke:#fff!important}
+html[data-style="3"] .hbtn.pro{background:#F4C54A!important;color:#0D3FA6!important}
+html[data-style="3"] .pc>div{background:#fff!important;border:0!important;border-radius:20px!important;box-shadow:0 10px 24px rgba(13,63,166,.16)!important}
+html[data-style="3"] #ptopen{background:rgba(255,255,255,.16)!important;color:#fff!important;border:1.5px solid rgba(255,255,255,.7)!important}
+html[data-style="3"] #ptopen *{color:#fff!important;stroke:#fff!important}
+/* Home வரிசை: quick actions card முதல்ல */
+html[data-style="3"] .xmain{display:flex;flex-direction:column}
+html[data-style="3"] #qa{order:-2}
+html[data-style="3"] .qchips{order:-1}
+html[data-style="3"] #qa.qa{background:#fff;border-radius:22px;padding:16px 8px 12px;box-shadow:0 12px 28px rgba(13,63,166,.12),inset 0 0 0 1px #E3EBF8}
+html[data-style="3"] .qa .qi{border-radius:50%!important;background:#EEF4FF!important;border:0!important;box-shadow:none!important;color:#1D5FD8!important}
+html[data-style="3"] .qa button:nth-child(4n+1) .qi{background:#E8F7EE!important;color:#157F4A!important}
+html[data-style="3"] .qa button:nth-child(4n+3) .qi{background:#FFF4D6!important;color:#B77A0C!important}
+html[data-style="3"] .qchip{background:#fff!important;border:0!important;box-shadow:0 6px 16px rgba(13,63,166,.08),inset 0 0 0 1px #E3EBF8!important}
+/* Banner + scheme cards */
+html[data-style="3"] .intro.xcard{background:linear-gradient(120deg,#0D3FA6,#1D5FD8)!important;border:0!important;box-shadow:0 10px 24px rgba(13,63,166,.2)!important;border-radius:22px!important}
+html[data-style="3"] .intro.xcard .intk{color:#F4C54A!important}
+html[data-style="3"] .intro .intb.on{background:#F4C54A!important;color:#0F1B3D!important;border-color:#F4C54A!important}
+html[data-style="3"] .xcard,html[data-style="3"] .pbcard{border-radius:20px!important}
+html[data-style="3"] .recent{box-shadow:0 6px 18px rgba(13,63,166,.07),inset 0 0 0 1px #E3EBF8!important;border:0!important}
+html[data-style="3"] .sc{border-radius:22px!important;overflow:hidden;box-shadow:0 8px 22px rgba(13,63,166,.09),inset 0 0 0 1px #E3EBF8!important}
+html[data-style="3"] .sc .sct:not(.img){background:linear-gradient(130deg,#1D5FD8,#3B82F0)!important}
+html[data-style="3"] .sc[data-k="kubera"] .sct:not(.img){background:linear-gradient(130deg,#8A5A00,#C98A12)!important}
+/* Passbook */
+html[data-style="3"] .pbtop{background:linear-gradient(165deg,#0D3FA6,#1D5FD8 60%,#3B82F0)!important;border-radius:0 0 26px 26px!important}
+html[data-style="3"] .pbcard.pbsum{background:linear-gradient(150deg,#0D3FA6,#1D5FD8 55%,#3B82F0)!important;border:0!important}
+html[data-style="3"] .pbtabs{border-radius:18px;box-shadow:0 10px 24px rgba(13,63,166,.12)}
+html[data-style="3"] .pbtabs button.on{background:#1D5FD8;box-shadow:0 4px 10px rgba(29,95,216,.3)}
+/* Login */
+html[data-style="3"] #lock .lkhero,html[data-style="3"] #lock.img .lkhero{background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.1) 0 70px,transparent 71px),linear-gradient(165deg,#0D3FA6 0%,#1D5FD8 55%,#3B82F0 100%)!important}
+html[data-style="3"] #lock .lksheet{background:#EEF4FF!important}
+html[data-style="3"] #lock .lkt.lkt1{background:#1D5FD8!important;box-shadow:0 8px 18px rgba(29,95,216,.35)!important}
+html[data-style="3"] #lock .lkpad button{background:#fff;box-shadow:0 4px 10px rgba(29,95,216,.08),inset 0 0 0 1px #DCE6F7}
+/* கீழ் Nav: வெள்ளை, நடுவுல "கட்டு" button (phone-ல), அறிவிப்பு மணியில */
+nav .navpay{display:none}
+@media (max-width:799px){
+ html[data-style="3"] nav{border-radius:22px 22px 0 0!important;border-top:0!important;box-shadow:0 -6px 20px rgba(13,63,166,.10)!important}
+ html[data-style="3"] nav button[data-t="n"]{display:none!important}
+ html[data-style="3"] nav .navpay{display:flex;order:0;flex:1;flex-direction:column;align-items:center;gap:2px;background:none!important;border:0;color:#157F4A;font:700 11px 'Noto Sans Tamil',sans-serif;padding:0;cursor:pointer;min-height:44px}
+ html[data-style="3"] nav .navpay span{width:58px;height:58px;margin-top:-28px;border-radius:50%;background:linear-gradient(160deg,#1D5FD8,#0D3FA6);box-shadow:0 8px 18px rgba(29,95,216,.4),0 0 0 5px #fff;display:flex;align-items:center;justify-content:center}
+ html[data-style="3"] nav .navpay svg{width:26px!important;height:26px!important;min-width:26px;padding:0!important;margin:0!important;border-radius:0!important;box-sizing:content-box!important;stroke:#fff!important;fill:none!important;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;background:none!important}
+ html[data-style="3"] nav button[data-t="s"]{order:-2}html[data-style="3"] nav button[data-t="scx"]{order:-1}
+ html[data-style="3"] nav button[data-t="p"]{order:1}html[data-style="3"] nav button[data-t="e"]{order:2}
+}
+html[data-style="3"] nav button.on{color:#1D5FD8!important}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
@@ -1455,7 +1510,7 @@ html[data-style="2"] .sb2,html[data-style="2"] .xbtn.xo{border-color:#E9DFCF!imp
  </div>
  <a id="ptopen" class="ptl" role="button" tabindex="0"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 3 8-8M15 7h5v5"/></svg>விலை நிலவரம் பார்க்க<svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></a>
 </div></header>
-<nav><button class="on" data-t="s"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>சேமிப்பு</button><button data-t="scx"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6"/></svg>திட்டங்கள்</button><button data-t="p"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6"/></svg>Passbook</button><button data-t="n"><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span id="ndot" class="dot hide"></span>அறிவிப்பு</button><button data-t="e"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>தொடர்பு</button></nav>
+<nav><button class="on" data-t="s"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v5c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 11v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/></svg>சேமிப்பு</button><button data-t="scx"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20M9 3L7 9l5 12 5-12-2-6"/></svg>திட்டங்கள்</button><button type="button" class="navpay" aria-label="தவணை கட்டு"><span><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M15 15h3"/></svg></span>கட்டு</button><button data-t="p"><svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6"/></svg>Passbook</button><button data-t="n"><svg viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span id="ndot" class="dot hide"></span>அறிவிப்பு</button><button data-t="e"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>தொடர்பு</button></nav>
 
 <section id="s" class="on"><div class="xhome"><div class="xmain">
 <div id="bn" class="hide"><div class="bs" id="bs"></div><div class="dots2" id="bd"></div></div>
@@ -1517,7 +1572,7 @@ $("waf").href=$("wa1").href=$("wa2").href=wa("வணக்கம், தங்�
 function openLn(){$("le").textContent="";$("lm").value=LS.get("mob")||$("lm").value;vis("ln",true);$("ln").scrollTop=0;if($("lm").value.length==10)setTimeout(()=>{try{$("lp").focus()}catch(e){}},250)}
 // பழைய கைரேகை பதிவு இருந்தா phone-ல இருந்து அழி
 try{localStorage.removeItem("bio");Object.keys(localStorage).forEach(k=>{if(k.startsWith("bio_no_"))localStorage.removeItem(k)})}catch(e){}
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){pbLocked();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
+document.querySelectorAll("nav button[data-t]").forEach(b=>b.onclick=()=>{if(b.dataset.t=="p"&&!window.PBOK){pbLocked();return}document.querySelector("header.hd").classList.toggle("hide",b.dataset.t!="s");
  document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
  b.classList.add("on");$(b.dataset.t).classList.add("on");scrollTo(0,0)});
 for(let i=1;i<=12;i++){const r=document.createElement("div");r.className="mrow";
@@ -2345,6 +2400,8 @@ $("shr").onclick=()=>{const t=`${SHOP}\n📍 51b, கங்கை அம்ம�
 const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#FBF8F1",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
 const l=document.createElement("link");l.rel="manifest";l.href=location.protocol=="file:"?URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"})):"manifest.webmanifest";document.head.appendChild(l);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+// Style 3: nav நடுவுல "கட்டு" → Home "தவணை கட்ட" மாதிரியே
+document.addEventListener("click",e=>{if(!e.target.closest("nav .navpay"))return;const q=document.querySelector('#qa [data-q="pay"]');if(q)q.click()});
 // App திறந்தா: படிக்காத notification-களை நீக்கி ஐகான் எண்ணை 0 ஆக்கு (WhatsApp மாதிரி)
 (function(){async function clr(){try{if("clearAppBadge" in navigator)navigator.clearAppBadge().catch(()=>{});
  if(!("serviceWorker" in navigator))return;const r=await navigator.serviceWorker.getRegistration();if(!r||!r.getNotifications)return;(await r.getNotifications()).forEach(n=>n.close())}catch(e){}}
