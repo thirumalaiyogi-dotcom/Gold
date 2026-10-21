@@ -2218,8 +2218,15 @@ function printPB(){document.body.classList.add("printpb");setTimeout(()=>window.
 window.addEventListener("afterprint",()=>document.body.classList.remove("printpb"));
 
 // Refer & Earn
+// ===== Referral link: ?ref=CODE → சேரும் படிவத்தில் தானா நிரம்பும் =====
+const APP_URL=/^https?:/.test(location.protocol)?location.origin:"https://gold.thirumalaiyogi.workers.dev";
+const PLAY_ID=""; // Play Store-ல app வந்ததும் package id இங்கே (உதா: "com.stm.digigold")
+const refLink=c=>APP_URL+"/?ref="+encodeURIComponent(c);
+const playLink=c=>"https://play.google.com/store/apps/details?id="+PLAY_ID+"&referrer="+encodeURIComponent("ref="+c);
+(function(){try{const u=new URL(location.href),c=(u.searchParams.get("ref")||"").trim().toUpperCase();if(/^[A-Z0-9]{3,12}$/.test(c)){localStorage.setItem("stm_ref",JSON.stringify({c,t:Date.now()}));u.searchParams.delete("ref");history.replaceState(history.state,"",u.pathname+(u.search||"")+u.hash)}}catch(e){}})();
+function refSaved(){try{const o=JSON.parse(localStorage.getItem("stm_ref")||"null");if(o&&o.c&&Date.now()-o.t<60*864e5)return o.c}catch(e){}return ""}
 function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count,earn=n*r.per+(r.bonus?r.per:0);
- const msg=`வணக்கம்! ${SHOP}-ல் தங்கநகை சேமிப்புத் திட்டத்தில் சேரும்போது என் code ${r.code} சொல்லுங்க. இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி கிடைக்கும்!`;
+ const msg=`வணக்கம்! ${SHOP}-ல் தங்கநகை சேமிப்புத் திட்டத்தில் சேர இந்த link-ஐ தொடுங்க (என் code ${r.code} தானா சேர்ந்துடும்). முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி கிடைக்கும்!\n\n🔗 ${refLink(r.code)}${PLAY_ID?`\n📱 Android app: ${playLink(r.code)}`:""}`;
  const ms=(lbl,k,max)=>k?`<div class="pbms"><span>${lbl}: ${esc(k)}</span><b>${Math.min(n,max)}/${max}</b><div class="pbbar sm"><i style="width:${Math.min(100,n/max*100)}%"></i></div></div>`:"";
  return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>Referral விவரம்</h3><p class="pbrsub">நண்பரை சேர்த்து பரிசு பெறுங்க</p>
  <div class="pbcode"><div><small>உங்க referral code</small><b>${esc(r.code)}</b></div><div class="pbcodeb"><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button><button type="button" class="pbcopy pbshare" data-rshare="${encodeURIComponent(msg)}">${PBI.sh}<span>பகிர்</span></button></div></div>
@@ -2292,7 +2299,7 @@ function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera
 $("sdback").onclick=()=>vis("sd",false);
 
 // Enrol form + requests
-function openEnrol(k){$("rgs").value=k||"dhana";$("rgf").classList.remove("hide");$("rgok").classList.add("hide");vis("rg",true);$("rg").scrollTop=0;wzShow(1)}
+function openEnrol(k){$("rgs").value=k||"dhana";{const rc=refSaved(),f=$("rgr");if(rc&&f&&!f.value){f.value=rc;f.classList.add("rfauto")}}$("rgf").classList.remove("hide");$("rgok").classList.add("hide");vis("rg",true);$("rg").scrollTop=0;wzShow(1)}
 // ===== Join form wizard (4 steps) =====
 let WZ=1;const WZT=["உங்க விவரம்","முகவரி","திட்டம் & தவணை","Nominee & உறுதி"];
 function wzSch(){const L=allSch(),cur=$("rgs").value;$("wzsc").innerHTML=L.map(x=>{const i=(typeof SINFO!="undefined"&&SINFO[x.key])||null;
