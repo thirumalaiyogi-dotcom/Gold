@@ -878,7 +878,7 @@ nav button[data-t="p"].lockd:after{content:"";position:absolute;top:6px;left:cal
 .pbsum .pbamt{font-size:38px;background:linear-gradient(180deg,#FFF4D6,#E3C27E);-webkit-background-clip:text;background-clip:text;color:transparent}
 .pbring{position:relative;flex:none;width:96px;text-align:center}.pbring svg{width:78px;height:78px;transform:rotate(-90deg);display:block;margin:0 auto}
 .pbring circle{fill:none;stroke:rgba(255,255,255,.18);stroke-width:7}.pbring circle.pg{stroke:#E3C27E;stroke-linecap:round;transition:stroke-dashoffset .8s}
-.pbring .pbcnt,.pbring .pbcnl{display:none}.pbring b{position:absolute;top:24px;left:0;right:0;font-size:18px;color:#fff}.pbring small{display:block;font-size:11.5px;color:var(--bE3ECFF);margin-top:2px}
+.pbring .pbcnt,.pbring .pbcnl{display:none}.pbwel{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:#FFF8E6;color:#6B4A00;font-size:13.5px;line-height:1.5;font-weight:600}.pbring b{position:absolute;top:24px;left:0;right:0;font-size:18px;color:#fff}.pbring small{display:block;font-size:11.5px;color:var(--bE3ECFF);margin-top:2px}
 .pbst3{display:grid;grid-template-columns:repeat(3,1fr);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px 4px}
 .pbst3 span{text-align:center;padding:2px 4px}.pbst3 span+span{border-left:1px solid rgba(255,255,255,.15)}
 .pbst3 i{display:inline-flex;width:30px;height:30px;border-radius:50%;background:rgba(227,194,126,.22);color:var(--bE3ECFF);align-items:center;justify-content:center}.pbst3 i svg{width:17px;height:17px}
@@ -1600,14 +1600,14 @@ html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[d
  <div class="wznav"><button type="button" class="wzb" id="wzprev">‹ பின்</button><button type="button" class="yb wzn" id="wznext">அடுத்து ›</button><button class="yb wzn hide" id="rgb">விண்ணப்பம் அனுப்பு</button></div>
  <div class="lk" style="font-size:13px">ஆதார் போன்ற ID proof-ஐ ஆப்-ல கொடுக்க வேண்டாம். கடைக்கு நேரில் வரும்போது காட்டினா போதும்.</div>
  </div>
- <div id="rgok" class="hide" style="text-align:center"><div style="font-size:60px;margin-top:20px">✅</div><h2>விண்ணப்பம் சென்றது</h2><p>கடையில் ID proof காட்டி முதல் தவணை கட்டுங்க. உடனே உங்க WhatsApp-க்கு Activation code வரும். அதை வச்சு நீங்களே PIN வைக்கலாம்.</p><button class="yb" id="rgx">சரி</button></div>
+ <div id="rgok" class="hide" style="text-align:center"><div style="font-size:60px;margin-top:20px">✅</div><h2>விண்ணப்பம் சென்றது</h2><p>கடை உங்க விண்ணப்பத்தை ஏற்றதும் WhatsApp-ல தகவல் வரும். அப்புறம் app-ல உங்க மொபைல் எண் போட்டு “முதல் தடவையா? mPIN உருவாக்க” அழுத்தி OTP மூலம் mPIN வைங்க. முதல் தவணையை app-லயே கட்டலாம், அல்லது கடையில கட்டலாம்.</p><button class="yb" id="rgx">சரி</button></div>
 </div>
 
 <div id="av" class="ov lt hide">
  <div class="lk" style="text-align:left;margin:6px 0"><a id="avk" style="font-size:16px;text-decoration:none">‹ பின்செல்</a></div>
  <div class="lg"><span class="shopn"></span></div>
  <h2>PIN அமைக்க</h2>
- <p style="text-align:center;color:#555;font-size:14px;margin:0">முதல் தவணை கட்டியதும் உங்க WhatsApp-க்கு ரசீதோட Activation code வரும். அதை போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க.</p>
+ <p style="text-align:center;color:#555;font-size:14px;margin:0">கடையில தவணை கட்டும்போது WhatsApp ரசீதுல Activation code வரும். அதை போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க. Code இல்லன்னா பின்செல்லி “முதல் தடவையா? mPIN உருவாக்க” (OTP) வழியா PIN வைக்கலாம்.</p>
  <label>மொபைல் எண்*</label><input id="avm" type="tel" inputmode="numeric" maxlength="10">
  <label>Activation code*</label><input id="avc" type="tel" inputmode="numeric" maxlength="6">
  <label>புது 6 இலக்க PIN*</label><input id="avp" type="password" inputmode="numeric" maxlength="6">
@@ -1993,12 +1993,13 @@ async function viewPB(){
  const rows=ps.map((x,i)=>({x,n:i+1})).reverse();
  // அடுத்த தவணை: மாதம் 1–7 தேதி
  let nx="";if(left){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
-  const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"});
-  const st=paidThis?["இந்த மாசம் செலுத்தியாச்சு ✓","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
-  const amt=fx&&ps.length?"₹"+f(ps[0].amount):"உங்க விருப்பத் தொகை";
-  const fa=fx&&ps.length?Math.round(ps[0].amount):0;
+  const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=ps.length?due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})+"க்குள்":"இப்போதே கட்டலாம்";
+  const st=!ps.length?["முதல் தவணை","due"]:paidThis?["இந்த மாசம் செலுத்தியாச்சு ✓","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
+  const fma=fx&&!ps.length&&+data.monthly_amount>0?Math.round(+data.monthly_amount):0;
+  const amt=fx&&ps.length?"₹"+f(ps[0].amount):fma?"₹"+f(fma):"உங்க விருப்பத் தொகை";
+  const fa=fx&&ps.length?Math.round(ps[0].amount):fma;
   const pay=paidThis?"":`<div class="pbpay noprint">${fa?`<input type="hidden" id="payam" value="${fa}">`:`<label for="payam">தொகை (₹1,000 – ₹1,00,000)</label><div class="pbpq">${[1000,2000,5000,10000].map(v=>`<button type="button" data-pq="${v}">₹${f(v)}</button>`).join("")}</div><input id="payam" type="number" inputmode="numeric" min="1000" max="100000" step="1" placeholder="தொகை ₹" value="${ps.length?Math.round(ps[ps.length-1].amount):""}">`}<button type="button" class="pbpaybtn" id="paygo">${PBI.wal}${fa?`₹${f(fa)} `:""}இப்போ online-ல கட்டு</button><p class="pbpm" id="paymsg" role="status"></p></div>`;
-  nx=`<div class="pbcard pbnx s-${st[1]}" aria-label="அடுத்த தவணை நிலை: ${st[0]}"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fx&&ps.length?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}க்குள்</small><em class="${st[1]}">${st[0]}</em></div></div>${pay}</div>`}
+  nx=`<div class="pbcard pbnx s-${st[1]}" aria-label="அடுத்த தவணை நிலை: ${st[0]}"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fa?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}</small><em class="${st[1]}">${st[0]}</em></div></div>${ps.length?"":`<p class="pbwel">🙏 வரவேற்கிறோம்! முதல் தவணை கட்டி உங்க தங்க சேமிப்பை ஆரம்பிங்க. கடையிலயும் கட்டலாம்.</p>`}${pay}</div>`}
  if(!left&&paid)nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>எல்லா ${mo} தவணையும் முடிந்தது</b></div><div class="pbnxr"><em class="up">முடிந்தது ✓</em></div></div><p class="pbdn">நகை / காயின் வாங்க கடைக்கு வாருங்க.</p></div>`;
  const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
@@ -2008,7 +2009,7 @@ async function viewPB(){
   <div class="pbring" role="img" aria-label="${pct}% முன்னேற்றம்"><svg viewBox="0 0 72 72"><defs><linearGradient id="pbgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF1BF"/><stop offset=".55" stop-color="#E7C066"/><stop offset="1" stop-color="#B8862A"/></linearGradient></defs><circle cx="36" cy="36" r="30"/><circle class="pg" cx="36" cy="36" r="30" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" style="--c:${C.toFixed(1)}"/></svg><b>${pct}%</b><em class="pbcnt">${paid}<i>/${mo}</i></em><small>முன்னேற்றம்</small><small class="pbcnl">தவணை முடிந்தது</small></div></div>
   <div class="pbbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${paid}"><i style="width:${pct}%"></i></div>
   <div class="pbst3"><span><i>${PBI.wal}</i><b>${paid}</b><small>கட்டிய தவணை</small></span><span><i>${PBI.coins}</i><b>${left}</b><small>மீதி தவணை</small></span><span><i>${PBI.tgt}</i><b>${mo}</b><small>மொத்த தவணை</small></span></div>
-  <p class="pbmat">${PBI.cal2}${left?`முடிவு / நகை வாங்கலாம் : <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
+  <p class="pbmat">${PBI.cal2}${!ps.length?`முதல் தவணை கட்டியதும் முடிவு தேதி தெரியும்`:left?`முடிவு / நகை வாங்கலாம் : <b>${bd}</b>`:`<b>எல்லா தவணையும் முடிந்தது ✔</b> நகை / காயின் வாங்க கடைக்கு வாருங்க.`}</p></div>
  ${nx}
  <div class="pbcard pbacts4 noprint"><h3><span class="pbgi">${PBI.r}</span>உங்கள் சேமிப்புக் கணக்கு</h3><div class="pbag">
   <button type="button" class="t1" onclick="printPB()"><i>${PBI.pdf}</i><b>Passbook PDF</b><small>பதிவிறக்கம்</small></button>

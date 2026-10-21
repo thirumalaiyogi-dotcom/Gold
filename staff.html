@@ -562,7 +562,15 @@ async function addCust(){
  if(window.REQD){const q=REQD;Object.assign(r,{address:q.address+", "+q.city+" "+(q.pincode||""),nominee:q.nominee,nominee_rel:q.nominee_rel,email:r.email||(q.email?q.email.toLowerCase():null),dob:r.dob||q.dob||null,anniv:r.anniv||q.anniv||null})}
  let {error}=await sb.from("gold_customers").insert(r);if(error&&/dob|anniv/.test(error.message||"")){delete r.dob;delete r.anniv;({error}=await sb.from("gold_customers").insert(r))}if(error)return alert(error.code=="23505"?"இந்த மொபைல் / Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);
  if(window.REQD){await sb.from("gold_requests").update({status:"approved"}).eq("id",REQD.id);window.REQD=null;loadReq()}
- ["nn","nm","ne","na","nr","ndob","nanv"].forEach(i=>$(i).value="");alert("Customer சேர்ந்தாச்சு ✅\nமுதல் தவணை பதிவு பண்ணும்போது Activation code WhatsApp ரசீதுல தானா போகும்.");load()}
+ ["nn","nm","ne","na","nr","ndob","nanv"].forEach(i=>$(i).value="");welcomeSheet(r);load()}
+function welcomeSheet(r){const old=document.getElementById("wlc");if(old)old.remove();
+ const amt=r.monthly_amount?`\nமாதத் தவணை: ₹${Number(r.monthly_amount).toLocaleString("en-IN")}`:"";
+ const msg=`வணக்கம் ${r.name}!\nசுப்புலட்சுமி தங்க மாளிகை ${SN[r.scheme]||""} சேமிப்புத் திட்டத்தில் உங்களை அன்புடன் வரவேற்கிறோம்.${amt}\n\nApp: ${APPURL}\n1) App-ல உங்க மொபைல் எண் போடுங்க\n2) "முதல் தடவையா? mPIN உருவாக்க" அழுத்தி OTP மூலம் 6 இலக்க mPIN வைங்க\n3) Passbook-லயே முதல் தவணையை online-ல கட்டலாம், அல்லது கடையில கட்டலாம்.\n\nசந்தேகம் இருந்தா இந்த எண்ணுக்கு பதில் அனுப்புங்க.`;
+ const d=document.createElement("div");d.id="wlc";d.setAttribute("role","dialog");d.setAttribute("aria-modal","true");
+ d.style.cssText="position:fixed;inset:0;z-index:9999;background:rgba(6,18,45,.6);display:flex;align-items:flex-end;justify-content:center";
+ d.innerHTML=`<div style="width:min(100%,480px);background:#fff;color:#0F1B3D;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px rgba(0,0,0,.25)"><b style="font-size:18px">Customer சேர்ந்தாச்சு ✅</b><p style="margin:8px 0 14px;font-size:14px;line-height:1.5;color:#34405A">${esc(r.name)}-க்கு app link-உம் mPIN வைக்கிற வழியும் WhatsApp-ல அனுப்புங்க. அவங்க app-லயே முதல் தவணை கட்டலாம்.</p><a id="wlcs" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;height:50px;border-radius:14px;background:#1f7a4d;color:#fff;font-weight:700;font-size:16px;text-decoration:none">💬 WhatsApp வரவேற்பு அனுப்பு</a><button type="button" id="wlcx" style="margin-top:10px;width:100%;height:46px;border-radius:14px;border:1.5px solid #C9D7F0;background:#fff;font-weight:700;font-size:15px;color:#34405A">பின்னர்</button></div>`;
+ document.body.appendChild(d);d.querySelector("#wlcs").href="https://api.whatsapp.com/send?phone=91"+String(r.mobile).slice(-10)+"&text="+encodeURIComponent(waT(msg));
+ const c=()=>d.remove();d.querySelector("#wlcs").addEventListener("click",()=>setTimeout(c,300));d.querySelector("#wlcx").onclick=c;d.addEventListener("click",e=>{if(e.target===d)c()})}
 async function addPay(){
  const a=+$("pa").value,r=+$("pr").value||null,c=$("pc").value;
  if(!c||!a)return alert("Customer, தொகை வேண்டும்");
