@@ -1434,6 +1434,19 @@ html[data-style="2"] .qa:active .qi{background:#F6EDDA}
 html[data-style="2"] .pc>div:first-child{box-shadow:inset 0 3px 0 #C9A34E,0 1px 2px rgba(51,37,31,.05),0 6px 18px rgba(51,37,31,.06)!important}
 html[data-style="2"] .pc>div+div{box-shadow:inset 0 3px 0 #B9B4AC,0 1px 2px rgba(51,37,31,.05),0 6px 18px rgba(51,37,31,.06)!important}
 html[data-style="2"] .sb2,html[data-style="2"] .xbtn.xo{border-color:#E9DFCF!important;color:#781D2A!important;background:#fff!important}
+
+
+/* ===== Style 3 accessibility + finishing polish (visual-only) ===== */
+html[data-style="3"]{color-scheme:light}
+html[data-style="3"] body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+html[data-style="3"] button,html[data-style="3"] a,[data-style="3"] [role="button"]{-webkit-tap-highlight-color:rgba(215,182,93,.18)}
+html[data-style="3"] button:focus-visible,html[data-style="3"] a:focus-visible,html[data-style="3"] [role="button"]:focus-visible{outline:3px solid #C58C19!important;outline-offset:3px!important}
+html[data-style="3"] .pc>div:first-child{box-shadow:inset 0 3px 0 #D7B65D,0 9px 22px rgba(103,74,15,.15),inset 0 0 0 2px rgba(255,255,255,.8)!important}
+html[data-style="3"] .pc>div+div{box-shadow:inset 0 3px 0 #B7BBC4,0 9px 22px rgba(103,74,15,.12),inset 0 0 0 2px rgba(255,255,255,.8)!important}
+html[data-style="3"] .qa button,html[data-style="3"] .qchip,html[data-style="3"] nav button{touch-action:manipulation}
+html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[data-style="3"] #ptopen:active{transform:translateY(1px)}
+@media(prefers-reduced-motion:reduce){html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[data-style="3"] #ptopen:active{transform:none}}
+
 </style></head><body>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2503,7 +2516,7 @@ $("shr").onclick=()=>{const t=`${SHOP}\n📍 51b, கங்கை அம்ம�
  if(navigator.share)navigator.share({title:SHOP,text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")};
 // PWA
 (function(){const ic=ICON;
-const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#FBF8F1",theme_color:"#b8860b",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
+const m={name:SHOP,short_name:"தங்க மாளிகை",start_url:location.href.split("#")[0],display:"standalone",background_color:"#FBF8F1",theme_color:document.documentElement.getAttribute("data-style")==="2"?"#781D2A":document.documentElement.getAttribute("data-style")==="3"?"#092A63":"#CFE0FF",icons:[{src:ic,sizes:"512x512",type:"image/png",purpose:"any"}]};
 const l=document.createElement("link");l.rel="manifest";l.href=location.protocol=="file:"?URL.createObjectURL(new Blob([JSON.stringify(m)],{type:"application/manifest+json"})):"manifest.webmanifest";document.head.appendChild(l);
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
 // App திறந்தா: படிக்காத notification-களை நீக்கி ஐகான் எண்ணை 0 ஆக்கு (WhatsApp மாதிரி)
