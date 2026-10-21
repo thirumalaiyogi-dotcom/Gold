@@ -1487,7 +1487,6 @@ html[data-style="3"] #gd{font-size:12px!important;font-weight:500!important;colo
 html.dhdr[data-style="3"] header.hd,html.dhdr[data-style="3"] header.hd.img{background-size:auto 112px,58px 58px,auto!important;background-position:left -18px top -4px,center top,0 0!important}
 @media (max-width:359px){html.dhdr[data-style="3"] header.hd{background-size:auto 92px,58px 58px,auto!important;background-position:left -18px top -4px,center top,0 0!important}}
 html[data-style="3"] .qchips{display:grid!important;grid-template-columns:1fr 1fr;gap:12px!important;overflow:visible!important;padding:2px 0 4px!important}
-html[data-style="3"] .qchips #qwa,html[data-style="3"] .qchips a[href^="tel:"]{display:none!important}
 html[data-style="3"] .qchip{min-width:0;min-height:52px;justify-content:center;padding:6px 12px 6px 6px!important;white-space:normal;line-height:1.25;text-align:left}
 html[data-style="3"] .waf{width:48px!important;height:48px!important;bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}html[data-style="3"] .waf svg{width:26px!important;height:26px!important}
 html[data-style="3"] nav button[data-t="p"].lockd:after{display:none!important}
@@ -1805,7 +1804,7 @@ const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNa
 // mPIN login: gold_login (5 முயற்சி வரம்பு). SQL ஓட்டாத நிலையில பழைய gold_get_passbook.
 
 // ===== Online தவணை (Cashfree) =====
-function note(t,ok){let e=document.getElementById("note");if(!e){e=document.createElement("div");e.id="note";e.setAttribute("role","status");document.body.appendChild(e)}e.className=ok?"ok":"bad";e.textContent=t;e.style.display="block";clearTimeout(note.t);note.t=setTimeout(()=>e.style.display="none",6000)}
+function note(t,ok){let e=document.getElementById("note");if(!e){e=document.createElement("div");e.id="note";e.setAttribute("role","status");e.addEventListener("click",()=>{e.style.display="none"});document.body.appendChild(e)}e.className=ok?"ok":"bad";e.textContent=t;e.style.display="block";clearTimeout(note.t);note.t=setTimeout(()=>e.style.display="none",6000)}
 function cfLoad(){return window.Cashfree?Promise.resolve():new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://sdk.cashfree.com/js/v3/cashfree.js";sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
 async function cfCall(b){try{const r=await fetch(SB_URL+"/functions/v1/cf-pay",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
 const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்."};
