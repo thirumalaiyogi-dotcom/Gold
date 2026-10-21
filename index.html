@@ -1345,6 +1345,11 @@ html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[d
 html[data-style="3"] .sc .sct small{background:linear-gradient(145deg,#FFE9A0,#D7A936)!important;color:#3B2A00!important;border:0!important}
 /* இயக்கம் வேண்டாம்னு phone setting இருந்தா */
 @media (prefers-reduced-motion:reduce){html[data-style="3"] .pc .ci::after{animation:none;display:none}html[data-style="3"] *{transition:none!important}}
+/* ===== Style 3: staff upload செய்த நகை படங்கள் (இல்லைன்னா எதுவும் மாறாது) ===== */
+html.dhdr[data-style="3"] header.hd,html.dhdr[data-style="3"] header.hd.img{background:var(--dhdr) left -26px top -8px/auto 168px no-repeat,linear-gradient(155deg,#061D49 0%,#092A63 52%,#174B9B 100%)!important}
+html.dgold[data-style="3"] .pc>div:first-child{background:var(--dgold) right -4px bottom 26px/auto 58px no-repeat,linear-gradient(145deg,#fffefa,#F8F0DC)!important}
+html.dsilver[data-style="3"] .pc>div+div{background:var(--dsilver) right -4px bottom 26px/auto 58px no-repeat,linear-gradient(145deg,#fffefa,#F2F2F0)!important}
+@media (max-width:359px){html.dhdr[data-style="3"] header.hd{background-size:auto 130px,auto!important;background-position:left -30px top -6px,0 0!important}html.dgold[data-style="3"] .pc>div:first-child,html.dsilver[data-style="3"] .pc>div+div{background-size:auto 44px,auto!important}}
 /* why-list: banner மேல படிக்கக்கூடிய வெள்ளை எழுத்து (இரண்டு style-க்கும்) */
 .intro.xcard #whyl{position:relative;margin:10px 0 0;padding-left:20px}
 .intro.xcard #whyl li{color:rgba(255,255,255,.94)!important;line-height:1.55;margin:4px 0}
@@ -2411,6 +2416,7 @@ function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=S
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
  const hd=document.querySelector("header.hd");{const lk=document.getElementById("lock");if(lk){lk.classList.toggle("img",!!SIM.hdr);if(SIM.hdr)lk.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}try{SIM.hdr?localStorage.setItem("stm_hdr",SIM.hdr.image_url):localStorage.removeItem("stm_hdr")}catch(e){}}
  {const R=document.documentElement,mb=SIM.mbg&&SIM.mbg.image_url;R.classList.toggle("mbg",!!mb);if(mb)R.style.setProperty("--mbg",`url("${mb}")`);else R.style.removeProperty("--mbg");try{mb?localStorage.setItem("stm_mbg",mb):localStorage.removeItem("stm_mbg")}catch(e){}}
+ {const R=document.documentElement;[["dec_hdr","dhdr"],["dec_gold","dgold"],["dec_silver","dsilver"]].forEach(([k,c])=>{const u=SIM[k]&&SIM[k].image_url;R.classList.toggle(c,!!u);if(u)R.style.setProperty("--"+c,`url("${String(u).replace(/["\\]/g,"")}")`);else R.style.removeProperty("--"+c)})}
  if(SIM.hdr){hd.classList.add("img");hd.style.setProperty("--hdimg",`url("${SIM.hdr.image_url}")`)}else{hd.classList.remove("img");hd.style.removeProperty("--hdimg")}}
 loadSIM();
 

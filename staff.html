@@ -482,6 +482,7 @@ html[data-style="3"] .card{background:#FFFEFA!important;border:1px solid #E8DAB8
   <input id="lkl" placeholder="காட்ட வேண்டிய பெயர் (எ.கா. @shopname)"><input id="lku" type="url" placeholder="https://...">
   <button class="btn" id="lkadd">சேர்</button><div id="lkm"></div></div>
   <div class="card"><h2>கடை புகைப்படம் (Home)</h2><div class="mut">கடையின் புகைப்படம் (நீளவாக்கு அல்லது சதுரம், 800×1000 நல்லது). Home-ல "எங்கள் கடை" card-ல வரும்.</div><div id="sha"></div></div>
+  <div class="card"><h2>நகை படங்கள் (Style 3)</h2><div class="mut">பின்னணி இல்லாத (transparent PNG) நகை படம் மட்டும். Header மூலையில, தங்க / வெள்ளி விலை card-ல வரும். எழுத்து இல்லாத படம் போடுங்க.</div><div id="dca"></div></div>
   <div class="card"><h2>Maroon பின்னணி படம் (Style 2)</h2><div class="mut">எழுத்து, காயின், நகை இல்லாத maroon velvet / texture படம் மட்டும் (சதுரம், 2048×2048 நல்லது). Customer app-ல maroon நிறம் உள்ள பெரிய இடங்கள்ல (Home banner, Passbook மேல் பகுதி, மொத்த சேமிப்பு, திட்ட card, Login card) இந்த படம் வரும். நீக்கினா சாதாரண maroon நிறம் திரும்ப வரும்.</div><div id="mba"></div></div>
   <div class="card"><h2>Header பின்னணி படம்</h2><div class="mut">எழுத்து, logo, விலை card இல்லாத அலங்கார பின்னணி மட்டும் (1080×770). விலை, logo ஆப்பே மேல போடும்.</div><div id="hda"></div></div>
   <div class="card"><h2>திட்ட card படங்கள்</h2><div class="mut">அகல படம் 1080×540 (2:1). படம் போட்டா card-ன் மேல பகுதி முழுக்க அந்த படம் வரும்.</div><div id="sia"></div></div>
@@ -774,7 +775,7 @@ $("hl").addEventListener("click",async e=>{const d=e.target.dataset.hx;if(!d||!c
 // Scheme card images
 let SIM={};
 function renderSIA(){$("sia").innerHTML=BASE.concat(EXTRA).map(x=>x.key).map(k=>{const r=SIM[k];return `<div style="margin:12px 0"><div class="mut">${esc(SNM(k))} ${r?`· <a data-sd="${k}" style="color:#b00020;text-decoration:underline">நீக்கு</a>`:"· இயல்பு"}</div>${r?`<img src="${r.image_url}" style="height:60px;border-radius:8px;margin:4px 0">`:""}<input type="file" accept="image/*" data-sk="${k}"></div>`}).join("")}
-async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA();renderMBA()}
+async function loadSIM(){const {data}=await sb.from("gold_scheme_img").select("*");SIM={};(data||[]).forEach(r=>SIM[r.scheme]=r);applySIM();renderSIA();renderHDA();renderSHA();renderMBA();renderDCA()}
 function applySIM(){document.querySelectorAll(".sc .sct").forEach(el=>{const r=SIM[el.closest(".sc").dataset.k];if(r){el.classList.add("img");el.style.backgroundImage=`url("${r.image_url}")`}else{el.classList.remove("img");el.style.backgroundImage=""}});
  const sp=$("simg");if(SIM.shop){sp.style.backgroundImage=`url("${SIM.shop.image_url}")`;sp.textContent=""}else{sp.style.backgroundImage="";sp.textContent="🏪"}
  const hd=document.querySelector("header.hd");if(SIM.hdr){hd.classList.add("img");hd.style.backgroundImage=`url("${SIM.hdr.image_url}")`}else{hd.classList.remove("img");hd.style.backgroundImage=""}}
@@ -847,6 +848,18 @@ $("mba").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)ret
   const d=await sb.from("gold_scheme_img").upsert({scheme:"mbg",image_url:url});if(d.error)throw d.error;
   await loadSIM();alert("Maroon பின்னணி படம் சேர்ந்தது ✅")}catch(x){alert(x.message||x)}});
 $("mba").addEventListener("click",async e=>{if(!e.target.dataset.mb)return;if(!confirm("Maroon பின்னணி படத்தை நீக்கவா?"))return;await sb.from("gold_scheme_img").delete().eq("scheme","mbg");loadSIM()});
+
+// Style 3 நகை படங்கள் (transparent PNG — JPEG ஆக்காம)
+const DCK=[["dec_hdr","Header மூலை நகை (ஜிமிக்கி போல, நீள்வாக்கு)"],["dec_gold","தங்க விலை card படம் (பிஸ்கட் / காசு)"],["dec_silver","வெள்ளி விலை card படம்"]];
+function shrinkPNG(f){return new Promise((res,rej)=>{if(f.size<=300*1024&&/png|webp/.test(f.type))return res(f);const i=new Image();i.onload=()=>{const k=Math.min(1,700/Math.max(i.width,i.height)),w=Math.round(i.width*k),h=Math.round(i.height*k),c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(i,0,0,w,h);c.toBlob(b=>b?res(b):rej("படம் படிக்க முடியல"),"image/png")};i.onerror=()=>rej("படம் திறக்க முடியல");i.src=URL.createObjectURL(f)})}
+function renderDCA(){$("dca").innerHTML=DCK.map(([k,l])=>{const r=SIM[k];return `<div style="margin:12px 0"><div class="mut">${l} ${r?`· <a data-dd="${k}" style="color:#b00020;text-decoration:underline">நீக்கு</a>`:"· இல்ல"}</div>${r?`<div style="display:inline-block;padding:6px;border-radius:10px;background:linear-gradient(155deg,#061D49,#174B9B);margin:4px 0"><img src="${esc(r.image_url)}" alt="" style="height:70px;display:block"></div>`:""}<input type="file" accept="image/png,image/webp" data-dk="${k}"></div>`}).join("")}
+$("dca").addEventListener("change",async e=>{const k=e.target.dataset.dk,f=e.target.files[0];if(!k||!f)return;
+ try{const blob=await shrinkPNG(f);const nm=k+".png";
+  const u=await sb.storage.from("slides").upload(nm,blob,{upsert:true,contentType:"image/png",cacheControl:"31536000"});if(u.error)throw u.error;
+  const url=sb.storage.from("slides").getPublicUrl(nm).data.publicUrl+"?v="+Date.now();
+  const d=await sb.from("gold_scheme_img").upsert({scheme:k,image_url:url});if(d.error)throw d.error;
+  await loadSIM();alert("நகை படம் சேர்ந்தது ✅ (Style 3-ல தெரியும்)")}catch(x){alert(x.message||x)}});
+$("dca").addEventListener("click",async e=>{const k=e.target.dataset.dd;if(!k||!confirm("இந்த படத்தை நீக்கவா?"))return;await sb.from("gold_scheme_img").delete().eq("scheme",k);loadSIM()});
 
 // Price change badge
 function chg(id,n,p,dec){const e=$(id);if(n==null||p==null||+p==+n){e.textContent="";e.className="chg";return}
