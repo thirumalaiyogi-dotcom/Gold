@@ -14,7 +14,7 @@ on:
       - ".github/workflows/android.yml"
 
 permissions:
-  contents: read
+  contents: write   # only used to publish the UNSIGNED bundle to the "android-build" branch when no key is set
 
 concurrency:
   group: android-build-${{ github.ref }}
@@ -63,11 +63,26 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon --stacktrace bundleRelease assembleDebug
 
-      - name: Build debug APK only (no key yet)
+      - name: Build debug APK + UNSIGNED AAB (no key in Secrets)
         if: env.HAS_KEY != 'true'
         run: |
           chmod +x gradlew
-          ./gradlew --no-daemon --stacktrace assembleDebug
+          ./gradlew --no-daemon --stacktrace assembleDebug bundleRelease
+
+      - name: Publish UNSIGNED AAB to branch android-build (signed later with the offline upload key)
+        if: env.HAS_KEY != 'true'
+        run: |
+          set -e
+          OUT="$RUNNER_TEMP/build-out"; mkdir -p "$OUT"
+          cp app/build/outputs/bundle/release/app-release.aab "$OUT/app-release-unsigned.aab"
+          cd "$OUT"
+          VC=$(grep -m1 "versionCode" "$GITHUB_WORKSPACE/android/app/build.gradle" | tr -dc '0-9')
+          printf 'commit=%s\nversionCode=%s\nbuilt=%s\n' "$GITHUB_SHA" "$VC" "$(date -u +%FT%TZ)" > BUILD_INFO.txt
+          git init -q -b android-build
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -q -m "Unsigned AAB from $GITHUB_SHA (versionCode $VC)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" android-build
 
       - name: Upload-key SHA-256 (public value → goes into assetlinks.json)
         if: env.HAS_KEY == 'true'
