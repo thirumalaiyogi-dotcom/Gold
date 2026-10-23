@@ -6,7 +6,7 @@ PASS means the check was actually run. NOT TESTED means it could not be run in t
 
 | # | Test | Result | Evidence |
 |---|---|---|---|
-| 1 | Gradle build in GitHub Actions; AAB + APK produced | **NOT TESTED** | Cannot reach Google Maven here. Run *Android app build* in Actions. |
+| 1 | Gradle build in GitHub Actions; AAB + APK produced | PASS (debug APK) / **NOT TESTED** (signed AAB) | Actions run 39993870749 on branch `android-twa-app`: wrapper validation ✓, `assembleDebug` ✓, artifact `stm-gold-debug-apk` uploaded. Signed release AAB (R8) runs once the keystore secrets exist. |
 | 1a | Java sources type-check | PASS (partial) | `javac -source 8` against API stubs; `LauncherActivity` override signatures copied from android-browser-helper **2.7.4** source (tag `android-browser-helper-2.7.4`) |
 | 1b | All XML resources / manifest well-formed; every manifest resource reference exists | PASS | XML parse of all 9 files; resource list cross-checked |
 | 1c | Every `trusted.*` meta-data key in the manifest is read by android-browser-helper 2.7.4 / androidx.browser | PASS | grep of library source |
