@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tamil-locale overrides of android-browser-helper's own messages. -->
+    <string name="provider_unavailable_fallback_message">இந்த app திறக்க Google Chrome தேவை. Play Store-ல் Chrome-ஐ install / update செய்து மீண்டும் திறக்கவும்.</string>
+    <string name="no_provider_toast">Google Chrome-ஐ install செய்யவும்</string>
+    <string name="update_chrome_toast">Google Chrome-ஐ update செய்யவும்</string>
+</resources>

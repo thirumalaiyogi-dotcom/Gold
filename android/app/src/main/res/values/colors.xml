@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand: navy #092A63 (bars, splash), ivory #FBF8F1, gold #C9A24A -->
+    <color name="colorPrimary">#092A63</color>
+    <color name="colorPrimaryDark">#092A63</color>
+    <color name="navigationColor">#092A63</color>
+    <color name="navigationColorDark">#092A63</color>
+    <color name="navigationDividerColor">#00000000</color>
+    <color name="backgroundColor">#092A63</color>
+    <color name="ic_launcher_background">#FFFAF0</color>
+</resources>

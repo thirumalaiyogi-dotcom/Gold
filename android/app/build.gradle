@@ -1,0 +1,80 @@
+plugins {
+    id 'com.android.application'
+}
+
+// ---- Web app settings (domain lives in ../gradle.properties → twaHost) ----
+def twaHost    = (project.findProperty('twaHost') ?: 'gold.thirumalaiyogi.workers.dev').toString().trim()
+def launchPath = '/?utm_source=android_app'
+
+// ---- Upload-key signing: values come ONLY from environment variables set by GitHub Actions.
+//      Nothing secret is stored in this repository. Without them the build is unsigned/debug-signed.
+def ksPath = System.getenv('ANDROID_KEYSTORE_PATH')
+def hasUploadKey = ksPath != null && !ksPath.isEmpty() && file(ksPath).exists()
+
+android {
+    namespace 'com.subbulakshmi.thangamaligai'
+    compileSdk 36
+
+    defaultConfig {
+        // applicationId can NEVER change after the first Play upload.
+        applicationId 'com.subbulakshmi.thangamaligai'
+        // minSdk 24 = Android 7.0. android-browser-helper 2.7.x itself requires 24,
+        // and Chrome's Trusted Web Activity support is reliable from here on.
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName '1.0.0'
+
+        resValue 'string', 'hostName', twaHost
+        resValue 'string', 'launchUrl', "https://${twaHost}${launchPath}"
+        resValue 'string', 'providerAuthority', 'com.subbulakshmi.thangamaligai.fileprovider'
+        // Digital Asset Links statement: this app may open https://<twaHost> without the address bar.
+        resValue 'string', 'assetStatements',
+                '[{\\"relation\\": [\\"delegate_permission/common.handle_all_urls\\"], ' +
+                '\\"target\\": {\\"namespace\\": \\"web\\", \\"site\\": \\"https://' + twaHost + '\\"}}]'
+    }
+
+    signingConfigs {
+        if (hasUploadKey) {
+            upload {
+                storeFile file(ksPath)
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasUploadKey) signingConfig signingConfigs.upload
+        }
+        debug {
+            // The debug APK is signed with the same upload key (when available) so its SHA-256 matches
+            // assetlinks.json and it opens WITHOUT an address bar, exactly like the Play build.
+            if (hasUploadKey) signingConfig signingConfigs.upload
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+        resValues true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+    implementation 'com.android.installreferrer:installreferrer:2.2'
+}

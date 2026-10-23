@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.subbulakshmi.thangamaligai",
+      "sha256_cert_fingerprints": [
+        "39:BD:5D:E0:49:D5:12:61:57:57:EE:0C:65:8C:38:12:71:DD:EE:1E:AD:30:95:8E:0C:22:56:6D:5D:EF:60:D6"
+      ]
+    }
+  }
+]
