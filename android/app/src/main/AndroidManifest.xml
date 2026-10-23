@@ -13,6 +13,7 @@
     <application
         android:name=".StmApplication"
         android:allowBackup="false"
+        android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/appName"
         android:supportsRtl="true"
@@ -76,6 +77,22 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https" android:host="@string/hostName" android:path="/" />
                 <data android:scheme="https" android:host="@string/hostName" android:path="/index.html" />
+            </intent-filter>
+        </activity>
+
+        <!-- REQUIRED: android-browser-helper enables/disables this activity on every launch
+             (site-settings shortcut). If it is missing the app crashes right after the splash. -->
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
+                android:value="@string/launchUrl" />
+            <intent-filter>
+                <action android:name="android.intent.action.APPLICATION_PREFERENCES" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
