@@ -1,5 +1,9 @@
 package com.subbulakshmi.thangamaligai;
 
+import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
@@ -8,6 +12,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.browser.customtabs.CustomTabsCallback;
 
 import com.android.installreferrer.api.InstallReferrerClient;
 import com.android.installreferrer.api.InstallReferrerStateListener;
@@ -55,6 +63,44 @@ public class LauncherActivity extends com.google.androidbrowserhelper.trusted.La
 
     @Override
     protected boolean shouldLaunchImmediately() {
+        // If the previous run crashed (or Chrome reported a problem), show it once so the owner
+        // can copy it and send it to the developer. Then continue normally.
+        String last = CrashLog.take(this);
+        if (last != null) {
+            showProblem(last);
+            return false;
+        }
+        return decideLaunch();
+    }
+
+    private void showProblem(final String text) {
+        try {
+            new AlertDialog.Builder(this)
+                    .setTitle("App பிழை தகவல் · Error report")
+                    .setMessage("கடந்த முறை app மூடியது. இந்த தகவலை Copy செய்து developer-க்கு அனுப்புங்க.\n\n" + text)
+                    .setCancelable(false)
+                    .setPositiveButton("Copy & தொடரு", (d, w) -> {
+                        try {
+                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                            if (cm != null) cm.setPrimaryClip(ClipData.newPlainText("STM app error", text));
+                        } catch (Exception ignored) {
+                        }
+                        continueLaunch();
+                    })
+                    .setNegativeButton("தொடரு", (d, w) -> continueLaunch())
+                    .show();
+        } catch (Exception e) {
+            continueLaunch();
+        }
+    }
+
+    private void continueLaunch() {
+        if (isFinishing()) return;
+        if (decideLaunch()) launchTwa();
+    }
+
+    /** true = launch now; false = launchTwa() will be called after the referrer lookup. */
+    private boolean decideLaunch() {
         if (BuildConfig.DEBUG) {
             String fake = getIntent() != null ? getIntent().getStringExtra("debug_referrer") : null;
             if (fake != null) {
@@ -159,6 +205,31 @@ public class LauncherActivity extends com.google.androidbrowserhelper.trusted.La
             mRefCode = null; // use once
         }
         return uri;
+    }
+
+    /**
+     * android-browser-helper's default QualityEnforcer CRASHES the app when Chrome reports a quality
+     * problem (asset-links check failed, 404/5xx, offline without a page). Record the reason instead,
+     * so the app keeps working (worst case with an address bar) and the reason is shown next launch.
+     */
+    @Override
+    protected CustomTabsCallback getCustomTabsCallback() {
+        final Context app = getApplicationContext();
+        return new CustomTabsCallback() {
+            @Nullable
+            @Override
+            public Bundle extraCallbackWithResult(@NonNull String callbackName, @Nullable Bundle args) {
+                if ("quality_enforcement.crash".equals(callbackName)) {
+                    String reason = args != null ? args.getString("crash_reason") : null;
+                    Log.w(TAG, "Chrome quality report: " + reason);
+                    CrashLog.save(app, "CHROME QUALITY REPORT\n" + reason);
+                    Bundle result = new Bundle();
+                    result.putBoolean("success", true);
+                    return result;
+                }
+                return Bundle.EMPTY;
+            }
+        };
     }
 
     @Override
