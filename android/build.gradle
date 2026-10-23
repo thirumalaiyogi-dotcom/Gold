@@ -1,0 +1,5 @@
+// Top-level build file. Versions follow the Bubblewrap template (AGP 8.9.1 + Gradle 8.11.1),
+// which is the combination Google ships for Trusted Web Activity apps targeting API 36.
+plugins {
+    id 'com.android.application' version '8.9.1' apply false
+}

@@ -2025,7 +2025,8 @@ async function viewPB(){
  <div class="pbcard pbtx" id="pbtx"><h3><span class="pbgi">${PBI.coins}</span>தவணை விவரம்${rows.length>3?`<a class="pball noprint" onclick="this.closest('.pbtx').classList.toggle('all');this.textContent=this.closest('.pbtx').classList.contains('all')?'குறைவாக ‹':'அனைத்தையும் பார்க்க ›'">அனைத்தையும் பார்க்க ›</a>`:""}</h3>${rows.map(({x,n},i)=>`<div class="pbrow${i>2?" more":""}"><span class="pbn">${n}</span><div class="pbd"><b>₹${f(x.amount)}${x.grams?` <em>${(+x.grams).toFixed(3)} கி</em>`:""}</b><small>${PBI.cal2}${pbDate(x.on)}</small></div><div class="pbr"><span class="pbok">${PBI.ok}செலுத்தப்பட்டது</span><button type="button" class="pbrc noprint" data-rc="${n}" aria-label="தவணை ${n} ரசீது">${PBI.r}ரசீது</button></div></div>`).join("")||'<div class="pbempty">இன்னும் தவணை எதுவும் இல்லை.<br>முதல் தவணை கட்டியதும் இங்கே தெரியும்.</div>'}</div>
  ${refCard(data)}
  <div id="pbme" class="noprint" aria-live="polite"></div>
- <div id="pushpb" class="noprint"></div></div>`;
+ <div id="pushpb" class="noprint"></div>
+ <div id="pbdel" class="pbcard noprint"><h3>கணக்கை நீக்க கோரிக்கை</h3><p>உங்கள் கணக்கையும் தகவல்களையும் நீக்க கடைக்கு கோரிக்கை அனுப்பலாம். கடை உங்களை அழைத்து உறுதி செய்யும்.</p><button type="button" class="pbdelb" onclick="pbDelReq()">கணக்கை நீக்க கோரிக்கை அனுப்பு</button><a class="pbdell" href="/delete-account.html" target="_blank" rel="noopener">என்ன நீக்கப்படும் · விவரம் ›</a></div></div>`;
  window.PBD=data;pbTabs();renderPS();payWire();pushUI();loadMe();if(!left&&paid)pbCelebrate(mo)}
 
 // ===== Passbook: 3 tab (சேமிப்பு / என் விவரம் / Referral) =====
@@ -2051,7 +2052,7 @@ function pbTabs(){const x=document.querySelector("#pb .pbx");if(!x||x.querySelec
  const mk=k=>{const d=document.createElement("div");d.className="pbpan";d.dataset.pp=k;d.id="pbp-"+k;d.setAttribute("role","tabpanel");d.setAttribute("aria-labelledby","pbt-"+k);return d};
  const P={sv:mk("sv"),me:mk("me"),rf:mk("rf")};
  const put=(k,sels)=>sels.forEach(sl=>{const e=x.querySelector(":scope>"+sl);if(e)P[k].appendChild(e)});
- put("me",[".pbcust"]);put("sv",[".pbsum",".pbnx",".pbacts4",".pbtx"]);put("rf",[".pbref"]);put("me",["#pbme","#pushpb"]);
+ put("me",[".pbcust"]);put("sv",[".pbsum",".pbnx",".pbacts4",".pbtx"]);put("rf",[".pbref"]);put("me",["#pbme","#pushpb","#pbdel"]);
  if(!P.rf.children.length)P.rf.innerHTML='<div class="pbcard pbstate"><b>Referral விவரம் இன்னும் இல்ல</b><p>உங்க referral code பற்றி கடையில் கேளுங்க.</p></div>';
  const bar=document.createElement("div");bar.className="pbtabs noprint";bar.setAttribute("role","tablist");bar.setAttribute("aria-label","Passbook பகுதிகள்");
  bar.innerHTML=[["sv",PBI.coins,"சேமிப்பு"],["me",PBI.u,"என் விவரம்"],["rf",PBI.gift,"Referral"]].map(([k,i,t])=>`<button type="button" role="tab" id="pbt-${k}" data-pt="${k}" aria-controls="pbp-${k}"><i>${i}</i><span>${t}</span></button>`).join("");
@@ -2670,6 +2671,39 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
   // முதல் பக்கத்துல: ஒரு தடவை எச்சரிக்கை; 2 விநாடிக்குள் மீண்டும் அழுத்தினா app மூடும்
   if(typeof note=="function")note("வெளியேற மீண்டும் Back அழுத்தவும்",1);
   rearmT=setTimeout(arm,2200)});
+})();
+</script>
+<style>
+/* ===== Play Store: கணக்கு நீக்கக் கோரிக்கை (Passbook → என் விவரம்) ===== */
+#pbdel{margin-top:14px}
+#pbdel p{margin:0 0 12px;font-size:14px;line-height:1.6;color:var(--pm,#5B6475)}
+#pbdel .pbdelb{display:block;width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid #B3261E;background:#fff;color:#B3261E;font:700 15px/1.3 inherit;font-family:inherit;cursor:pointer}
+#pbdel .pbdell{display:block;text-align:center;margin-top:10px;font-size:13px;color:inherit;opacity:.8}
+/* ===== இணையம் இல்லாதபோது முழுத் திரை (பழைய தொகை / payment நிலை எதுவும் தெரியாது) ===== */
+#offl{position:fixed;inset:0;z-index:2147483000;background:#FBF8F1;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;font-family:"Noto Sans Tamil",system-ui,sans-serif;color:#092A63}
+#offl[hidden]{display:none}
+#offl .ob{max-width:320px}
+#offl svg{width:64px;height:64px;margin-bottom:10px}
+#offl h2{margin:0 0 6px;font-size:20px}
+#offl p{margin:0 0 18px;color:#5B6475;font-size:15px;line-height:1.6}
+#offl button{padding:12px 28px;border:0;border-radius:12px;background:#092A63;color:#fff;font:700 16px/1.3 inherit;font-family:inherit;cursor:pointer}
+#offl small{display:block;margin-top:12px;min-height:1.4em;color:#B3261E;font-size:13px}
+</style>
+<script>
+// கணக்கு நீக்கக் கோரிக்கை → கடையின் WhatsApp (backend மாற்றம் இல்லை)
+function pbDelReq(){try{
+ var d=window.PBD||{},m="";try{m=(localStorage.getItem("mob")||"").replace(/\D/g,"").slice(-10)}catch(e){}
+ var t="கணக்கை நீக்க கோரிக்கை / Account deletion request\n\nபெயர் / Name: "+(d.name||"")+"\nமொபைல் / Mobile: "+m+"\n\nசுப்புலட்சுமி தங்க மாளிகை app-ல் உள்ள என் கணக்கையும் தகவல்களையும் நீக்கவும்.\nPlease delete my app account and data.";
+ open(typeof wa=="function"?wa(t):"https://api.whatsapp.com/send?phone=919791918344&text="+encodeURIComponent(t),"_blank")}catch(e){location.href="/delete-account.html"}}
+// இணையம் இல்லை → முழுத் திரை மூடி; இணையம் வந்ததும் தானா மறையும்
+(function(){var o=document.createElement("div");o.id="offl";o.hidden=true;o.setAttribute("role","alertdialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-labelledby","offlt");
+ o.innerHTML='<div class="ob"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1"/><path d="M3 3l18 18"/></svg><h2 id="offlt">இணையம் இல்லை</h2><p>உங்க mobile data / Wi-Fi-ஐ சரிபார்த்து மீண்டும் முயற்சி செய்யுங்க.<br>No internet connection.</p><button type="button" id="offlr">மீண்டும் முயற்சி</button><small id="offlm" role="status"></small></div>';
+ document.body.appendChild(o);
+ var show=function(){o.hidden=false;try{document.getElementById("offlr").focus()}catch(e){}},hide=function(){o.hidden=true;document.getElementById("offlm").textContent=""};
+ addEventListener("offline",show);addEventListener("online",hide);if(navigator.onLine===false)show();
+ document.getElementById("offlr").onclick=function(){var m=document.getElementById("offlm");m.textContent="சரிபார்க்கிறோம்…";
+  fetch("/manifest.webmanifest?ping="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;hide();try{if(typeof loadRate=="function")loadRate()}catch(e){}})
+  .catch(function(){m.textContent="இன்னும் இணையம் இல்லை · Still offline"})};
 })();
 </script>
 </body></html>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">சுப்புலட்சுமி தங்க மாளிகை</string>
+    <string name="launcherName">தங்க மாளிகை</string>
+
+    <!-- Shown by android-browser-helper when no browser at all is installed (overrides the library text). -->
+    <string name="provider_unavailable_fallback_message">இந்த app திறக்க Google Chrome தேவை. Play Store-ல் Chrome-ஐ install / update செய்து மீண்டும் திறக்கவும்.\n\nThis app needs Google Chrome. Please install or update Chrome from the Play Store and open the app again.</string>
+    <string name="no_provider_toast">Google Chrome-ஐ install செய்யவும் · Please install Google Chrome</string>
+    <string name="update_chrome_toast">Google Chrome-ஐ update செய்யவும் · Please update Google Chrome</string>
+</resources>

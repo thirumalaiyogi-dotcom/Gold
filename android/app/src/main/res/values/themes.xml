@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 7–11: transparent launcher window (Bubblewrap default); android-browser-helper
+         draws the navy splash with the logo and hands it over to Chrome. -->
+    <style name="Theme.STM.Launcher" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/navigationColor</item>
+    </style>
+</resources>
