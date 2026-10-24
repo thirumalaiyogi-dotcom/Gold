@@ -1681,6 +1681,34 @@ html[data-lux][data-style] #lock .lkdots i.on{background:var(--lx-navy)!importan
 /* staff upload செய்த தங்கக் கட்டி / வெள்ளி படங்கள்: பலகைக்கு உள்ளே, லேபிள் பக்கத்தில் சின்னதா */
 html[data-lux].dgold[data-style] header.hd .pc>div:first-child,html[data-lux].dsilver[data-style] header.hd .pc>div+div{position:relative!important;overflow:visible!important}
 html[data-lux].dgold[data-style] header.hd .pc>div:first-child::after,html[data-lux].dsilver[data-style] header.hd .pc>div+div::after{top:10px!important;right:10px!important;width:46px!important;height:28px!important;filter:none!important;opacity:.95}
+/* ===== Style 4: ☰ menu ===== */
+html[data-lux][data-style] header.hd #hbell,html[data-lux][data-style] header.hd #hpro{display:none!important}
+html[data-lux][data-style] header.hd #hmenu{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border-radius:22px;cursor:pointer}
+html[data-lux] #smenu{position:fixed;inset:0;z-index:2147482000;font-family:"Noto Sans Tamil",system-ui,sans-serif}
+html[data-lux] #smenu.hide{display:none!important}
+html[data-lux] #smenu .smbk{position:absolute;inset:0;background:rgba(6,18,45,.45);opacity:0;transition:opacity .2s}
+html[data-lux] #smenu .smp{position:absolute;top:0;right:0;bottom:0;width:min(86vw,340px);background:var(--lx-ivory);display:flex;flex-direction:column;overflow-y:auto;transform:translateX(100%);transition:transform .22s ease;box-shadow:-8px 0 24px rgba(0,0,0,.18)}
+html[data-lux] #smenu.on .smbk{opacity:1}
+html[data-lux] #smenu.on .smp{transform:none}
+@media (prefers-reduced-motion:reduce){html[data-lux] #smenu .smp,html[data-lux] #smenu .smbk{transition:none}}
+html[data-lux] #smenu .smh{position:relative;background:var(--lx-navy);color:#fff;padding:calc(22px + env(safe-area-inset-top,0px)) 20px 20px;border-bottom:2px solid var(--lx-gold);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+html[data-lux] #smenu .smx{position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:10px;width:44px;height:44px;border:0;border-radius:22px;background:transparent;color:#F3E2B3;display:flex;align-items:center;justify-content:center;cursor:pointer}
+html[data-lux] #smenu .smav{width:64px;height:64px;border-radius:32px;border:1.5px solid var(--lx-gold);color:#F3E2B3;display:flex;align-items:center;justify-content:center;font-family:var(--lx-serif);font-size:28px;font-weight:600;margin-bottom:6px}
+html[data-lux] #smenu .smav svg{width:30px;height:30px}
+html[data-lux] #smenu .smh b{font-family:var(--lx-serif);font-weight:600;font-size:18px;line-height:1.4}
+html[data-lux] #smenu .smh small{color:#C9D3E6;font-size:13px}
+html[data-lux] #smenu .smh small:empty{display:none}
+html[data-lux] #smenu .smlog{margin-top:10px;min-height:44px;padding:0 18px;border-radius:12px;border:0;background:var(--lx-gold);color:var(--lx-navy);font:700 14.5px/1.3 inherit;font-family:inherit;cursor:pointer}
+html[data-lux] #smenu .smlog.hide{display:none}
+html[data-lux] #smenu .sml{display:flex;flex-direction:column;padding:8px 0}
+html[data-lux] #smenu .sml button{display:flex;align-items:center;gap:14px;min-height:52px;padding:6px 20px;border:0;border-bottom:1px solid var(--lx-line);background:transparent;color:var(--lx-ink);font:500 15px/1.4 inherit;font-family:inherit;text-align:left;cursor:pointer}
+html[data-lux] #smenu .sml button.hide{display:none}
+html[data-lux] #smenu .sml button:active{background:#F3EDDD}
+html[data-lux] #smenu .sml i{flex:0 0 38px;width:38px;height:38px;border-radius:19px;border:1px solid var(--lx-gl);color:var(--lx-navy);display:flex;align-items:center;justify-content:center;font-style:normal}
+html[data-lux] #smenu .sml i svg{width:20px;height:20px}
+html[data-lux] #smenu .sml .smlo{color:var(--lx-red)}
+html[data-lux] #smenu .sml .smlo i{color:var(--lx-red);border-color:#E8B4AF}
+html[data-lux] #smenu .smf{margin:auto 0 0;padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));font-size:12px;color:var(--lx-mute);text-align:center}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2809,6 +2837,7 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
  var rearmT=0;
  function back(){
   if(window.PAYING)return true;                                   // payment நடக்கும்போது ஒன்னும் பண்ணாது
+  if(window.stmMenuBack&&window.stmMenuBack())return true;      // Style 4 menu திறந்திருந்தா மூடு
   var n=document.getElementById("note");if(n&&n.style.display=="block"){n.style.display="none"}
   if(on("lkok"))return true;
   if(on("pop")){closePop();return true}
@@ -2872,6 +2901,72 @@ function pbDelReq(){try{
  document.getElementById("offlr").onclick=function(){var m=document.getElementById("offlm");m.textContent="சரிபார்க்கிறோம்…";
   fetch("/manifest.webmanifest?ping="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;hide();try{if(typeof loadRate=="function")loadRate()}catch(e){}})
   .catch(function(){m.textContent="இன்னும் இணையம் இல்லை · Still offline"})};
+})();
+</script>
+<script>
+// ===== Style 4: ☰ பக்கவாட்டு menu (Style 4-ல மட்டும் உருவாகும்; இருக்கும் function-களையே அழைக்கும்) =====
+(function(){
+ if(!document.documentElement.hasAttribute("data-lux"))return;
+ var $i=function(id){return document.getElementById(id)};
+ var tools=document.querySelector("header.hd .htools");if(!tools)return;
+ var I={
+  user:'<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  book:'<path d="M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 9h8M8 13h6"/>',
+  key:'<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  gift:'<rect x="3" y="8" width="18" height="13" rx="1"/><path d="M12 8v13M3 12h18M12 8S10 3 7.5 4.5 9 8 12 8zM12 8s2-5 4.5-3.5S15 8 12 8z"/>',
+  dia:'<path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  wa:'<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c.3 2 2 4 4.5 4.6l1-1.1 1.6.7"/>',
+  shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>',
+  menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>'
+ };
+ var ic=function(k){return '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[k]+'</svg>'};
+ var btn=document.createElement("button");btn.type="button";btn.id="hmenu";btn.className="hbtn";btn.setAttribute("aria-label","Menu");btn.setAttribute("aria-haspopup","dialog");btn.innerHTML=ic("menu");
+ tools.appendChild(btn);
+ var ov=document.createElement("div");ov.id="smenu";ov.className="hide";
+ ov.innerHTML='<div class="smbk" data-sm="close"></div><aside class="smp" role="dialog" aria-modal="true" aria-label="Menu"><div class="smh"><button type="button" class="smx" data-sm="close" aria-label="மூடு">'+ic("x")+'</button><div class="smav" id="smav">'+ic("user")+'</div><b id="smn">வணக்கம்!</b><small id="smm"></small><small id="smc"></small><button type="button" class="smlog" id="smlogin" data-sm="login">Passbook-ல் உள்நுழை</button></div><div class="sml" role="navigation" aria-label="Menu"></div><p class="smf">சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி</p></aside>';
+ document.body.appendChild(ov);
+ var items=[
+  ["me","user","என் விவரம்"],["pb","book","என் Passbook"],["pin","key","mPIN மாற்ற / மறந்துவிட்டேன்"],
+  ["n","bell","அறிவிப்புகள் · Notification"],["rf","gift","நண்பரை சேர்க்க (Referral)"],["sch","dia","சேமிப்புத் திட்டங்கள்"],
+  ["e","phone","கடையைத் தொடர்பு கொள்ள"],["wa","wa","WhatsApp-ல் பேச"],
+  ["priv","shield","தனியுரிமைக் கொள்கை"],["del","trash","கணக்கை நீக்க கோரிக்கை"],["lo","out","வெளியேறு"]
+ ];
+ ov.querySelector(".sml").innerHTML=items.map(function(x){return '<button type="button" data-sm="'+x[0]+'"'+(x[0]=="lo"?' class="smlo"':'')+'><i>'+ic(x[1])+'</i><span>'+x[2]+'</span></button>'}).join("");
+ var last=null;
+ function fill(){var d=window.PBOK&&window.PBD,mob="";try{mob=(localStorage.getItem("mob")||"").replace(/\D/g,"").slice(-10)}catch(e){}
+  $i("smn").textContent=d&&d.name?("வணக்கம், "+d.name):"வணக்கம்!";
+  $i("smm").textContent=d&&mob?("+91 "+mob.slice(0,5)+" "+mob.slice(5)):"";
+  $i("smc").textContent=d&&d.refer&&d.refer.code?("உறுப்பினர் எண் : "+d.refer.code):"";
+  $i("smav").innerHTML=d&&d.name?String(d.name).trim().charAt(0).toUpperCase():ic("user");
+  $i("smlogin").classList.toggle("hide",!!window.PBOK);
+  var lo=ov.querySelector('[data-sm="lo"]');if(lo)lo.classList.toggle("hide",!window.PBOK)}
+ function open(){fill();last=document.activeElement;ov.classList.remove("hide");requestAnimationFrame(function(){ov.classList.add("on")});document.body.style.overflow="hidden";var f=ov.querySelector(".smx");if(f)f.focus()}
+ function close(){if(ov.classList.contains("hide"))return;ov.classList.remove("on");document.body.style.overflow="";setTimeout(function(){ov.classList.add("hide")},220);try{if(last&&last.focus)last.focus()}catch(e){}}
+ window.stmMenuBack=function(){if(!ov.classList.contains("hide")){close();return true}return false};
+ btn.addEventListener("click",open);
+ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!ov.classList.contains("hide"))close()});
+ var tab=function(t){var b=document.querySelector('nav button[data-t="'+t+'"]');if(b)b.click()};
+ var needLogin=function(){if(window.PBOK)return false;if(typeof showLock=="function")showLock("pin");else tab("p");return true};
+ ov.addEventListener("click",function(e){var b=e.target.closest("[data-sm]");if(!b)return;var k=b.dataset.sm;
+  if(k=="close"){close();return}
+  close();
+  setTimeout(function(){try{
+   if(k=="login"){needLogin();return}
+   if(k=="me"||k=="pb"||k=="rf"){if(needLogin())return;tab("p");if(k!="pb")setTimeout(function(){if(typeof pbTab=="function")pbTab(k=="me"?"me":"rf");scrollTo(0,0)},400);return}
+   if(k=="pin"){if(typeof openOT=="function")openOT("f");return}
+   if(k=="n"){tab("n");return}
+   if(k=="sch"){tab("scx");return}
+   if(k=="e"){tab("e");return}
+   if(k=="wa"){var w=$i("qwa");if(w)w.click();else window.open("https://api.whatsapp.com/send?phone=919791918344","_blank");return}
+   if(k=="priv"){window.open("/privacy.html","_blank","noopener");return}
+   if(k=="del"){if(window.PBOK&&typeof pbDelReq=="function")pbDelReq();else window.open("/delete-account.html","_blank","noopener");return}
+   if(k=="lo"){var l=$i("lo");if(l)l.click();return}
+  }catch(x){}},230)});
 })();
 </script>
 </body></html>
