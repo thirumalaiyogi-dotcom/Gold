@@ -1753,14 +1753,17 @@ html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
 #lock .lknewp{margin:0!important}
 #lock .lkhelp{margin:8px 0 4px!important}
 #lock .lkhelp a{min-height:62px!important;padding:6px 2px!important}
+#lkA .lksub{font-size:14px;line-height:1.5;margin-bottom:14px}
+#lkA .lkwel{margin-bottom:8px;font-weight:600}
+@media (max-height:800px){#lock.stA .lkhero{height:clamp(120px,24vh,260px)!important}#lock.stA .lkhero .shopn img,#lock.stA .lkhero .logo{max-height:72px!important;width:auto!important}#lkA .lkt{min-height:72px;padding:10px 14px}}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
  <div class="lksheet">
   <div id="lkA">
-   <h2>வணக்கம், வருக!</h2><p class="lksub">உங்க தங்க சேமிப்பை பார்க்கவோ, புது திட்டங்களை தெரிஞ்சுக்கவோ கீழே தேர்ந்தெடுங்க.</p>
-   <button type="button" class="lkt lkt1" id="lkgoPin"><span class="lkti"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span><b>என் சேமிப்பு (Passbook)</b><small id="lkAmob">mPIN போட்டு உள்ளே போக</small></span><em>›</em></button>
-   <button type="button" class="lkt" id="lkgoView"><span class="lkti"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20"/></svg></span><span><b>திட்டங்களை மட்டும் பார்க்க</b><small>Login இல்லாமல்</small></span><em>›</em></button>
+   <h2>வணக்கம்.. வருக..!</h2><p class="lksub lkwel">சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.</p><p class="lksub">உங்கள் தங்க சேமிப்பை பார்க்கவோ அல்லது தங்க சேமிப்புத் திட்டங்களைப் பற்றிய விவரங்களைத் தெரிந்து கொள்வதற்கோ கீழே உள்ள விருப்பங்களில் ஒன்றைத் தேர்வு செய்யுங்கள்.</p>
+   <button type="button" class="lkt lkt1" id="lkgoPin"><span class="lkti"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span><b>என் சேமிப்பு (Passbook)</b><small id="lkAmob">mPIN போட்டு உள்ளே நுழையுங்கள்</small></span><em>›</em></button>
+   <button type="button" class="lkt" id="lkgoView"><span class="lkti"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20"/></svg></span><span><b>தங்கசேமிப்புத் திட்டங்களை பற்றி தெரிந்து கொள்வதற்கு</b><small>(Login தேவையில்லை)</small></span><em>›</em></button>
   </div>
   <div id="lkB" class="hide">
    <a class="lkbk" id="lkbk" role="button" tabindex="0" aria-label="பின் செல்ல">‹</a>
@@ -2440,7 +2443,7 @@ function lkStage(stage){vis("lkA",stage=="A");vis("lkB",stage!="A");{const lk=do
  if(stage=="pin"){LKM="pin";$("lkh").textContent="mPIN";$("lksub").textContent="உங்க 6 இலக்க mPIN போடுங்க";$("lkmob").textContent=maskMob(LS.get("mob"));vis("lkwho",true)}
  lkDraw()}
 function showLock(stage){if(window.PBOK)return;
- const m=LS.get("mob");$("lkAmob").textContent=m&&/^[0-9]{10}$/.test(m)?maskMob(m)+" · mPIN போட்டு உள்ளே போங்க":"mPIN போட்டு உள்ளே போங்க";
+ const m=LS.get("mob");$("lkAmob").textContent=m&&/^[0-9]{10}$/.test(m)?maskMob(m)+" · mPIN போட்டு உள்ளே நுழையுங்கள்":"mPIN போட்டு உள்ளே நுழையுங்கள்";
  lkStage(stage=="pin"?(m&&/^[0-9]{10}$/.test(m)?"pin":"mob"):"A");vis("lock",true);$("lock").scrollTop=0}
 function lkFail(t){$("lke").innerHTML=t;LKV="";lkDraw();const b=$("lkB");b.classList.remove("shake");void b.offsetWidth;b.classList.add("shake")}
 async function lkVerify(){const m=LS.get("mob"),p=LKV;$("lkpad").classList.add("dis");$("lke").textContent="சரிபார்க்கிறோம்…";
