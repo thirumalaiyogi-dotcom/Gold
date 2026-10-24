@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம் (blue), Style 2 = மரூன் · தங்கம் (default). மாற்ற: ?style=1 அல்லது ?style=2 */(function(){var D="3",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([123])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3")v=D;document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம், 2 = மரூன், 3 = default, 4 = Luxury (Style 3 + data-lux layer). மாற்ற: ?style=1..4 */(function(){var D="3",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([1234])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3"&&v!=="4")v=D;if(v==="4"){document.documentElement.setAttribute("data-lux","");v="3";var lf=document.createElement("link");lf.rel="stylesheet";lf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(lf)}document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1513,6 +1513,168 @@ html[data-style="3"] .qa button,html[data-style="3"] .qchip,html[data-style="3"]
 html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[data-style="3"] #ptopen:active{transform:translateY(1px)}
 @media(prefers-reduced-motion:reduce){html[data-style="3"] .qa button:active,html[data-style="3"] .qchip:active,html[data-style="3"] #ptopen:active{transform:none}}
 
+/* ===== Style 4 — Luxury (ஐவரி · navy · மெல்லிய தங்கம்). ?style=4 → data-style="3" + data-lux; Style 3 மேல் ஒரு layer மட்டும். ===== */
+html[data-lux]{--lx-navy:#092A63;--lx-navy2:#061D45;--lx-ivory:#FBF8F1;--lx-paper:#FFFFFF;--lx-ink:#1B2233;--lx-mute:#5F6677;--lx-gold:#C9A24A;--lx-goldt:#8A6A1F;--lx-gl:#D9C08A;--lx-line:#ECE4D0;--lx-line2:#E3D6B4;--lx-red:#B3261E;--lx-green:#1E6B42;--lx-serif:"Noto Serif Tamil","Noto Sans Tamil",Georgia,serif}
+html[data-lux],html[data-lux] body,html[data-lux][data-style] #app,html[data-lux][data-style] main{background:var(--lx-ivory)!important}
+html[data-lux][data-style] body{color:var(--lx-ink)!important}
+
+/* --- Header: தட்டையான navy + தங்கக் கோடு --- */
+html[data-lux][data-style] header.hd,html[data-lux][data-style] header.hd.img{background:var(--lx-navy)!important;background-image:none!important;border-radius:0!important;box-shadow:none!important;border-bottom:2px solid var(--lx-gold)!important}
+html[data-lux][data-style] header.hd::before,html[data-lux][data-style] header.hd::after,html[data-lux][data-style] header.hd .xhd::before,html[data-lux][data-style] header.hd .xhd::after{display:none!important;content:none!important}
+html[data-lux][data-style] header.hd #shop img{filter:none!important}
+html[data-lux][data-style] header.hd .hbtn{background:transparent!important;border:1px solid rgba(201,162,74,.55)!important;box-shadow:none!important;color:#F3E2B3!important}
+html[data-lux][data-style] header.hd .hbtn.pro{background:transparent!important;color:#F3E2B3!important}
+html[data-lux][data-style] header.hd .xhi{color:#fff!important;font-weight:600!important}
+html[data-lux][data-style] header.hd #gd,html[data-lux][data-style] header.hd .hu{color:#C9D3E6!important}
+
+/* விலைப் பலகை: இரண்டு தனி card → ஒரே வெள்ளை பலகை, நடுவில் கோடு, serif எண்கள் */
+html[data-lux][data-style] header.hd .pc{width:100%!important;max-width:none!important;box-sizing:border-box!important;justify-self:stretch!important;align-self:stretch!important;gap:0!important;background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;border-radius:16px!important;box-shadow:none!important;overflow:hidden}
+html[data-lux][data-style] header.hd .pc>div{padding:14px 16px!important;min-width:0!important;width:auto!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important}
+html[data-lux][data-style] header.hd .pc>div+div{border-left:1px solid var(--lx-line)!important}
+html[data-lux][data-style] header.hd .pc .ci{display:none!important}
+html[data-lux][data-style] header.hd .pc .pl,html[data-lux][data-style] header.hd .pc .pu{color:var(--lx-mute)!important}
+html[data-lux][data-style] header.hd .pc b{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important;font-size:27px!important;letter-spacing:0!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+html[data-lux][data-style] header.hd .pc .chg{background:transparent!important;border:0!important;padding:0!important;font-weight:700!important}
+html[data-lux][data-style] header.hd .pc .chg.dn{color:var(--lx-red)!important}
+html[data-lux][data-style] header.hd .pc .chg.up{color:var(--lx-green)!important}
+html[data-lux][data-style] header.hd #ptopen,html[data-lux][data-style] header.hd .ptl{background:transparent!important;border:1px solid rgba(201,162,74,.6)!important;color:#F3E2B3!important;box-shadow:none!important}
+
+/* --- விரைவு செயல்கள்: 3D படங்களுக்கு பதில் மெல்லிய navy icons, தங்க வட்டம் --- */
+html[data-lux][data-style] #qa.qa{background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-lux][data-style] #qa .qi,html[data-lux][data-style] #qa button .qi{background:var(--lx-paper)!important;background-image:none!important;border:1px solid var(--lx-gl)!important;box-shadow:none!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] #qa .qi svg{opacity:1!important;color:var(--lx-navy)!important;stroke:currentColor}
+html[data-lux][data-style] #qa button{color:var(--lx-ink)!important}
+html[data-lux][data-style] #qa button>span:last-child{font-weight:500!important}
+
+/* chips */
+html[data-lux][data-style] .qchip{background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;box-shadow:none!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .qchip .qci{background:transparent!important;color:var(--lx-navy)!important;border:1px solid var(--lx-gl)!important}
+
+/* --- திட்ட hero: navy, உள்ளே மெல்லிய தங்க frame, serif தலைப்பு --- */
+html[data-lux][data-style] .intro.xcard{background:var(--lx-navy)!important;background-image:none!important;border:0!important;box-shadow:none!important;border-radius:18px!important;outline:1px solid rgba(201,162,74,.6);outline-offset:-7px}
+html[data-lux][data-style] .intro.xcard::before,html[data-lux][data-style] .intro.xcard::after{display:none!important;content:none!important}
+html[data-lux][data-style] .intro.xcard .intk{color:var(--lx-gold)!important;letter-spacing:.1em}
+html[data-lux][data-style] .intro.xcard>b{font-family:var(--lx-serif)!important;font-weight:600!important;color:#fff!important}
+html[data-lux][data-style] .intro.xcard p{color:#D6DDEB!important}
+html[data-lux][data-style] .intro .intb{background:transparent!important;border:1px solid rgba(255,255,255,.45)!important;color:#fff!important;box-shadow:none!important;border-radius:12px!important}
+html[data-lux][data-style] .intro .intb.on{background:var(--lx-gold)!important;border-color:var(--lx-gold)!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .intro #why{color:#F3E2B3!important}
+
+/* --- பகுதித் தலைப்புகள் --- */
+html[data-lux][data-style] .sh,html[data-lux][data-style] .xsh h2{font-family:var(--lx-serif)!important;font-weight:600!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .xsh::after,html[data-lux][data-style] .sh::after{background:var(--lx-gold)!important;height:1.5px!important}
+
+/* --- திட்ட card-கள்: வெள்ளை, மேலே தங்கக் கோடு --- */
+html[data-lux][data-style] .sc{background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;border-top:3px solid var(--lx-gold)!important;box-shadow:none!important;border-radius:16px!important}
+html[data-lux][data-style] .sc .sct,html[data-lux][data-style] .sc .sct:not(.img),html[data-lux][data-style] .sc[data-k] .sct:not(.img){background:var(--lx-paper)!important;background-image:none!important;color:var(--lx-ink)!important}
+html[data-lux][data-style] .sc .sct h3{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .sc .sct>div{color:var(--lx-mute)!important}
+html[data-lux][data-style] .sc .sct small{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
+html[data-lux][data-style] .sc .scb{background:var(--lx-paper)!important;border-top:1px solid var(--lx-line)!important}
+html[data-lux][data-style] .sc .scb a{border-radius:12px!important;box-shadow:none!important}
+html[data-lux][data-style] .sc .scb a.mo{background:transparent!important;border:1px solid #C9CFDB!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .sc .scb a.jn{background:var(--lx-navy)!important;border:1px solid var(--lx-navy)!important;color:#F3E2B3!important}
+html[data-lux][data-style] .dots2 i{background:var(--lx-line2)!important}
+html[data-lux][data-style] .dots2 i.on{background:var(--lx-gold)!important}
+
+/* --- பொது card / பொத்தான்கள் --- */
+html[data-lux][data-style] .xcard:not(.intro){background:var(--lx-paper)!important;border:1px solid var(--lx-line)!important;box-shadow:none!important;border-radius:16px!important}
+html[data-lux][data-style] .xbtn{border-radius:12px!important;box-shadow:none!important}
+html[data-lux][data-style] .xbtn:not(.xo){background:var(--lx-navy)!important;color:#F3E2B3!important;border:1px solid var(--lx-navy)!important}
+html[data-lux][data-style] .xbtn.xo{background:transparent!important;border:1px solid #C9CFDB!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .xrow svg{color:var(--lx-goldt)!important}
+html[data-lux][data-style] #waf.waf{width:48px!important;height:48px!important;box-shadow:0 4px 12px rgba(0,0,0,.18)!important}
+
+/* --- கீழ் nav: சமமான 5, மிதக்கும் வட்டம் இல்லை, இருக்கும் பக்கத்துக்கு தங்கப் புள்ளி --- */
+html[data-lux][data-style] nav{background:var(--lx-paper)!important;border-top:1px solid var(--lx-line2)!important;box-shadow:none!important;border-radius:0!important}
+html[data-lux][data-style] nav button{color:var(--lx-mute)!important;background:transparent!important;box-shadow:none!important}
+html[data-lux][data-style] nav button svg{background:transparent!important;box-shadow:none!important;border:0!important;stroke:currentColor!important}
+html[data-lux][data-style] nav button.on{color:var(--lx-navy)!important;font-weight:700!important}
+html[data-lux][data-style] nav button::before,html[data-lux][data-style] nav button[data-t]:not([data-t="p"]).on::before{display:none!important;content:none!important}
+html[data-lux][data-style] nav button.on::after{content:""!important;display:block!important;position:absolute;left:50%;bottom:4px;width:5px;height:5px;margin-left:-2.5px;border-radius:3px;background:var(--lx-gold)}
+html[data-lux][data-style] nav button[data-t="p"],html[data-lux][data-style] nav button[data-t="p"].on{position:relative;color:var(--lx-mute)!important;background:transparent!important}
+html[data-lux][data-style] nav button[data-t="p"].on{color:var(--lx-navy)!important}
+html[data-lux][data-style] nav button[data-t="p"] svg{width:24px!important;height:24px!important;padding:0!important;margin-top:0!important;background:transparent!important;border:0!important;box-shadow:none!important;border-radius:0!important;color:inherit!important}
+
+/* ===== Passbook ===== */
+html[data-lux][data-style] .pbtop{background:var(--lx-navy)!important;background-image:none!important;border-radius:0!important;box-shadow:none!important;border-bottom:2px solid var(--lx-gold)!important}
+html[data-lux][data-style] .pbtop::before,html[data-lux][data-style] .pbtop::after{display:none!important;content:none!important}
+html[data-lux][data-style] .pbtop b{font-family:var(--lx-serif)!important;font-weight:600!important}
+html[data-lux][data-style] .pbtop .pbback,html[data-lux][data-style] .pbtop .pbtopi{background:transparent!important;border:1px solid rgba(201,162,74,.55)!important;color:#F3E2B3!important;box-shadow:none!important}
+/* tabs: கீழே தங்கக் கோடு */
+html[data-lux][data-style] .pbtabs{background:var(--lx-paper)!important;border:0!important;border-bottom:1px solid var(--lx-line2)!important;box-shadow:none!important;border-radius:0!important;padding:0!important}
+html[data-lux][data-style] .pbtabs button{background:transparent!important;color:var(--lx-mute)!important;box-shadow:none!important;border-radius:0!important;border:0!important;border-bottom:2.5px solid transparent!important}
+html[data-lux][data-style] .pbtabs button.on{color:var(--lx-navy)!important;font-weight:700!important;border-bottom-color:var(--lx-gold)!important}
+html[data-lux][data-style] .pbtabs button i{color:inherit!important}
+/* card-கள் */
+html[data-lux][data-style] .pbcard{background:var(--lx-paper)!important;border:1px solid var(--lx-line)!important;box-shadow:none!important;border-radius:16px!important}
+html[data-lux][data-style] .pbcard h3{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .pbcard h3 .pbgi{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
+/* மொத்த சேமிப்பு */
+html[data-lux][data-style] .pbsum{background:var(--lx-paper)!important;background-image:none!important;color:var(--lx-ink)!important;border:1px solid var(--lx-line2)!important;outline:1px solid #EFE5CB;outline-offset:-7px}
+html[data-lux][data-style] .pbsum::before,html[data-lux][data-style] .pbsum::after{display:none!important;content:none!important}
+html[data-lux][data-style] .pbsum .pblab{color:var(--lx-goldt)!important;letter-spacing:.06em}
+html[data-lux][data-style] .pbsum .pblab svg{color:var(--lx-goldt)!important}
+html[data-lux][data-style] .pbsum .pbamt{font-family:var(--lx-serif)!important;font-weight:600!important;color:var(--lx-navy)!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+html[data-lux][data-style] .pbsum .pbg,html[data-lux][data-style] .pbsum .pbg b{color:var(--lx-goldt)!important}
+html[data-lux][data-style] .pbsum .pbring b,html[data-lux][data-style] .pbsum .pbring em,html[data-lux][data-style] .pbsum .pbring i{color:var(--lx-navy)!important;-webkit-text-fill-color:currentColor!important}
+html[data-lux][data-style] .pbsum .pbring small{color:var(--lx-mute)!important}
+html[data-lux][data-style] .pbsum .pbring circle:first-of-type{stroke:#F0EADB!important}
+html[data-lux][data-style] .pbsum .pbbar{background:#F0EADB!important}
+html[data-lux][data-style] .pbsum .pbbar i{background:var(--lx-gold)!important}
+html[data-lux][data-style] .pbsum .pbst3{background:transparent!important;border:0!important;border-top:1px solid var(--lx-line)!important;border-radius:0!important;box-shadow:none!important}
+html[data-lux][data-style] .pbsum .pbst3 span{background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-lux][data-style] .pbsum .pbst3 span+span{border-left:1px solid var(--lx-line)!important}
+html[data-lux][data-style] .pbsum .pbst3 i{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
+html[data-lux][data-style] .pbsum .pbst3 b{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .pbsum .pbst3 small,html[data-lux][data-style] .pbsum .pbmat{color:var(--lx-mute)!important}
+html[data-lux][data-style] .pbsum .pbmat b{color:var(--lx-ink)!important}
+html[data-lux][data-style] .pbsum .pbmat svg{color:var(--lx-goldt)!important}
+/* அடுத்த தவணை: முழு சிவப்பு card இல்லை, சின்ன label மட்டும் */
+html[data-lux][data-style] .pbnx,html[data-lux][data-style] .pbnx[class*="s-"]{background:var(--lx-paper)!important;border:1px solid var(--lx-line)!important}
+html[data-lux][data-style] .pbnx .pbnxi{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
+html[data-lux][data-style] .pbnx .pbnxt b{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .pbnx em.late,html[data-lux][data-style] .pbnx em.due{background:transparent!important;border:1px solid #E8B4AF!important;color:var(--lx-red)!important}
+html[data-lux][data-style] .pbnx em.up{background:transparent!important;border:1px solid #A9D3B9!important;color:var(--lx-green)!important}
+html[data-lux][data-style] .pbnx hr,html[data-lux][data-style] .pbnx .pbnxt{border-color:var(--lx-line)!important}
+html[data-lux][data-style] .pbpay .pbpq button{background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;color:var(--lx-navy)!important;box-shadow:none!important}
+html[data-lux][data-style] .pbpay input{border:1px solid var(--lx-line2)!important;box-shadow:none!important}
+html[data-lux][data-style] .pbpay button:not([data-pq]),html[data-lux][data-style] .pbpay .pbgo{background:var(--lx-navy)!important;background-image:none!important;color:#F3E2B3!important;border:0!important;box-shadow:none!important;border-radius:12px!important}
+/* செயல் tiles: வெளிர் நிறங்கள் இல்லாம வெள்ளை, மெல்லிய navy icons */
+html[data-lux][data-style] .pbag button,html[data-lux][data-style] .pbag button[class]{background:var(--lx-paper)!important;background-image:none!important;border:1px solid var(--lx-line)!important;box-shadow:none!important;color:var(--lx-ink)!important}
+html[data-lux][data-style] .pbag button i{background:transparent!important;background-image:none!important;border:1px solid var(--lx-gl)!important;box-shadow:none!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .pbag button i svg{opacity:1!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] .pbag button b{color:var(--lx-navy)!important}
+html[data-lux][data-style] .pbag button small{color:var(--lx-mute)!important}
+/* தவணை வரிசைகள் */
+html[data-lux][data-style] .pbrow{border-color:#F0EADB!important}
+html[data-lux][data-style] .pbrow .pbn{background:transparent!important;background-image:none!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important;font-family:var(--lx-serif)!important;box-shadow:none!important}
+html[data-lux][data-style] .pbrow .pbd b{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .pbrow .pbd b em{color:var(--lx-goldt)!important;font-family:"Noto Sans Tamil",system-ui,sans-serif!important}
+html[data-lux][data-style] .pbrow .pbok{background:transparent!important;color:var(--lx-green)!important;border:0!important}
+html[data-lux][data-style] .pbrow .pbrc{background:transparent!important;border:1px solid #C9CFDB!important;color:var(--lx-navy)!important;box-shadow:none!important}
+html[data-lux][data-style] #pbdel .pbdelb{border-radius:12px}
+
+/* ===== Login (lock) திரை ===== */
+html[data-lux][data-style] #lock .lkhero,html[data-lux][data-style] #lock.img .lkhero{background:var(--lx-navy)!important;background-image:none!important;border-bottom:2px solid var(--lx-gold)!important}
+html[data-lux][data-style] #lock .lkhero::before,html[data-lux][data-style] #lock .lkhero::after{display:none!important;content:none!important}
+html[data-lux][data-style] #lock .lkhero .shopn img{filter:none!important}
+html[data-lux][data-style] #lock .lksheet{background:var(--lx-ivory)!important}
+html[data-lux][data-style] #lock .lksheet h2{font-family:var(--lx-serif)!important;font-weight:600!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] #lock .lksub{color:var(--lx-mute)!important}
+html[data-lux][data-style] #lock .lkt{background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;box-shadow:none!important;color:var(--lx-ink)!important;border-radius:16px!important}
+html[data-lux][data-style] #lock .lkt.lkt1{background:var(--lx-navy)!important;border:1px solid var(--lx-navy)!important;box-shadow:none!important;color:#fff!important;outline:1px solid rgba(201,162,74,.6);outline-offset:-5px}
+html[data-lux][data-style] #lock .lkt.lkt1 b{color:#fff!important}
+html[data-lux][data-style] #lock .lkt.lkt1 small{color:#C9D3E6!important}
+html[data-lux][data-style] #lock .lkt b{color:var(--lx-navy)}
+html[data-lux][data-style] #lock .lkt em{color:var(--lx-goldt)!important}
+html[data-lux][data-style] #lock .lkt.lkt1 em{color:var(--lx-gold)!important}
+html[data-lux][data-style] #lock .lkti,html[data-lux][data-style] #lock #lkgoPin .lkti,html[data-lux][data-style] #lock #lkgoView .lkti{background:transparent!important;background-image:none!important;border:1px solid var(--lx-gl)!important;box-shadow:none!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] #lock #lkgoPin .lkti{color:#F3E2B3!important;border-color:rgba(201,162,74,.6)!important}
+html[data-lux][data-style] #lock .lkti svg{opacity:1!important}
+html[data-lux][data-style] #lock .lkpad button{background:var(--lx-paper)!important;box-shadow:none!important;border:1px solid var(--lx-line)!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] #lock .lkdots i{border-color:var(--lx-gl)!important}
+html[data-lux][data-style] #lock .lkdots i.on{background:var(--lx-navy)!important;border-color:var(--lx-navy)!important}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
