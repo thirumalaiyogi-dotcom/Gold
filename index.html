@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம், 2 = மரூன், 3 = default, 4 = Luxury (Style 3 + data-lux layer). மாற்ற: ?style=1..4 */(function(){var D="3",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([1234])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3"&&v!=="4")v=D;if(v==="4"){document.documentElement.setAttribute("data-lux","");v="3";var lf=document.createElement("link");lf.rel="stylesheet";lf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(lf)}document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம், 2 = மரூன், 3 = default, 4 = Luxury (Style 3 + data-lux layer). மாற்ற: ?style=1..4 */(function(){var D="4",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([1234])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3"&&v!=="4")v=D;if(v==="4"){document.documentElement.setAttribute("data-lux","");v="3";var lf=document.createElement("link");lf.rel="stylesheet";lf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(lf)}document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1658,7 +1658,7 @@ html[data-lux][data-style] .pbrow .pbrc{background:transparent!important;border:
 html[data-lux][data-style] #pbdel .pbdelb{border-radius:12px}
 
 /* ===== Login (lock) திரை ===== */
-html[data-lux][data-style] #lock .lkhero,html[data-lux][data-style] #lock.img .lkhero{background:var(--lx-navy)!important;background-image:none!important;border-bottom:2px solid var(--lx-gold)!important}
+html[data-lux][data-style] #lock .lkhero,html[data-lux][data-style] #lock.img .lkhero{background:radial-gradient(circle at 50% 52%,rgba(201,162,74,.2),transparent 58%),linear-gradient(rgba(9,42,99,.5),rgba(9,42,99,.5)),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none' stroke='%23E7C873' stroke-width='1.1' stroke-linecap='round'%3E%3Cg opacity='.16'%3E%3Cpath d='M32 19C38 25 38 39 32 45C26 39 26 25 32 19Z'/%3E%3Cpath d='M19 32C25 26 39 26 45 32C39 38 25 38 19 32Z'/%3E%3Cpath d='M0 11A11 11 0 0 0 11 0M53 0A11 11 0 0 0 64 11M64 53A11 11 0 0 0 53 64M11 64A11 11 0 0 0 0 53'/%3E%3Cpath d='M32 6Q40 6 44 12M58 32Q58 40 52 44M32 58Q24 58 20 52M6 32Q6 24 12 20'/%3E%3C/g%3E%3Cg opacity='.22' fill='%23E7C873' stroke='none'%3E%3Ccircle cx='32' cy='32' r='1.7'/%3E%3Ccircle cx='0' cy='0' r='1.7'/%3E%3Ccircle cx='64' cy='0' r='1.7'/%3E%3Ccircle cx='0' cy='64' r='1.7'/%3E%3Ccircle cx='64' cy='64' r='1.7'/%3E%3C/g%3E%3C/svg%3E") center top/58px 58px repeat,var(--lx-navy)!important;border-bottom:2px solid var(--lx-gold)!important}
 html[data-lux][data-style] #lock .lkhero::before,html[data-lux][data-style] #lock .lkhero::after{display:none!important;content:none!important}
 html[data-lux][data-style] #lock .lkhero .shopn img{filter:none!important}
 html[data-lux][data-style] #lock .lksheet{background:var(--lx-ivory)!important}
@@ -1709,6 +1709,12 @@ html[data-lux] #smenu .sml i svg{width:20px;height:20px}
 html[data-lux] #smenu .sml .smlo{color:var(--lx-red)}
 html[data-lux] #smenu .sml .smlo i{color:var(--lx-red);border-color:#E8B4AF}
 html[data-lux] #smenu .smf{margin:auto 0 0;padding:16px 20px calc(16px + env(safe-area-inset-bottom,0px));font-size:12px;color:var(--lx-mute);text-align:center}
+
+/* Header உயரம் குறைப்பு (~32px): விலைப் பலகைக்கு மேல் இருந்த இடம் Style 3 படங்களுக்கானது */
+html[data-lux][data-style] header.hd{padding-bottom:10px!important}
+html[data-lux][data-style] header.hd .pc{margin-top:14px!important}
+html[data-lux][data-style] header.hd .xrth{margin-top:8px!important}
+html[data-lux][data-style] header.hd #ptopen{margin-top:8px!important}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
