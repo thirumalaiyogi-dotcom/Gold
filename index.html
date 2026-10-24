@@ -1855,14 +1855,15 @@ html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
 <div id="av" class="ov lt hide">
  <div class="lk" style="text-align:left;margin:6px 0"><a id="avk" style="font-size:16px;text-decoration:none">‹ பின்செல்</a></div>
  <div class="lg"><span class="shopn"></span></div>
- <h2>PIN அமைக்க</h2>
- <p style="text-align:center;color:#555;font-size:14px;margin:0">கடையில தவணை கட்டும்போது WhatsApp ரசீதுல Activation code வரும். அதை போட்டு உங்க சொந்த 6 இலக்க PIN வைங்க. Code இல்லன்னா பின்செல்லி “புதிய வாடிக்கையாளர்? mPIN உருவாக்க” (OTP) வழியா PIN வைக்கலாம்.</p>
+ <h2>புது mPIN உருவாக்க</h2>
+ <p style="text-align:center;color:#555;font-size:14px;margin:0">கடையில முதல் தவணை கட்டும்போது WhatsApp ரசீதுல <b>6 இலக்க Activation code</b> வரும். உங்க மொபைல் எண்ணும் அந்த code-ம் போட்டு, உங்க சொந்த 6 இலக்க mPIN வைங்க.</p>
  <label>மொபைல் எண்*</label><input id="avm" type="tel" inputmode="numeric" maxlength="10">
  <label>Activation code*</label><input id="avc" type="tel" inputmode="numeric" maxlength="6">
  <label>புது 6 இலக்க PIN*</label><input id="avp" type="password" inputmode="numeric" maxlength="6">
  <label>PIN மறுபடி*</label><input id="avq" type="password" inputmode="numeric" maxlength="6">
  <div class="err" id="ave"></div>
- <button class="yb" id="avb">PIN அமை</button>
+ <button class="yb" id="avb">mPIN அமை</button>
+ <div class="lk" style="font-size:14px;text-align:center;margin-top:10px">Code வரலையா? <a id="avot" role="button" tabindex="0" style="font-weight:700;text-decoration:underline">Telegram OTP மூலம் mPIN வைக்க ›</a> · <a id="avwa" role="button" tabindex="0" style="text-decoration:underline">கடைக்கு WhatsApp</a></div>
 </div>
 
 <div id="ot" class="ov lt hide">
@@ -2466,7 +2467,9 @@ $("lkwho").onclick=()=>{LS.set("mob","");lkStage("mob")};
 $("lkfg").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("f")};
 $("lkhwa").onclick=()=>open(wa("வணக்கம், Passbook login பற்றி உதவி வேண்டும்."),"_blank");
 $("lkhab").onclick=()=>{window.GUEST=true;vis("lock",false);const b=document.querySelector('nav button[data-t="e"]');if(b)b.click()};
-$("lknew").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("n")};
+$("lknew").onclick=()=>{$("avm").value=LS.get("mob")||"";$("ave").textContent="";vis("av",true);$("av").scrollTop=0;setTimeout(()=>{const c=$("avm").value?$("avc"):$("avm");try{c.focus()}catch(e){}},150)};
+$("avot").onclick=()=>{$("lm").value=$("avm").value.trim()||LS.get("mob")||"";vis("av",false);openOT("n")};
+$("avwa").onclick=()=>open(wa(`வணக்கம், Passbook-க்கு Activation code வேணும்.\nமொபைல் எண்: ${$("avm").value.trim()||"-"}`),"_blank");
 
 // Guest → Passbook பூட்டு
 function pbLocked(){vis("pblk",true);const i=document.querySelector("#pblk .pblki"),k=document.querySelector("#pblk .shk");[i,k].forEach(x=>{x.style.animation="none";void x.offsetWidth;x.style.animation=""})}
