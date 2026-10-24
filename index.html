@@ -1566,10 +1566,12 @@ html[data-lux][data-style] .xsh::after,html[data-lux][data-style] .sh::after{bac
 
 /* --- திட்ட card-கள்: வெள்ளை, மேலே தங்கக் கோடு --- */
 html[data-lux][data-style] .sc{background:var(--lx-paper)!important;border:1px solid var(--lx-line2)!important;border-top:3px solid var(--lx-gold)!important;box-shadow:none!important;border-radius:16px!important}
-html[data-lux][data-style] .sc .sct,html[data-lux][data-style] .sc .sct:not(.img),html[data-lux][data-style] .sc[data-k] .sct:not(.img){background:var(--lx-paper)!important;background-image:none!important;color:var(--lx-ink)!important}
-html[data-lux][data-style] .sc .sct h3{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
-html[data-lux][data-style] .sc .sct>div{color:var(--lx-mute)!important}
-html[data-lux][data-style] .sc .sct small{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
+html[data-lux][data-style] .sc .sct:not(.img),html[data-lux][data-style] .sc[data-k] .sct:not(.img){background:var(--lx-paper)!important;background-image:none!important;color:var(--lx-ink)!important}
+/* staff upload செய்த திட்டப் படம் (.sct.img) அப்படியே தெரியணும் */
+html[data-lux][data-style] .sc .sct.img{box-shadow:none!important}
+html[data-lux][data-style] .sc .sct:not(.img) h3{font-family:var(--lx-serif)!important;color:var(--lx-navy)!important;font-weight:600!important}
+html[data-lux][data-style] .sc .sct:not(.img)>div{color:var(--lx-mute)!important}
+html[data-lux][data-style] .sc .sct:not(.img) small{background:transparent!important;border:1px solid var(--lx-gl)!important;color:var(--lx-goldt)!important}
 html[data-lux][data-style] .sc .scb{background:var(--lx-paper)!important;border-top:1px solid var(--lx-line)!important}
 html[data-lux][data-style] .sc .scb a{border-radius:12px!important;box-shadow:none!important}
 html[data-lux][data-style] .sc .scb a.mo{background:transparent!important;border:1px solid #C9CFDB!important;color:var(--lx-navy)!important}
@@ -1675,6 +1677,10 @@ html[data-lux][data-style] #lock .lkti svg{opacity:1!important}
 html[data-lux][data-style] #lock .lkpad button{background:var(--lx-paper)!important;box-shadow:none!important;border:1px solid var(--lx-line)!important;color:var(--lx-navy)!important}
 html[data-lux][data-style] #lock .lkdots i{border-color:var(--lx-gl)!important}
 html[data-lux][data-style] #lock .lkdots i.on{background:var(--lx-navy)!important;border-color:var(--lx-navy)!important}
+
+/* staff upload செய்த தங்கக் கட்டி / வெள்ளி படங்கள்: பலகைக்கு உள்ளே, லேபிள் பக்கத்தில் சின்னதா */
+html[data-lux].dgold[data-style] header.hd .pc>div:first-child,html[data-lux].dsilver[data-style] header.hd .pc>div+div{position:relative!important;overflow:visible!important}
+html[data-lux].dgold[data-style] header.hd .pc>div:first-child::after,html[data-lux].dsilver[data-style] header.hd .pc>div+div::after{top:10px!important;right:10px!important;width:46px!important;height:28px!important;filter:none!important;opacity:.95}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
