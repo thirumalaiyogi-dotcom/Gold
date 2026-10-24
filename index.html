@@ -1732,8 +1732,27 @@ html[data-lux] #smenu .sml span em.smsw.on{border-color:var(--lx-gold);color:var
 .otsteps li.done::before{content:"✓";border-color:#1E6B42;background:#1E6B42;color:#fff}
 .otnew{margin:0 0 12px;padding:10px 12px;border-radius:12px;background:#FFF7E0;border:1px solid #E7D49B;color:#5A4410;font-size:13.5px;line-height:1.6}
 .otnew.hide{display:none}
-html[data-style="3"] #lock #lkgoNew .lkti{background:#EEF4FF!important;color:#092A63!important}
-html[data-style="3"] #lock #lkgoNew .lkti svg{opacity:1!important;width:24px;height:24px}
+
+/* ===== mPIN பக்கம்: படம் + "புதிய வாடிக்கையாளரா?" + உதவி tiles (முதல் பக்கத்தில் மறைக்கும்) ===== */
+#lock.stA #lknewp,#lock.stA #lkhelp{display:none!important}
+#lock .lkill{display:block;width:84px;height:84px;object-fit:contain;margin:0 auto 6px}
+#lock.stA .lkill{display:none}
+#lock .lknewp{text-align:center;margin:6px 0 0;font-size:14px;color:#5F6677}
+#lock .lknewp a{font-weight:700;color:#092A63;text-decoration:underline;cursor:pointer;display:inline-block;min-height:36px;line-height:36px}
+#lock .lkhelp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+#lock .lkhelp a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:72px;padding:8px 4px;border-radius:14px;background:#fff;border:1px solid #E3D6B4;color:#092A63;text-decoration:none;font-size:12px;font-weight:600;text-align:center;line-height:1.3;cursor:pointer}
+#lock .lkhelp svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html[data-lux] #lock .lkhelp a{border-color:var(--lx-line2)}
+html[data-lux] #lock .lkhelp svg{color:var(--lx-navy)}
+html #lock #lkfg{display:block!important;width:auto!important;align-self:stretch!important;box-sizing:border-box;text-align:right!important;margin:8px 4px 0!important;min-height:32px;line-height:32px;font-size:14px}
+/* ஒரே திரையில் அடங்க: படம் சின்னது, keypad கொஞ்சம் குறைவு */
+#lock .lkill{width:56px!important;height:56px!important;margin:0 auto 2px!important}
+html #lock:not(.stA) .lkpad button{height:clamp(42px,6.6vh,56px)!important}
+html #lock:not(.stA) .lkpad{gap:8px!important;margin-top:8px!important}
+html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
+#lock .lknewp{margin:0!important}
+#lock .lkhelp{margin:8px 0 4px!important}
+#lock .lkhelp a{min-height:62px!important;padding:6px 2px!important}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -1741,11 +1760,11 @@ html[data-style="3"] #lock #lkgoNew .lkti svg{opacity:1!important;width:24px;hei
   <div id="lkA">
    <h2>வணக்கம், வருக!</h2><p class="lksub">உங்க தங்க சேமிப்பை பார்க்கவோ, புது திட்டங்களை தெரிஞ்சுக்கவோ கீழே தேர்ந்தெடுங்க.</p>
    <button type="button" class="lkt lkt1" id="lkgoPin"><span class="lkti"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span><span><b>என் சேமிப்பு (Passbook)</b><small id="lkAmob">mPIN போட்டு உள்ளே போக</small></span><em>›</em></button>
-   <button type="button" class="lkt" id="lkgoNew"><span class="lkti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3M15 8l2 2"/></svg></span><span><b>புது mPIN உருவாக்க</b><small>புதிய வாடிக்கையாளர் · கடை ஒப்புதலுக்குப் பிறகு</small></span><em>›</em></button>
    <button type="button" class="lkt" id="lkgoView"><span class="lkti"><svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9zM2 9h20"/></svg></span><span><b>திட்டங்களை மட்டும் பார்க்க</b><small>Login இல்லாமல்</small></span><em>›</em></button>
   </div>
   <div id="lkB" class="hide">
    <a class="lkbk" id="lkbk" role="button" tabindex="0" aria-label="பின் செல்ல">‹</a>
+   <img class="lkill" src="icons3d/lock.png" alt="" aria-hidden="true">
    <h2 id="lkh">mPIN</h2><p class="lksub" id="lksub">உங்க 6 இலக்க mPIN போடுங்க</p>
    <button type="button" class="lkwho" id="lkwho"><span id="lkmob"></span><small>மாற்ற</small></button>
    <div class="lkdots" id="lkdots" aria-live="polite"></div>
@@ -1754,7 +1773,8 @@ html[data-style="3"] #lock #lkgoNew .lkti svg{opacity:1!important;width:24px;hei
    <button type="button" class="lkbtn hide" id="lknx">தொடரவும்</button>
   </div>
   <a class="lkfg" id="lkfg" role="button" tabindex="0">mPIN மறந்துட்டீங்களா?</a>
-  <a class="lkfg" id="lknew" role="button" tabindex="0">புதிய வாடிக்கையாளர்? mPIN உருவாக்க</a>
+  <p class="lknewp" id="lknewp">புதிய வாடிக்கையாளரா? <a id="lknew" role="button" tabindex="0">mPIN உருவாக்க</a></p>
+  <div class="lkhelp" id="lkhelp" role="group" aria-label="உதவி"><a id="lkhwa" role="button" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c.3 2 2 4 4.5 4.6l1-1.1 1.6.7"/></svg><span>WhatsApp</span></a><a id="lkhab" role="button" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg><span>எங்களைப் பற்றி</span></a><a href="tel:+919791918344"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span>அழைக்க</span></a><a href="https://www.google.com/maps/search/?api=1&amp;query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>வழி காட்டு</span></a></div>
  </div>
  <div id="lkok" class="lkok hide" role="status"><div><span class="lkck"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><b>வெற்றி!</b><p>உள்ளே வந்துட்டீங்க. இனி app-ஐ பயன்படுத்தலாம்.</p></div></div>
 </div>
@@ -2444,7 +2464,9 @@ $("lkgoView").onclick=()=>{window.GUEST=true;vis("lock",false);document.querySel
 $("lkbk").onclick=()=>lkStage("A");
 $("lkwho").onclick=()=>{LS.set("mob","");lkStage("mob")};
 $("lkfg").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("f")};
-$("lkgoNew").onclick=$("lknew").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("n")};
+$("lkhwa").onclick=()=>open(wa("வணக்கம், Passbook login பற்றி உதவி வேண்டும்."),"_blank");
+$("lkhab").onclick=()=>{window.GUEST=true;vis("lock",false);const b=document.querySelector('nav button[data-t="e"]');if(b)b.click()};
+$("lknew").onclick=()=>{$("lm").value=LS.get("mob")||"";openOT("n")};
 
 // Guest → Passbook பூட்டு
 function pbLocked(){vis("pblk",true);const i=document.querySelector("#pblk .pblki"),k=document.querySelector("#pblk .shk");[i,k].forEach(x=>{x.style.animation="none";void x.offsetWidth;x.style.animation=""})}
