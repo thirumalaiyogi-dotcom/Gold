@@ -1715,6 +1715,9 @@ html[data-lux][data-style] header.hd{padding-bottom:10px!important}
 html[data-lux][data-style] header.hd .pc{margin-top:14px!important}
 html[data-lux][data-style] header.hd .xrth{margin-top:8px!important}
 html[data-lux][data-style] header.hd #ptopen{margin-top:8px!important}
+
+html[data-lux] #smenu .sml span em.smsw{font-style:normal;margin-left:8px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid #C9CFDB;color:var(--lx-mute)}
+html[data-lux] #smenu .sml span em.smsw.on{border-color:var(--lx-gold);color:var(--lx-goldt);background:#FFF7E0}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2016,7 +2019,7 @@ async function cfCall(b){try{const r=await fetch(SB_URL+"/functions/v1/cf-pay",{
 const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்."};
 async function cfSettle(oid,el){const show=(t,ok)=>{if(el){el.textContent=t;el.className="pbpm "+(ok?"ok":"bad")}note(t,ok)};
  for(let i=0;i<4;i++){const d=await cfCall({action:"verify",order_id:oid});
-  if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);if(window.PBOK)setTimeout(viewPB,1200);return true}
+  if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);try{window.stmFx&&stmFx.coin()}catch(e){}if(window.PBOK)setTimeout(viewPB,1200);return true}
   if(d.ok&&!d.paid&&d.status!=="ACTIVE")break;await new Promise(r=>setTimeout(r,2500))}
  show("பணம் இன்னும் உறுதியாகல. பணம் போயிருந்தா சில நிமிஷத்துல தானா பதியும்; இல்லைன்னா கடையை அணுகவும்.",0);return false}
 function payWire(){const go=$("paygo");if(!go)return;
@@ -2247,7 +2250,7 @@ function pbCelebrate(mo){try{if(document.documentElement.getAttribute("data-styl
  const o=document.createElement("div");o.id="pbcel";o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");o.setAttribute("aria-labelledby","pbcelt");
  let sp="";for(let i=0;i<26;i++)sp+=`<i style="left:${(i*37)%100}%;animation-delay:${(i%9)*.18}s;animation-duration:${2.4+(i%5)*.35}s;width:${6+(i%3)*3}px;height:${6+(i%3)*3}px"></i>`;
  o.innerHTML=`<div class="pbcsp" aria-hidden="true">${sp}</div><div class="pbcbox"><span class="pbcic" aria-hidden="true"></span><h2 id="pbcelt">வாழ்த்துக்கள்! 🎉</h2><p>உங்க ${mo} தவணையும் முடிஞ்சது.<br><b>நகை வாங்க தயார்!</b></p><p class="pbcs">கடைக்கு வந்து உங்க விருப்ப நகையை தேர்ந்தெடுங்க.</p><button type="button" id="pbcok">சரி</button></div>`;
- document.body.appendChild(o);const c=()=>{o.remove();document.removeEventListener("keydown",esk)},esk=e=>{if(e.key==="Escape")c()};
+ document.body.appendChild(o);try{window.stmFx&&stmFx.shower()}catch(e){}const c=()=>{o.remove();document.removeEventListener("keydown",esk)},esk=e=>{if(e.key==="Escape")c()};
  o.querySelector("#pbcok").onclick=c;o.addEventListener("click",e=>{if(e.target===o)c()});document.addEventListener("keydown",esk);setTimeout(()=>{const b=o.querySelector("#pbcok");if(b)b.focus()},50)}catch(e){}}
 function pbTabs(){const x=document.querySelector("#pb .pbx");if(!x||x.querySelector(".pbtabs"))return;
  const top=x.querySelector(":scope>.pbtop");if(!top)return;
@@ -2910,6 +2913,36 @@ function pbDelReq(){try{
 })();
 </script>
 <script>
+// ===== ஒலி & அதிர்வு: முக்கிய தருணங்களில் மட்டும் coin ஒலி; முக்கிய பொத்தான்களுக்கு சின்ன அதிர்வு =====
+// ஒலி file இல்லை: Web Audio-வில் இங்கேயே உருவாகிறது. ☰ menu-ல ON/OFF (localStorage "stm_snd"="0" → OFF).
+(function(){
+ var ctx=null;
+ var on=function(){try{return localStorage.getItem("stm_snd")!=="0"}catch(e){return true}};
+ var ac=function(){if(!ctx){var A=window.AudioContext||window.webkitAudioContext;if(!A)return null;try{ctx=new A()}catch(e){return null}}if(ctx.state==="suspended")ctx.resume().catch(function(){});return ctx};
+ // ஒரு "டிங்": உலோக ஒலி (சில அதிர்வெண்கள், வேகமாக மங்கும்)
+ function ding(c,t,base,vol){
+  var g=c.createGain();g.connect(c.destination);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.004);g.gain.exponentialRampToValueAtTime(0.0001,t+0.55);
+  [[1,1],[1.5,.5],[2.76,.28],[5.4,.12]].forEach(function(p){var o=c.createOscillator();o.type="sine";o.frequency.setValueAtTime(base*p[0],t);
+   var pg=c.createGain();pg.gain.value=p[1];o.connect(pg);pg.connect(g);o.start(t);o.stop(t+0.6)})}
+ var fx={
+  enabled:on,
+  set:function(v){try{localStorage.setItem("stm_snd",v?"1":"0")}catch(e){}},
+  // தவணை கட்டியதும்: இரண்டு "டிங்" (coin விழுவது போல)
+  coin:function(){if(!on())return;var c=ac();if(!c)return;var t=c.currentTime+0.02;ding(c,t,1975,0.22);ding(c,t+0.09,2637,0.2);fx.buzz([12,40,12])},
+  // 12 தவணை முடிந்ததும்: coins கொட்டும் ஒலி
+  shower:function(){if(!on())return;var c=ac();if(!c)return;var t=c.currentTime+0.02;
+   for(var i=0;i<14;i++){ding(c,t+i*0.07+Math.random()*0.05,1700+Math.random()*1500,0.08+Math.random()*0.08)}fx.buzz([15,60,15,60,25])},
+  buzz:function(p){if(!on())return;try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
+ };
+ window.stmFx=fx;
+ // முதல் தொடுதலில் audio-வை தயார் செய் (browser விதி)
+ var unlock=function(){if(on())ac();removeEventListener("pointerdown",unlock,true)};addEventListener("pointerdown",unlock,true);
+ // முக்கிய பொத்தான்களுக்கு மட்டும் சின்ன அதிர்வு (ஒலி இல்லை)
+ var KEY="#paygo,.intb.on,.sc .jn,#lkgoPin,#qa button,.pbag button,nav button[data-t],#hmenu,#smlogin";
+ document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(KEY);if(b)fx.buzz(8)},true);
+})();
+</script>
+<script>
 // ===== Style 4: ☰ பக்கவாட்டு menu (Style 4-ல மட்டும் உருவாகும்; இருக்கும் function-களையே அழைக்கும்) =====
 (function(){
  if(!document.documentElement.hasAttribute("data-lux"))return;
@@ -2927,6 +2960,7 @@ function pbDelReq(){try{
   shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
   trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
   out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>',
+  snd:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/>',
   menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',
   x:'<path d="M6 6l12 12M18 6 6 18"/>'
  };
@@ -2940,7 +2974,7 @@ function pbDelReq(){try{
   ["me","user","என் விவரம்"],["pb","book","என் Passbook"],["pin","key","mPIN மாற்ற / மறந்துவிட்டேன்"],
   ["n","bell","அறிவிப்புகள் · Notification"],["rf","gift","நண்பரை சேர்க்க (Referral)"],["sch","dia","சேமிப்புத் திட்டங்கள்"],
   ["e","phone","கடையைத் தொடர்பு கொள்ள"],["wa","wa","WhatsApp-ல் பேச"],
-  ["priv","shield","தனியுரிமைக் கொள்கை"],["del","trash","கணக்கை நீக்க கோரிக்கை"],["lo","out","வெளியேறு"]
+  ["snd","snd","ஒலி & அதிர்வு"],["priv","shield","தனியுரிமைக் கொள்கை"],["del","trash","கணக்கை நீக்க கோரிக்கை"],["lo","out","வெளியேறு"]
  ];
  ov.querySelector(".sml").innerHTML=items.map(function(x){return '<button type="button" data-sm="'+x[0]+'"'+(x[0]=="lo"?' class="smlo"':'')+'><i>'+ic(x[1])+'</i><span>'+x[2]+'</span></button>'}).join("");
  var last=null;
@@ -2950,7 +2984,7 @@ function pbDelReq(){try{
   $i("smc").textContent=d&&d.refer&&d.refer.code?("உறுப்பினர் எண் : "+d.refer.code):"";
   $i("smav").innerHTML=d&&d.name?String(d.name).trim().charAt(0).toUpperCase():ic("user");
   $i("smlogin").classList.toggle("hide",!!window.PBOK);
-  var lo=ov.querySelector('[data-sm="lo"]');if(lo)lo.classList.toggle("hide",!window.PBOK)}
+  var lo=ov.querySelector('[data-sm="lo"]');if(lo)lo.classList.toggle("hide",!window.PBOK);var sb=ov.querySelector('[data-sm="snd"] span');if(sb){var en=!window.stmFx||stmFx.enabled();sb.innerHTML='ஒலி & அதிர்வு <em class="smsw'+(en?' on':'')+'">'+(en?'ON':'OFF')+'</em>'}}
  function open(){fill();last=document.activeElement;ov.classList.remove("hide");requestAnimationFrame(function(){ov.classList.add("on")});document.body.style.overflow="hidden";var f=ov.querySelector(".smx");if(f)f.focus()}
  function close(){if(ov.classList.contains("hide"))return;ov.classList.remove("on");document.body.style.overflow="";setTimeout(function(){ov.classList.add("hide")},220);try{if(last&&last.focus)last.focus()}catch(e){}}
  window.stmMenuBack=function(){if(!ov.classList.contains("hide")){close();return true}return false};
@@ -2960,6 +2994,7 @@ function pbDelReq(){try{
  var needLogin=function(){if(window.PBOK)return false;if(typeof showLock=="function")showLock("pin");else tab("p");return true};
  ov.addEventListener("click",function(e){var b=e.target.closest("[data-sm]");if(!b)return;var k=b.dataset.sm;
   if(k=="close"){close();return}
+  if(k=="snd"){if(window.stmFx){var nv=!stmFx.enabled();stmFx.set(nv);if(nv)stmFx.coin()}fill();return}
   close();
   setTimeout(function(){try{
    if(k=="login"){needLogin();return}
