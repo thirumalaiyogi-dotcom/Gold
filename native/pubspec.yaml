@@ -1,0 +1,28 @@
+name: stm_proto
+description: "சுப்புலட்சுமி தங்க மாளிகை — native app prototype (Flutter, mock data only)"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"
+  adaptive_icon_background: "#FFFAF0"
+  adaptive_icon_foreground: "assets/icon_fg.png"
+  remove_alpha_ios: true
