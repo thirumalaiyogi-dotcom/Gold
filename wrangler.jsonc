@@ -4,5 +4,7 @@
   "name": "stm-gold",
   "compatibility_date": "2026-10-01",
   "build": { "command": "sh build.sh" },
-  "assets": { "directory": "./dist", "html_handling": "auto-trailing-slash" }
+  "assets": { "directory": "./dist", "html_handling": "auto-trailing-slash" },
+  // Branch preview link-க்கு (npx wrangler preview) தேவை. Live deploy-ஐ பாதிக்காது.
+  "previews": {}
 }
