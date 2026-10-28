@@ -2137,7 +2137,7 @@ async function cfCall(b){try{const r=await fetch(SB_URL+"/functions/v1/cf-pay",{
 const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்."};
 async function cfSettle(oid,el){const show=(t,ok)=>{if(el){el.textContent=t;el.className="pbpm "+(ok?"ok":"bad")}note(t,ok)};
  for(let i=0;i<4;i++){const d=await cfCall({action:"verify",order_id:oid});
-  if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);try{window.stmFx&&stmFx.coin()}catch(e){}if(window.PBOK)setTimeout(viewPB,1200);return true}
+  if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);try{window.stmPaid&&stmPaid(oid)}catch(e){}try{window.stmFx&&stmFx.coin()}catch(e){}if(window.PBOK)setTimeout(viewPB,1200);return true}
   if(d.ok&&!d.paid&&d.status!=="ACTIVE")break;await new Promise(r=>setTimeout(r,2500))}
  show("பணம் இன்னும் உறுதியாகல. பணம் போயிருந்தா சில நிமிஷத்துல தானா பதியும்; இல்லைன்னா கடையை அணுகவும்.",0);return false}
 function payWire(){const go=$("paygo");if(!go)return;
@@ -2150,7 +2150,7 @@ function payWire(){const go=$("paygo");if(!go)return;
   try{await cfLoad()}catch(e){go.disabled=false;msg.textContent=PAYERR.net;msg.className="pbpm bad";return}
   msg.textContent="Payment பக்கம் திறக்கிறது…";
   try{const cf=Cashfree({mode:d.env==="production"?"production":"sandbox"});
-   window.PAYING=true;const r=await cf.checkout({paymentSessionId:d.session,redirectTarget:"_modal"});window.PAYING=false;
+   window.PAYAMT=a;window.PAYING=true;const r=await cf.checkout({paymentSessionId:d.session,redirectTarget:"_modal"});window.PAYING=false;
    msg.textContent="சரிபார்க்கிறோம்…";await cfSettle(d.order_id,msg)}catch(e){window.PAYING=false;await cfSettle(d.order_id,msg)}
   go.disabled=false}}
 (function(){try{const u=new URL(location.href),o=u.searchParams.get("cfo");if(!o)return;u.searchParams.delete("cfo");history.replaceState(null,"",u.pathname+(u.search||"")+u.hash);setTimeout(()=>cfSettle(o,null),800)}catch(e){}})();
@@ -2972,7 +2972,8 @@ if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(
  var rearmT=0;
  function back(){
   if(window.PAYING)return true;                                   // payment நடக்கும்போது ஒன்னும் பண்ணாது
-  if(window.stmMenuBack&&window.stmMenuBack())return true;      // Style 4 menu திறந்திருந்தா மூடு
+  if(window.stmMenuBack&&window.stmMenuBack())return true;
+  if(window.stmPaidBack&&window.stmPaidBack())return true;      // Style 4 payment ரசீது      // Style 4 menu திறந்திருந்தா மூடு
   var n=document.getElementById("note");if(n&&n.style.display=="block"){n.style.display="none"}
   if(on("lkok"))return true;
   if(on("pop")){closePop();return true}
@@ -3244,6 +3245,111 @@ html[data-lux] #cl th{background:#FBF6EA;color:#8A6A1F}
  $c("clrows").addEventListener("input",function(e){var t=e.target;if(!t.dataset||t.dataset.mi==null)return;M[+t.dataset.mi]=+t.value||0;t.classList.toggle("bad",M[+t.dataset.mi]<MIN||M[+t.dataset.mi]>MAX);sums()});
  $c("cl").addEventListener("click",function(e){var b=e.target.closest("[data-cq],[data-ck]");if(!b)return;if(b.dataset.cq){A=+b.dataset.cq;M=[]}if(b.dataset.ck&&b.dataset.ck!=K){K=b.dataset.ck;M=[]}draw()});
  $c("clgo").onclick=function(){close();vis("sd",false);if(typeof openEnrol=="function")openEnrol(K)};
+})();
+</script>
+<style>
+/* ===== Style 4 · v3: mPIN, Activation/OTP, வெற்றி, Payment ரசீது, தொடர்பு, ☰ menu (prototype 05/06/07/14/16/17). data-lux-ல மட்டும்; logic மாறாது ===== */
+html[data-lux] #lock .lkill{content:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 72'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23F6E3A1'/%3E%3Cstop offset='.55' stop-color='%23D4AF37'/%3E%3Cstop offset='1' stop-color='%239C7A1E'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='36' cy='36' r='36' fill='url(%23g)'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='24' y='34' width='24' height='17' rx='3'/%3E%3Cpath d='M29 34v-5a7 7 0 0 1 14 0v5'/%3E%3C/g%3E%3C/svg%3E")!important;width:68px!important;height:68px!important;filter:drop-shadow(0 10px 16px rgba(156,122,30,.35))!important}
+html[data-lux][data-style] #lock #lkB h2{font-family:var(--lx-serif)!important;font-weight:600!important;color:var(--lx-navy)!important}
+html[data-lux][data-style] #lock .lkdots i.f,html[data-lux][data-style] #lock .lkdots i.on{background:linear-gradient(135deg,#F6E3A1,#C9A13B 60%,#8C6A1F)!important;border-color:#B8902E!important}
+html[data-lux][data-style] #lock .lkdots i{border-color:#9AA3B2!important}
+html[data-lux][data-style] #lock .lkpad button{border-radius:14px!important;font-family:var(--lx-serif)!important;font-weight:600!important;font-size:22px!important}
+html[data-lux][data-style] #lock .lkpad button:active{background:#FBF6EA!important;border-color:var(--lx-gold)!important}
+html[data-lux][data-style] #lock .lkpad button[data-k="del"]{border-color:transparent!important;background:transparent!important}
+html[data-lux] #lock .lkhelp a{background:#F7F2E6!important;border:0!important;color:var(--lx-ink)!important;font-weight:500}
+html[data-lux] #lock .lkhelp svg{width:38px!important;height:38px!important;padding:8px;box-sizing:border-box;border-radius:50%;background:#fff;border:1px solid rgba(201,161,59,.6)}
+html[data-lux] #lock .lkfg,html[data-lux] #lock .lknewp a{color:var(--lx-navy)!important}
+/* Activation code / OTP திரைகள் */
+html[data-lux] #av,html[data-lux] #ot{background:var(--lx-ivory)!important;color:var(--lx-ink)}
+html[data-lux] #av .lg,html[data-lux] #ot .lg{transform:scale(.72);transform-origin:center top;margin-bottom:-18px}
+html[data-lux] #av h2,html[data-lux] #ot h2{font-family:var(--lx-serif)!important;font-weight:600!important;color:var(--lx-navy)!important}
+html[data-lux] #av label,html[data-lux] #ot label{color:var(--lx-ink)!important;font-weight:600}
+html[data-lux] #av input,html[data-lux] #ot input{border:1px solid var(--lx-line2)!important;border-radius:12px!important;background:#fff!important;box-shadow:none!important}
+html[data-lux] #av input:focus,html[data-lux] #ot input:focus{border-color:var(--lx-navy)!important;outline:2px solid rgba(9,42,99,.18)!important}
+html[data-lux] #avc,html[data-lux] #otc{text-align:center;letter-spacing:.45em;font-family:var(--lx-serif);font-size:22px!important;font-weight:600}
+html[data-lux] #av .yb,html[data-lux] #ot .yb{background:var(--lx-navy)!important;color:#F3E2B3!important;border:1px solid var(--lx-gold)!important;border-radius:14px!important;box-shadow:0 10px 24px -10px rgba(4,12,31,.5)!important;background-image:none!important}
+html[data-lux] #ot .tgb{background:#fff!important;color:var(--lx-navy)!important;border:1px solid var(--lx-gold)!important;box-shadow:none!important}
+html[data-lux] #ot .tgb svg{stroke:var(--lx-navy)!important}
+html[data-lux] #av a,html[data-lux] #ot a{color:var(--lx-navy)!important}
+html[data-lux] #ot .otsteps li.on::before{background:var(--lx-navy)!important;border-color:var(--lx-gold)!important}
+html[data-lux] #ot .otsteps li:not(:last-child)::after{background:var(--lx-gl)!important}
+/* வெற்றி திரை */
+html[data-lux] .lkok{background:var(--lx-ivory)!important}
+html[data-lux] .lkok>div{background:transparent!important;box-shadow:none!important}
+html[data-lux] .lkck{width:112px!important;height:112px!important;margin:0 auto 64px!important;background:linear-gradient(135deg,#F6E3A1 0%,#D4AF37 55%,#9C7A1E 100%)!important;filter:none!important;box-shadow:0 0 0 22px rgba(201,162,74,.16),0 0 0 46px rgba(201,162,74,.08),0 14px 30px rgba(156,122,30,.45),inset 0 4px 8px rgba(255,255,255,.55)!important}
+html[data-lux] .lkck svg{display:block!important;width:54px!important;height:54px!important}
+html[data-lux] .lkok b{font-family:var(--lx-serif)!important;font-weight:600!important;font-size:26px!important;color:var(--lx-navy)!important}
+html[data-lux] .lkok p{color:var(--lx-mute)!important}
+/* தொடர்பு: 3 பெரிய button */
+html[data-lux] #e .lxact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0 16px}
+html[data-lux] #e .lxact a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:84px;border-radius:18px;text-decoration:none;font-size:14px;font-weight:600;cursor:pointer}
+html[data-lux] #e .lxact svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+html[data-lux] #e .lxact .a1{background:var(--lx-navy);color:#F3E2B3;border:1px solid var(--lx-gold)}
+html[data-lux] #e .lxact .a2{background:#E8F5EE;color:#16834A;border:1px solid rgba(22,131,74,.3)}
+html[data-lux] #e .lxact .a3{background:#fff;color:var(--lx-navy);border:1px solid var(--lx-line2)}
+/* ☰ menu மேல் பகுதி: velvet + logo */
+html[data-lux] #smenu .smh{background:linear-gradient(rgba(4,12,31,.35),rgba(4,12,31,.7)),url(img/lux/tex.webp) center/cover no-repeat,var(--lx-navy)!important}
+html[data-lux] #smenu .smlogo{display:block;width:150px;height:auto;margin:0 0 10px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+/* Payment வெற்றி ரசீது */
+#psok{position:fixed;inset:0;z-index:2147481000;background:var(--lx-ivory,#FBF8F1);display:flex;flex-direction:column;overflow-y:auto;font-family:"Noto Sans Tamil",system-ui,sans-serif;color:var(--lx-ink,#1B2233);padding:calc(56px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px))}
+#psok.hide{display:none}
+#psok .psb{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+#psok .psc{width:100px;height:100px;margin:24px 0 48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#F6E3A1 0%,#D4AF37 55%,#9C7A1E 100%);box-shadow:0 0 0 20px rgba(201,162,74,.16),0 0 0 42px rgba(201,162,74,.08),0 14px 30px rgba(156,122,30,.45),inset 0 4px 8px rgba(255,255,255,.55)}
+#psok .psc svg{width:50px;height:50px;fill:none;stroke:#fff;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+#psok h2{margin:0;font-family:var(--lx-serif,serif);font-weight:600;font-size:24px;line-height:1.4;color:var(--lx-navy,#092A63)}
+#psok .psa{font-family:var(--lx-serif,serif);font-weight:600;font-size:34px;color:var(--lx-navy,#092A63)}
+#psok .psg{display:inline-flex;padding:6px 14px;border-radius:999px;background:#E8F5EE;color:#16834A;font-size:14px;font-weight:600}
+#psok .psg:empty{display:none}
+#psok .psr{width:100%;max-width:420px;margin-top:8px;padding:8px 16px;background:#fff;border:1px solid var(--lx-line2,#E3D6B4);border-radius:18px;text-align:left}
+#psok .psr div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:14px}
+#psok .psr div+div{border-top:1px solid var(--lx-line,#ECE4D0)}
+#psok .psr span{color:var(--lx-mute,#5F6677)}
+#psok .psr span{flex:none}
+#psok .psr b{font-weight:600;text-align:right;overflow-wrap:anywhere;min-width:0}
+#psok .psf{width:100%;max-width:420px;margin:20px auto 0;display:flex;flex-direction:column;gap:10px}
+#psok .psf button{min-height:52px;border-radius:14px;font:600 16px/1.3 inherit;font-family:inherit;cursor:pointer}
+#psok .psf .p1{background:var(--lx-navy,#092A63);color:#F3E2B3;border:1px solid var(--lx-gold,#C9A24A)}
+#psok .psf .p2{background:#fff;color:var(--lx-navy,#092A63);border:1.5px solid var(--lx-gold,#C9A24A)}
+@media (prefers-reduced-motion:no-preference){#psok:not(.hide) .psc{animation:lkpop .35s ease-out}}
+</style>
+<div id="psok" class="hide" role="dialog" aria-modal="true" aria-labelledby="psh"><div class="psb">
+ <span class="psc" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+ <h2 id="psh">பணம் வெற்றிகரமாக செலுத்தப்பட்டது!</h2><span class="psa" id="psa"></span><span class="psg" id="psg" role="status"></span>
+ <div class="psr" id="psr"></div></div>
+ <div class="psf"><button type="button" class="p2" id="psshare">ரசீது பகிர</button><button type="button" class="p1" id="psokx">Passbook பார்க்க</button></div>
+</div>
+<script>
+// ===== Style 4 v3: தொடர்பு button-கள், menu logo, payment வெற்றி ரசீது (data-lux-ல மட்டும்) =====
+(function(){
+ if(!document.documentElement.hasAttribute("data-lux"))return;
+ var $x=function(id){return document.getElementById(id)};
+ var svg=function(d){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>'};
+ // தொடர்பு
+ try{var e=$x("e"),h=e&&e.querySelector("h2");if(h&&!e.querySelector(".lxact")){var d=document.createElement("div");d.className="lxact";
+  d.innerHTML='<a class="a1" href="tel:+919791918344">'+svg('<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>')+'அழைக்க</a><a class="a2" role="button" tabindex="0" id="lxwa">'+svg('<path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z"/><path d="M9 9.5c.3 2 2 4 4.5 4.6l1-1.1 1.6.7"/>')+'WhatsApp</a><a class="a3" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&amp;query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855">'+svg('<path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>')+'வழி காட்ட</a>';
+  h.insertAdjacentElement("afterend",d);
+  var w=$x("lxwa"),go=function(){try{open(wa("வணக்கம், தங்க சேமிப்புத் திட்டம் பற்றி விபரம் வேண்டும்."),"_blank")}catch(x){}};
+  w.onclick=go;w.onkeydown=function(k){if(k.key=="Enter"||k.key==" "){k.preventDefault();go()}}}}catch(x){}
+ // ☰ menu logo
+ try{var smh=document.querySelector("#smenu .smh");if(smh&&typeof LOGO!="undefined"&&!smh.querySelector(".smlogo")){var im=document.createElement("img");im.className="smlogo";im.src=LOGO;im.alt="சுப்புலட்சுமி தங்கமாளிகை";var av=$x("smav");smh.insertBefore(im,av||smh.firstChild.nextSibling)}}catch(x){}
+ // Payment வெற்றி ரசீது: cfSettle உறுதி செய்த பிறகு மட்டும் அழைக்கப்படும் (பணம் / பதிவு logic இதில இல்ல)
+ var ov=$x("psok"),txt="";
+ var row=function(k,v){return v?'<div><span>'+k+'</span><b>'+esc(String(v))+'</b></div>':""};
+ function close(){ov.classList.add("hide");document.body.style.overflow=""}
+ window.stmPaid=function(oid){
+  var d=window.PBOK&&window.PBD,amt=+window.PAYAMT||0,n0=d&&d.payments?d.payments.length:null,mo=null,nm="";
+  try{if(d){mo=MON(d.scheme);nm=(SN[d.scheme]||d.scheme)+" திட்டம்"}}catch(x){}
+  var now=new Date(),when=now.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})+" · "+now.toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"});
+  $x("psa").textContent=amt?"₹"+fmt(amt):"";$x("psg").textContent="";
+  $x("psr").innerHTML=row("திட்டம்",nm)+row("தவணை",n0!=null&&mo?(n0+1)+" / "+mo:"")+row("தேதி & நேரம்",when)+row("Order ID",oid)+'<div><span>நிலை</span><b style="color:#16834A">Passbook-ல பதிவாச்சு ✓</b></div>';
+  txt="தவணை ரசீது\n"+(typeof SHOP!="undefined"?SHOP+"\n":"")+(nm?nm+"\n":"")+(amt?"தொகை: ₹"+fmt(amt)+"\n":"")+"தேதி: "+when+"\nOrder ID: "+oid+"\nநிலை: செலுத்தப்பட்டது";
+  ov.classList.remove("hide");document.body.style.overflow="hidden";
+  // Passbook மறுபடி ஏறியதும் சேர்ந்த தங்கம் தெரிஞ்சா காட்டு
+  if(n0!=null){var t0=Date.now(),iv=setInterval(function(){var p=window.PBD&&window.PBD.payments;if(p&&p.length>n0){clearInterval(iv);var g=+p[p.length-1].grams||0;if(g)$x("psg").textContent="+"+g.toFixed(3)+" கிராம் உங்கள் சேமிப்பில் சேர்ந்தது"}else if(Date.now()-t0>9000)clearInterval(iv)},700)}
+ };
+ window.stmPaidBack=function(){if(!ov.classList.contains("hide")){close();return true}return false};
+ $x("psokx").onclick=function(){close();var b=document.querySelector('nav button[data-t="p"]');if(b&&window.PBOK)b.click()};
+ $x("psshare").onclick=function(){if(navigator.share)navigator.share({title:"தவணை ரசீது",text:txt}).catch(function(){});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(txt),"_blank")};
 })();
 </script>
 </body></html>
