@@ -3165,6 +3165,17 @@ function pbDelReq(){try{
 #cl th{text-align:left;font-weight:700;padding:8px 10px;background:var(--si);color:var(--smu)}
 #cl td{padding:8px 10px;border-top:1px solid var(--sl)}
 #cl td:last-child,#cl th:last-child{text-align:right}
+#cl td input{width:100%;max-width:130px;min-height:40px;padding:6px 10px;border:1px solid var(--sl);border-radius:10px;background:var(--sw);font:600 15px/1.2 inherit;font-family:inherit;color:var(--st);box-sizing:border-box}
+#cl td input:focus{outline:2px solid var(--sm);outline-offset:1px}
+#cl td input.bad{border-color:#B3261E;color:#B3261E}
+#cl .cltip{margin:0;font-size:14px;font-weight:600;color:var(--sm)}
+#cl .clwarn{margin:0;font-size:14px;font-weight:600;color:#B3261E}
+#cl .cltip.hide,#cl .clwarn.hide{display:none}
+#cl input[type=range]{-webkit-appearance:none;appearance:none;height:6px;min-height:0;padding:0;border:0;border-radius:3px;background:var(--sl);margin:14px 0;box-shadow:none}
+#cl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--sm);border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+#cl input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--sm);border:3px solid #fff}
+html[data-lux] #cl input[type=range]::-webkit-slider-thumb{background:#C9A24A}
+html[data-lux] #cl input[type=range]::-moz-range-thumb{background:#C9A24A}
 #cl .clnote{margin:0;font-size:13px;line-height:1.6;color:var(--smu)}
 #cl .clgo{display:block;width:100%;height:56px;border:0;border-radius:14px;background:var(--sm);color:#fff;font-family:inherit;font-size:17px;font-weight:800;cursor:pointer}
 html[data-lux] #cl{--sm:#092A63;--si:#FBF8F1;--sl:#ECE4D0;--st:#1B2233;--smu:#5F6677}
@@ -3182,39 +3193,57 @@ html[data-lux] #cl th{background:#FBF6EA;color:#8A6A1F}
 <div id="cl" class="ov sdv hide" role="dialog" aria-modal="true" aria-labelledby="clt"><div class="clh"><a id="clback" role="button" tabindex="0" aria-label="பின் செல்ல">‹</a><span id="clt">சேமிப்பு கணக்கீடு</span></div>
  <div class="clb">
   <div class="cltabs" id="cltabs" role="group" aria-label="திட்டம்"></div>
-  <div class="clc"><label for="clr">மாதத் தவணை</label><span class="clamt" id="clamt" aria-live="polite">₹5,000</span>
+  <div class="clc"><label for="clr" id="cllab">மாதத் தவணை</label><span class="clamt" id="clamt" aria-live="polite">₹5,000</span>
    <input type="range" id="clr" min="1000" max="100000" step="500" value="5000" aria-describedby="clmm">
    <div class="clmm" id="clmm"><span>₹1,000</span><span>₹1,00,000</span></div>
    <div class="clq" id="clq"></div></div>
   <div class="clres" role="status" aria-live="polite"><small id="clrl">11 மாத மொத்த சேமிப்பு</small><b id="cltot">₹55,000</b><em id="clg"></em></div>
-  <div class="clc" style="padding:0;overflow:hidden"><table aria-label="மாதவாரி கணக்கு"><thead><tr><th>தவணை</th><th>தொகை</th><th>மொத்தம்</th></tr></thead><tbody id="clrows"></tbody></table></div>
+  <p class="cltip" id="cltip">✏️ ஒவ்வொரு மாதத் தொகையையும் கீழே தொட்டு மாத்தலாம்</p><p class="clwarn hide" id="clwarn" role="alert">தொகை ₹1,000 – ₹1,00,000-க்குள் இருக்கணும்</p>
+  <div class="clc" style="padding:0;overflow:hidden"><table aria-label="மாதவாரி கணக்கு"><thead><tr><th>தவணை</th><th>தொகை</th><th id="clth3">மொத்தம்</th></tr></thead><tbody id="clrows"></tbody></table></div>
   <p class="clnote" id="clnote"></p>
  </div>
  <div class="clf"><button type="button" class="clgo" id="clgo">இந்த திட்டத்தில் சேர</button></div>
 </div>
 <script>
 // ===== சேமிப்பு கணக்கீடு =====
+// தனலட்சுமி (fixed=false): ஒவ்வொரு மாதத் தொகையையும் தனியா மாத்தலாம். குபேரலட்சுமி (fixed=true): ஒரே தொகை + ஒவ்வொரு தவணைக்கும் சேரும் தங்கம்.
 (function(){
- var $c=function(id){return document.getElementById(id)},K="dhana",A=5000,Q=[1000,2000,5000,10000,25000];
+ var $c=function(id){return document.getElementById(id)},K="dhana",A=5000,M=[],Q=[1000,2000,5000,10000,25000],MIN=1000,MAX=100000;
  var inr=function(n){return "₹"+Math.round(n).toLocaleString("en-IN")};
  var list=function(){try{return allSch().filter(function(x){return x.active!==false})}catch(e){return [{key:"dhana",name:"தனலட்சுமி",months:11},{key:"kubera",name:"குபேரலட்சுமி",months:11}]}};
+ var isFx=function(k){try{return !!FX(k)}catch(e){return k=="kubera"}};
+ var rate=function(){return window.RT&&+window.RT.rate22||0};
+ var cur=function(){var L=list();return L.find(function(x){return x.key==K})||L[0]};
+ function fill(mo){M=[];for(var i=0;i<mo;i++)M.push(A)}
+ function sums(){
+  var c=cur(),mo=+c.months||11,fx=isFx(K),r=rate(),run=0,tot=M.reduce(function(s,v){return s+(+v||0)},0);
+  $c("clrl").textContent=mo+" மாத மொத்த சேமிப்பு";$c("cltot").textContent=inr(tot);
+  $c("clg").textContent=r>0?(fx?"சுமார் "+(tot/r).toFixed(3)+" கிராம் தங்கம் சேரும்*":"இன்றைய 22K விலையில் சுமார் "+(tot/r).toFixed(3)+" கிராம் நகை*"):"";
+  var trs=$c("clrows").children;for(var i=0;i<trs.length;i++){run+=(+M[i]||0);var t=trs[i].querySelector("[data-run]");if(t)t.textContent=fx?(r>0?(run/r).toFixed(3)+" கி":"—"):inr(run)}
+  var bad=!fx&&M.some(function(v){return v<MIN||v>MAX});$c("clwarn").classList.toggle("hide",!bad);
+ }
  function draw(){
-  var L=list(),cur=L.find(function(x){return x.key==K})||L[0];if(!cur)return;K=cur.key;
-  var mo=+cur.months||11,tot=A*mo,rate=window.RT&&+window.RT.rate22,fx=false;try{fx=FX(K)}catch(e){}
+  var L=list(),c=cur();if(!c)return;K=c.key;
+  var mo=+c.months||11,fx=isFx(K),r=rate();if(M.length!=mo)fill(mo);
   $c("cltabs").innerHTML=L.map(function(x){return '<button type="button" data-ck="'+x.key+'" class="'+(x.key==K?"on":"")+'" aria-pressed="'+(x.key==K)+'">'+esc(x.name)+'</button>'}).join("");
+  $c("cllab").textContent=fx?"நிலையான மாதத் தவணை (11 மாதமும் இதே தொகை)":"மாதத் தவணை (எல்லா மாதத்துக்கும் நிரப்ப)";
   $c("clamt").textContent=inr(A);$c("clr").value=A;
   $c("clq").innerHTML=Q.map(function(v){return '<button type="button" data-cq="'+v+'" class="'+(v==A?"on":"")+'">'+inr(v)+'</button>'}).join("");
-  $c("clrl").textContent=mo+" மாத மொத்த சேமிப்பு";$c("cltot").textContent=inr(tot);
-  $c("clg").textContent=rate>0?"இன்றைய 22K விலையில் சுமார் "+(tot/rate).toFixed(3)+" கிராம்*":"";
-  var r="";for(var i=1;i<=mo;i++)r+="<tr><td>"+i+"</td><td>"+inr(A)+"</td><td>"+inr(A*i)+"</td></tr>";$c("clrows").innerHTML=r;
-  $c("clnote").textContent=(rate>0?"* இன்றைய 22K விலை "+inr(rate)+"/கிராம் அடிப்படையில் தோராயக் கணக்கு மட்டும். தங்க விலை தினமும் மாறும். ":"")+(fx?"இந்தத் திட்டத்தில் ஒவ்வொரு மாதமும் அதே தொகை.":"இந்தத் திட்டத்தில் மாதத் தொகையை மாற்றலாம்; இது ஒவ்வொரு மாதமும் ஒரே தொகை கட்டினா வரும் கணக்கு.")+" "+(mo+1)+"-வது மாதம் நகை வாங்கலாம்.";
+  $c("clth3").textContent=fx?"சேர்ந்த தங்கம்*":"மொத்தம்";
+  $c("cltip").classList.toggle("hide",fx);
+  var h="";for(var i=0;i<mo;i++){h+="<tr><td>"+(i+1)+"</td><td>"+(fx?inr(M[i]):'<input type="number" inputmode="numeric" min="'+MIN+'" max="'+MAX+'" step="100" value="'+M[i]+'" data-mi="'+i+'" aria-label="மாதம் '+(i+1)+' தொகை">')+'</td><td data-run></td></tr>'}
+  $c("clrows").innerHTML=h;
+  $c("clnote").textContent=(r>0?"* இன்றைய 22K விலை "+inr(r)+"/கிராம் அடிப்படையில் தோராயக் கணக்கு மட்டும். தங்க விலை தினமும் மாறும். ":"")+(fx?"குபேரலட்சுமியில் ஒவ்வொரு தவணைக்கும் அன்றைய விலையில் தங்கம் சேரும்; உண்மையான எடை ஒவ்வொரு தவணை நாள் விலையைப் பொறுத்தது.":"தனலட்சுமியில் மாதத் தொகையை உங்க வசதிப்படி மாத்தலாம் (₹1,000 – ₹1,00,000). சேமித்த தொகைக்கு "+(mo+1)+"-வது மாத விலையில் நகை வாங்கலாம்.");
+  sums();
  }
- window.openCalc=function(k){if(k)K=k;draw();vis("cl",true);$c("cl").querySelector(".clb").scrollTop=0};
- $c("clback").onclick=function(){vis("cl",false)};
- $c("clback").onkeydown=function(e){if(e.key=="Enter"||e.key==" "){e.preventDefault();vis("cl",false)}};
- $c("clr").addEventListener("input",function(){A=+this.value||1000;draw()});
- $c("cl").addEventListener("click",function(e){var b=e.target.closest("[data-cq],[data-ck]");if(!b)return;if(b.dataset.cq)A=+b.dataset.cq;if(b.dataset.ck)K=b.dataset.ck;draw()});
- $c("clgo").onclick=function(){vis("cl",false);vis("sd",false);if(typeof openEnrol=="function")openEnrol(K)};
+ window.openCalc=function(k){if(k&&k!=K){K=k;M=[]}draw();vis("cl",true);$c("cl").querySelector(".clb").scrollTop=0};
+ var close=function(){vis("cl",false)};
+ $c("clback").onclick=close;
+ $c("clback").onkeydown=function(e){if(e.key=="Enter"||e.key==" "){e.preventDefault();close()}};
+ $c("clr").addEventListener("input",function(){A=+this.value||MIN;M=[];draw()});
+ $c("clrows").addEventListener("input",function(e){var t=e.target;if(!t.dataset||t.dataset.mi==null)return;M[+t.dataset.mi]=+t.value||0;t.classList.toggle("bad",M[+t.dataset.mi]<MIN||M[+t.dataset.mi]>MAX);sums()});
+ $c("cl").addEventListener("click",function(e){var b=e.target.closest("[data-cq],[data-ck]");if(!b)return;if(b.dataset.cq){A=+b.dataset.cq;M=[]}if(b.dataset.ck&&b.dataset.ck!=K){K=b.dataset.ck;M=[]}draw()});
+ $c("clgo").onclick=function(){close();vis("sd",false);if(typeof openEnrol=="function")openEnrol(K)};
 })();
 </script>
 </body></html>
