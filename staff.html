@@ -413,6 +413,15 @@ html[data-style="3"] .card{background:#FFFEFA!important;border:1px solid #E8DAB8
 
 /* audit fix: date inputs in a row shrink instead of overflowing on 320–360px */
 div[style*="display:flex"]>input[type=date]{flex:1 1 0;min-width:0;width:100%;box-sizing:border-box}
+#adm:not(.devon) .dev{display:none}
+.devl{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.devl b{display:block;font-size:17px}.devl small{display:block;color:#777;font-size:13px;margin-top:2px}
+.devl input{position:absolute;opacity:0;width:1px;height:1px}
+.devl i{flex:none;width:50px;height:30px;border-radius:30px;background:#c9c9c9;position:relative;transition:background .2s}
+.devl i:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+.devl input:checked+i{background:#16834A}.devl input:checked+i:after{left:23px}
+.devl input:focus-visible+i{outline:2px solid #2161D1;outline-offset:2px}
+.devsw{border:1.5px dashed #c9a24b}
 </style></head><body>
 <div id="app">
 <header class="hd"><div class="hl"><span id="shop"></span></div>
@@ -484,13 +493,14 @@ div[style*="display:flex"]>input[type=date]{flex:1 1 0;min-width:0;width:100%;bo
   <div class="card"><h2>Social / Website links</h2><div class="mut">Instagram, Facebook, YouTube, இணையதளம் எதுவும் சேர்க்கலாம் (https:// உடன்).</div>
   <input id="lkl" placeholder="காட்ட வேண்டிய பெயர் (எ.கா. @shopname)"><input id="lku" type="url" placeholder="https://...">
   <button class="btn" id="lkadd">சேர்</button><div id="lkm"></div></div>
-  <div class="card"><h2>கடை புகைப்படம் (Home)</h2><div class="mut">கடையின் புகைப்படம் (நீளவாக்கு அல்லது சதுரம், 800×1000 நல்லது). Home-ல "எங்கள் கடை" card-ல வரும்.</div><div id="sha"></div></div>
-  <div class="card"><h2>நகை படங்கள் (Style 3)</h2><div class="mut">பின்னணி இல்லாத (transparent PNG) நகை படம் மட்டும். Header மூலையில, தங்க / வெள்ளி விலை card-ல வரும். எழுத்து இல்லாத படம் போடுங்க.</div><div id="dca"></div></div>
-  <div class="card"><h2>Maroon பின்னணி படம் (Style 2)</h2><div class="mut">எழுத்து, காயின், நகை இல்லாத maroon velvet / texture படம் மட்டும் (சதுரம், 2048×2048 நல்லது). Customer app-ல maroon நிறம் உள்ள பெரிய இடங்கள்ல (Home banner, Passbook மேல் பகுதி, மொத்த சேமிப்பு, திட்ட card, Login card) இந்த படம் வரும். நீக்கினா சாதாரண maroon நிறம் திரும்ப வரும்.</div><div id="mba"></div></div>
-  <div class="card"><h2>Header பின்னணி படம்</h2><div class="mut">எழுத்து, logo, விலை card இல்லாத அலங்கார பின்னணி மட்டும் (1080×770). விலை, logo ஆப்பே மேல போடும்.</div><div id="hda"></div></div>
-  <div class="card"><h2>திட்ட card படங்கள்</h2><div class="mut">அகல படம் 1080×540 (2:1). படம் போட்டா card-ன் மேல பகுதி முழுக்க அந்த படம் வரும்.</div><div id="sia"></div></div>
-  <div class="card"><h2>Banner படங்கள் (Home)</h2><div class="mut">அகல படம் 1080×500, 5 வரை. தானா மாறி மாறி வரும்.</div><div id="ba"></div></div>
-  <div class="card"><h2>Onboarding படங்கள்</h2><div class="mut">9:16 படம் (1080×1920). படம் போட்டா அந்த slide முழுக்க அந்த படம் தான் வரும்.</div><div id="sa"></div></div>
+  <div class="card devsw"><label class="devl" for="devm"><span><b>🛠 Developer mode</b><small id="devs">படம் சேர்க்கும் options மறைஞ்சிருக்கு</small></span><input type="checkbox" id="devm" role="switch"><i></i></label></div>
+  <div class="card dev"><h2>கடை புகைப்படம் (Home)</h2><div class="mut">கடையின் புகைப்படம் (நீளவாக்கு அல்லது சதுரம், 800×1000 நல்லது). Home-ல "எங்கள் கடை" card-ல வரும்.</div><div id="sha"></div></div>
+  <div class="card dev"><h2>நகை படங்கள் (Style 3)</h2><div class="mut">பின்னணி இல்லாத (transparent PNG) நகை படம் மட்டும். Header மூலையில, தங்க / வெள்ளி விலை card-ல வரும். எழுத்து இல்லாத படம் போடுங்க.</div><div id="dca"></div></div>
+  <div class="card dev"><h2>Maroon பின்னணி படம் (Style 2)</h2><div class="mut">எழுத்து, காயின், நகை இல்லாத maroon velvet / texture படம் மட்டும் (சதுரம், 2048×2048 நல்லது). Customer app-ல maroon நிறம் உள்ள பெரிய இடங்கள்ல (Home banner, Passbook மேல் பகுதி, மொத்த சேமிப்பு, திட்ட card, Login card) இந்த படம் வரும். நீக்கினா சாதாரண maroon நிறம் திரும்ப வரும்.</div><div id="mba"></div></div>
+  <div class="card dev"><h2>Header பின்னணி படம்</h2><div class="mut">எழுத்து, logo, விலை card இல்லாத அலங்கார பின்னணி மட்டும் (1080×770). விலை, logo ஆப்பே மேல போடும்.</div><div id="hda"></div></div>
+  <div class="card dev"><h2>திட்ட card படங்கள்</h2><div class="mut">அகல படம் 1080×540 (2:1). படம் போட்டா card-ன் மேல பகுதி முழுக்க அந்த படம் வரும்.</div><div id="sia"></div></div>
+  <div class="card dev"><h2>Banner படங்கள் (Home)</h2><div class="mut">அகல படம் 1080×500, 5 வரை. தானா மாறி மாறி வரும்.</div><div id="ba"></div></div>
+  <div class="card dev"><h2>Onboarding படங்கள்</h2><div class="mut">9:16 படம் (1080×1920). படம் போட்டா அந்த slide முழுக்க அந்த படம் தான் வரும்.</div><div id="sa"></div></div>
   <div class="card"><h2>இந்த மாத நினைவூட்டல்</h2><div id="rm"></div></div>
   <div class="card"><h2>புதிய Customer</h2>
   <input id="nn" placeholder="பெயர்"><input id="nm" type="tel" inputmode="numeric" placeholder="மொபைல்">
@@ -990,5 +1000,11 @@ $("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster �
  if($("ppn").checked){const d=await pushFn({action:"send",title:$("ppt").value.trim(),body:"",image:PPIMG,url:$("ppl").value,target:"all"});msg+=d.ok?`\n🔔 ${d.sent} phone-க்கு notification போச்சு`:"\nNotification போகல: "+(d.err||"");loadPushLog()}
  alert(msg);PPIMG="";$("ppf").value="";$("ppimg").innerHTML="";$("pps").value="";$("ppe").value="";$("ppn").checked=false;$("ppt").value="";loadPop()};
 
+</script>
+<script>
+(function(){var a=document.getElementById("adm"),c=document.getElementById("devm"),t=document.getElementById("devs");if(!a||!c)return;
+function set(on){a.classList.toggle("devon",on);c.checked=on;t.textContent=on?"ON · படம் சேர்க்கும் options கீழே தெரியுது":"படம் சேர்க்கும் options மறைஞ்சிருக்கு";try{sessionStorage.setItem("stm_dev",on?"1":"0")}catch(e){}}
+var on=false;try{on=sessionStorage.getItem("stm_dev")==="1"}catch(e){}set(on);
+c.addEventListener("change",function(){set(c.checked);if(c.checked){var d=document.querySelector("#adm .dev");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}});})();
 </script>
 </body></html>
