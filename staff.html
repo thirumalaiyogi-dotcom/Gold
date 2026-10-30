@@ -414,6 +414,8 @@ html[data-style="3"] .card{background:#FFFEFA!important;border:1px solid #E8DAB8
 /* audit fix: date inputs in a row shrink instead of overflowing on 320–360px */
 div[style*="display:flex"]>input[type=date]{flex:1 1 0;min-width:0;width:100%;box-sizing:border-box}
 #adm:not(.devon) .dev{display:none}
+#adm:not(.devun) .devsw{display:none}
+#devtoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:rgba(20,20,20,.88);color:#fff;padding:10px 18px;border-radius:22px;font-size:14px;z-index:9999;pointer-events:none;opacity:0;transition:opacity .2s}#devtoast.on{opacity:1}
 .devl{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
 .devl b{display:block;font-size:17px}.devl small{display:block;color:#777;font-size:13px;margin-top:2px}
 .devl input{position:absolute;opacity:0;width:1px;height:1px}
@@ -1003,8 +1005,19 @@ $("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster �
 </script>
 <script>
 (function(){var a=document.getElementById("adm"),c=document.getElementById("devm"),t=document.getElementById("devs");if(!a||!c)return;
-function set(on){a.classList.toggle("devon",on);c.checked=on;t.textContent=on?"ON · படம் சேர்க்கும் options கீழே தெரியுது":"படம் சேர்க்கும் options மறைஞ்சிருக்கு";try{sessionStorage.setItem("stm_dev",on?"1":"0")}catch(e){}}
-var on=false;try{on=sessionStorage.getItem("stm_dev")==="1"}catch(e){}set(on);
-c.addEventListener("change",function(){set(c.checked);if(c.checked){var d=document.querySelector("#adm .dev");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}});})();
+function ss(k,v){try{if(v===undefined)return sessionStorage.getItem(k);sessionStorage.setItem(k,v)}catch(e){}}
+function set(on){a.classList.toggle("devon",on);c.checked=on;t.textContent=on?"ON · படம் சேர்க்கும் options கீழே தெரியுது":"படம் சேர்க்கும் options மறைஞ்சிருக்கு";ss("stm_dev",on?"1":"0")}
+function unlock(){a.classList.add("devun");ss("stm_devun","1")}
+if(ss("stm_devun")==="1")unlock();set(ss("stm_dev")==="1");
+c.addEventListener("change",function(){set(c.checked);if(c.checked){var d=document.querySelector("#adm .dev");if(d)d.scrollIntoView({behavior:"smooth",block:"start"})}});
+// ⚙️ App அமைப்பு tab-ஐ 10 தடவை வேகமா தட்டினா Developer mode வெளிப்படும் (Android மாதிரி)
+var n=0,last=0,tt=null,toast=document.createElement("div");toast.id="devtoast";toast.setAttribute("role","status");document.body.appendChild(toast);
+function say(m){toast.textContent=m;toast.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("on")},1300)}
+document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest('#stabs [data-g="set"]');if(!b)return;
+ var now=Date.now();n=(now-last<1500)?n+1:1;last=now;
+ if(a.classList.contains("devun")){if(n>=3)say("Developer mode ஏற்கனவே திறந்திருக்கு");return}
+ if(n>=10){n=0;unlock();set(true);say("🛠 Developer mode திறந்தது");var d=document.querySelector("#adm .devsw");if(d)setTimeout(function(){d.scrollIntoView({behavior:"smooth",block:"start"})},150)}
+ else if(n>=5)say("இன்னும் "+(10-n)+" தடவை தட்டுங்க")});
+})();
 </script>
 </body></html>
