@@ -1758,6 +1758,11 @@ html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
 @media (max-height:800px){#lock.stA .lkhero{height:clamp(120px,24vh,260px)!important}#lock.stA .lkhero .shopn img,#lock.stA .lkhero .logo{max-height:72px!important;width:auto!important}#lkA .lkt{min-height:72px;padding:10px 14px}}
 /* 44px tap area (layout மாறாது) */
 .meed,#wzsum a[data-go]{position:relative}.meed::after,#wzsum a[data-go]::after{content:"";position:absolute;left:-8px;right:-8px;top:50%;height:44px;transform:translateY(-50%)}
+/* வெள்ளி திட்டம்: வெள்ளி நாணயம் + வெள்ளி badge; நாணயம் எழுத்தை மறைக்காம */
+.sc .sct:not(.img)>h3{padding-right:70px}
+html[data-style] .sc.silver .coin:after{content:"வெள்ளி"!important;color:#2f3640!important;background:linear-gradient(180deg,#ffffff,#cfd5dc)!important}
+.sc.silver .coin{filter:grayscale(1) brightness(1.18) contrast(1.05) drop-shadow(0 6px 10px rgba(0,0,0,.3))!important}
+.sdpur.ag{color:#3f4650!important;background:linear-gradient(180deg,#f4f6f8,#cfd5dc)!important;border-color:#b9c1ca!important}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2567,6 +2572,7 @@ const SDI={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v
  ph:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
  wa:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'};
 const SDMIN={dhana:"₹1,000",kubera:"₹1,000"};
+function isSilver(k){const x=EXTRA.find(e=>e.key===k);return !!(x&&x.silver)}
 function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera",mn=SDMIN[k];
  $("sdt").textContent=d.n+" திட்டம்";
  const feats=base?[[SDI.cal,mo+" மாதங்கள்"],fx?[SDI.lock,"நிலையான தவணை"]:[SDI.rep,"தவணை மாற்றலாம்"],[SDI.tag,"சேதாரம் & செய்கூலி தள்ளுபடி"]]
@@ -2579,7 +2585,7 @@ function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera
  const acc=(list,g)=>list.map(a=>`<details class="sdacc" data-g="${g}"><summary><span>${String(a[0]).replace(/<\/?b>/g,"")}</span><i aria-hidden="true"></i></summary><div class="sdans">${a[1]||'<span class="mut">விவரம் விரைவில் சேர்க்கப்படும் (கடை உறுதி செய்த பின்).</span>'}</div></details>`).join("");
  $("sdb").innerHTML=`${banner}
  <section class="sdinfo">
-  <div class="sdtop"><span class="sdbadge">${mo} மாத சேமிப்புத் திட்டம்</span><span class="sdpur">22K | 916</span></div>
+  <div class="sdtop"><span class="sdbadge">${mo} மாத சேமிப்புத் திட்டம்</span><span class="sdpur${isSilver(k)?" ag":""}">${isSilver(k)?"வெள்ளி":"22K | 916"}</span></div>
   <h2>${d.n}</h2><p class="sdsub">${mn?mn+" முதல் மாதத் தவணை":d.tag}</p>
   <ul class="sdfeat">${feats.map(f=>`<li>${IC(f[0])}<span>${f[1]}</span></li>`).join("")}</ul>
  </section>
@@ -2840,7 +2846,7 @@ function fillSel(){const o=allSch().map(x=>`<option value="${x.key}">${esc(x.nam
 // திட்ட அட்டை: கடையின் விதிமுறைகளில் உள்ள விவரங்கள் மட்டும்
 const SINFO={dhana:{tag:"தவணை உங்கள் விருப்பம்",amt:"₹1,000 – ₹1,00,000",type:"மாதா மாதம் மாற்றலாம்",mat:"12 வது மாதம் அன்றைய தங்க விலைக்கு நகை / காயின்"},
  kubera:{tag:"நிலையான தவணை · தங்க எடையில் சேமிப்பு",amt:"₹1,000 – ₹1,00,000",type:"நிலையானது (முதல் மாதத் தொகையே)",mat:"12 வது மாதம் சேர்ந்த தங்க எடைக்கு நகை / காயின்"}};
-function schCard(x){return `<div class="sc" data-k="${x.key}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`}
+function schCard(x){return `<div class="sc${x.silver?" silver":""}" data-k="${x.key}"><div class="sct"><small>${x.months} மாத திட்டம்</small><h3>${esc(x.name)}</h3><div>${x.card}</div><span class="coin">${x.coin}</span></div><div class="scb"><a class="mo">மேலும் அறியவும்</a><a class="jn">இப்போது சேரவும்</a></div></div>`}
 function renderSchemes(){const L=allSch();
  $("hs").innerHTML=L.map(schCard).join("");
  $("d2").innerHTML=L.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("");
@@ -2849,7 +2855,7 @@ function renderSchemes(){const L=allSch();
  applySIM();fillSel();
  $("sxl").innerHTML=EXTRA.map(x=>`<div class="row"><span>${esc(x.name)}${x.active?"":" (நிறுத்தப்பட்டது)"}</span><a data-sa="${x.key}" style="color:${x.active?"#b00020":"#1f7a4d"};text-decoration:underline">${x.active?"நிறுத்து":"செயல்படுத்து"}</a></div>`).join("")}
 async function loadSchemes(){const {data}=await sb.from("gold_schemes").select("*").order("created_at");
- EXTRA=(data||[]).map(r=>({key:r.key,name:r.name,months:r.months||12,grams:r.grams,fixed:r.fixed,card:esc(r.tagline||""),coin:"★",active:r.active}));
+ EXTRA=(data||[]).map(r=>({key:r.key,name:r.name,months:r.months||12,grams:r.grams,fixed:r.fixed,card:esc(r.tagline||""),coin:/சில்வர்|வெள்ளி|silver/i.test((r.name||"")+" "+(r.tagline||"")+" "+(r.tags||""))?"Ag":"★",active:r.active,silver:/சில்வர்|வெள்ளி|silver/i.test((r.name||"")+" "+(r.tagline||"")+" "+(r.tags||""))}));
  (data||[]).forEach(r=>{SCH[r.key]=mkSch(r)});renderSchemes();renderSIA()}
 loadSchemes();
 
