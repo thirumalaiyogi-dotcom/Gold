@@ -2077,7 +2077,7 @@ async function cfSettle(oid,el){const show=(t,ok)=>{if(el){el.textContent=t;el.c
 function payWire(){const go=$("paygo");if(!go)return;
  document.querySelectorAll("[data-pq]").forEach(b=>b.onclick=()=>{$("payam").value=b.dataset.pq});
  go.onclick=async()=>{const a=Math.round(+$("payam").value),msg=$("paymsg");msg.className="pbpm";
-  if(!(a>=1000&&a<=100000)){msg.textContent=PAYERR.amount;msg.className="pbpm bad";return}
+  const mn=window.PAYMIN||1000;if(!(a>=mn&&a<=100000)){msg.textContent="தொகை ₹"+mn.toLocaleString("en-IN")+" முதல் ₹1,00,000 வரை இருக்கணும்.";msg.className="pbpm bad";return}
   go.disabled=true;msg.textContent="தயார் செய்கிறோம்…";
   const d=await cfCall({action:"create",mobile:$("cm").value.trim(),pin:$("cp").value.trim(),amount:a,return_url:location.origin+location.pathname});
   if(!d.ok){go.disabled=false;msg.textContent=PAYERR[d.err]||("Payment தொடங்க முடியல ("+d.err+")");msg.className="pbpm bad";return}
@@ -2252,18 +2252,19 @@ async function viewPB(){
  if(!data){$("pb").innerHTML='<div class="pbx"><div class="pbcard pbstate"><b>மொபைல் எண் / PIN தவறு</b><p>வெளியேறி மீண்டும் உள்நுழையவும்.</p></div></div>';return}
  const mo=MON(data.scheme),sd=new Date(data.start);sd.setMonth(sd.getMonth()+mo);const bd=sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"});
  const ps=data.payments||[],t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),gr=GR(data.scheme),fx=FX(data.scheme);
- const paid=ps.length,left=Math.max(0,mo-paid),pct=Math.min(100,Math.round(paid/mo*100));
+ const fl=isSilver(data.scheme),cym=new Date(Date.now()+19800000).toISOString().slice(0,7),mset=new Set(ps.map(x=>String(x.on).slice(0,7)));window.PAYMIN=fl?100:1000;
+ const paid=fl?mset.size:ps.length,left=Math.max(0,mo-paid),pct=Math.min(100,Math.round(paid/mo*100));
  const rows=ps.map((x,i)=>({x,n:i+1})).reverse();
  // அடுத்த தவணை: மாதம் 1–7 தேதி
- let nx="";if(left){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
+ let nx="";if(left||fl&&mset.has(cym)){const now=new Date(),lp=ps.length?new Date(String(ps[ps.length-1].on).slice(0,10)+"T00:00:00"):null,paidThis=lp&&lp.getFullYear()==now.getFullYear()&&lp.getMonth()==now.getMonth();
   const due=new Date(now.getFullYear(),now.getMonth()+(paidThis?1:0),7),dueS=ps.length?due.toLocaleDateString("ta-IN",{day:"numeric",month:"short",year:"numeric"})+"க்குள்":"இப்போதே கட்டலாம்";
-  const st=!ps.length?["முதல் தவணை","due"]:paidThis?["இந்த மாசம் செலுத்தியாச்சு ✓","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
+  const st=!ps.length?["முதல் தவணை","due"]:paidThis?[fl?"இந்த மாசம் சேமிச்சாச்சு ✓":"இந்த மாசம் செலுத்தியாச்சு ✓","up"]:now.getDate()<=7?["நிலுவையில்","due"]:["தாமதம்","late"];
   const fma=fx&&!ps.length&&+data.monthly_amount>0?Math.round(+data.monthly_amount):0;
   const amt=fx&&ps.length?"₹"+f(ps[0].amount):fma?"₹"+f(fma):"உங்க விருப்பத் தொகை";
   const fa=fx&&ps.length?Math.round(ps[0].amount):fma;
-  const pay=paidThis?"":`<div class="pbpay noprint">${fa?`<input type="hidden" id="payam" value="${fa}">`:`<label for="payam">தொகை (₹1,000 – ₹1,00,000)</label><div class="pbpq">${[1000,2000,5000,10000].map(v=>`<button type="button" data-pq="${v}">₹${f(v)}</button>`).join("")}</div><input id="payam" type="number" inputmode="numeric" min="1000" max="100000" step="1" placeholder="தொகை ₹" value="${ps.length?Math.round(ps[ps.length-1].amount):""}">`}<button type="button" class="pbpaybtn" id="paygo">${PBI.wal}${fa?`₹${f(fa)} `:""}இப்போ online-ல கட்டு</button><p class="pbpm" id="paymsg" role="status"></p></div>`;
-  nx=`<div class="pbcard pbnx s-${st[1]}" aria-label="அடுத்த தவணை நிலை: ${st[0]}"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>அடுத்த தவணை (${paid+1}/${mo})</small><b${fa?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}</small><em class="${st[1]}">${st[0]}</em></div></div>${ps.length?"":`<p class="pbwel">🙏 வரவேற்கிறோம்! முதல் தவணை கட்டி உங்க தங்க சேமிப்பை ஆரம்பிங்க. கடையிலயும் கட்டலாம்.</p>`}${pay}</div>`}
- if(!left&&paid)nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>எல்லா ${mo} தவணையும் முடிந்தது</b></div><div class="pbnxr"><em class="up">முடிந்தது ✓</em></div></div><p class="pbdn">நகை / காயின் வாங்க கடைக்கு வாருங்க.</p></div>`;
+  const pay=paidThis&&!fl?"":`<div class="pbpay noprint">${fa?`<input type="hidden" id="payam" value="${fa}">`:`<label for="payam">தொகை (${fl?"₹100":"₹1,000"} – ₹1,00,000)${fl&&paidThis?" · இந்த மாசம் இன்னும் சேர்க்கலாம்":""}</label><div class="pbpq">${(fl?[100,200,500,1000]:[1000,2000,5000,10000]).map(v=>`<button type="button" data-pq="${v}">₹${f(v)}</button>`).join("")}</div><input id="payam" type="number" inputmode="numeric" min="${fl?100:1000}" max="100000" step="1" placeholder="தொகை ₹" value="${ps.length?Math.round(ps[ps.length-1].amount):""}">`}<button type="button" class="pbpaybtn" id="paygo">${PBI.wal}${fa?`₹${f(fa)} `:""}இப்போ online-ல கட்டு</button><p class="pbpm" id="paymsg" role="status"></p></div>`;
+  nx=`<div class="pbcard pbnx s-${st[1]}" aria-label="அடுத்த தவணை நிலை: ${st[0]}"><div class="pbnxt"><span class="pbnxi">${PBI.cal}</span><div><small>${fl&&paidThis?`இந்த மாத சேமிப்பு (${paid}/${mo})`:`அடுத்த தவணை (${paid+1}/${mo})`}</small><b${fa?"":' class="flex"'}>${fa?"₹"+f(fa):amt}</b></div><div class="pbnxr"><small>${PBI.cal2}${dueS}</small><em class="${st[1]}">${st[0]}</em></div></div>${ps.length?"":`<p class="pbwel">🙏 வரவேற்கிறோம்! முதல் தவணை கட்டி உங்க தங்க சேமிப்பை ஆரம்பிங்க. கடையிலயும் கட்டலாம்.</p>`}${pay}</div>`}
+ if(!left&&paid&&!(fl&&mset.has(cym)))nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>எல்லா ${mo} தவணையும் முடிந்தது</b></div><div class="pbnxr"><em class="up">முடிந்தது ✓</em></div></div><p class="pbdn">நகை / காயின் வாங்க கடைக்கு வாருங்க.</p></div>`;
  const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
  <div class="pbtop noprint"><a class="pbback" role="button" tabindex="0" onclick="document.querySelector('nav button[data-t=&quot;s&quot;]').click()" aria-label="முகப்பு">←</a><div><b>Passbook</b><small>உங்கள் சேமிப்பு பயணம்</small></div><span class="pbtopi">${PBI.r}</span></div>
@@ -2495,15 +2496,15 @@ $("lo").onclick=()=>{setTimeout(showLock,50);$("pb").innerHTML="";$("cp").value=
 function greetT(){const h=new Date(Date.now()+19800000).getUTCHours();return h<12?"காலை வணக்கம்":h<16?"மதிய வணக்கம்":h<19?"மாலை வணக்கம்":"இனிய இரவு"}
 function renderRecent(){const host=document.getElementById("recent");if(!host)return;const d=window.PBOK&&window.PBD;
  if(!d){host.innerHTML="";host.classList.add("hide");return}host.classList.remove("hide");
- const ps=(d.payments||[]).map((x,i)=>({x,n:i+1})).reverse().slice(0,3),mo=MON(d.scheme);
- host.innerHTML=`<div class="rech"><b>சமீபத்திய பரிவர்த்தனைகள்</b><button type="button" data-q="pb">அனைத்தும் ›</button></div>`+(ps.length?ps.map(({x,n})=>`<div class="recr"><span class="reci" aria-hidden="true">${n}</span><div class="recm"><b>தவணை ${n}/${mo}</b><small>${pbDate(x.on)}${x.grams?" · "+(+x.grams).toFixed(3)+" கி":""}</small></div><div class="reca"><b>₹${fmt(x.amount)}</b><small class="recs">செலுத்தப்பட்டது</small></div></div>`).join(""):'<p class="rece">இன்னும் தவணை எதுவும் இல்லை. முதல் தவணை கட்டியதும் இங்கே தெரியும்.</p>')}
+ const ps=(d.payments||[]).map((x,i)=>({x,n:i+1})).reverse().slice(0,3),mo=MON(d.scheme),fl=isSilver(d.scheme);
+ host.innerHTML=`<div class="rech"><b>சமீபத்திய பரிவர்த்தனைகள்</b><button type="button" data-q="pb">அனைத்தும் ›</button></div>`+(ps.length?ps.map(({x,n})=>`<div class="recr"><span class="reci" aria-hidden="true">${n}</span><div class="recm"><b>${fl?`சேமிப்பு ${n}`:`தவணை ${n}/${mo}`}</b><small>${pbDate(x.on)}${x.grams?" · "+(+x.grams).toFixed(3)+" கி":""}</small></div><div class="reca"><b>₹${fmt(x.amount)}</b><small class="recs">செலுத்தப்பட்டது</small></div></div>`).join(""):'<p class="rece">இன்னும் தவணை எதுவும் இல்லை. முதல் தவணை கட்டியதும் இங்கே தெரியும்.</p>')}
 function renderPS(){const e=$("pss"),d=window.PBOK&&window.PBD;$("xhi").textContent=d&&d.name?greetT()+", "+String(d.name).split(" ")[0]:greetT();renderRecent();{const nb=document.querySelector('nav button[data-t="p"]');nb&&nb.classList.toggle("lockd",!window.PBOK)}const IB='<svg viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM9 8h6M9 12h6"/></svg>';
  if(!d){e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>என் சேமிப்பு Passbook</b><small>திட்டத்தில் சேர்ந்தவர்களுக்கு</small></div></div><p>உங்க மொத்த சேமிப்பு, கட்டிய தவணைகள், தங்க எடை எல்லாம் மொபைல்லயே பாருங்க.</p><div class="xbtns"><a class="xbtn" data-pb role="button" tabindex="0">Passbook திற</a><a class="xbtn xo" data-act role="button" tabindex="0">PIN அமைக்க</a></div>`;return}
- const ps=d.payments||[],t=ps.reduce((a,x)=>a+x.amount,0),g=ps.reduce((a,x)=>a+(+x.grams||0),0),mo=MON(d.scheme),sd=new Date(d.start);sd.setMonth(sd.getMonth()+mo);
+ const ps=d.payments||[],t=ps.reduce((a,x)=>a+x.amount,0),g=ps.reduce((a,x)=>a+(+x.grams||0),0),mo=MON(d.scheme),sd=new Date(d.start);sd.setMonth(sd.getMonth()+mo);const pn=pbN(d);
  e.innerHTML=`<div class="xpbh"><span class="xic">${IB}</span><div><b>${esc(d.name)}</b><small>${esc(SN[d.scheme])} திட்டம்</small></div></div>
- <div class="xstat"><span><small>மொத்த சேமிப்பு</small><b>₹${f(t)}</b></span>${GR(d.scheme)?`<span><small>தங்க எடை</small><b>${g.toFixed(3)} கி</b></span>`:`<span><small>தவணை</small><b>${ps.length}/${mo}</b></span>`}</div>
- <div class="xbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${ps.length}"><i style="width:${Math.min(100,ps.length/mo*100)}%"></i></div>
- <p class="xmeta">${ps.length}/${mo} தவணை · நகை வாங்கலாம்: ${sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"})}</p>
+ <div class="xstat"><span><small>மொத்த சேமிப்பு</small><b>₹${f(t)}</b></span>${GR(d.scheme)?`<span><small>தங்க எடை</small><b>${g.toFixed(3)} கி</b></span>`:`<span><small>தவணை</small><b>${pn}/${mo}</b></span>`}</div>
+ <div class="xbar" role="progressbar" aria-label="கட்டிய தவணை" aria-valuemin="0" aria-valuemax="${mo}" aria-valuenow="${pn}"><i style="width:${Math.min(100,pn/mo*100)}%"></i></div>
+ <p class="xmeta">${pn}/${mo} தவணை · நகை வாங்கலாம்: ${sd.toLocaleDateString("ta-IN",{month:"long",year:"numeric"})}</p>
  <a class="xbtn" data-pb role="button" tabindex="0">முழு Passbook பார்க்க</a>`}
 $("pss").addEventListener("click",e=>{if(e.target.closest("[data-pb]"))document.querySelector('nav button[data-t="p"]').click();
  else if(e.target.closest("[data-act]")){$("avm").value=LS.get("mob")||"";$("ave").textContent="";vis("av",true)}});
@@ -2514,7 +2515,7 @@ renderPS();
 
 // Passbook share / PDF
 function pbText(d){const ps=d.payments,t=ps.reduce((s,x)=>s+x.amount,0),g=ps.reduce((s,x)=>s+(+x.grams||0),0),k=GR(d.scheme);
- return `${SHOP}\nPassbook\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதொடக்கம்: ${d.start}\n\n`+ps.map((x,i)=>`${i+1}. ${x.on} – ₹${f(x.amount)}${x.grams?` (${(+x.grams).toFixed(3)} கிராம்)`:""}`).join("\n")+`\n\nமொத்த சேமிப்பு: ₹${f(t)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+`\nதவணை: ${ps.length}/${MON(d.scheme)}`}
+ return `${SHOP}\nPassbook\n\nபெயர்: ${d.name}\nதிட்டம்: ${SN[d.scheme]}\nதொடக்கம்: ${d.start}\n\n`+ps.map((x,i)=>`${i+1}. ${x.on} – ₹${f(x.amount)}${x.grams?` (${(+x.grams).toFixed(3)} கிராம்)`:""}`).join("\n")+`\n\nமொத்த சேமிப்பு: ₹${f(t)}`+(k?`\nமொத்த தங்கம்: ${g.toFixed(3)} கிராம்`:"")+`\nதவணை: ${pbN(d)}/${MON(d.scheme)}`}
 function sharePB(){const t=pbText(window.PBD);if(navigator.share)navigator.share({text:t}).catch(()=>{});else open("https://api.whatsapp.com/send?text="+encodeURIComponent(waT(t)),"_blank")}
 function printPB(){document.body.classList.add("printpb");setTimeout(()=>window.print(),80)}
 window.addEventListener("afterprint",()=>document.body.classList.remove("printpb"));
@@ -2572,6 +2573,7 @@ const SDI={cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v
  ph:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
  wa:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>'};
 const SDMIN={dhana:"₹1,000",kubera:"₹1,000"};
+function pbN(d){const ps=d.payments||[];return isSilver(d.scheme)?new Set(ps.map(x=>String(x.on).slice(0,7))).size:ps.length}
 function isSilver(k){const x=EXTRA.find(e=>e.key===k);return !!(x&&x.silver)}
 function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera",mn=SDMIN[k];
  $("sdt").textContent=d.n+" திட்டம்";
@@ -2608,7 +2610,8 @@ function openEnrol(k){$("rgs").value=k||"dhana";{const rc=refSaved(),f=$("rgr");
 let WZ=1;const WZT=["உங்க விவரம்","முகவரி","திட்டம் & தவணை","Nominee & உறுதி"];
 function wzSch(){const L=allSch(),cur=$("rgs").value;$("wzsc").innerHTML=L.map(x=>{const i=(typeof SINFO!="undefined"&&SINFO[x.key])||null;
  return `<button type="button" data-k="${x.key}" class="${x.key==cur?"on":""}" aria-pressed="${x.key==cur}"><span class="rd"></span><span><b>${esc(x.name)}</b><small>${x.months} மாதம் · ${i?esc(i.tag):String(x.card||"").replace(/<br>/g," · ")}</small></span></button>`}).join("")}
-function wzAm(){const v=+$("rgq").value;$("wzam").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.a===v))}
+function wzAmSet(){const ag=isSilver($("rgs").value),A=ag?[100,200,500,1000]:[1000,2000,5000,10000],w=$("wzam");if(w.dataset.ag===String(ag))return;w.dataset.ag=String(ag);w.innerHTML=A.map(v=>`<button type="button" data-a="${v}">₹${v.toLocaleString("en-IN")}</button>`).join("");$("rgq").placeholder=`அல்லது தொகை போடுங்க (₹${A[0].toLocaleString("en-IN")} – ₹1,00,000)`}
+function wzAm(){wzAmSet();const v=+$("rgq").value;$("wzam").querySelectorAll("button").forEach(b=>b.classList.toggle("on",+b.dataset.a===v))}
 function wzSum(){const sch=allSch().find(x=>x.key==$("rgs").value)||{},q=+$("rgq").value;
  $("wzsum").innerHTML=`<div><span>பெயர்:</span> <b>${esc($("rgn").value.trim())}</b> · ${esc($("rgm").value.trim())}<a data-go="1">மாற்று</a></div>
  <div><span>முகவரி:</span> <b>${esc($("rga").value.trim())}, ${esc($("rgt").value.trim())} ${esc($("rgp").value.trim())}</b><a data-go="2">மாற்று</a></div>
@@ -2620,10 +2623,10 @@ function wzShow(n){WZ=n;document.querySelectorAll("#rgf .wzs").forEach(d=>d.clas
 function wzCheck(n){const e=t=>{$("wze").textContent=t;return false};
  if(n==1){if(!$("rgn").value.trim())return e("உங்க பெயர் போடுங்க");if(!/^[0-9]{10}$/.test($("rgm").value.trim()))return e("10 இலக்க மொபைல் எண் போடுங்க");const em=$("rge").value.trim();if(em&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return e("சரியான Email போடுங்க, இல்லைன்னா காலியா விடுங்க")}
  if(n==2){if(!$("rga").value.trim())return e("முகவரி போடுங்க");if(!$("rgt").value.trim())return e("ஊர் பெயர் போடுங்க");const pc=$("rgp").value.trim();if(pc&&!/^[0-9]{6}$/.test(pc))return e("பின்கோடு 6 இலக்கம்")}
- if(n==3){if(!$("rgs").value)return e("ஒரு திட்டத்தை தேர்வு செய்யுங்க");const q=$("rgq").value.trim();if(q&&(+q<1000||+q>100000))return e("மாத தவணை ₹1,000 முதல் ₹1,00,000 வரை")}
+ if(n==3){if(!$("rgs").value)return e("ஒரு திட்டத்தை தேர்வு செய்யுங்க");const q=$("rgq").value.trim(),mn=isSilver($("rgs").value)?100:1000;if(q&&(+q<mn||+q>100000))return e("மாத தவணை ₹"+mn.toLocaleString("en-IN")+" முதல் ₹1,00,000 வரை")}
  return true}
 $("wznext").onclick=()=>{if(wzCheck(WZ))wzShow(WZ+1)};$("wzprev").onclick=()=>wzShow(Math.max(1,WZ-1));
-$("wzsc").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(!b)return;$("rgs").value=b.dataset.k;wzSch()});
+$("wzsc").addEventListener("click",e=>{const b=e.target.closest("button[data-k]");if(!b)return;$("rgs").value=b.dataset.k;wzSch();wzAm()});
 $("wzam").addEventListener("click",e=>{const b=e.target.closest("button[data-a]");if(!b)return;$("rgq").value=b.dataset.a;wzAm()});
 $("rgq").addEventListener("input",wzAm);
 $("wzsum").addEventListener("click",e=>{const a=e.target.closest("[data-go]");if(a)wzShow(+a.dataset.go)});
