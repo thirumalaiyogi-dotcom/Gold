@@ -1763,6 +1763,11 @@ html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
 html[data-style] .sc.silver .coin:after{content:"வெள்ளி"!important;color:#2f3640!important;background:linear-gradient(180deg,#ffffff,#cfd5dc)!important}
 .sc.silver .coin{filter:grayscale(1) brightness(1.18) contrast(1.05) drop-shadow(0 6px 10px rgba(0,0,0,.3))!important}
 .sdpur.ag{color:#3f4650!important;background:linear-gradient(180deg,#f4f6f8,#cfd5dc)!important;border-color:#b9c1ca!important}
+/* பெரிய எழுத்து அளவு வச்ச phone-லயும் page பக்கவாட்டுல நகராம */
+html,body{max-width:100%;overflow-x:clip}
+.qa{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.qa button{min-width:0}
+.qa span{overflow-wrap:anywhere;hyphens:auto;max-width:100%}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2599,7 +2604,7 @@ function openSD(k){const d=SCH[k],mo=MON(k),fx=FX(k),base=k=="dhana"||k=="kubera
   <a href="tel:+919791918344">${IC(SDI.ph)}<span>97919 18344</span></a><a href="tel:+919344395078">${IC(SDI.ph)}<span>93443 95078</span></a>
   <a id="sdwa" target="_blank" rel="noopener">${IC(SDI.wa)}<span>WhatsApp-ல் கேட்க</span></a></section>`;
  $("sdwa").href=wa("வணக்கம், "+d.n+" திட்டம் பற்றி விபரம் வேண்டும்.");
- $("sdterms").onclick=()=>{const T=TERMS[k];if(T){if(!window.TMDEF)window.TMDEF=$("tmul").innerHTML;$("tmh").textContent=d.n+" · விதிமுறைகள் & நிபந்தனைகள்";$("tmul").innerHTML=T.map(x=>`<li>${x}</li>`).join("")}vis("tm",true)};
+ $("sdterms").onclick=()=>{const T=TERMS[k]||(!base&&d.acc&&d.acc.length?d.acc.map(a=>`<b>${a[0]}:</b> ${a[1]}`):null);if(T){if(!window.TMDEF)window.TMDEF=$("tmul").innerHTML;$("tmh").textContent=d.n+" · விதிமுறைகள் & நிபந்தனைகள்";$("tmul").innerHTML=T.map(x=>`<li>${x}</li>`).join("")}vis("tm",true)};
  $("sdb").querySelectorAll("details.sdacc").forEach(x=>x.addEventListener("toggle",()=>{if(x.open)$("sdb").querySelectorAll(`details.sdacc[data-g="${x.dataset.g}"]`).forEach(y=>{if(y!==x)y.open=false})}));
  $("sdjoin").onclick=()=>{vis("sd",false);openEnrol(k)};vis("sd",true);$("sdb").scrollTop=0}
 $("sdback").onclick=()=>vis("sd",false);
