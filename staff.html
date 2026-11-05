@@ -368,7 +368,7 @@ label.flab{display:block;font-size:13px;font-weight:600;color:var(--c-muted);mar
  #stabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:visible}
  #stabs button{justify-content:center;padding:0 8px}
  #stabs .sp{display:none}
- #stabs #slo{grid-column:1/-1;min-height:36px;font-size:13px}
+ #stabs #slo{grid-column:1/-1;min-height:44px;font-size:13px}
 }
 
 @media (min-width:1024px){
@@ -601,7 +601,7 @@ async function addPay(){
    if(FX(cu.scheme)&&first&&Math.round(+first.amount)!==Math.round(a))w.push(`இது நிலையான தவணை திட்டம். முதல் தவணை ₹${f(first.amount)}, இப்போ ₹${f(a)}.`);
    if(w.length&&!confirm("கவனிக்கவும்:\n• "+w.join("\n• ")+"\n\nஇருந்தாலும் பதிவு செய்யவா?"))return}}
  addPay.busy=true;setTimeout(()=>addPay.busy=false,4000);
- const row={customer_id:c,amount:a,gold_rate:GR(cu.scheme)?r:null,grams:GR(cu.scheme)?a/r:null,mode:PMODE,ref:PMODE=="cash"?null:($("pref").value.trim()||null)};
+ const row={customer_id:c,amount:a,gold_rate:GR(cu.scheme)?r:null,grams:GR(cu.scheme)?Math.round(a/r*1000)/1000:null,mode:PMODE,ref:PMODE=="cash"?null:($("pref").value.trim()||null)};
  let {error}=await sb.from("gold_payments").insert(row);
  if(error&&/mode|ref/.test(error.message||"")){delete row.mode;delete row.ref;({error}=await sb.from("gold_payments").insert(row))}   // SQL இன்னும் ஓட்டலைன்னா பழைய மாதிரி பதியும்
  if(error)return alert(error.message);

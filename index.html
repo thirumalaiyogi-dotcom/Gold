@@ -1756,6 +1756,8 @@ html #lock:not(.stA) .lkdots{margin:10px 0 6px!important}
 #lkA .lksub{font-size:14px;line-height:1.5;margin-bottom:14px}
 #lkA .lkwel{margin-bottom:8px;font-weight:600}
 @media (max-height:800px){#lock.stA .lkhero{height:clamp(120px,24vh,260px)!important}#lock.stA .lkhero .shopn img,#lock.stA .lkhero .logo{max-height:72px!important;width:auto!important}#lkA .lkt{min-height:72px;padding:10px 14px}}
+/* 44px tap area (layout மாறாது) */
+.meed,#wzsum a[data-go]{position:relative}.meed::after,#wzsum a[data-go]::after{content:"";position:absolute;left:-8px;right:-8px;top:50%;height:44px;transform:translateY(-50%)}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2060,10 +2062,11 @@ const pbDate=d=>{const x=new Date(String(d).slice(0,10)+"T00:00:00");return isNa
 function note(t,ok){let e=document.getElementById("note");if(!e){e=document.createElement("div");e.id="note";e.setAttribute("role","status");e.addEventListener("click",()=>{e.style.display="none"});document.body.appendChild(e)}e.className=ok?"ok":"bad";e.textContent=t;e.style.display="block";clearTimeout(note.t);note.t=setTimeout(()=>e.style.display="none",6000)}
 function cfLoad(){return window.Cashfree?Promise.resolve():new Promise((ok,no)=>{const sc=document.createElement("script");sc.src="https://sdk.cashfree.com/js/v3/cashfree.js";sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)})}
 async function cfCall(b){try{const r=await fetch(SB_URL+"/functions/v1/cf-pay",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
-const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்."};
+const PAYERR={amount:"தொகை ₹1,000 முதல் ₹1,00,000 வரை இருக்கணும்.",paid_month:"இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.",done:"எல்லா தவணையும் முடிஞ்சாச்சு.",auth:"மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.",fixed:"இந்த திட்டத்தில தவணைத் தொகை மாறாது.",no_keys:"Online payment இன்னும் தயாராகல. கடையை அணுகவும்.",net:"இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்.",sandbox:"இது test payment. உண்மையான தவணையா பதியாது.",dup_paid:"இந்த மாசத் தவணை ஏற்கனவே பதிவாயிருக்கு, அதனால இந்த பணம் தவணையா சேரல. கடை இதை திருப்பித் தரும். கடையை அணுகவும்."};
 async function cfSettle(oid,el){const show=(t,ok)=>{if(el){el.textContent=t;el.className="pbpm "+(ok?"ok":"bad")}note(t,ok)};
  for(let i=0;i<4;i++){const d=await cfCall({action:"verify",order_id:oid});
   if(d.ok&&d.paid){show("பணம் வந்தது ✅ தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏",1);try{window.stmFx&&stmFx.coin()}catch(e){}if(window.PBOK)setTimeout(viewPB,1200);return true}
+  if(!d.ok&&(d.err==="sandbox"||d.err==="dup_paid")){show(PAYERR[d.err],0);return false}
   if(d.ok&&!d.paid&&d.status!=="ACTIVE")break;await new Promise(r=>setTimeout(r,2500))}
  show("பணம் இன்னும் உறுதியாகல. பணம் போயிருந்தா சில நிமிஷத்துல தானா பதியும்; இல்லைன்னா கடையை அணுகவும்.",0);return false}
 function payWire(){const go=$("paygo");if(!go)return;
