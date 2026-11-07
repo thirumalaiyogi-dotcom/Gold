@@ -72,11 +72,12 @@ const ymIST = () => new Date(Date.now() + 330 * 60000).toISOString().slice(0, 7)
 
 
 // ---------- FCM (native app) ----------
-let SA: any = undefined;
+let SA: any = null;
 function fcmSA() {
-  if (SA !== undefined) return SA;
-  try { SA = JSON.parse(Deno.env.get("FCM_SERVICE_ACCOUNT") || ""); } catch { SA = null; }
-  if (!SA?.private_key || !SA?.client_email || !SA?.project_id) SA = null;
+  if (SA) return SA; // only a valid key is cached, so a secret added later is picked up
+  let s: any = null;
+  try { s = JSON.parse(Deno.env.get("FCM_SERVICE_ACCOUNT") || ""); } catch { s = null; }
+  if (s?.private_key && s?.client_email && s?.project_id) SA = s;
   return SA;
 }
 const b64u = (u: Uint8Array) => btoa(String.fromCharCode(...u)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
