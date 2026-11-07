@@ -7,6 +7,7 @@ import 'api.dart';
 import 'data.dart';
 import 'login.dart';
 import 'notify.dart';
+import 'onboard.dart';
 import 'ui.dart';
 
 const _taMon = ['ஜன.', 'பிப்.', 'மார்.', 'ஏப்.', 'மே', 'ஜூன்', 'ஜூலை', 'ஆக.', 'செப்.', 'அக்.', 'நவ.', 'டிச.'];
@@ -192,7 +193,7 @@ class StmApp extends StatelessWidget {
       title: 'சுப்புலட்சுமி தங்க மாளிகை',
       debugShowCheckedModeBanner: false,
       theme: base.copyWith(textTheme: GoogleFonts.notoSansTamilTextTheme(base.textTheme)),
-      home: const WelcomeScreen(),
+      home: const Boot(),
     );
   }
 }

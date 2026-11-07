@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'home.dart';
@@ -49,6 +50,38 @@ class _LoginFrame extends StatelessWidget {
   }
 }
 
+/// The mobile number is remembered after the first successful login (like the website),
+/// so next time only the mPIN is asked. "எண் மாற்ற" on the mPIN page changes it.
+class SavedMobile {
+  static Future<String?> get() async {
+    try {
+      final m = (await SharedPreferences.getInstance()).getString('mobile');
+      return (m != null && RegExp(r'^[6-9]\d{9}$').hasMatch(m)) ? m : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<void> set(String m) async {
+    try {
+      await (await SharedPreferences.getInstance()).setString('mobile', m);
+    } catch (_) {}
+  }
+
+  static Future<void> clear() async {
+    try {
+      await (await SharedPreferences.getInstance()).remove('mobile');
+    } catch (_) {}
+  }
+}
+
+/// Opens the mPIN page directly when a number is remembered, else the mobile page.
+Future<void> openPassbookLogin(BuildContext context) async {
+  final m = await SavedMobile.get();
+  if (!context.mounted) return;
+  Navigator.of(context).push(MaterialPageRoute(builder: (_) => m != null ? PinScreen(mobile: m) : const MobileScreen()));
+}
+
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
   @override
@@ -64,7 +97,7 @@ class WelcomeScreen extends StatelessWidget {
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.fromLTRB(14, 16, 12, 16),
+            padding: const EdgeInsets.fromLTRB(14, 13, 12, 13),
             decoration: primary
                 ? BoxDecoration(borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0x99C9A24A)))
                 : null,
@@ -73,7 +106,7 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(width: 14),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(title, style: sans(16, color: primary ? Colors.white : C.navy, weight: FontWeight.w700)),
+                  Text(title, style: sans(15, color: primary ? Colors.white : C.navy, weight: FontWeight.w700, height: 1.35)),
                   const SizedBox(height: 2),
                   Text(sub, style: sans(13, color: primary ? C.navyMute : C.mute)),
                 ]),
@@ -85,22 +118,24 @@ class WelcomeScreen extends StatelessWidget {
       );
     }
 
+    final h = MediaQuery.of(context).size.height;
     return _LoginFrame(
-      child: ListView(padding: const EdgeInsets.fromLTRB(24, 30, 24, 24), children: [
-        Text('வணக்கம்.. வருக..!', style: serif(26)),
+      heroHeight: h < 760 ? 150 : (h < 860 ? 175 : 220),
+      child: ListView(padding: const EdgeInsets.fromLTRB(22, 22, 22, 18), children: [
+        Text('வணக்கம்.. வருக..!', style: serif(25)),
         const SizedBox(height: 6),
-        Text('சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.', style: sans(14.5, color: C.ink, weight: FontWeight.w600, height: 1.6)),
+        Text('சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.', style: sans(14, color: C.ink, weight: FontWeight.w600, height: 1.5)),
         const SizedBox(height: 6),
-        Text('உங்கள் தங்க சேமிப்பை பார்க்கவோ அல்லது தங்க சேமிப்புத் திட்டங்களைப் பற்றிய விவரங்களைத் தெரிந்து கொள்வதற்கோ கீழே உள்ள விருப்பங்களில் ஒன்றைத் தேர்வு செய்யுங்கள்.', style: sans(14.5, color: C.mute, height: 1.6)),
-        const SizedBox(height: 22),
+        Text('உங்கள் தங்க சேமிப்பை பார்க்கவோ அல்லது தங்க சேமிப்புத் திட்டங்களைப் பற்றிய விவரங்களைத் தெரிந்து கொள்வதற்கோ கீழே உள்ள விருப்பங்களில் ஒன்றைத் தேர்வு செய்யுங்கள்.', style: sans(13.5, color: C.mute, height: 1.5)),
+        const SizedBox(height: 16),
         option(
           icon: Icons.lock_outline,
           title: 'என் சேமிப்பு (Passbook)',
           sub: 'mPIN போட்டு உள்ளே நுழையுங்கள்',
           primary: true,
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen())),
+          onTap: () => openPassbookLogin(context),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 10),
         option(
           icon: Icons.diamond_outlined,
           title: 'தங்கசேமிப்புத் திட்டங்களை பற்றி தெரிந்து கொள்வதற்கு',
@@ -108,7 +143,7 @@ class WelcomeScreen extends StatelessWidget {
           primary: false,
           onTap: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 18),
         Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி', style: sans(12, color: C.mute))),
       ]),
     );
@@ -250,7 +285,7 @@ class _MobileScreenState extends State<MobileScreen> {
         const SizedBox(height: 14),
         Shake(
           trigger: shake,
-          child: Center(child: Text(shown, style: sans(24, color: v.isEmpty ? const Color(0xFFC9B9A6) : C.navy, weight: FontWeight.w600))),
+          child: SizedBox(height: 40, child: Center(child: FittedBox(child: Text(shown, maxLines: 1, style: sans(v.isEmpty ? 17 : 26, color: v.isEmpty ? const Color(0xFFB8A690) : C.navy, weight: FontWeight.w600, letterSpacing: v.isEmpty ? 0 : 1.5))))),
         ),
         SizedBox(height: 22, child: Center(child: Text(err, style: sans(13, color: C.red)))),
         KeyPad(onKey: _key),
@@ -311,6 +346,7 @@ class _PinScreenState extends State<PinScreen> {
       if (fail == null && d != null) {
         HapticFeedback.mediumImpact();
         app.login(widget.mobile, v, d);
+        SavedMobile.set(widget.mobile);
         Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 450),
@@ -345,6 +381,16 @@ class _PinScreenState extends State<PinScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(12), border: Border.all(color: C.line2)),
             child: Text('+91 ••••• •${m.substring(m.length - 4)}', style: sans(15, color: C.navy, weight: FontWeight.w600)),
+          ),
+        ),
+        Center(
+          child: TextButton.icon(
+            onPressed: () {
+              SavedMobile.clear();
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const MobileScreen()));
+            },
+            icon: const Icon(Icons.edit_outlined, size: 16, color: C.navy),
+            label: Text('எண் மாற்ற', style: sans(13.5, color: C.navy, weight: FontWeight.w600)),
           ),
         ),
         const SizedBox(height: 14),

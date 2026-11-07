@@ -50,7 +50,7 @@ class _MainShellState extends State<MainShell> {
               width: double.infinity,
               child: PrimaryButton('mPIN போட்டு உள்ளே போக', onTap: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen()));
+                openPassbookLogin(context);
               }),
             ),
           ]),
@@ -434,7 +434,7 @@ class SideMenu extends StatelessWidget {
                 const SizedBox(height: 12),
                 PrimaryButton('Passbook-ல் உள்நுழை', gold: true, onTap: () {
                   close();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen()));
+                  openPassbookLogin(context);
                 }),
               ],
             ]),
@@ -475,7 +475,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.8.1', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -563,7 +563,7 @@ class ProfileTab extends StatelessWidget {
             head,
             if (!app.loggedIn) ...[
               const SizedBox(height: 12),
-              PrimaryButton('mPIN போட்டு நுழைய', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen()))),
+              PrimaryButton('mPIN போட்டு நுழைய', onTap: () => openPassbookLogin(context)),
             ],
             if (app.loggedIn)
               _group([
@@ -593,7 +593,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.8.1', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },
