@@ -224,7 +224,7 @@ class HomeTab extends StatelessWidget {
           const SizedBox(height: 24),
           SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
           SizedBox(
-            height: 228,
+            height: 272,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: app.schemes.length,

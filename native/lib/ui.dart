@@ -107,14 +107,16 @@ class PrimaryButton extends StatelessWidget {
   final bool gold;
   final IconData? icon;
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 50,
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 50),
         child: FilledButton(
           style: FilledButton.styleFrom(
             backgroundColor: gold ? C.gold : C.navy,
             foregroundColor: gold ? C.navy : C.goldSoft,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle: sans(15.5, weight: FontWeight.w700),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            minimumSize: const Size(0, 50),
+            textStyle: sans(15, weight: FontWeight.w700, height: 1.25),
           ),
           onPressed: () {
             tapFeel();
@@ -122,7 +124,7 @@ class PrimaryButton extends StatelessWidget {
           },
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
-            Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+            Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
           ]),
         ),
       );
@@ -135,19 +137,21 @@ class OutlineBtn extends StatelessWidget {
   final bool light;
   final IconData? icon;
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 46,
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 50),
         child: OutlinedButton(
           style: OutlinedButton.styleFrom(
             foregroundColor: light ? Colors.white : C.navy,
-            side: BorderSide(color: light ? const Color(0x73FFFFFF) : const Color(0xFFC9CFDB)),
+            side: BorderSide(color: light ? const Color(0x73FFFFFF) : const Color(0xFFE2D6BE)),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            textStyle: sans(14.5, weight: FontWeight.w600),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            minimumSize: const Size(0, 50),
+            textStyle: sans(14.5, weight: FontWeight.w600, height: 1.25),
           ),
           onPressed: onTap,
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 6)],
-            Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
+            Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
           ]),
         ),
       );

@@ -54,23 +54,26 @@ class SchemeCard extends StatelessWidget {
                     child: Text('${s.months} மாத திட்டம்', style: sans(11.5, color: C.navy2, weight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 10),
-                  Text(s.name, style: serif(21, color: Colors.white, weight: FontWeight.w700, height: 1.25)),
+                  Text(s.name, softWrap: true, style: serif(20, color: Colors.white, weight: FontWeight.w700, height: 1.3)),
                   const SizedBox(height: 4),
                   Text(s.tag, style: sans(13, color: C.navyMute)),
                   Text(s.amountRange, style: sans(13, color: C.navyMute)),
                 ]),
               ),
+              const SizedBox(width: 12),
               _Coin(s),
             ]),
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(12),
-          child: Row(children: [
-            Expanded(child: OutlineBtn('மேலும் அறியவும்', onTap: () => openScheme(context, s))),
-            const SizedBox(width: 10),
-            Expanded(child: PrimaryButton('இப்போது சேரவும்', onTap: () => openEnrol(context, s))),
-          ]),
+          child: IntrinsicHeight(
+            child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Expanded(child: OutlineBtn('மேலும் அறியவும்', onTap: () => openScheme(context, s))),
+              const SizedBox(width: 10),
+              Expanded(child: PrimaryButton('இப்போது சேரவும்', onTap: () => openEnrol(context, s))),
+            ]),
+          ),
         ),
       ]),
     );
