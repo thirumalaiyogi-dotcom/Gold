@@ -257,3 +257,162 @@ void showNote(BuildContext context, String text, {bool ok = true}) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
     ));
 }
+
+/// Swipe-to-pay: drag the gold coin to the right to start a payment.
+/// Past 85% it locks, gives a firm haptic and calls [onDone]; otherwise it springs back.
+class SwipeToPay extends StatefulWidget {
+  const SwipeToPay({super.key, required this.label, required this.onDone, this.amount});
+  final String label;
+  final String? amount;
+  final VoidCallback onDone;
+  @override
+  State<SwipeToPay> createState() => _SwipeToPayState();
+}
+
+class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
+  static const h = 62.0, pad = 5.0;
+  double x = 0;
+  bool done = false;
+  int _lastTick = 0;
+  late final AnimationController back = AnimationController(vsync: this, duration: const Duration(milliseconds: 380));
+  late final AnimationController shine = AnimationController(vsync: this, duration: const Duration(milliseconds: 2200))..repeat();
+  Animation<double>? _a;
+
+  @override
+  void dispose() {
+    back.dispose();
+    shine.dispose();
+    super.dispose();
+  }
+
+  void _reset() {
+    _a = Tween(begin: x, end: 0.0).animate(CurvedAnimation(parent: back, curve: Curves.easeOutBack))
+      ..addListener(() => setState(() => x = _a!.value));
+    back.forward(from: 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, c) {
+      final travel = (c.maxWidth - h).clamp(1.0, double.infinity);
+      final p = (x / travel).clamp(0.0, 1.0);
+      return Semantics(
+        button: true,
+        label: widget.label,
+        onTap: widget.onDone, // accessibility: a plain tap still works for screen readers
+        child: Container(
+          height: h,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(h),
+            gradient: const LinearGradient(colors: [C.navy2, C.navy]),
+            boxShadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 14, offset: Offset(0, 6))],
+          ),
+          child: Stack(alignment: Alignment.centerLeft, children: [
+            // gold fill that follows the coin
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: x + h,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(h),
+                  gradient: LinearGradient(colors: [C.gold.withValues(alpha: .25), C.gold.withValues(alpha: .55)]),
+                ),
+              ),
+            ),
+            // label with a moving shine
+            Positioned.fill(
+              left: h,
+              right: 14,
+              child: Opacity(
+                opacity: (1 - p * 1.4).clamp(0.0, 1.0),
+                child: AnimatedBuilder(
+                  animation: shine,
+                  builder: (_, child) => ShaderMask(
+                    blendMode: BlendMode.srcIn,
+                    shaderCallback: (r) {
+                      final t = shine.value * 2 - .5;
+                      return LinearGradient(
+                        colors: const [C.goldSoft, Colors.white, C.goldSoft],
+                        stops: [(t - .2).clamp(0.0, 1.0), t.clamp(0.0, 1.0), (t + .2).clamp(0.0, 1.0)],
+                      ).createShader(r);
+                    },
+                    child: child,
+                  ),
+                  child: Center(
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Text(widget.label, maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(15, color: Colors.white, weight: FontWeight.w700)),
+                      if (widget.amount != null) Text(widget.amount!, maxLines: 1, style: sans(12, color: Colors.white, weight: FontWeight.w600)),
+                    ]),
+                  ),
+                ),
+              ),
+            ),
+            // the coin
+            Positioned(
+              left: pad + x,
+              child: GestureDetector(
+                onHorizontalDragUpdate: done
+                    ? null
+                    : (d) {
+                        setState(() => x = (x + d.delta.dx).clamp(0.0, travel));
+                        final tick = (x / travel * 5).floor();
+                        if (tick != _lastTick) {
+                          _lastTick = tick;
+                          HapticFeedback.selectionClick();
+                        }
+                      },
+                onHorizontalDragEnd: done
+                    ? null
+                    : (_) {
+                        if (x / travel > .85) {
+                          setState(() {
+                            x = travel;
+                            done = true;
+                          });
+                          HapticFeedback.heavyImpact();
+                          Future.delayed(const Duration(milliseconds: 260), () {
+                            widget.onDone();
+                            if (mounted) {
+                              setState(() => done = false);
+                              _reset();
+                            }
+                          });
+                        } else {
+                          _lastTick = 0;
+                          _reset();
+                        }
+                      },
+                child: Container(
+                  width: h - pad * 2,
+                  height: h - pad * 2,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: C.goldSoft,
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .25), blurRadius: 8, offset: const Offset(0, 3))],
+                  ),
+                  padding: const EdgeInsets.all(3),
+                  child: Transform.rotate(
+                    angle: p * 6.283,
+                    child: done
+                        ? const Icon(Icons.check_rounded, color: C.navy, size: 28)
+                        : ClipOval(child: Image.asset('assets/coin.png', fit: BoxFit.cover)),
+                  ),
+                ),
+              ),
+            ),
+            // chevrons hint on the right
+            Positioned(
+              right: 14,
+              child: Opacity(
+                opacity: (1 - p * 2).clamp(0.0, 1.0),
+                child: const Icon(Icons.keyboard_double_arrow_right_rounded, color: C.goldSoft, size: 26),
+              ),
+            ),
+          ]),
+        ),
+      );
+    });
+  }
+}

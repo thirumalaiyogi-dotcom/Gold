@@ -15,7 +15,7 @@ class SchemesTab extends StatelessWidget {
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
         Text('சேமிப்பு திட்டங்கள்', style: serif(22, color: C.ink, weight: FontWeight.w700)),
         const SizedBox(height: 6),
-        Text('உங்களுக்கு விருப்பமான திட்டத்தை தேர்வு செய்து அதைப்பற்றி முழுமையாகத் தெரிந்து கொள்ளுங்கள்.', style: sans(14, color: C.mute, height: 1.6)),
+        Text('உங்கள் தேவைக்கேற்ற திட்டத்தை தேர்வு செய்யுங்க', style: sans(14, color: C.mute, height: 1.6)),
         const SizedBox(height: 14),
         for (final s in app.schemes) ...[SchemeCard(s), const SizedBox(height: 14)],
       ]),
@@ -139,14 +139,14 @@ class SchemeDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final steps = [
-      [Icons.storefront_outlined, 'திட்டத்தில் சேருங்கள்', 'கடையில் பதிவு செய்து திட்டத்தில் இணையுங்கள்.'],
-      [Icons.account_balance_wallet_outlined, '${s.months} மாதங்கள் சேமியுங்கள்', 'திட்ட விதிமுறைகளின்படி தவணை செலுத்துங்கள்.'],
-      [Icons.diamond_outlined, 'நகை வாங்குங்கள்', 'திட்ட விதிமுறைகளின்படி ${s.months + 1}-வது மாதத்தில் பலனைப் பெறுங்கள்.'],
+      [Icons.storefront_outlined, 'கடையில் சேர்ந்து Passbook பெறுங்க', 'கடையிலோ இந்த app-லோ பதிவு செய்யலாம்.'],
+      [Icons.calendar_month_outlined, s.silver ? '${s.months} மாதம் சேமியுங்க' : 'மாதம் 1–7 தேதிக்குள் தவணை செலுத்துங்க', s.silver ? 'மாதம் பல முறை ₹100 முதல் செலுத்தலாம்.' : 'Passbook-லோ கடையிலோ செலுத்தலாம்.'],
+      [Icons.diamond_outlined, s.silver ? '${s.months + 1} வது மாதம் வெள்ளி நகை வாங்குங்கள்' : '${s.months + 1} வது மாதம் நகை / காயின் வாங்குங்கள்', s.fixed ? 'சேர்ந்த தங்க எடைக்கு நகை / காயின்.' : (s.silver ? 'சேமித்த தொகைக்கு வெள்ளி நகை.' : 'அன்றைய தங்க விலைக்கு நகை / காயின்.')],
     ];
     final feats = [
-      [Icons.calendar_month_outlined, '${s.months} மாதங்கள்'],
+      [Icons.calendar_month_outlined, '${s.months} தவணை'],
       [s.fixed ? Icons.lock_outline : Icons.sync_alt, s.fixed ? 'நிலையான தவணை' : (s.silver ? 'மாதம் பல முறை' : 'தவணை மாற்றலாம்')],
-      [Icons.sell_outlined, s.silver ? 'வெள்ளி நகை' : 'சேதாரம் & செய்கூலி தள்ளுபடி'],
+      [s.fixed ? Icons.scale_outlined : Icons.sell_outlined, s.fixed ? 'கிராம் கணக்கு' : (s.silver ? 'வெள்ளி நகை' : 'சேதாரம் & செய்கூலி தள்ளுபடி')],
     ];
     return Scaffold(
       backgroundColor: C.ivory,
@@ -437,7 +437,7 @@ class _EnrolPageState extends State<EnrolPage> {
                   Expanded(
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Text(s.name, style: sans(15, weight: FontWeight.w700)),
-                      Text('${s.tag} · ${s.amountRange}', style: sans(12.5, color: C.mute)),
+                      Text('${s.months} மாதம் · ${const {'dhana': 'தவணை உங்கள் விருப்பம்', 'kubera': 'நிலையான தவணை · தங்க எடையில் சேமிப்பு'}[s.key] ?? s.tag} · ${s.amountRange}', style: sans(12.5, color: C.mute)),
                     ]),
                   ),
                 ]),

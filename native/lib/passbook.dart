@@ -178,14 +178,18 @@ class _PassbookTabState extends State<PassbookTab> {
             ),
           ]),
           const SizedBox(height: 6),
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Flexible(child: Text(done ? 'எல்லா தவணையும் முடிந்தது' : (Demo.fixed ? rupees(Demo.monthly) : (Demo.silver ? '₹100 முதல்' : 'உங்க விருப்பத் தொகை')), style: serif(done || !Demo.fixed ? 20 : 30))),
-            const SizedBox(width: 8),
-            if (!done) Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(Demo.dueText, style: sans(13, color: C.mute))),
-          ]),
+          Text(done ? 'எல்லா தவணையும் முடிந்தது' : (Demo.fixed ? rupees(Demo.monthly) : (Demo.silver ? '₹100 முதல்' : 'உங்க விருப்பத் தொகை')), style: serif(done || !Demo.fixed ? 22 : 30)),
+          if (!done) ...[
+            const SizedBox(height: 4),
+            Row(children: [
+              const Icon(Icons.event_outlined, size: 16, color: C.mute),
+              const SizedBox(width: 6),
+              Expanded(child: Text(Demo.dueText, style: sans(13, color: C.mute))),
+            ]),
+          ],
           if (canPay) ...[
-            const SizedBox(height: 12),
-            PrimaryButton('Online-ல கட்டு', icon: Icons.open_in_new, onTap: () => _pay(context)),
+            const SizedBox(height: 16),
+            SwipeToPay(label: 'இழுத்து தவணை செலுத்துங்க', amount: Demo.fixed ? rupees(Demo.monthly) : null, onDone: () => _pay(context)),
           ],
         ]),
       ),

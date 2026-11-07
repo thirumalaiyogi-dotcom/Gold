@@ -198,7 +198,7 @@ class HomeTab extends StatelessWidget {
           // ---------- Quick actions ----------
           Row(children: [
             _quick(context, Icons.menu_book_outlined, 'என்\nPassbook', () => go(2)),
-            _quick(context, Icons.credit_card, 'தவணை\nகட்ட', () => go(2)),
+            _quick(context, Icons.credit_card, 'தவணைத்தொகை\nசெலுத்த', () => go(2)),
             _quick(context, Icons.diamond_outlined, 'சேமிப்பு\nதிட்டங்கள்', () => go(1)),
             _quick(context, Icons.trending_up, 'விலை\nநிலவரம்', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage()))),
           ]),
@@ -344,13 +344,24 @@ class _SchemeHero extends StatelessWidget {
           const SizedBox(height: 8),
           Text('தங்க சேமிப்புத் திட்டம்', style: serif(24, color: Colors.white, height: 1.3)),
           const SizedBox(height: 8),
-          Text('ஒவ்வொரு மாதமும் சிறிது சிறிதாக 11 மாதம் சேமித்து, 12 வது மாதம் உங்கள் கனவு நகையை வாங்குங்கள்.', style: sans(14.5, color: const Color(0xFFEAD9B8), height: 1.7)),
+          Text('ஒவ்வொரு மாதமும் சிறிது சிறிதாக சேமித்து 12 வது மாதம் உங்கள் கனவு தங்க நகையை சேதாரம், செய்கூலி இல்லாமல் வாங்கிச் செல்லுங்கள்.', style: sans(14.5, color: const Color(0xFFEAD9B8), height: 1.7)),
           const SizedBox(height: 16),
           Row(children: [
             Expanded(child: PrimaryButton('திட்டங்கள் பார்க்க', gold: true, onTap: () => go(1))),
             const SizedBox(width: 10),
             Expanded(child: OutlineBtn('என் சேமிப்பு', light: true, onTap: () => go(2))),
           ]),
+          const SizedBox(height: 6),
+          InkWell(
+            onTap: () => showWhyGold(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(children: [
+                Expanded(child: Text('மேலும் அறிய: ஏன் தங்கத்தில் சேமிக்க வேண்டும்?', style: sans(13.5, color: C.goldSoft, weight: FontWeight.w600))),
+                const Icon(Icons.info_outline, size: 18, color: C.goldSoft),
+              ]),
+            ),
+          ),
         ]),
       ),
       Positioned.fill(
@@ -455,7 +466,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -571,10 +582,47 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },
     );
   }
+}
+
+
+/// "ஏன் தங்கத்தில் சேமிக்க வேண்டும்?" — same four points as the website.
+void showWhyGold(BuildContext context) {
+  const pts = [
+    'உலகளவில் தங்கம் ஒரு பாதுகாப்பான சேமிப்பு பொருள் ஆகும்.',
+    'நீங்கள் சேமிக்க நினைக்கும் மிகக் குறைந்த அளவிலான பணத்தையும் சேமிப்புத் திட்டங்களின் மூலம் தங்கமாக மாற்றி சேமிக்க முடியும்.',
+    'இந்த சேமிப்பின் மூலம் தங்கநகை வாங்கும்போது சேதாரம் மற்றும் செய்கூலிக்கு நீங்கள் கொடுக்க வேண்டிய பணத்தை மிச்சப்படுத்தலாம்.',
+    'சேமிப்பு கணக்கிற்கான Passbook எப்போதும் உங்கள் உள்ளங்கையிலேயே இருக்கும்.',
+  ];
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: C.ivory,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('ஏன் தங்கத்தில் சேமிக்க வேண்டும்?', style: serif(20, color: C.ink, weight: FontWeight.w700)),
+          const SizedBox(height: 14),
+          for (final p in pts)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Padding(padding: EdgeInsets.only(top: 3), child: Icon(Icons.check_circle, size: 18, color: C.gold)),
+                const SizedBox(width: 10),
+                Expanded(child: Text(p, style: sans(14.5, height: 1.6))),
+              ]),
+            ),
+          const SizedBox(height: 4),
+          PrimaryButton('சரி', onTap: () => Navigator.of(ctx).pop()),
+        ]),
+      ),
+    ),
+  );
 }
