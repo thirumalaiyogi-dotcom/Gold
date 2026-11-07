@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_badge_plus/app_badge_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -37,6 +38,13 @@ class Notify {
   static Future<void> _show(int id, String title, String body, String ch, String chName, int n) =>
       _p.show(id, title, body, NotificationDetails(android: _ch(ch, chName, n, body)));
 
+  /// Red number on the app icon (vivo / oppo / samsung / huawei launchers).
+  static Future<void> badge(int n) async {
+    try {
+      await AppBadgePlus.updateBadge(n);
+    } catch (_) {}
+  }
+
   static Future<void> init() async {
     await _p.initialize(const InitializationSettings(android: AndroidInitializationSettings(_icon)));
     // Channels created up-front so Firebase (FCM) messages land in the same named channels.
@@ -73,6 +81,7 @@ class Notify {
         final c = (sp.getInt('unread') ?? 0) + 1;
         await sp.setInt('unread', c);
         unread.value = c;
+        await badge(c);
         final due = '${m.data['tag'] ?? ''}'.startsWith('due');
         await _show(DateTime.now().millisecondsSinceEpoch ~/ 1000 % 100000, n.title ?? 'சுப்புலட்சுமி தங்க மாளிகை', n.body ?? '',
             due ? 'stm_due' : 'stm_notice', due ? 'தவணை நினைவூட்டல்' : 'கடை அறிவிப்புகள்', c);
@@ -122,6 +131,7 @@ class Notify {
       );
       final sp = await SharedPreferences.getInstance();
       unread.value = sp.getInt('unread') ?? 0;
+      await badge(unread.value);
       await check();
     } catch (e) {
       debugPrint('notify start: $e');
@@ -150,6 +160,7 @@ class Notify {
     final sp = await SharedPreferences.getInstance();
     await sp.setInt('unread', 0);
     unread.value = 0;
+    await badge(0);
     try {
       await _p.cancelAll();
     } catch (_) {}
@@ -159,6 +170,9 @@ class Notify {
     await init();
     final sp = await SharedPreferences.getInstance();
     final n = (sp.getInt('unread') ?? 0) + 1;
+    await sp.setInt('unread', n);
+    unread.value = n;
+    await badge(n);
     await _show(9, 'சுப்புலட்சுமி தங்க மாளிகை', 'இது ஒரு சோதனை அறிவிப்பு. இப்படித்தான் கடை அறிவிப்புகள் வரும் 🙏', 'stm_notice', 'கடை அறிவிப்புகள்', n);
   }
 
@@ -183,6 +197,7 @@ class Notify {
               final count = (sp.getInt('unread') ?? 0) + fresh.length;
               await sp.setInt('unread', count);
               unread.value = count;
+              await badge(count);
               var id = 100;
               for (final n in fresh.take(3)) {
                 await _show(id++, '${n['title'] ?? 'புதிய அறிவிப்பு'}', '${n['body'] ?? ''}', 'stm_notice', 'கடை அறிவிப்புகள்', count);
@@ -258,6 +273,8 @@ void callbackDispatcher() {
 Future<void> fcmBackground(RemoteMessage m) async {
   try {
     final sp = await SharedPreferences.getInstance();
-    await sp.setInt('unread', (sp.getInt('unread') ?? 0) + 1);
+    final c = (sp.getInt('unread') ?? 0) + 1;
+    await sp.setInt('unread', c);
+    await Notify.badge(c);
   } catch (_) {}
 }

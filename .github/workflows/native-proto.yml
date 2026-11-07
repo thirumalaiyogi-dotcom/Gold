@@ -44,7 +44,7 @@ jobs:
           sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.INTERNET"/>#' "$M"
           sed -i 's/android:label="stm_proto"/android:label="தங்க மாளிகை (மாதிரி)"/' "$M"
           grep -n "INTERNET\|android:label" "$M"
-          sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>#' "$M"
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>\n    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>#' "$M"
           cp -r android_res/* android/app/src/main/res/
           python3 - <<'PY'
           import re, pathlib
