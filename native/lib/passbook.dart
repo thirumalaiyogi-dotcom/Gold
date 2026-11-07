@@ -42,7 +42,7 @@ class PaymentRow extends StatelessWidget {
             onPressed: () => showNote(context, 'மாதிரி: தவணை $n ரசீது'),
             style: OutlinedButton.styleFrom(
               foregroundColor: C.navy,
-              side: const BorderSide(color: Color(0xFFC9CFDB)),
+              side: const BorderSide(color: Color(0xFFE2D6BE)),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               minimumSize: const Size(0, 40),
             ),
@@ -175,7 +175,7 @@ class _PassbookTabState extends State<PassbookTab> {
           const SizedBox(height: 10),
           Text.rich(TextSpan(children: [
             TextSpan(text: 'நகை வாங்கலாம் : ', style: sans(13.5)),
-            TextSpan(text: 'ஆகஸ்ட் 2027', style: sans(13.5, weight: FontWeight.w700)),
+            TextSpan(text: 'ஜூலை 2027', style: sans(13.5, weight: FontWeight.w700)),
           ])),
         ]),
       ),

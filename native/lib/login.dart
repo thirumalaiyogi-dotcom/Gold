@@ -22,7 +22,7 @@ class _LoginFrame extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.only(top: top),
           decoration: const BoxDecoration(
-            gradient: RadialGradient(center: Alignment(0, .1), radius: .8, colors: [Color(0xFF173B78), C.navy]),
+            gradient: RadialGradient(center: Alignment(0, .1), radius: .8, colors: [Color(0xFF8A2333), C.navy]),
           ),
           child: Stack(children: [
             Center(child: Hero(tag: 'logo', child: Image.asset('assets/logo.png', height: heroHeight * .42))),
@@ -84,22 +84,24 @@ class WelcomeScreen extends StatelessWidget {
 
     return _LoginFrame(
       child: ListView(padding: const EdgeInsets.fromLTRB(24, 30, 24, 24), children: [
-        Text('வணக்கம், வருக!', style: serif(26)),
+        Text('வணக்கம்.. வருக..!', style: serif(26)),
         const SizedBox(height: 6),
-        Text('உங்க தங்க சேமிப்பை பார்க்கவோ, புது திட்டங்களை தெரிஞ்சுக்கவோ கீழே தேர்ந்தெடுங்க.', style: sans(14.5, color: C.mute, height: 1.6)),
+        Text('சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.', style: sans(14.5, color: C.ink, weight: FontWeight.w600, height: 1.6)),
+        const SizedBox(height: 6),
+        Text('உங்கள் தங்க சேமிப்பை பார்க்கவோ அல்லது தங்க சேமிப்புத் திட்டங்களைப் பற்றிய விவரங்களைத் தெரிந்து கொள்வதற்கோ கீழே உள்ள விருப்பங்களில் ஒன்றைத் தேர்வு செய்யுங்கள்.', style: sans(14.5, color: C.mute, height: 1.6)),
         const SizedBox(height: 22),
         option(
           icon: Icons.lock_outline,
           title: 'என் சேமிப்பு (Passbook)',
-          sub: 'mPIN போட்டு உள்ளே போங்க',
+          sub: 'mPIN போட்டு உள்ளே நுழையுங்கள்',
           primary: true,
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen())),
         ),
         const SizedBox(height: 12),
         option(
           icon: Icons.diamond_outlined,
-          title: 'திட்டங்களை மட்டும் பார்க்க',
-          sub: 'Login இல்லாமல்',
+          title: 'தங்கசேமிப்புத் திட்டங்களை பற்றி தெரிந்து கொள்வதற்கு',
+          sub: '(Login தேவையில்லை)',
           primary: false,
           onTap: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false),
         ),
@@ -226,7 +228,7 @@ class _MobileScreenState extends State<MobileScreen> {
         const SizedBox(height: 14),
         Shake(
           trigger: shake,
-          child: Center(child: Text(shown, style: sans(24, color: v.isEmpty ? const Color(0xFFB7BFCD) : C.navy, weight: FontWeight.w600))),
+          child: Center(child: Text(shown, style: sans(24, color: v.isEmpty ? const Color(0xFFC9B9A6) : C.navy, weight: FontWeight.w600))),
         ),
         SizedBox(height: 22, child: Center(child: Text(err, style: sans(13, color: C.red)))),
         KeyPad(onKey: _key),

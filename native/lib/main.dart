@@ -17,7 +17,7 @@ class Demo {
   static const name = 'பாண்டியன்';
   static const member = 'PAN123';
   static const scheme = 'குபேர லட்சுமி';
-  static const months = 12;
+  static const months = 11;
   static const monthly = 5000;
   static const payments = [
     ['2', '3 செப். 2026', 5000, 0.370],

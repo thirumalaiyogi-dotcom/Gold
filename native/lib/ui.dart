@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Style 4 (Luxury) tokens — the same values as the website.
+/// STM Premium tokens (maroon / champagne / ivory) — same values as the website (Style 5).
+/// Names kept from the first prototype: `navy` is now the brand maroon.
 class C {
-  static const navy = Color(0xFF092A63);
-  static const navy2 = Color(0xFF061D45);
+  static const navy = Color(0xFF6E1423);
+  static const navy2 = Color(0xFF4A0D18);
   static const ivory = Color(0xFFFBF8F1);
   static const paper = Color(0xFFFFFFFF);
-  static const ink = Color(0xFF1B2233);
-  static const mute = Color(0xFF5F6677);
-  static const gold = Color(0xFFC9A24A);
-  static const goldText = Color(0xFF8A6A1F);
+  static const ink = Color(0xFF252525);
+  static const mute = Color(0xFF777777);
+  static const gold = Color(0xFFC9A45C);
+  static const goldText = Color(0xFF8A6A2E);
   static const goldLine = Color(0xFFD9C08A);
-  static const goldSoft = Color(0xFFF3E2B3);
+  static const goldSoft = Color(0xFFE5C98B);
   static const line = Color(0xFFECE4D0);
   static const line2 = Color(0xFFE3D6B4);
-  static const red = Color(0xFFB3261E);
-  static const green = Color(0xFF1E6B42);
-  static const navyMute = Color(0xFFC9D3E6);
+  static const red = Color(0xFFC63C45);
+  static const green = Color(0xFF24865B);
+  static const navyMute = Color(0xFFEAD9B8);
 }
 
 TextStyle serif(double size, {Color color = C.navy, FontWeight weight = FontWeight.w600, double? height}) =>

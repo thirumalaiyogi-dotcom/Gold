@@ -58,7 +58,7 @@ class _MainShellState extends State<MainShell> {
       const _Soon('சேமிப்புத் திட்டங்கள்'),
       PassbookTab(onBack: () => go(0)),
       const _Soon('அறிவிப்புகள்'),
-      const _Soon('தொடர்பு'),
+      ProfileTab(go: go),
     ];
     return PopScope(
       canPop: tab == 0,
@@ -89,7 +89,7 @@ class _BottomNav extends StatelessWidget {
       [Icons.diamond_outlined, 'திட்டங்கள்'],
       [Icons.menu_book_outlined, 'Passbook'],
       [Icons.notifications_none, 'அறிவிப்பு'],
-      [Icons.call_outlined, 'தொடர்பு'],
+      [Icons.person_outline, 'கணக்கு'],
     ];
     return Container(
       decoration: const BoxDecoration(color: C.paper, border: Border(top: BorderSide(color: C.line2))),
@@ -346,7 +346,7 @@ class _SchemeHero extends StatelessWidget {
           const SizedBox(height: 8),
           Text('தங்க சேமிப்புத் திட்டம்', style: serif(24, color: Colors.white, height: 1.3)),
           const SizedBox(height: 8),
-          Text('மாதம் சிறிது சிறிதாக சேமித்து, 13-வது மாதம் உங்கள் கனவு நகையை எளிதாக வாங்குங்கள்.', style: sans(14.5, color: const Color(0xFFD6DDEB), height: 1.7)),
+          Text('ஒவ்வொரு மாதமும் சிறிது சிறிதாக 11 மாதம் சேமித்து, 12 வது மாதம் உங்கள் கனவு நகையை வாங்குங்கள்.', style: sans(14.5, color: const Color(0xFFEAD9B8), height: 1.7)),
           const SizedBox(height: 16),
           Row(children: [
             Expanded(child: PrimaryButton('திட்டங்கள் பார்க்க', gold: true, onTap: () => showNote(context, 'மாதிரி: திட்டங்கள்'))),
@@ -379,7 +379,7 @@ class _SchemeCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: C.goldLine)),
-              child: Text('12 மாத திட்டம்', style: sans(12, color: C.goldText, weight: FontWeight.w600)),
+              child: Text('11 மாத திட்டம்', style: sans(12, color: C.goldText, weight: FontWeight.w600)),
             ),
             const SizedBox(height: 8),
             Text(name, style: serif(22)),
@@ -486,10 +486,125 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.1', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
+    );
+  }
+}
+
+
+/// கணக்கு (Profile) tab — same items as the website's Profile page.
+class ProfileTab extends StatelessWidget {
+  const ProfileTab({super.key, required this.go});
+  final ValueChanged<int> go;
+
+  Widget _row(IconData icon, String label, VoidCallback onTap, {Widget? trailing, Color color = C.ink, bool first = false}) => InkWell(
+        onTap: () {
+          tapFeel();
+          onTap();
+        },
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(border: first ? null : const Border(top: BorderSide(color: Color(0xFFF1E9D8)))),
+          child: Row(children: [
+            Container(
+              width: 36,
+              height: 36,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(color: color == C.red ? const Color(0xFFFBEAEA) : const Color(0xFFF6EEDC), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, size: 20, color: color == C.red ? C.red : C.navy),
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(label, style: sans(15, color: color, weight: FontWeight.w500))),
+            trailing ?? const Icon(Icons.chevron_right, color: Color(0xFFB9AE9C)),
+          ]),
+        ),
+      );
+
+  Widget _group(List<Widget> rows, {String? title}) => Container(
+        margin: const EdgeInsets.only(top: 14),
+        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+        clipBehavior: Clip.antiAlias,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          if (title != null) Padding(padding: const EdgeInsets.fromLTRB(16, 12, 16, 4), child: Text(title, style: sans(12, color: C.mute, weight: FontWeight.w600))),
+          ...rows,
+        ]),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: app,
+      builder: (context, _) {
+        final m = app.mobile;
+        final head = Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [C.navy, C.navy2]),
+            border: Border.all(color: const Color(0x66E5C98B)),
+          ),
+          child: Row(children: [
+            Container(
+              width: 56,
+              height: 56,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFF6EEDC), border: Border.all(color: C.gold, width: 2)),
+              child: app.loggedIn ? Text(Demo.name.characters.first, style: serif(24, color: C.navy, weight: FontWeight.w700)) : const Icon(Icons.person_outline, color: C.navy),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(app.loggedIn ? Demo.name : 'உங்க கணக்கு', style: serif(19, color: Colors.white, weight: FontWeight.w700)),
+                const SizedBox(height: 3),
+                if (app.loggedIn && m.length == 10) Text('+91 ${m.substring(0, 5)} ${m.substring(5)}', style: sans(12.5, color: C.navyMute)),
+                Text(app.loggedIn ? '${Demo.scheme} திட்டம் · ${Demo.member}' : 'Passbook, தவணை, Referral எல்லாம் பார்க்க mPIN போட்டு நுழையுங்கள்.',
+                    style: sans(12.5, color: C.navyMute, height: 1.45)),
+              ]),
+            ),
+          ]),
+        );
+        return SafeArea(
+          child: ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
+            Text('என் கணக்கு', style: serif(22, color: C.ink, weight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            head,
+            if (!app.loggedIn) ...[
+              const SizedBox(height: 12),
+              PrimaryButton('mPIN போட்டு நுழைய', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MobileScreen()))),
+            ],
+            if (app.loggedIn)
+              _group([
+                _row(Icons.person_outline, 'என் விவரம்', () => go(2), first: true),
+                _row(Icons.menu_book_outlined, 'என் Passbook', () => go(2)),
+                _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => showNote(context, 'மாதிரி: OTP மூலம் புது mPIN')),
+                _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => go(2)),
+              ]),
+            StatefulBuilder(builder: (context, setLocal) {
+              return _group([
+                _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
+                    first: true, trailing: Switch(value: app.haptics, activeThumbColor: C.green, onChanged: (v) => setLocal(() => app.haptics = v))),
+                _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => showNote(context, 'மாதிரி: privacy.html')),
+                if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => showNote(context, 'மாதிரி: WhatsApp கோரிக்கை')),
+                if (app.loggedIn)
+                  _row(Icons.logout, 'வெளியேறு', () {
+                    app.logout();
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const WelcomeScreen()), (_) => false);
+                  }, color: C.red),
+              ], title: 'அமைப்புகள்');
+            }),
+            _group([
+              _row(Icons.call_outlined, 'கடைக்கு அழை · 97919 18344', () => showNote(context, 'மாதிரி: அழைப்பு'), first: true),
+              _row(Icons.location_on_outlined, 'வழி காட்டு', () => showNote(context, 'மாதிரி: Google Maps')),
+            ], title: 'உதவி & தொடர்பு'),
+            const SizedBox(height: 18),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+          ]),
+        );
+      },
     );
   }
 }
