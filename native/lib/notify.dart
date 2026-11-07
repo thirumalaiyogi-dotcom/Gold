@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
@@ -34,6 +39,72 @@ class Notify {
 
   static Future<void> init() async {
     await _p.initialize(const InitializationSettings(android: AndroidInitializationSettings(_icon)));
+    // Channels created up-front so Firebase (FCM) messages land in the same named channels.
+    final a = _p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    for (final c in const [
+      ['stm_notice', 'கடை அறிவிப்புகள்'],
+      ['stm_due', 'தவணை நினைவூட்டல்'],
+      ['stm_rate', 'இன்றைய விலை'],
+    ]) {
+      await a?.createNotificationChannel(AndroidNotificationChannel(c[0], c[1], importance: Importance.high, showBadge: true));
+    }
+  }
+
+  // ---------- Firebase (FCM): instant push from the shop ----------
+  static const fbOptions = FirebaseOptions(
+    apiKey: 'AIzaSyAkwonB9H8DxoLdeA0ZJ36qkJ759jRcDTk',
+    appId: '1:742720250332:android:b5b66132e6ca609f5bef19',
+    messagingSenderId: '742720250332',
+    projectId: 'stm-gold',
+    storageBucket: 'stm-gold.firebasestorage.app',
+  );
+  static bool _fcmReady = false;
+
+  static Future<void> startFcm() async {
+    try {
+      if (Firebase.apps.isEmpty) await Firebase.initializeApp(options: fbOptions);
+      FirebaseMessaging.onBackgroundMessage(fcmBackground);
+      final fm = FirebaseMessaging.instance;
+      await fm.requestPermission();
+      FirebaseMessaging.onMessage.listen((m) async {
+        final n = m.notification;
+        if (n == null) return;
+        final sp = await SharedPreferences.getInstance();
+        final c = (sp.getInt('unread') ?? 0) + 1;
+        await sp.setInt('unread', c);
+        unread.value = c;
+        final due = '${m.data['tag'] ?? ''}'.startsWith('due');
+        await _show(DateTime.now().millisecondsSinceEpoch ~/ 1000 % 100000, n.title ?? 'சுப்புலட்சுமி தங்க மாளிகை', n.body ?? '',
+            due ? 'stm_due' : 'stm_notice', due ? 'தவணை நினைவூட்டல்' : 'கடை அறிவிப்புகள்', c);
+      });
+      fm.onTokenRefresh.listen((_) => linkFcm());
+      _fcmReady = true;
+      await linkFcm();
+    } catch (e) {
+      debugPrint('fcm: $e');
+    }
+  }
+
+  /// Register this phone's FCM token with the shop server (push function, same table as the website).
+  /// With mobile + mPIN it is linked to the customer, so personal reminders / greetings reach it too.
+  static String _m = '', _pin = '';
+  static Future<void> linkFcm({String? mobile, String? pin}) async {
+    if (mobile != null) _m = mobile;
+    if (pin != null) _pin = pin;
+    if (!_fcmReady) return;
+    try {
+      final t = await FirebaseMessaging.instance.getToken();
+      if (t == null) return;
+      final r = await http.post(Uri.parse('${Api.url}/functions/v1/push'),
+          headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'},
+          body: jsonEncode({'action': 'fcm_sub', 'token': t, if (_m.isNotEmpty) 'mobile': _m, if (_pin.isNotEmpty) 'pin': _pin}));
+      final d = jsonDecode(r.body);
+      final sp = await SharedPreferences.getInstance();
+      // Server sends personal reminders (1st / 5th) once linked and FCM is configured — then skip the local ones.
+      if (d is Map && d['ok'] == true && d['linked'] == true && d['fcm'] == true) await sp.setBool('fcm_linked', true);
+    } catch (e) {
+      debugPrint('fcm link: $e');
+    }
   }
 
   /// Foreground start: permission (Android 13+), background job, first check.
@@ -55,6 +126,7 @@ class Notify {
     } catch (e) {
       debugPrint('notify start: $e');
     }
+    await startFcm();
   }
 
   static bool _on(SharedPreferences sp, String k) => sp.getBool(k) ?? true;
@@ -139,7 +211,7 @@ class Notify {
     }
 
     // 3) Installment reminder — only for someone who has logged in on this phone
-    if (_on(sp, 'n_due') && (sp.getBool('acct') ?? false) && !(sp.getBool('done') ?? false) && now.hour >= 10 && sp.getString('due_day') != today) {
+    if (_on(sp, 'n_due') && !(sp.getBool('fcm_linked') ?? false) && (sp.getBool('acct') ?? false) && !(sp.getBool('done') ?? false) && now.hour >= 10 && sp.getString('due_day') != today) {
       final silver = sp.getBool('silver') ?? false;
       final paid = sp.getString('paid_ym') == today.substring(0, 7);
       final remindDay = silver ? (now.day == 5 || now.day == 20) : (now.day == 1 || now.day == 4 || now.day == 7);
@@ -179,4 +251,13 @@ void callbackDispatcher() {
     } catch (_) {}
     return true;
   });
+}
+
+/// FCM message while the app is closed: the system shows it; we only bump the unread count.
+@pragma('vm:entry-point')
+Future<void> fcmBackground(RemoteMessage m) async {
+  try {
+    final sp = await SharedPreferences.getInstance();
+    await sp.setInt('unread', (sp.getInt('unread') ?? 0) + 1);
+  } catch (_) {}
 }

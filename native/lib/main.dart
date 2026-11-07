@@ -129,6 +129,7 @@ class AppState extends ChangeNotifier {
     loggedIn = true;
     notifyListeners();
     _syncNotify();
+    Notify.linkFcm(mobile: m, pin: p);
   }
 
   void _syncNotify() {
