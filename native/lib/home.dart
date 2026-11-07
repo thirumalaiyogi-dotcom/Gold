@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'data.dart';
+import 'links.dart';
 import 'login.dart';
+import 'notices.dart';
+import 'rates.dart';
+import 'schemes.dart';
 import 'main.dart';
 import 'passbook.dart';
 import 'ui.dart';
@@ -55,9 +60,9 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final pages = [
       HomeTab(onOpenMenu: () => _key.currentState?.openEndDrawer(), go: go),
-      const _Soon('சேமிப்புத் திட்டங்கள்'),
+      const SchemesTab(),
       PassbookTab(onBack: () => go(0)),
-      const _Soon('அறிவிப்புகள்'),
+      const NoticesTab(),
       ProfileTab(go: go),
     ];
     return PopScope(
@@ -125,26 +130,6 @@ class _BottomNav extends StatelessWidget {
   }
 }
 
-class _Soon extends StatelessWidget {
-  const _Soon(this.title);
-  final String title;
-  @override
-  Widget build(BuildContext context) => SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(30),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              const RingIcon(Icons.hourglass_empty, size: 64),
-              const SizedBox(height: 14),
-              Text(title, style: serif(22)),
-              const SizedBox(height: 6),
-              Text('இந்தப் பக்கம் மாதிரி app-ல இன்னும் சேர்க்கல.\nமுழு app-ல வரும்.', style: sans(14, color: C.mute, height: 1.6), textAlign: TextAlign.center),
-            ]),
-          ),
-        ),
-      );
-}
-
 class HomeTab extends StatelessWidget {
   const HomeTab({super.key, required this.onOpenMenu, required this.go});
   final VoidCallback onOpenMenu;
@@ -189,7 +174,7 @@ class HomeTab extends StatelessWidget {
           Text(Demo.rateStamp, style: sans(12.5, color: C.navyMute)),
           const SizedBox(height: 8),
           OutlinedButton.icon(
-            onPressed: () => showNote(context, 'மாதிரி: விலை graph பக்கம்'),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
             style: OutlinedButton.styleFrom(
               foregroundColor: C.goldSoft,
               side: const BorderSide(color: Color(0x99C9A24A)),
@@ -209,7 +194,7 @@ class HomeTab extends StatelessWidget {
             _quick(context, Icons.menu_book_outlined, 'என்\nPassbook', () => go(2)),
             _quick(context, Icons.credit_card, 'தவணை\nகட்ட', () => go(2)),
             _quick(context, Icons.diamond_outlined, 'சேமிப்பு\nதிட்டங்கள்', () => go(1)),
-            _quick(context, Icons.trending_up, 'விலை\nநிலவரம்', () => showNote(context, 'மாதிரி: விலை graph')),
+            _quick(context, Icons.trending_up, 'விலை\nநிலவரம்', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage()))),
           ]),
           const SizedBox(height: 18),
           SingleChildScrollView(
@@ -221,21 +206,22 @@ class HomeTab extends StatelessWidget {
             ]),
           ),
           const SizedBox(height: 20),
-          const _SchemeHero(),
+          _SchemeHero(go: go),
           if (app.loggedIn) ...[
             const SizedBox(height: 24),
             SectionTitle('சமீபத்திய தவணைகள்', action: 'அனைத்தும் ›', onAction: () => go(2)),
             LuxCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(children: [for (final p in Demo.payments) PaymentRow(p, last: p == Demo.payments.last)])),
           ],
           const SizedBox(height: 24),
-          const SectionTitle('சேமிப்புத் திட்டங்கள்'),
+          SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
           SizedBox(
-            height: 196,
-            child: ListView(scrollDirection: Axis.horizontal, children: const [
-              _SchemeCard('தனலட்சுமி', 'தவணை மாற்றலாம் · ₹1,000 – ₹1,00,000'),
-              SizedBox(width: 12),
-              _SchemeCard('குபேர லட்சுமி', 'நிலையான தவணை · தங்கமாக சேமிப்பு'),
-            ]),
+            height: 228,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: schemes.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (_, i) => SchemeCard(schemes[i], width: 300),
+            ),
           ),
           const SizedBox(height: 24),
           LuxCard(
@@ -247,9 +233,9 @@ class HomeTab extends StatelessWidget {
               Text('திங்கள் – சனி 9:00 – 9:00 · ஞாயிறு 9:00 – 8:00', style: sans(13.5, color: C.mute, height: 1.7)),
               const SizedBox(height: 12),
               Row(children: [
-                Expanded(child: PrimaryButton('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => showNote(context, 'மாதிரி: 97919 18344'))),
+                Expanded(child: PrimaryButton('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
                 const SizedBox(width: 10),
-                Expanded(child: OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => showNote(context, 'மாதிரி: Google Maps'))),
+                Expanded(child: OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => openMaps(context))),
               ]),
             ]),
           ),
@@ -283,7 +269,7 @@ class HomeTab extends StatelessWidget {
           shape: StadiumBorder(side: const BorderSide(color: C.line2)),
           child: InkWell(
             customBorder: const StadiumBorder(),
-            onTap: () => showNote(context, 'மாதிரி: $t'),
+            onTap: () => t == 'WhatsApp' ? whatsApp(context) : t == 'வழி காட்டு' ? openMaps(context) : callShop(context),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(6, 6, 18, 6),
               child: Row(children: [
@@ -334,7 +320,8 @@ class _RateBoard extends StatelessWidget {
 }
 
 class _SchemeHero extends StatelessWidget {
-  const _SchemeHero();
+  const _SchemeHero({required this.go});
+  final ValueChanged<int> go;
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -349,9 +336,9 @@ class _SchemeHero extends StatelessWidget {
           Text('ஒவ்வொரு மாதமும் சிறிது சிறிதாக 11 மாதம் சேமித்து, 12 வது மாதம் உங்கள் கனவு நகையை வாங்குங்கள்.', style: sans(14.5, color: const Color(0xFFEAD9B8), height: 1.7)),
           const SizedBox(height: 16),
           Row(children: [
-            Expanded(child: PrimaryButton('திட்டங்கள் பார்க்க', gold: true, onTap: () => showNote(context, 'மாதிரி: திட்டங்கள்'))),
+            Expanded(child: PrimaryButton('திட்டங்கள் பார்க்க', gold: true, onTap: () => go(1))),
             const SizedBox(width: 10),
-            Expanded(child: OutlineBtn('என் சேமிப்பு', light: true, onTap: () => showNote(context, 'மாதிரி: Passbook'))),
+            Expanded(child: OutlineBtn('என் சேமிப்பு', light: true, onTap: () => go(2))),
           ]),
         ]),
       ),
@@ -365,35 +352,6 @@ class _SchemeHero extends StatelessWidget {
       ),
     ]);
   }
-}
-
-class _SchemeCard extends StatelessWidget {
-  const _SchemeCard(this.name, this.sub);
-  final String name, sub;
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 290,
-        child: LuxCard(
-          topGold: true,
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: C.goldLine)),
-              child: Text('11 மாத திட்டம்', style: sans(12, color: C.goldText, weight: FontWeight.w600)),
-            ),
-            const SizedBox(height: 8),
-            Text(name, style: serif(22)),
-            const SizedBox(height: 4),
-            Text(sub, style: sans(13.5, color: C.mute), maxLines: 1, overflow: TextOverflow.ellipsis),
-            const SizedBox(height: 12),
-            Row(children: [
-              Expanded(child: OutlineBtn('விவரம்', onTap: () => showNote(context, 'மாதிரி: $name விவரம்'))),
-              const SizedBox(width: 8),
-              Expanded(child: PrimaryButton('இப்போது சேர', onTap: () => showNote(context, 'மாதிரி: சேரும் படிவம்'))),
-            ]),
-          ]),
-        ),
-      );
 }
 
 class SideMenu extends StatelessWidget {
@@ -477,8 +435,8 @@ class SideMenu extends StatelessWidget {
           }),
           item(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
               trailing: Switch(value: app.haptics, activeThumbColor: C.gold, onChanged: (v) => setLocal(() => app.haptics = v))),
-          item(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => showNote(context, 'மாதிரி: privacy.html')),
-          item(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => showNote(context, 'மாதிரி: WhatsApp கோரிக்கை')),
+          item(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => openLink(context, Shop.privacy)),
+          item(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
           if (app.loggedIn)
             item(Icons.logout, 'வெளியேறு', () {
               app.logout();
@@ -486,7 +444,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -587,8 +545,8 @@ class ProfileTab extends StatelessWidget {
               return _group([
                 _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
                     first: true, trailing: Switch(value: app.haptics, activeThumbColor: C.green, onChanged: (v) => setLocal(() => app.haptics = v))),
-                _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => showNote(context, 'மாதிரி: privacy.html')),
-                if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => showNote(context, 'மாதிரி: WhatsApp கோரிக்கை')),
+                _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => openLink(context, Shop.privacy)),
+                if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
                 if (app.loggedIn)
                   _row(Icons.logout, 'வெளியேறு', () {
                     app.logout();
@@ -597,11 +555,12 @@ class ProfileTab extends StatelessWidget {
               ], title: 'அமைப்புகள்');
             }),
             _group([
-              _row(Icons.call_outlined, 'கடைக்கு அழை · 97919 18344', () => showNote(context, 'மாதிரி: அழைப்பு'), first: true),
-              _row(Icons.location_on_outlined, 'வழி காட்டு', () => showNote(context, 'மாதிரி: Google Maps')),
+              _row(Icons.call_outlined, 'கடைக்கு அழை · 97919 18344', () => callShop(context), first: true),
+              _row(Icons.chat_outlined, 'WhatsApp-ல் பேச', () => whatsApp(context)),
+              _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },
