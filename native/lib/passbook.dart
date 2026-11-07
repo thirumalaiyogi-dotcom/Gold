@@ -5,6 +5,7 @@ import 'api.dart';
 import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
+import 'pay.dart';
 
 class PaymentRow extends StatelessWidget {
   const PaymentRow(this.p, {super.key, this.last = false, this.receipt = false});
@@ -218,30 +219,9 @@ class _PassbookTabState extends State<PassbookTab> {
       'சுப்புலட்சுமி தங்க மாளிகை · ${Demo.scheme} திட்டம்\nபெயர்: ${Demo.name}\nமொத்த சேமிப்பு: ${rupees(Demo.total)}\nதவணை: ${Demo.paidCount}/${Demo.months}${Demo.grams ? '\nதங்கம்: ${Demo.gramsTotal.toStringAsFixed(3)} கி' : ''}';
 
   /// Online payment runs on the website (same Cashfree flow, same database checks).
-  void _pay(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: C.ivory,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            const Center(child: RingIcon(Icons.lock_outline, size: 60)),
-            const SizedBox(height: 12),
-            Text('பாதுகாப்பான online payment', textAlign: TextAlign.center, style: serif(20)),
-            const SizedBox(height: 6),
-            Text('Payment எங்கள் website-ல Cashfree மூலம் நடக்கும். அங்கே உங்க மொபைல் எண் + mPIN போட்டு Passbook-ல் "online-ல கட்டு" அழுத்துங்க. பணம் வந்ததும் இந்த app-லயும் தானா தெரியும்.',
-                textAlign: TextAlign.center, style: sans(13.5, color: C.mute, height: 1.6)),
-            const SizedBox(height: 16),
-            PrimaryButton('Website திறக்க', icon: Icons.open_in_new, onTap: () {
-              Navigator.of(ctx).pop();
-              openLink(context, Api.site);
-            }),
-          ]),
-        ),
-      ),
-    );
+  Future<void> _pay(BuildContext context) async {
+    final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const PayPage()));
+    if (ok == true) app.refreshPassbook();
   }
 
   // ignore: unused_element

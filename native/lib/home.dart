@@ -10,6 +10,7 @@ import 'schemes.dart';
 import 'main.dart';
 import 'passbook.dart';
 import 'ui.dart';
+import 'info.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -457,7 +458,7 @@ class SideMenu extends StatelessWidget {
           }),
           item(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
               trailing: Switch(value: app.haptics, activeThumbColor: C.gold, onChanged: (v) => setLocal(() => app.haptics = v))),
-          item(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => openLink(context, Shop.privacy)),
+          item(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
           item(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
           if (app.loggedIn)
             item(Icons.logout, 'வெளியேறு', () {
@@ -466,7 +467,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.5.1', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -567,7 +568,8 @@ class ProfileTab extends StatelessWidget {
               return _group([
                 _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
                     first: true, trailing: Switch(value: app.haptics, activeThumbColor: C.green, onChanged: (v) => setLocal(() => app.haptics = v))),
-                _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => openLink(context, Shop.privacy)),
+                _row(Icons.info_outline, 'எங்களைப் பற்றி', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage()))),
+                _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
                 if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
                 if (app.loggedIn)
                   _row(Icons.logout, 'வெளியேறு', () {
@@ -582,7 +584,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.5.1', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },

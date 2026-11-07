@@ -6,6 +6,7 @@ import 'home.dart';
 import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
+import 'info.dart';
 
 /// Navy hero with the logo, ivory sheet below (shared by the login screens).
 class _LoginFrame extends StatelessWidget {
@@ -155,7 +156,7 @@ class _HelpTiles extends StatelessWidget {
         );
     return Row(children: [
       tile(Icons.chat_outlined, 'WhatsApp', () => whatsApp(context)),
-      tile(Icons.info_outline, 'எங்களைப் பற்றி', () => openLink(context, Api.site)),
+      tile(Icons.info_outline, 'எங்களைப் பற்றி', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage(fromLogin: true)))),
       tile(Icons.call_outlined, 'அழைக்க', () => callShop(context)),
       tile(Icons.place_outlined, 'வழி காட்டு', () => openMaps(context)),
     ]);

@@ -80,3 +80,23 @@ class ApiError implements Exception {
   @override
   String toString() => 'ApiError($status)';
 }
+
+/// Same Cashfree edge function the website uses (cf-pay). The function itself
+/// re-checks mobile + mPIN, scheme rules, one-per-month etc. — the app adds no new rules.
+class PayApi {
+  static Future<Map<String, dynamic>> call(Map<String, dynamic> body) async {
+    try {
+      final r = await http
+          .post(Uri.parse('${Api.url}/functions/v1/cf-pay'),
+              headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'}, body: jsonEncode(body))
+          .timeout(const Duration(seconds: 25));
+      try {
+        return Map<String, dynamic>.from(jsonDecode(utf8.decode(r.bodyBytes)));
+      } catch (_) {
+        return {'ok': false, 'err': 'http${r.statusCode}'};
+      }
+    } catch (_) {
+      return {'ok': false, 'err': 'net'};
+    }
+  }
+}
