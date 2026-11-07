@@ -74,7 +74,17 @@ class Demo {
   static int get goldChange => _rt['prev_rate22'] == null ? 0 : gold22 - (num.tryParse('${_rt['prev_rate22']}') ?? gold22).round();
   static double get silverRate => (num.tryParse('${_rt['silver'] ?? 0}') ?? 0).toDouble();
   static double get silverChange => _rt['prev_silver'] == null ? 0 : silverRate - (num.tryParse('${_rt['prev_silver']}') ?? silverRate).toDouble();
-  static String get rateStamp => _rt['updated_on'] == null ? (app.rateError ? 'விலை இப்போ கிடைக்கல' : 'விலை ஏற்றுகிறது…') : 'இன்றைய விலை · ${taDate(_rt['updated_on'].toString())}';
+  /// True only when the shop has entered the rate for today's IST date.
+  static bool get rateIsToday {
+    final u = '${_rt['updated_on'] ?? ''}';
+    if (u.length < 10) return false;
+    final today = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30)).toIso8601String().substring(0, 10);
+    return u.substring(0, 10) == today;
+  }
+
+  static String get rateStamp => _rt['updated_on'] == null
+      ? (app.rateError ? 'விலை இப்போ கிடைக்கல' : 'விலை ஏற்றுகிறது…')
+      : (rateIsToday ? 'இன்றைய விலை · ${taDate(_rt['updated_on'].toString())}' : 'கடைசி விலை · ${taDate(_rt['updated_on'].toString())} · இன்று இன்னும் புதுப்பிக்கல');
 }
 
 /// App state: live rate / notices / schemes for everyone, passbook after mPIN login.
