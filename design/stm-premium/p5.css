@@ -1,0 +1,129 @@
+/* ===== STM Premium (Style 5) · design tokens ===== */
+html[data-p5]{
+ --p5-maroon:#6E1423;--p5-burg:#4A0D18;--p5-maroon-90:#7E2232;
+ --p5-gold:#C9A45C;--p5-gold-soft:#E5C98B;--p5-gold-50:#F6EEDC;
+ --p5-ivory:#FBF8F1;--p5-white:#FFFFFF;--p5-line:#EADFC8;--p5-line-2:#F1E9D8;
+ --p5-ink:#252525;--p5-ink-2:#4A4441;--p5-mut:#777777;
+ --p5-ok:#24865B;--p5-ok-50:#E7F3EC;--p5-err:#C63C45;--p5-err-50:#FBEAEA;
+ --p5-r-lg:20px;--p5-r:14px;--p5-r-sm:10px;
+ --p5-sh-1:0 1px 2px rgba(74,13,24,.05),0 4px 14px rgba(74,13,24,.05);
+ --p5-sh-2:0 2px 4px rgba(74,13,24,.06),0 14px 32px rgba(74,13,24,.10);
+ --p5-serif:"Noto Serif Tamil","Noto Serif",Georgia,serif;
+ --p5-sans:"Noto Sans Tamil","Noto Sans",system-ui,sans-serif;
+ --p5-s1:4px;--p5-s2:8px;--p5-s3:12px;--p5-s4:16px;--p5-s5:20px;--p5-s6:24px;--p5-s8:32px;
+}
+html[data-p5] body{background:var(--p5-ivory)!important;color:var(--p5-ink)}
+
+/* Header: compact burgundy bar, logo centred, rate moves into the dashboard */
+html[data-p5] header.hd{background:var(--p5-burg)!important;background-image:none!important;border-bottom:1px solid rgba(201,164,92,.35)!important;box-shadow:none!important;padding-bottom:10px!important}
+html[data-p5] header.hd .xrth,html[data-p5] header.hd .pc,html[data-p5] header.hd #ptopen,html[data-p5] header.hd .xhi{display:none!important}
+html[data-p5] .hbtn{background:rgba(255,255,255,.06)!important;border:1px solid rgba(229,201,139,.35)!important;color:var(--p5-gold-soft)!important;box-shadow:none!important}
+html[data-p5] .hbtn.pro{background:var(--p5-gold-50)!important;color:var(--p5-maroon)!important;border-color:var(--p5-gold)!important;font-family:var(--p5-serif);font-weight:700}
+
+/* Bottom navigation */
+html[data-p5] nav{background:#fff!important;border-top:1px solid var(--p5-line)!important;box-shadow:0 -4px 18px rgba(74,13,24,.06)!important}
+html[data-p5] nav button{color:var(--p5-mut)!important}
+html[data-p5] nav button.on{color:var(--p5-maroon)!important}
+html[data-p5] nav button.on svg{stroke:var(--p5-maroon)!important}
+html[data-p5] nav button.on:after{background:var(--p5-gold)!important}
+
+/* Old home blocks replaced by the dashboard (kept in the page, only hidden) */
+html[data-p5] #s .intro,html[data-p5] #s #qa,html[data-p5] #s #recent,html[data-p5] #s #pss{display:none!important}
+
+/* Section titles */
+html[data-p5] .sh{font-family:var(--p5-serif)!important;color:var(--p5-ink)!important;letter-spacing:0}
+html[data-p5] .xsh .sh:after,html[data-p5] .sh:after{background:var(--p5-gold)!important}
+
+/* ===== Dashboard ===== */
+.d5{display:none}
+html[data-p5] .d5{display:block;margin:4px 0 8px;font-family:var(--p5-sans);color:var(--p5-ink)}
+.d5 *{box-sizing:border-box}
+.d5-hi{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 2px 14px}
+.d5-hi small{display:block;font-size:13px;color:var(--p5-mut);font-weight:500}
+.d5-hi h1{margin:2px 0 0;font:700 24px/1.25 var(--p5-serif);color:var(--p5-ink);overflow-wrap:anywhere}
+.d5-hi .d5-mem{font-size:12px;color:var(--p5-maroon);background:var(--p5-gold-50);border:1px solid var(--p5-line);padding:4px 10px;border-radius:999px;white-space:nowrap}
+
+/* Savings card */
+.d5-sv{position:relative;border-radius:var(--p5-r-lg);padding:20px 20px 18px;color:#fff;background:linear-gradient(160deg,var(--p5-maroon) 0%,var(--p5-burg) 100%);box-shadow:var(--p5-sh-2);overflow:hidden}
+.d5-sv:before{content:"";position:absolute;inset:6px;border:1px solid rgba(229,201,139,.28);border-radius:16px;pointer-events:none}
+.d5-sv .d5-k{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--p5-gold-soft);letter-spacing:.2px}
+.d5-sv .d5-k b{font-weight:600}
+.d5-sv .d5-k span{opacity:.85}
+.d5-sv .d5-tot{margin:12px 0 2px;font:700 34px/1.1 var(--p5-serif);font-variant-numeric:tabular-nums;letter-spacing:.2px}
+.d5-sv .d5-tl{font-size:12.5px;opacity:.8}
+.d5-sv .d5-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0 12px;padding:12px 0;border-top:1px solid rgba(229,201,139,.25);border-bottom:1px solid rgba(229,201,139,.25)}
+.d5-sv .d5-g div{min-width:0}
+.d5-sv .d5-g small{display:block;font-size:11.5px;color:var(--p5-gold-soft);opacity:.9}
+.d5-sv .d5-g b{display:block;margin-top:2px;font:600 17px/1.2 var(--p5-serif);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.d5-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.14);overflow:hidden;margin:2px 0 6px}
+.d5-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p5-gold),var(--p5-gold-soft));border-radius:6px}
+.d5-sv .d5-pm{font-size:12px;opacity:.8}
+
+/* Next installment strip (inside savings card) */
+.d5-nx{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;background:rgba(255,255,255,.07);border:1px solid rgba(229,201,139,.25);border-radius:var(--p5-r);padding:12px}
+.d5-nx div{min-width:0}
+.d5-nx small{display:block;font-size:11.5px;color:var(--p5-gold-soft)}
+.d5-nx b{display:block;font-size:15px;font-weight:600;margin-top:2px}
+.d5-nx em{display:inline-block;white-space:nowrap;font-style:normal;font-size:11.5px;line-height:1.5;padding:1px 8px;border-radius:999px;margin:4px 0 0}
+.d5-nx b>em{display:table;margin-top:6px}
+.d5-nx em.ok{background:rgba(36,134,91,.25);color:#BFEBD3}.d5-nx em.due{background:rgba(229,201,139,.22);color:var(--p5-gold-soft)}.d5-nx em.late{background:rgba(198,60,69,.3);color:#FFD5D8}
+.d5-pay{flex:none;min-height:44px;padding:0 16px;border:0;border-radius:12px;background:var(--p5-gold-soft);color:var(--p5-burg);font:700 14px var(--p5-sans);cursor:pointer}
+.d5-pay:active{transform:scale(.98)}
+
+/* Guest welcome card */
+.d5-wel{border-radius:var(--p5-r-lg);padding:22px 20px;background:linear-gradient(160deg,var(--p5-maroon),var(--p5-burg));color:#fff;box-shadow:var(--p5-sh-2);position:relative;overflow:hidden}
+.d5-wel:before{content:"";position:absolute;inset:6px;border:1px solid rgba(229,201,139,.28);border-radius:16px;pointer-events:none}
+.d5-wel small{color:var(--p5-gold-soft);font-size:12.5px}
+.d5-wel h2{margin:6px 0 8px;font:700 22px/1.3 var(--p5-serif)}
+.d5-wel p{margin:0 0 16px;font-size:14px;line-height:1.6;opacity:.88}
+.d5-wel .d5-b2{display:grid;grid-template-columns:1fr 1fr;gap:10px;position:relative}
+.d5-btn{display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;font:600 14px var(--p5-sans);border:1px solid transparent;cursor:pointer;text-align:center;padding:0 10px}
+.d5 .d5-b2 .d5-btn{margin:0!important;align-self:stretch}
+.d5-btn.pri{background:var(--p5-gold-soft);color:var(--p5-burg)}
+.d5-btn.sec{background:transparent;color:#fff;border-color:rgba(229,201,139,.55)}
+
+/* Rate row */
+.d5-rt{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin:14px 0 0;background:#fff;border:1px solid var(--p5-line);border-radius:var(--p5-r);box-shadow:var(--p5-sh-1);overflow:hidden}
+.d5-rt button{all:unset;cursor:pointer;display:block;padding:12px 14px;min-width:0}
+.d5-rt button+button{border-left:1px solid var(--p5-line-2)}
+.d5-rt small{display:block;font-size:12px;color:var(--p5-mut)}
+.d5-rt b{display:block;margin-top:2px;font:700 20px/1.2 var(--p5-serif);color:var(--p5-ink);font-variant-numeric:tabular-nums}
+.d5-rt em{font-style:normal;font-size:12px;font-weight:600}
+.d5-rt em.up{color:var(--p5-ok)}.d5-rt em.dn{color:var(--p5-err)}
+.d5-rtu{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:11.5px;color:var(--p5-mut);margin:6px 4px 0}
+.d5-rtu span{flex:1;min-width:0;line-height:1.4}
+.d5-rtu button{flex:none}
+html[data-p5] #s .xmain>.d5{order:-10}
+html[data-p5] #s .xmain>.qchips{order:-9;margin-top:14px!important}
+.d5-rtu button{all:unset;cursor:pointer;color:var(--p5-maroon);font-weight:600;padding:6px 0}
+
+/* Quick actions */
+.d5-qa{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0 4px}
+.d5-qa button{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:4px 0;text-align:center}
+.d5-qa i{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:16px;background:#fff;border:1px solid var(--p5-line);box-shadow:var(--p5-sh-1);color:var(--p5-maroon)}
+.d5-qa svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.d5-qa span{font-size:12.5px;line-height:1.3;color:var(--p5-ink-2);font-weight:500;overflow-wrap:anywhere}
+.d5-qa button:active i{transform:scale(.96)}
+
+/* Cards: transactions + announcements */
+.d5-card{margin:16px 0 0;background:#fff;border:1px solid var(--p5-line);border-radius:var(--p5-r);box-shadow:var(--p5-sh-1);padding:4px 14px}
+.d5-ch{display:flex;justify-content:space-between;align-items:center;padding:12px 0 8px}
+.d5-ch b{font:700 16px var(--p5-serif);color:var(--p5-ink)}
+.d5-ch button{all:unset;cursor:pointer;color:var(--p5-maroon);font-size:13px;font-weight:600;padding:8px 0 8px 12px}
+.d5-tx{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--p5-line-2)}
+.d5-tx .ic{flex:none;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--p5-ok-50);color:var(--p5-ok)}
+.d5-tx .ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.d5-tx .m{flex:1;min-width:0}
+.d5-tx .m b{display:block;font-size:14px;font-weight:600;color:var(--p5-ink)}
+.d5-tx .m small{display:block;font-size:12px;color:var(--p5-mut);margin-top:1px}
+.d5-tx .a{text-align:right}
+.d5-tx .a b{font:700 15px var(--p5-serif);font-variant-numeric:tabular-nums}
+.d5-tx .a small{display:block;font-size:11.5px;color:var(--p5-ok)}
+.d5-empty{padding:14px 0 16px;border-top:1px solid var(--p5-line-2);font-size:13.5px;color:var(--p5-mut);line-height:1.6}
+.d5-an{padding:12px 0;border-top:1px solid var(--p5-line-2)}
+.d5-an b{display:block;font-size:14px;font-weight:600}
+.d5-an p{margin:4px 0 0;font-size:13px;color:var(--p5-ink-2);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.d5-an small{display:block;font-size:11.5px;color:var(--p5-mut);margin-top:4px}
+.d5 button:focus-visible,.d5 [role=button]:focus-visible{outline:2px solid var(--p5-gold);outline-offset:3px;border-radius:12px}
+@media (min-width:800px){html[data-p5] .d5-sv .d5-tot{font-size:40px}}
+@media (prefers-reduced-motion:reduce){.d5 *{transition:none!important}}
