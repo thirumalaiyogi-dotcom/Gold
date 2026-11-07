@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'api.dart';
 import 'data.dart';
 import 'login.dart';
+import 'notify.dart';
 import 'ui.dart';
 
 const _taMon = ['ஜன.', 'பிப்.', 'மார்.', 'ஏப்.', 'மே', 'ஜூன்', 'ஜூலை', 'ஆக.', 'செப்.', 'அக்.', 'நவ.', 'டிச.'];
@@ -127,6 +128,13 @@ class AppState extends ChangeNotifier {
     pb = data;
     loggedIn = true;
     notifyListeners();
+    _syncNotify();
+  }
+
+  void _syncNotify() {
+    try {
+      Notify.saveAccount(paidThisMonth: Demo.paidThisMonth, done: Demo.paidCount >= Demo.months, silver: Demo.silver);
+    } catch (_) {}
   }
 
   Future<void> refreshPassbook() async {
@@ -136,6 +144,7 @@ class AppState extends ChangeNotifier {
       if (d != null && d['name'] != null && d['wrong'] != true && d['locked'] != true && d['locked_otp'] != true) {
         pb = d;
         notifyListeners();
+        _syncNotify();
       }
     } catch (_) {}
   }
@@ -162,6 +171,7 @@ void main() {
   ));
   app.loadPublic();
   runApp(const StmApp());
+  WidgetsBinding.instance.addPostFrameCallback((_) => Notify.start());
 }
 
 class StmApp extends StatelessWidget {

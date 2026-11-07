@@ -44,6 +44,17 @@ jobs:
           sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.INTERNET"/>#' "$M"
           sed -i 's/android:label="stm_proto"/android:label="தங்க மாளிகை (மாதிரி)"/' "$M"
           grep -n "INTERNET\|android:label" "$M"
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>#' "$M"
+          cp -r android_res/* android/app/src/main/res/
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path("android/app/build.gradle.kts")
+          s = p.read_text()
+          s = s.replace("compileOptions {", "compileOptions {\n        isCoreLibraryDesugaringEnabled = true", 1)
+          s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+          p.write_text(s)
+          PY
+          grep -n "Desugar\|desugar" android/app/build.gradle.kts
       - name: Build APK
         id: build
         run: |

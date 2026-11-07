@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'home.dart';
 import 'links.dart';
+import 'notify.dart';
 import 'ui.dart';
 
 Widget _scaffold(String title, Widget body) => Scaffold(
@@ -104,4 +105,62 @@ class PrivacyPage extends StatelessWidget {
           TextButton(onPressed: () => openLink(context, Shop.privacy), child: Text('முழு கொள்கை (English உட்பட) — website', style: sans(13, color: C.navy))),
         ]),
       );
+}
+
+
+/// Notification அமைப்பு — three switches + a test button.
+class NotifySettingsPage extends StatefulWidget {
+  const NotifySettingsPage({super.key});
+  @override
+  State<NotifySettingsPage> createState() => _NotifySettingsPageState();
+}
+
+class _NotifySettingsPageState extends State<NotifySettingsPage> {
+  final v = <String, bool>{'n_due': true, 'n_notice': true, 'n_rate': true};
+
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      for (final k in v.keys.toList()) {
+        v[k] = await Notify.isOn(k);
+      }
+      if (mounted) setState(() {});
+    }();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget sw(String k, IconData i, String t, String sub) => SwitchListTile(
+          value: v[k]!,
+          activeThumbColor: C.navy,
+          secondary: Icon(i, color: C.navy),
+          title: Text(t, style: sans(15, weight: FontWeight.w700)),
+          subtitle: Text(sub, style: sans(12.5, color: C.mute, height: 1.4)),
+          onChanged: (x) {
+            setState(() => v[k] = x);
+            Notify.setOn(k, x);
+          },
+        );
+    return _scaffold(
+      'Notification அமைப்பு',
+      ListView(padding: const EdgeInsets.fromLTRB(12, 14, 12, 24), children: [
+        LuxCard(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(children: [
+            sw('n_due', Icons.event_available_outlined, 'தவணை நினைவூட்டல்', 'மாதம் 1, 4, 7 தேதிகளில் — தவணை கட்டலைன்னா மட்டும்'),
+            const Divider(height: 1, color: C.line),
+            sw('n_notice', Icons.campaign_outlined, 'கடை அறிவிப்புகள்', 'சலுகைகள், புதிய திட்டங்கள், கடை செய்திகள்'),
+            const Divider(height: 1, color: C.line),
+            sw('n_rate', Icons.trending_up, 'இன்றைய தங்க விலை', 'கடை விலை பதிவு செய்ததும் தினமும் ஒரு முறை'),
+          ]),
+        ),
+        const SizedBox(height: 16),
+        OutlineBtn('சோதனை notification அனுப்பு', onTap: () => Notify.test()),
+        const SizedBox(height: 12),
+        Text('App icon மேல சிவப்பு எண் வர, சில phone-ல (vivo / oppo) Settings → Notifications → இந்த app → "Desktop icon badges" ON பண்ணணும்.',
+            style: sans(12.5, color: C.mute, height: 1.6)),
+      ]),
+    );
+  }
 }

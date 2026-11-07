@@ -10,6 +10,7 @@ import 'schemes.dart';
 import 'main.dart';
 import 'passbook.dart';
 import 'ui.dart';
+import 'notify.dart';
 import 'info.dart';
 
 class MainShell extends StatefulWidget {
@@ -28,6 +29,7 @@ class _MainShellState extends State<MainShell> {
       return;
     }
     HapticFeedback.selectionClick();
+    if (i == 3) Notify.markRead();
     setState(() => tab = i);
   }
 
@@ -110,7 +112,13 @@ class _BottomNav extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onTap(i),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Icon(items[i][0] as IconData, color: on ? C.navy : C.mute, size: 24),
+                    i == 3
+                        ? ValueListenableBuilder<int>(
+                            valueListenable: Notify.unread,
+                            builder: (_, n, child) => Badge(isLabelVisible: n > 0, label: Text('$n'), backgroundColor: C.red, child: child),
+                            child: Icon(items[i][0] as IconData, color: on ? C.navy : C.mute, size: 24),
+                          )
+                        : Icon(items[i][0] as IconData, color: on ? C.navy : C.mute, size: 24),
                     const SizedBox(height: 2),
                     Text(items[i][1] as String, style: sans(11.5, color: on ? C.navy : C.mute, weight: on ? FontWeight.w700 : FontWeight.w400)),
                     const SizedBox(height: 3),
@@ -467,7 +475,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.7', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -568,6 +576,7 @@ class ProfileTab extends StatelessWidget {
               return _group([
                 _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
                     first: true, trailing: Switch(value: app.haptics, activeThumbColor: C.green, onChanged: (v) => setLocal(() => app.haptics = v))),
+                _row(Icons.notifications_active_outlined, 'Notification அமைப்பு', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotifySettingsPage()))),
                 _row(Icons.info_outline, 'எங்களைப் பற்றி', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage()))),
                 _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
                 if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
@@ -584,7 +593,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.7', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },

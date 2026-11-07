@@ -1,0 +1,182 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
+
+import 'api.dart';
+
+/// Phone notifications without any server change:
+/// the app itself checks (every few hours, also in the background) for
+///   • new shop notices (gold_notices)   • today's rate   • installment due (1–7 of the month)
+/// and shows a normal Android notification. The unread count goes on the notification,
+/// so launchers that support badges show the red number on the app icon.
+class Notify {
+  static final _p = FlutterLocalNotificationsPlugin();
+  static final unread = ValueNotifier<int>(0);
+  static const _task = 'stm-check';
+
+  static const _icon = 'ic_stat_stm';
+  static AndroidNotificationDetails _ch(String id, String name, int number, [String body = '']) => AndroidNotificationDetails(
+        id,
+        name,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: _icon,
+        color: const Color(0xFF6E1423),
+        number: number,
+        channelShowBadge: true,
+        styleInformation: BigTextStyleInformation(body),
+      );
+
+  static Future<void> _show(int id, String title, String body, String ch, String chName, int n) =>
+      _p.show(id, title, body, NotificationDetails(android: _ch(ch, chName, n, body)));
+
+  static Future<void> init() async {
+    await _p.initialize(const InitializationSettings(android: AndroidInitializationSettings(_icon)));
+  }
+
+  /// Foreground start: permission (Android 13+), background job, first check.
+  static Future<void> start() async {
+    try {
+      await init();
+      await _p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+      await Workmanager().initialize(callbackDispatcher);
+      await Workmanager().registerPeriodicTask(
+        _task,
+        _task,
+        frequency: const Duration(hours: 3),
+        constraints: Constraints(networkType: NetworkType.connected),
+        existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
+      );
+      final sp = await SharedPreferences.getInstance();
+      unread.value = sp.getInt('unread') ?? 0;
+      await check();
+    } catch (e) {
+      debugPrint('notify start: $e');
+    }
+  }
+
+  static bool _on(SharedPreferences sp, String k) => sp.getBool(k) ?? true;
+  static Future<bool> isOn(String k) async => _on(await SharedPreferences.getInstance(), k);
+  static Future<void> setOn(String k, bool v) async => (await SharedPreferences.getInstance()).setBool(k, v);
+
+  static DateTime _ist() => DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
+  static String _day(DateTime d) => d.toIso8601String().substring(0, 10);
+
+  /// Called after login / passbook refresh so background reminders know the status.
+  static Future<void> saveAccount({required bool paidThisMonth, required bool done, required bool silver}) async {
+    final sp = await SharedPreferences.getInstance();
+    await sp.setBool('acct', true);
+    await sp.setBool('done', done);
+    await sp.setBool('silver', silver);
+    if (paidThisMonth) await sp.setString('paid_ym', _day(_ist()).substring(0, 7));
+  }
+
+  /// Opening the அறிவிப்பு tab clears the count.
+  static Future<void> markRead() async {
+    final sp = await SharedPreferences.getInstance();
+    await sp.setInt('unread', 0);
+    unread.value = 0;
+    try {
+      await _p.cancelAll();
+    } catch (_) {}
+  }
+
+  static Future<void> test() async {
+    await init();
+    final sp = await SharedPreferences.getInstance();
+    final n = (sp.getInt('unread') ?? 0) + 1;
+    await _show(9, 'சுப்புலட்சுமி தங்க மாளிகை', 'இது ஒரு சோதனை அறிவிப்பு. இப்படித்தான் கடை அறிவிப்புகள் வரும் 🙏', 'stm_notice', 'கடை அறிவிப்புகள்', n);
+  }
+
+  /// One pass of all three checks. Safe to call from the app or from the background job.
+  static Future<void> check() async {
+    final sp = await SharedPreferences.getInstance();
+    final now = _ist();
+    final today = _day(now);
+
+    // 1) New shop notices
+    if (_on(sp, 'n_notice')) {
+      try {
+        final list = await Api.notices();
+        final stamps = list.map((n) => '${n['created_at'] ?? ''}').where((s) => s.isNotEmpty).toList()..sort();
+        final seen = sp.getString('seen_notice');
+        if (stamps.isNotEmpty) {
+          if (seen == null) {
+            await sp.setString('seen_notice', stamps.last); // first run: don't flood old notices
+          } else {
+            final fresh = list.where((n) => '${n['created_at'] ?? ''}'.compareTo(seen) > 0).toList();
+            if (fresh.isNotEmpty) {
+              final count = (sp.getInt('unread') ?? 0) + fresh.length;
+              await sp.setInt('unread', count);
+              unread.value = count;
+              var id = 100;
+              for (final n in fresh.take(3)) {
+                await _show(id++, '${n['title'] ?? 'புதிய அறிவிப்பு'}', '${n['body'] ?? ''}', 'stm_notice', 'கடை அறிவிப்புகள்', count);
+              }
+              await sp.setString('seen_notice', stamps.last);
+            }
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2) Today's rate — once a day, after the shop updates it
+    if (_on(sp, 'n_rate') && now.hour >= 9 && sp.getString('rate_day') != today) {
+      try {
+        final r = await Api.rate();
+        final on = '${r?['updated_on'] ?? ''}';
+        if (r != null && on.startsWith(today)) {
+          final g = (num.tryParse('${r['rate22'] ?? 0}') ?? 0).round();
+          final s = num.tryParse('${r['silver'] ?? 0}') ?? 0;
+          if (g > 0) {
+            await _show(2, 'இன்றைய தங்க விலை', '22K தங்கம்: ₹${_inr(g)} / கிராம்${s > 0 ? '\nவெள்ளி: ₹${s.toStringAsFixed(s % 1 == 0 ? 0 : 2)} / கிராம்' : ''}', 'stm_rate', 'இன்றைய விலை', sp.getInt('unread') ?? 0);
+            await sp.setString('rate_day', today);
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 3) Installment reminder — only for someone who has logged in on this phone
+    if (_on(sp, 'n_due') && (sp.getBool('acct') ?? false) && !(sp.getBool('done') ?? false) && now.hour >= 10 && sp.getString('due_day') != today) {
+      final silver = sp.getBool('silver') ?? false;
+      final paid = sp.getString('paid_ym') == today.substring(0, 7);
+      final remindDay = silver ? (now.day == 5 || now.day == 20) : (now.day == 1 || now.day == 4 || now.day == 7);
+      if (!paid && remindDay) {
+        await _show(
+            3,
+            'தவணை நினைவூட்டல்',
+            silver ? 'இந்த மாதம் வெள்ளி சேமிப்பு இன்னும் செலுத்தல. App-லயே ₹100 முதல் செலுத்தலாம்.' : 'இந்த மாதத் தவணையை 7 ஆம் தேதிக்குள் செலுத்துங்க. App-லயே செலுத்தலாம்.', 'stm_due', 'தவணை நினைவூட்டல்', (sp.getInt('unread') ?? 0) + 1);
+        await sp.setString('due_day', today);
+      }
+    }
+  }
+
+  static String _inr(int v) {
+    final s = '$v';
+    if (s.length <= 3) return s;
+    final last = s.substring(s.length - 3);
+    var rest = s.substring(0, s.length - 3);
+    final parts = <String>[];
+    while (rest.length > 2) {
+      parts.insert(0, rest.substring(rest.length - 2));
+      rest = rest.substring(0, rest.length - 2);
+    }
+    if (rest.isNotEmpty) parts.insert(0, rest);
+    return '${parts.join(',')},$last';
+  }
+}
+
+/// Background entry point (runs in its own isolate, every ~3 hours when online).
+@pragma('vm:entry-point')
+void callbackDispatcher() {
+  Workmanager().executeTask((task, input) async {
+    WidgetsFlutterBinding.ensureInitialized();
+    try {
+      await Notify.init();
+      await Notify.check();
+    } catch (_) {}
+    return true;
+  });
+}
