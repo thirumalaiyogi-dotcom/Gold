@@ -2,7 +2,7 @@
 <html lang="ta"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம், 2 = மரூன், 3 = default, 4 = Luxury (Style 3 + data-lux), 5 = STM Premium (Style 3 + data-p5, preview). மாற்ற: ?style=1..5 */(function(){var D="3",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12345])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3"&&v!=="4"&&v!=="5")v=D;if(v==="5"){document.documentElement.setAttribute("data-p5","");v="3";var pf=document.createElement("link");pf.rel="stylesheet";pf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(pf)}if(v==="4"){document.documentElement.setAttribute("data-lux","");v="3";var lf=document.createElement("link");lf.rel="stylesheet";lf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(lf)}document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m&&document.documentElement.hasAttribute("data-p5")){m.content="#4A0D18"}else if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
+<meta name="theme-color" content="#CFE0FF"><script>/* Style 1 = நீலம், 2 = மரூன், 3 = default, 4 = Luxury (Style 3 + data-lux), 5 = STM Premium (Style 3 + data-p5, preview). மாற்ற: ?style=1..5 */(function(){var D="5",k="stm_style",v=D;try{var q=(location.search.match(/[?&]style=([12345])/)||[])[1];if(q)localStorage.setItem(k,q);v=localStorage.getItem(k)||D}catch(e){}if(v!=="1"&&v!=="2"&&v!=="3"&&v!=="4"&&v!=="5")v=D;if(v==="5"){document.documentElement.setAttribute("data-p5","");v="3";var pf=document.createElement("link");pf.rel="stylesheet";pf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(pf)}if(v==="4"){document.documentElement.setAttribute("data-lux","");v="3";var lf=document.createElement("link");lf.rel="stylesheet";lf.href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@500;600;700&display=swap";document.head.appendChild(lf)}document.documentElement.setAttribute("data-style",v);try{var mb=localStorage.getItem("stm_mbg");if(mb&&/^https:\/\//.test(mb)){document.documentElement.classList.add("mbg");document.documentElement.style.setProperty("--mbg",'url("'+mb.replace(/["\\]/g,"")+'")')}}catch(e){}var m=document.querySelector('meta[name="theme-color"]');if(m&&document.documentElement.hasAttribute("data-p5")){m.content="#4A0D18"}else if(m)m.content=v==="2"?"#FBF8F1":v==="3"?"#092A63":"#CFE0FF"})()</script><script src="lib/supabase.js?v=2.45.4"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <title>சுப்புலட்சுமி தங்க மாளிகை</title>
 <style>
@@ -1900,6 +1900,32 @@ html[data-p5] #s .xmain>.qchips{order:-9;margin-top:14px!important}
 @media (min-width:800px){html[data-p5] .d5-sv .d5-tot{font-size:40px}}
 @media (prefers-reduced-motion:reduce){.d5 *{transition:none!important}}
 
+/* ===== Profile (கணக்கு) ===== */
+.pf5{margin:0 0 20px}
+.pf5c{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--p5-r-lg);background:linear-gradient(160deg,var(--p5-maroon),var(--p5-burg));color:#fff;box-shadow:var(--p5-sh-2);position:relative;overflow:hidden}
+.pf5c:before{content:"";position:absolute;inset:6px;border:1px solid rgba(229,201,139,.28);border-radius:16px;pointer-events:none}
+.pf5av{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--p5-gold-50);color:var(--p5-maroon);font:700 24px var(--p5-serif);border:2px solid var(--p5-gold)}
+.pf5av svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7}
+.pf5m{min-width:0}
+.pf5m b{display:block;font:700 19px/1.3 var(--p5-serif);overflow-wrap:anywhere}
+.pf5m small{display:block;font-size:12.5px;color:var(--p5-gold-soft);margin-top:3px;line-height:1.45}
+.pf5btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:12px 0 0;border:0;border-radius:12px;background:var(--p5-maroon);color:#fff;font:600 15px var(--p5-sans);cursor:pointer}
+.pf5btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pf5g{margin:14px 0 0;background:#fff;border:1px solid var(--p5-line);border-radius:var(--p5-r);box-shadow:var(--p5-sh-1);overflow:hidden}
+.pf5gl{display:block;padding:12px 16px 4px;font-size:12px;color:var(--p5-mut);font-weight:600}
+.pf5r{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:8px 16px;border-top:1px solid var(--p5-line-2);color:var(--p5-ink);font:500 15px var(--p5-sans)}
+.pf5g>.pf5r:first-child,.pf5gl+.pf5r{border-top:0}
+.pf5r i{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--p5-gold-50);color:var(--p5-maroon)}
+.pf5r svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pf5r span{flex:1;min-width:0}
+.pf5r>svg{width:18px;height:18px;color:#B9AE9C}
+.pf5r.danger{color:var(--p5-err)}.pf5r.danger i{background:var(--p5-err-50);color:var(--p5-err)}
+.pf5r:focus-visible{outline:2px solid var(--p5-gold);outline-offset:-2px}
+.pf5sw{flex:none;width:44px;height:26px;border-radius:26px;background:#D9D2C5;position:relative;transition:background .2s}
+.pf5sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.pf5sw.on{background:var(--p5-ok)}.pf5sw.on i{left:21px}
+html[data-p5] #e .pf5t{margin-top:4px}
+
 /* ----- generated: blue → maroon/champagne remap of active Style 3 rules (tools: p5/gen_theme.py) ----- */
 html[data-p5]{--b2161D1:#B02F44;--b174A9C:#832132;--b163E9A:#781E2D;--b0F2F73:#591521;--b2F6FE4:#CC314B;--b3D7BEA:#D43B55;--b2F6FD6:#BA364C;--b4A86E0:#CC465D;--b6FA0F2:#DCBF85;--b7FA8F5:#E0C794;--b9CC0FF:#E9D7B2;--b172033:#310E14;--b3B4A66:#6A1F2B;--b687386:#83776B;--b5F6B7A:#776D62;--b9AA6BA:#B2AAA2;--bB7C3D6:#E6D1A7;--bCBD5E3:#EDDEC1;--bE1E8F3:#EFECE5;--bD5E0F0:#EBE5DA;--bD5E2F7:#F0E9DC;--bD9E4F7:#F1EBDF;--bD6E4FB:#F4ECDD;--bC9DCFB:#F1E7D3;--bC3D6F8:#F0E4CB;--bE3ECFF:#F9F4E9;--bE8F1FF:#FAF6ED;--bE4EEFF:#F9F4EA;--bCFE0FF:#F4EBDA;--bE8EEF7:#F4F1EB;--bEEF4FE:#FBF8F1;--bEDF2F9:#F7F4EF;--bF1F6FE:#FBF9F4;--bEAF1FE:#FAF6EE;--bEEF3FB:#F8F6F1;--bEEF2F8:#F6F4F0;--bF2F6FD:#FBF9F4;--bF2F5FA:#F8F7F4;--bF5F7FC:#FBF9F6}
 html[data-p5] .tgb{background:#B73047;box-shadow:0 6px 16px rgba(183,48,71,.3)}
@@ -3407,6 +3433,62 @@ function pbDelReq(){try{
  function place(){if(main.firstElementChild!==host)main.prepend(host);const ch=main.querySelector(".qchips");if(ch&&host.nextElementSibling!==ch)host.after(ch)}
  tick();place();setInterval(()=>{tick();place()},1000);
  document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")tick()});
+})();
+
+/* ===== STM Premium (Style 5) · Navigation + Profile ===== */
+(function(){
+ if(!document.documentElement.hasAttribute("data-p5"))return;
+ const $i=id=>document.getElementById(id);
+ const E=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const P={
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14 9l2 2"/>',
+  gift:'<path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7ZM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7Z"/>',
+  snd:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+  out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  login:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'};
+ const ic=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${P[k]}</svg>`;
+ // Bottom navigation: முகப்பு · திட்டங்கள் · Passbook · அறிவிப்பு · கணக்கு
+ function relabel(t,label,icon){const b=document.querySelector(`nav button[data-t="${t}"]`);if(!b)return;
+  [...b.childNodes].forEach(n=>{if(n.nodeType===3&&n.textContent.trim())n.textContent=label});
+  if(icon){const s=b.querySelector("svg");if(s){s.setAttribute("viewBox","0 0 24 24");s.innerHTML=P[icon]}}
+  b.setAttribute("aria-label",label)}
+ relabel("s","முகப்பு","home");relabel("e","கணக்கு","user");
+ // Profile section
+ const sec=$i("e");if(!sec)return;
+ const h=sec.querySelector("h2.sh");if(h)h.textContent="உதவி & தொடர்பு";
+ const box=document.createElement("div");box.id="pf5";box.className="pf5";sec.prepend(box);
+ const head=document.createElement("h2");head.className="sh pf5t";head.textContent="என் கணக்கு";sec.prepend(head);
+ const mob=()=>{try{return(localStorage.getItem("mob")||"").replace(/\D/g,"").slice(-10)}catch(e){return""}};
+ function render(){
+  const d=window.PBOK&&window.PBD,m=mob(),snd=!window.stmFx||stmFx.enabled();
+  const row=(k,i,t,extra,cls)=>`<button type="button" class="pf5r${cls?" "+cls:""}" data-pf="${k}"><i>${ic(i)}</i><span>${t}</span>${extra||ic("chev")}</button>`;
+  const top=d?`<div class="pf5c"><div class="pf5av" aria-hidden="true">${E(String(d.name||"").trim().charAt(0).toUpperCase())}</div><div class="pf5m"><b>${E(d.name)}</b><small>${m?"+91 "+E(m.slice(0,5))+" "+E(m.slice(5)):""}</small><small>${E((()=>{try{return SN[d.scheme]}catch(e){return ""}})()||d.scheme)} திட்டம்${d.refer&&d.refer.code?" · "+E(d.refer.code):""}</small></div></div>`
+   :`<div class="pf5c guest"><div class="pf5av" aria-hidden="true">${ic("user")}</div><div class="pf5m"><b>உங்க கணக்கு</b><small>Passbook, தவணை, Referral எல்லாம் பார்க்க mPIN போட்டு நுழையுங்கள்.</small></div></div><button type="button" class="pf5btn" data-pf="login">${ic("login")}<span>mPIN போட்டு நுழைய</span></button>`;
+  const sw=`<em class="pf5sw${snd?" on":""}" aria-hidden="true"><i></i></em>`;
+  const list=d?[row("me","user","என் விவரம்"),row("pb","book","என் Passbook"),row("pin","key","mPIN மாற்ற / மறந்துவிட்டேன்"),row("rf","gift","நண்பரை சேர்க்க (Referral)")].join(""):"";
+  const set=[row("snd","snd","ஒலி & அதிர்வு",sw),row("priv","shield","தனியுரிமைக் கொள்கை"),d?row("del","trash","கணக்கை நீக்க கோரிக்கை"):"",d?row("lo","out","வெளியேறு","","danger"):""].join("");
+  box.innerHTML=top+(list?`<div class="pf5g">${list}</div>`:"")+`<div class="pf5g"><small class="pf5gl">அமைப்புகள்</small>${set}</div>`;
+  const s=box.querySelector('[data-pf="snd"]');if(s)s.setAttribute("aria-pressed",String(snd))}
+ const tab=t=>{const b=document.querySelector(`nav button[data-t="${t}"]`);if(b)b.click()};
+ box.addEventListener("click",e=>{const b=e.target.closest("[data-pf]");if(!b)return;const k=b.dataset.pf;
+  if(k=="login"){if(typeof showLock=="function")showLock("pin");return}
+  if(k=="me"||k=="pb"||k=="rf"){tab("p");if(k!="pb")setTimeout(()=>{if(typeof pbTab=="function")pbTab(k);scrollTo(0,0)},400);return}
+  if(k=="pin"){if(typeof openOT=="function")openOT("f");return}
+  if(k=="snd"){if(window.stmFx){const v=!stmFx.enabled();stmFx.set(v);if(v)stmFx.coin()}render();return}
+  if(k=="priv"){window.open("/privacy.html","_blank","noopener");return}
+  if(k=="del"){if(typeof pbDelReq=="function")pbDelReq();return}
+  if(k=="lo"){const l=$i("lo");if(l)l.click();setTimeout(render,300);return}});
+ // header avatar → profile
+ const hp=$i("hpro");if(hp)hp.onclick=()=>tab("e");
+ const nb=document.querySelector('nav button[data-t="e"]');if(nb)nb.addEventListener("click",render);
+ let sig="";setInterval(()=>{const d=window.PBOK&&window.PBD,s=[!!d,d&&d.name,mob()].join("|");if(s!==sig){sig=s;render()}},1000);
+ render();
 })();
 
 </script>

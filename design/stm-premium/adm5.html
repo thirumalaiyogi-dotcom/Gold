@@ -45,7 +45,7 @@
  let PEND=null,sig="";
  async function pend(){const r=await T(()=>sb.from("gold_requests").select("id",{count:"exact",head:true}).eq("status","pending"),null);if(r&&!r.error)PEND=r.count;render(true)}
  function render(force){
-  const C=window.CU;if(!Array.isArray(C)){card.innerHTML='<div class="a5h"><h2>📊 Dashboard</h2></div><p class="a5e">தகவல் ஏற்றுகிறது…</p>';return}
+  const C=window.CU;if(!Array.isArray(C)){card.innerHTML='<div class="a5h"><h2>Dashboard</h2></div><p class="a5e">தகவல் ஏற்றுகிறது…</p>';return}
   const day=ist().slice(0,10),mon=day.slice(0,7);
   const s=[C.length,C.reduce((a,c)=>a+(c.gold_payments||[]).length,0),PEND,day].join("|");if(!force&&s===sig)return;sig=s;
   const mo=k=>T(()=>MON(k),12),silv=k=>T(()=>SILV(k),false);
@@ -61,7 +61,7 @@
   all.sort((a,b)=>String(b.x.paid_on).localeCompare(String(a.x.paid_on)));
   const rec=all.slice(0,5);
   const k=(l,v,cls,sub)=>`<div class="a5k${cls?" "+cls:""}"><small>${l}</small><b>${v}</b>${sub?`<em>${sub}</em>`:""}</div>`;
-  card.innerHTML=`<div class="a5h"><div><h2>📊 Dashboard</h2><small>${new Date(day+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"long",year:"numeric"})}</small></div><button type="button" class="a5r" data-a5r>புதுப்பி ↻</button></div>
+  card.innerHTML=`<div class="a5h"><div><h2>Dashboard</h2><small>${new Date(day+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"long",year:"numeric"})}</small></div><button type="button" class="a5r" data-a5r>புதுப்பி ↻</button></div>
    <div class="a5hero"><small>இன்றைய வசூல்</small><b>₹${R(today)}</b><small>${todayN} பதிவு</small>
     <div class="a5hs"><div><small>இந்த மாத வசூல்</small><b>₹${R(month)}</b></div><div><small>மொத்த வசூல்</small><b>₹${R(tot)}</b></div></div></div>
    <div class="a5g">

@@ -4,6 +4,7 @@
 # colours remapped to the maroon / champagne / ivory palette. Gold colours are kept.
 import re, sys, colorsys
 src = open(sys.argv[1], encoding='utf-8').read()
+ATTR = 'html[%s]' % (sys.argv[3] if len(sys.argv) > 3 else 'data-p5')
 m = re.search(r'<style>', src); css = src[m.end(): src.index('</style>', m.end())]
 
 def hx(h):
@@ -54,15 +55,15 @@ def prefix(sel):
         p = part.strip()
         if not p: continue
         if p.startswith('html[data-style="3"]'):
-            out.append('html[data-p5]' + p[4:])
+            out.append(ATTR + p[4:])
         elif p.startswith('html[data-style=') or p.startswith('html[data-lux') or p.startswith('html.') or 'data-lux' in p:
             return None                          # other styles: not active under Style 5
         elif p.startswith(':root'):
-            out.append('html[data-p5]' + p[5:])
+            out.append(ATTR + p[5:])
         elif p.startswith('html'):
-            out.append('html[data-p5]' + p[4:])
+            out.append(ATTR + p[4:])
         else:
-            out.append('html[data-p5] ' + p)
+            out.append(ATTR+' ' + p)
     return ','.join(out) if out else None
 
 res = []

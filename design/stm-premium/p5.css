@@ -127,3 +127,29 @@ html[data-p5] #s .xmain>.qchips{order:-9;margin-top:14px!important}
 .d5 button:focus-visible,.d5 [role=button]:focus-visible{outline:2px solid var(--p5-gold);outline-offset:3px;border-radius:12px}
 @media (min-width:800px){html[data-p5] .d5-sv .d5-tot{font-size:40px}}
 @media (prefers-reduced-motion:reduce){.d5 *{transition:none!important}}
+
+/* ===== Profile (கணக்கு) ===== */
+.pf5{margin:0 0 20px}
+.pf5c{display:flex;align-items:center;gap:14px;padding:18px;border-radius:var(--p5-r-lg);background:linear-gradient(160deg,var(--p5-maroon),var(--p5-burg));color:#fff;box-shadow:var(--p5-sh-2);position:relative;overflow:hidden}
+.pf5c:before{content:"";position:absolute;inset:6px;border:1px solid rgba(229,201,139,.28);border-radius:16px;pointer-events:none}
+.pf5av{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--p5-gold-50);color:var(--p5-maroon);font:700 24px var(--p5-serif);border:2px solid var(--p5-gold)}
+.pf5av svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7}
+.pf5m{min-width:0}
+.pf5m b{display:block;font:700 19px/1.3 var(--p5-serif);overflow-wrap:anywhere}
+.pf5m small{display:block;font-size:12.5px;color:var(--p5-gold-soft);margin-top:3px;line-height:1.45}
+.pf5btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin:12px 0 0;border:0;border-radius:12px;background:var(--p5-maroon);color:#fff;font:600 15px var(--p5-sans);cursor:pointer}
+.pf5btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pf5g{margin:14px 0 0;background:#fff;border:1px solid var(--p5-line);border-radius:var(--p5-r);box-shadow:var(--p5-sh-1);overflow:hidden}
+.pf5gl{display:block;padding:12px 16px 4px;font-size:12px;color:var(--p5-mut);font-weight:600}
+.pf5r{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:8px 16px;border-top:1px solid var(--p5-line-2);color:var(--p5-ink);font:500 15px var(--p5-sans)}
+.pf5g>.pf5r:first-child,.pf5gl+.pf5r{border-top:0}
+.pf5r i{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--p5-gold-50);color:var(--p5-maroon)}
+.pf5r svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.pf5r span{flex:1;min-width:0}
+.pf5r>svg{width:18px;height:18px;color:#B9AE9C}
+.pf5r.danger{color:var(--p5-err)}.pf5r.danger i{background:var(--p5-err-50);color:var(--p5-err)}
+.pf5r:focus-visible{outline:2px solid var(--p5-gold);outline-offset:-2px}
+.pf5sw{flex:none;width:44px;height:26px;border-radius:26px;background:#D9D2C5;position:relative;transition:background .2s}
+.pf5sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.pf5sw.on{background:var(--p5-ok)}.pf5sw.on i{left:21px}
+html[data-p5] #e .pf5t{margin-top:4px}

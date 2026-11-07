@@ -117,3 +117,59 @@
  tick();place();setInterval(()=>{tick();place()},1000);
  document.addEventListener("visibilitychange",()=>{if(document.visibilityState=="visible")tick()});
 })();
+
+/* ===== STM Premium (Style 5) · Navigation + Profile ===== */
+(function(){
+ if(!document.documentElement.hasAttribute("data-p5"))return;
+ const $i=id=>document.getElementById(id);
+ const E=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+ const P={
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14 9l2 2"/>',
+  gift:'<path d="M20 12v9H4v-9M2 7h20v5H2zM12 21V7M12 7H7.5a2.5 2.5 0 1 1 0-5C11 2 12 7 12 7ZM12 7h4.5a2.5 2.5 0 1 0 0-5C13 2 12 7 12 7Z"/>',
+  snd:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6"/>',
+  shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15"/>',
+  out:'<path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11"/>',
+  chev:'<path d="m9 6 6 6-6 6"/>',
+  login:'<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/>'};
+ const ic=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${P[k]}</svg>`;
+ // Bottom navigation: முகப்பு · திட்டங்கள் · Passbook · அறிவிப்பு · கணக்கு
+ function relabel(t,label,icon){const b=document.querySelector(`nav button[data-t="${t}"]`);if(!b)return;
+  [...b.childNodes].forEach(n=>{if(n.nodeType===3&&n.textContent.trim())n.textContent=label});
+  if(icon){const s=b.querySelector("svg");if(s){s.setAttribute("viewBox","0 0 24 24");s.innerHTML=P[icon]}}
+  b.setAttribute("aria-label",label)}
+ relabel("s","முகப்பு","home");relabel("e","கணக்கு","user");
+ // Profile section
+ const sec=$i("e");if(!sec)return;
+ const h=sec.querySelector("h2.sh");if(h)h.textContent="உதவி & தொடர்பு";
+ const box=document.createElement("div");box.id="pf5";box.className="pf5";sec.prepend(box);
+ const head=document.createElement("h2");head.className="sh pf5t";head.textContent="என் கணக்கு";sec.prepend(head);
+ const mob=()=>{try{return(localStorage.getItem("mob")||"").replace(/\D/g,"").slice(-10)}catch(e){return""}};
+ function render(){
+  const d=window.PBOK&&window.PBD,m=mob(),snd=!window.stmFx||stmFx.enabled();
+  const row=(k,i,t,extra,cls)=>`<button type="button" class="pf5r${cls?" "+cls:""}" data-pf="${k}"><i>${ic(i)}</i><span>${t}</span>${extra||ic("chev")}</button>`;
+  const top=d?`<div class="pf5c"><div class="pf5av" aria-hidden="true">${E(String(d.name||"").trim().charAt(0).toUpperCase())}</div><div class="pf5m"><b>${E(d.name)}</b><small>${m?"+91 "+E(m.slice(0,5))+" "+E(m.slice(5)):""}</small><small>${E((()=>{try{return SN[d.scheme]}catch(e){return ""}})()||d.scheme)} திட்டம்${d.refer&&d.refer.code?" · "+E(d.refer.code):""}</small></div></div>`
+   :`<div class="pf5c guest"><div class="pf5av" aria-hidden="true">${ic("user")}</div><div class="pf5m"><b>உங்க கணக்கு</b><small>Passbook, தவணை, Referral எல்லாம் பார்க்க mPIN போட்டு நுழையுங்கள்.</small></div></div><button type="button" class="pf5btn" data-pf="login">${ic("login")}<span>mPIN போட்டு நுழைய</span></button>`;
+  const sw=`<em class="pf5sw${snd?" on":""}" aria-hidden="true"><i></i></em>`;
+  const list=d?[row("me","user","என் விவரம்"),row("pb","book","என் Passbook"),row("pin","key","mPIN மாற்ற / மறந்துவிட்டேன்"),row("rf","gift","நண்பரை சேர்க்க (Referral)")].join(""):"";
+  const set=[row("snd","snd","ஒலி & அதிர்வு",sw),row("priv","shield","தனியுரிமைக் கொள்கை"),d?row("del","trash","கணக்கை நீக்க கோரிக்கை"):"",d?row("lo","out","வெளியேறு","","danger"):""].join("");
+  box.innerHTML=top+(list?`<div class="pf5g">${list}</div>`:"")+`<div class="pf5g"><small class="pf5gl">அமைப்புகள்</small>${set}</div>`;
+  const s=box.querySelector('[data-pf="snd"]');if(s)s.setAttribute("aria-pressed",String(snd))}
+ const tab=t=>{const b=document.querySelector(`nav button[data-t="${t}"]`);if(b)b.click()};
+ box.addEventListener("click",e=>{const b=e.target.closest("[data-pf]");if(!b)return;const k=b.dataset.pf;
+  if(k=="login"){if(typeof showLock=="function")showLock("pin");return}
+  if(k=="me"||k=="pb"||k=="rf"){tab("p");if(k!="pb")setTimeout(()=>{if(typeof pbTab=="function")pbTab(k);scrollTo(0,0)},400);return}
+  if(k=="pin"){if(typeof openOT=="function")openOT("f");return}
+  if(k=="snd"){if(window.stmFx){const v=!stmFx.enabled();stmFx.set(v);if(v)stmFx.coin()}render();return}
+  if(k=="priv"){window.open("/privacy.html","_blank","noopener");return}
+  if(k=="del"){if(typeof pbDelReq=="function")pbDelReq();return}
+  if(k=="lo"){const l=$i("lo");if(l)l.click();setTimeout(render,300);return}});
+ // header avatar → profile
+ const hp=$i("hpro");if(hp)hp.onclick=()=>tab("e");
+ const nb=document.querySelector('nav button[data-t="e"]');if(nb)nb.addEventListener("click",render);
+ let sig="";setInterval(()=>{const d=window.PBOK&&window.PBD,s=[!!d,d&&d.name,mob()].join("|");if(s!==sig){sig=s;render()}},1000);
+ render();
+})();
