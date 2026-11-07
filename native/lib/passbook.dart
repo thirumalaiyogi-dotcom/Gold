@@ -189,7 +189,7 @@ class _PassbookTabState extends State<PassbookTab> {
           ],
           if (canPay) ...[
             const SizedBox(height: 16),
-            SwipeToPay(label: 'இழுத்து தவணை செலுத்துங்க', amount: Demo.fixed ? rupees(Demo.monthly) : null, onDone: () => _pay(context)),
+            SwipeToPay(label: 'தவணை செலுத்த', silver: Demo.silver, onDone: () => _pay(context)),
           ],
         ]),
       ),

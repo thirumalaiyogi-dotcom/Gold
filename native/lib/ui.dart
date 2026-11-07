@@ -261,8 +261,9 @@ void showNote(BuildContext context, String text, {bool ok = true}) {
 /// Swipe-to-pay: drag the gold coin to the right to start a payment.
 /// Past 85% it locks, gives a firm haptic and calls [onDone]; otherwise it springs back.
 class SwipeToPay extends StatefulWidget {
-  const SwipeToPay({super.key, required this.label, required this.onDone, this.amount});
+  const SwipeToPay({super.key, required this.label, required this.onDone, this.amount, this.silver = false});
   final String label;
+  final bool silver;
   final String? amount;
   final VoidCallback onDone;
   @override
@@ -317,7 +318,7 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(h),
-                  gradient: LinearGradient(colors: [C.gold.withValues(alpha: .25), C.gold.withValues(alpha: .55)]),
+                  gradient: LinearGradient(colors: widget.silver ? [const Color(0x40D9DDE2), const Color(0x8CD9DDE2)] : [C.gold.withValues(alpha: .25), C.gold.withValues(alpha: .55)]),
                 ),
               ),
             ),
@@ -389,7 +390,7 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
                   height: h - pad * 2,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: C.goldSoft,
+                    color: widget.silver ? const Color(0xFFE6E8EB) : C.goldSoft,
                     boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: .25), blurRadius: 8, offset: const Offset(0, 3))],
                   ),
                   padding: const EdgeInsets.all(3),
@@ -397,7 +398,19 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
                     angle: p * 6.283,
                     child: done
                         ? const Icon(Icons.check_rounded, color: C.navy, size: 28)
-                        : ClipOval(child: Image.asset('assets/coin.png', fit: BoxFit.cover)),
+                        : ClipOval(
+                            child: widget.silver
+                                // silver scheme: same Lakshmi coin rendered in silver tones
+                                ? ColorFiltered(
+                                    colorFilter: const ColorFilter.matrix([
+                                      0.30, 0.55, 0.15, 0, 18, //
+                                      0.30, 0.55, 0.15, 0, 22, //
+                                      0.30, 0.55, 0.15, 0, 30, //
+                                      0, 0, 0, 1, 0,
+                                    ]),
+                                    child: Image.asset('assets/coin.png', fit: BoxFit.cover),
+                                  )
+                                : Image.asset('assets/coin.png', fit: BoxFit.cover)),
                   ),
                 ),
               ),
