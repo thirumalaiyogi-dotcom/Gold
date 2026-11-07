@@ -153,3 +153,12 @@ html[data-p5] #s .xmain>.qchips{order:-9;margin-top:14px!important}
 .pf5sw i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
 .pf5sw.on{background:var(--p5-ok)}.pf5sw.on i{left:21px}
 html[data-p5] #e .pf5t{margin-top:4px}
+
+/* ===== Passbook (Style 5): one page ===== */
+html[data-p5] #pb .pbtabs,html[data-p5] #pb .pbacts4{display:none!important}
+html[data-p5] #pb .pb5back{display:none}
+html[data-p5] #p.pbt-me #pb .pb5back,html[data-p5] #p.pbt-rf #pb .pb5back{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:6px;min-height:44px;margin:4px 0 8px;padding:0 4px;color:var(--p5-maroon);font:600 15px var(--p5-sans)}
+html[data-p5] #pb .pb5a{display:flex;gap:8px;margin-left:auto}
+html[data-p5] #pb .pb5a button{all:unset;box-sizing:border-box;cursor:pointer;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(201,164,92,.55);color:var(--p5-maroon);background:#fff}
+html[data-p5] #pb .pb5a svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html[data-p5] #pb .pb5a button:focus-visible{outline:2px solid var(--p5-gold);outline-offset:2px}

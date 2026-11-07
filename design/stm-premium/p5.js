@@ -173,3 +173,34 @@
  let sig="";setInterval(()=>{const d=window.PBOK&&window.PBD,s=[!!d,d&&d.name,mob()].join("|");if(s!==sig){sig=s;render()}},1000);
  render();
 })();
+
+/* ===== STM Premium (Style 5) · Passbook: one simple page =====
+   Passbook shows only savings, next installment and history. "என் விவரம்" and "Referral"
+   open from the கணக்கு tab (same panels, with a back bar). PDF + share sit in the header. */
+(function(){
+ if(!document.documentElement.hasAttribute("data-p5"))return;
+ const pb=document.getElementById("pb"),sec=document.getElementById("p");if(!pb||!sec)return;
+ // only the profile page may open the "me"/"rf" panels (blocks the old swipe-between-tabs)
+ if(typeof pbTab==="function"){const orig=pbTab;window.pbTab=function(k,f){if(k&&k!=="sv"){if(window.P5PB!==k)k="sv";else window.P5PB=""}return orig(k,f)}}
+ const SH='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>';
+ const PD='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>';
+ function fix(){
+  const x=pb.querySelector(".pbx");if(!x)return;
+  const top=x.querySelector(".pbtop");
+  if(top&&!top.querySelector(".pb5a")){const i=top.querySelector(".pbtopi");const w=document.createElement("span");w.className="pb5a";
+   w.innerHTML=`<button type="button" aria-label="Passbook PDF" data-pb5="pdf">${PD}</button><button type="button" aria-label="WhatsApp-ல் பகிர்" data-pb5="share">${SH}</button>`;
+   if(i)i.replaceWith(w);else top.appendChild(w)}
+  const bar=x.querySelector(".pbtabs");
+  if(bar&&!x.querySelector(".pb5back")){const b=document.createElement("button");b.type="button";b.className="pb5back noprint";b.innerHTML='‹ <span>என் கணக்கு</span>';bar.after(b)}
+  const h=x.querySelector(".pbtx h3");if(h&&!h.dataset.p5){h.dataset.p5="1";[...h.childNodes].forEach(n=>{if(n.nodeType===3&&/தவணை விவரம்/.test(n.textContent))n.textContent=n.textContent.replace("தவணை விவரம்","தவணை வரலாறு")})}
+ }
+ new MutationObserver(fix).observe(pb,{childList:true,subtree:true});fix();
+ pb.addEventListener("click",e=>{const a=e.target.closest("[data-pb5]");
+  if(a){if(a.dataset.pb5==="pdf"&&typeof printPB==="function")printPB();if(a.dataset.pb5==="share"&&typeof sharePB==="function")sharePB();return}
+  if(e.target.closest(".pb5back")){window.pbTab("sv");const n=document.querySelector('nav button[data-t="e"]');if(n)n.click()}});
+ // Passbook from the nav always opens on savings
+ const nb=document.querySelector('nav button[data-t="p"]');if(nb)nb.addEventListener("click",()=>{if(window.PBTAB&&window.PBTAB!=="sv")setTimeout(()=>window.pbTab("sv"),0)});
+ // profile rows "me" / "rf" are allowed to open their panel
+ const box=document.getElementById("pf5");
+ if(box)box.addEventListener("click",e=>{const b=e.target.closest('[data-pf="me"],[data-pf="rf"]');if(b)window.P5PB=b.dataset.pf},true);
+})();
