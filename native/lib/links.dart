@@ -24,3 +24,7 @@ Future<void> whatsApp(BuildContext context, [String text = 'வணக்கம�
     openLink(context, 'https://api.whatsapp.com/send?phone=${Shop.waNumber}&text=${Uri.encodeComponent(text)}');
 
 Future<void> openMaps(BuildContext context) => openLink(context, Shop.maps);
+
+/// Share any text through WhatsApp (user picks the contact).
+Future<void> shareWhatsApp(BuildContext context, String text) =>
+    openLink(context, 'https://api.whatsapp.com/send?text=${Uri.encodeComponent(text)}');

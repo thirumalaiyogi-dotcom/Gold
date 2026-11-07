@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'data.dart';
+import 'api.dart';
 import 'ui.dart';
 
 /// விலை நிலவரம் — gold / silver, range chips, line chart, stats, daily list.
@@ -15,10 +15,60 @@ class RatePage extends StatefulWidget {
 class _RatePageState extends State<RatePage> {
   bool silver = false;
   int days = 30;
+  List<Map<String, dynamic>>? rows;
+  bool failed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      rows = null;
+      failed = false;
+    });
+    try {
+      final r = await Api.history(days);
+      if (mounted) setState(() => rows = r);
+    } catch (_) {
+      if (mounted) setState(() => failed = true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final h = rateHistory(silver: silver, days: days);
+    final appBar = AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('விலை நிலவரம்', style: sans(16.5, color: C.ink, weight: FontWeight.w700)));
+    if (rows == null) {
+      return Scaffold(
+        backgroundColor: C.ivory,
+        appBar: appBar,
+        body: Center(
+          child: failed
+              ? Column(mainAxisSize: MainAxisSize.min, children: [
+                  Text('விலை விவரம் ஏற்ற முடியல', style: sans(15)),
+                  const SizedBox(height: 10),
+                  OutlineBtn('மீண்டும் முயற்சி', onTap: _load),
+                ])
+              : const CircularProgressIndicator(color: C.navy),
+        ),
+      );
+    }
+    // [days-back, value] from real history; empty days skipped
+    final today = DateTime.now();
+    final h = <List<num>>[
+      for (final r in rows!)
+        if ((silver ? r['silver'] : r['rate22']) != null)
+          [today.difference(DateTime.parse(r['day'].toString())).inDays, num.parse('${silver ? r['silver'] : r['rate22']}')]
+    ];
+    if (h.length < 2) {
+      return Scaffold(
+        backgroundColor: C.ivory,
+        appBar: appBar,
+        body: Center(child: Padding(padding: const EdgeInsets.all(30), child: Text('இந்த காலத்துக்கு போதுமான விலை பதிவு இல்ல. கடை தினமும் விலை பதிவு செய்ததும் graph வரும்.', textAlign: TextAlign.center, style: sans(14.5, color: C.mute, height: 1.6)))),
+      );
+    }
     final vals = h.map((e) => e[1].toDouble()).toList();
     final hi = vals.reduce(math.max), lo = vals.reduce(math.min);
     final diff = vals.last - vals.first;
@@ -47,7 +97,7 @@ class _RatePageState extends State<RatePage> {
 
     return Scaffold(
       backgroundColor: C.ivory,
-      appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('விலை நிலவரம்', style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
+      appBar: appBar,
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
         Container(
           padding: const EdgeInsets.all(4),
@@ -61,7 +111,10 @@ class _RatePageState extends State<RatePage> {
               label: Text(d == 7 ? '7 நாட்கள்' : d == 30 ? '1 மாதம்' : '3 மாதம்'),
               selected: days == d,
               selectedColor: C.goldSoft,
-              onSelected: (_) => setState(() => days = d),
+              onSelected: (_) {
+                days = d;
+                _load();
+              },
             ),
         ]),
         const SizedBox(height: 12),
@@ -85,7 +138,7 @@ class _RatePageState extends State<RatePage> {
               Text(day(0), style: sans(11.5, color: C.mute)),
             ]),
             const SizedBox(height: 6),
-            Text('மாதிரி விலைகள் · உண்மையான app கடை பதிவு செய்த விலைகளைக் காட்டும்', style: sans(11.5, color: C.mute)),
+            Text('கடை பதிவு செய்த விலைகள் · ${h.length} நாட்கள்', style: sans(11.5, color: C.mute)),
           ]),
         ),
         const SizedBox(height: 12),

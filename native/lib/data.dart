@@ -8,9 +8,46 @@ class Scheme {
   final List<List<String>> acc, faq;
   final int minAmount, months;
   final bool fixed, grams, silver;
+
+  /// Schemes the shop adds from the staff panel (gold_schemes). Section lines are "தலைப்பு | விவரம்".
+  factory Scheme.fromDb(Map<String, dynamic> r) {
+    List<List<String>> sp(dynamic t) => (t ?? '')
+        .toString()
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .map((l) {
+          final i = l.indexOf('|');
+          return i < 0 ? [l, ''] : [l.substring(0, i).trim(), l.substring(i + 1).trim()];
+        })
+        .toList();
+    final name = (r['name'] ?? r['key']).toString();
+    final tagline = (r['tagline'] ?? '').toString();
+    final tags = (r['tags'] ?? '').toString();
+    final silver = RegExp('சில்வர்|வெள்ளி|silver', caseSensitive: false).hasMatch('$name $tagline $tags');
+    final acc = sp(r['sections']);
+    return Scheme(
+      key: r['key'].toString(),
+      name: name,
+      title: '$name திட்டம்',
+      tag: tagline,
+      tags: tags.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList(),
+      why: (r['description'] ?? '').toString(),
+      acc: acc,
+      faq: [...sp(r['faq']), ['வேறு சந்தேகம்?', 'கடையை தொடர்பு கொள்ளுங்க: 9791918344 / 9344395078.']],
+      terms: acc.map((a) => '${a[0]}: ${a[1]}').toList(),
+      minAmount: silver ? 100 : 1000,
+      amountRange: silver ? '₹100 – ₹1,00,000' : '₹1,000 – ₹1,00,000',
+      fixed: r['fixed'] == true,
+      grams: r['grams'] == true,
+      silver: silver,
+      coin: silver ? 'வெள்ளி' : '22K',
+      months: (r['months'] as num?)?.toInt() ?? 12,
+    );
+  }
 }
 
-const schemes = <Scheme>[
+const _allStatic = <Scheme>[
   Scheme(key: 'dhana', name: r'''தனலட்சுமி''', title: r'''தனலட்சுமி தங்கநகை சேமிப்புத் திட்டம்''', tag: r'''₹1,000 முதல் தங்கம் சேமிங்க''', tags: [r'''11 தவணை''', r'''தவணை மாற்றலாம்''', r'''சேதாரம் & செய்கூலி தள்ளுபடி'''],
     why: r'''ஒவ்வொரு மாதமும் உங்களால் இயன்ற தவணைத் தொகையை செலுத்திக் கொள்ளலாம். 11 தவணைத் தொகை முடிந்தவுடன் 12 வது மாதம் உங்கள் கனவுத் தங்கத்தை மனநிறைவோடு வாங்கிக் கொள்ளும் திட்டம்.''',
     acc: [[r'''திட்ட விவரம்''', r'''₹1,000 முதல் ₹1,00,000 வரை பணம் செலுத்தி தங்கம் சேமிக்கலாம். தவணைக்காலம் 11 மாதங்கள்; 12 வது மாதம் நகை / காயின் வாங்கலாம். ஒவ்வொரு மாதமும் 1 முதல் 7 ஆம் தேதிக்குள் பணம் செலுத்த வேண்டும்.'''], [r'''தவணை உங்கள் விருப்பம்''', r'''தவணைத்தொகையை மாதா மாதம் மாற்றலாம். எ.கா: முதல் மாதம் ₹1,000, இரண்டாவது மாதம் ₹5,000, மூன்றாவது மாதம் ₹2,500.'''], [r'''12 வது மாதம் என்ன கிடைக்கும்?''', r'''11 மாதங்களில் நீங்கள் செலுத்திய மொத்த ரூபாய்க்கு, 12 வது மாதம் அன்றைய தங்க விலைக்கு ஏற்ப தங்க நகை அல்லது தங்க காசு (காயின்) வாங்கலாம்.'''], [r'''சலுகைகள் மற்றும் நிபந்தனைகள்''', r'''காயின்: சேதாரம், செய்கூலி, GST அனைத்தும் தள்ளுபடி.
@@ -38,7 +75,7 @@ class Notice {
 }
 
 /// Sample notices (the real app reads them from gold_notices).
-const notices = <Notice>[
+const sampleNotices = <Notice>[
   Notice('தீபாவளி சிறப்பு சலுகை', 'இந்த வாரம் கடையில் எல்லா நகைகளுக்கும் சிறப்பு சலுகை. விவரங்களுக்கு கடைக்கு வாருங்கள்.', '5 நவ. 2026'),
   Notice('குபேர லட்சுமி திட்டம்', 'சின்ன சின்னதா தங்கத்தை சேமிங்க. ஒவ்வொரு மாதமும் செலுத்தும் தொகை அன்றைய விலையில் தங்கமாக மாறும்.', '18 அக். 2026'),
   Notice('கடை நேரம்', 'திங்கள் – சனி: 9:00 AM – 9:00 PM · ஞாயிறு: 9:00 AM – 8:00 PM', '1 அக். 2026'),
@@ -55,3 +92,10 @@ List<List<num>> rateHistory({bool silver = false, int days = 30}) {
   }
   return out;
 }
+
+
+/// தனலட்சுமி + குபேரலட்சுமி are built into the website too; other schemes come from the database.
+final baseSchemes = _allStatic.where((s) => s.key == 'dhana' || s.key == 'kubera').toList();
+
+/// Used only when the database can't be reached (offline first start).
+final offlineSchemes = _allStatic;

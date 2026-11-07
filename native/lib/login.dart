@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'api.dart';
 import 'home.dart';
+import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
 
@@ -106,7 +108,7 @@ class WelcomeScreen extends StatelessWidget {
           onTap: () => Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false),
         ),
         const SizedBox(height: 26),
-        Center(child: Text('மாதிரி app · Test data மட்டும்', style: sans(12, color: C.mute))),
+        Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி', style: sans(12, color: C.mute))),
       ]),
     );
   }
@@ -130,7 +132,7 @@ class _HelpTiles extends StatelessWidget {
   const _HelpTiles();
   @override
   Widget build(BuildContext context) {
-    Widget tile(IconData i, String t, String msg) => Expanded(
+    Widget tile(IconData i, String t, VoidCallback onTap) => Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Material(
@@ -138,7 +140,7 @@ class _HelpTiles extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: C.line2)),
               child: InkWell(
                 borderRadius: BorderRadius.circular(14),
-                onTap: () => showNote(context, msg),
+                onTap: onTap,
                 child: SizedBox(
                   height: 66,
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -152,10 +154,10 @@ class _HelpTiles extends StatelessWidget {
           ),
         );
     return Row(children: [
-      tile(Icons.chat_outlined, 'WhatsApp', 'மாதிரி: கடையின் WhatsApp திறக்கும்'),
-      tile(Icons.info_outline, 'எங்களைப் பற்றி', 'மாதிரி: கடை விவரப் பக்கம்'),
-      tile(Icons.call_outlined, 'அழைக்க', 'மாதிரி: 97919 18344 அழைக்கும்'),
-      tile(Icons.place_outlined, 'வழி காட்டு', 'மாதிரி: Google Maps திறக்கும்'),
+      tile(Icons.chat_outlined, 'WhatsApp', () => whatsApp(context)),
+      tile(Icons.info_outline, 'எங்களைப் பற்றி', () => openLink(context, Api.site)),
+      tile(Icons.call_outlined, 'அழைக்க', () => callShop(context)),
+      tile(Icons.place_outlined, 'வழி காட்டு', () => openMaps(context)),
     ]);
   }
 }
@@ -205,11 +207,30 @@ class _MobileScreenState extends State<MobileScreen> {
     });
   }
 
-  void _next() {
+  bool busy = false;
+  Future<void> _next() async {
+    if (busy) return;
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(v)) {
       HapticFeedback.heavyImpact();
       setState(() {
         err = 'சரியான 10 இலக்க மொபைல் எண் போடுங்க';
+        shake++;
+      });
+      return;
+    }
+    setState(() => busy = true);
+    bool? ok;
+    try {
+      ok = await Api.mobileOk(v);
+    } catch (_) {
+      ok = null; // network problem: let the mPIN step decide
+    }
+    if (!mounted) return;
+    setState(() => busy = false);
+    if (ok == false) {
+      HapticFeedback.heavyImpact();
+      setState(() {
+        err = 'இந்த எண் பதிவில் இல்ல. கடையில் பதிவு செய்த எண்ணை போடுங்க.';
         shake++;
       });
       return;
@@ -270,11 +291,25 @@ class _PinScreenState extends State<PinScreen> {
     });
     if (v.length == 6) {
       setState(() => busy = true);
-      await Future.delayed(const Duration(milliseconds: 350));
+      Map<String, dynamic>? d;
+      String? fail;
+      try {
+        d = await Api.login(widget.mobile, v);
+      } catch (_) {
+        fail = 'இணைய இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்.';
+      }
       if (!mounted) return;
-      if (v == Demo.pin) {
+      if (fail == null && d != null && d['locked'] == true) {
+        fail = 'பல தவறான முயற்சிகள். ${d['minutes'] ?? ''} நிமிடம் கழித்து முயற்சிக்கவும்.';
+      } else if (fail == null && d != null && d['locked_otp'] == true) {
+        fail = '5 முறை தவறு. mPIN பூட்டப்பட்டது. "mPIN மறந்துட்டீங்களா?" வழியாக புது mPIN வைங்க.';
+      } else if (fail == null && (d == null || d['wrong'] == true || d['name'] == null)) {
+        final left = d?['left'];
+        fail = left is num ? 'mPIN தவறு. இன்னும் $left முயற்சி மட்டும்.' : 'மொபைல் எண் / mPIN தவறு.';
+      }
+      if (fail == null && d != null) {
         HapticFeedback.mediumImpact();
-        app.login(widget.mobile);
+        app.login(widget.mobile, v, d);
         Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 450),
@@ -288,7 +323,7 @@ class _PinScreenState extends State<PinScreen> {
         setState(() {
           busy = false;
           v = '';
-          err = 'mPIN தவறு. (மாதிரி app-ல mPIN: 123456)';
+          err = fail ?? 'mPIN தவறு';
           shake++;
         });
       }
@@ -318,7 +353,7 @@ class _PinScreenState extends State<PinScreen> {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-            onPressed: () => showNote(context, 'மாதிரி: Telegram OTP மூலம் புது mPIN'),
+            onPressed: () => whatsApp(context, 'வணக்கம், என் mPIN மறந்துட்டேன். புது Activation code வேண்டும்.\nமொபைல் எண்: ${widget.mobile}'),
             child: Text('mPIN மறந்துட்டீங்களா?', style: sans(14, color: C.navy, weight: FontWeight.w700)),
           ),
         ),
@@ -388,7 +423,9 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         ]),
       );
 
-  void _save() {
+  bool busy = false;
+  Future<void> _save() async {
+    if (busy) return;
     String? e;
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(_m.text)) {
       e = 'சரியான மொபைல் எண் போடுங்க';
@@ -404,9 +441,37 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       setState(() => err = e!);
       return;
     }
-    HapticFeedback.mediumImpact();
-    showNote(context, 'மாதிரி: mPIN அமைக்கப்பட்டது ✓ (உண்மையில் சேமிக்கப்படவில்லை)');
-    Navigator.of(context).pop();
+    setState(() {
+      busy = true;
+      err = '';
+    });
+    Map<String, dynamic>? r;
+    try {
+      r = await Api.activate(_m.text, _c.text, _p1.text);
+    } catch (_) {
+      if (mounted) setState(() => err = 'இணைய இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்.');
+    }
+    if (!mounted) return;
+    if (r != null && r['locked'] == true) {
+      setState(() => err = 'பல தவறான முயற்சிகள். ${r!['minutes'] ?? ''} நிமிடம் கழித்து முயற்சிக்கவும்.');
+    } else if (r == null || r['ok'] != true) {
+      if (err.isEmpty) setState(() => err = 'மொபைல் / code தவறு. கடையை தொடர்பு கொள்ளுங்க.');
+    } else {
+      HapticFeedback.mediumImpact();
+      try {
+        final d = await Api.login(_m.text, _p1.text);
+        if (!mounted) return;
+        if (d != null && d['name'] != null) {
+          app.login(_m.text, _p1.text, d);
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false);
+          return;
+        }
+      } catch (_) {}
+      if (!mounted) return;
+      showNote(context, 'mPIN அமைக்கப்பட்டது ✓ இப்போ உள்நுழையுங்க');
+      Navigator.of(context).pop();
+    }
+    if (mounted) setState(() => busy = false);
   }
 
   @override
@@ -433,11 +498,11 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         _field('புது 6 இலக்க mPIN*', _p1, secret: true),
         _field('mPIN மறுபடி*', _p2, secret: true),
         if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
-        PrimaryButton('mPIN அமை', onTap: _save),
+        PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', onTap: _save),
         const SizedBox(height: 14),
         Center(
           child: TextButton(
-            onPressed: () => showNote(context, 'மாதிரி: Telegram OTP வழி'),
+            onPressed: () => whatsApp(context, 'வணக்கம், எனக்கு Activation code வரல. புது code வேண்டும்.\nமொபைல் எண்: ${_m.text}'),
             child: Text('Code வரலையா? Telegram OTP மூலம் mPIN வைக்க ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
           ),
         ),

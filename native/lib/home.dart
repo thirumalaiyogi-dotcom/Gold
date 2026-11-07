@@ -143,7 +143,13 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
-    return ListView(padding: EdgeInsets.zero, children: [
+    return AnimatedBuilder(animation: app, builder: (context, _) => RefreshIndicator(
+      color: C.navy,
+      onRefresh: () async {
+        await app.loadPublic();
+        await app.refreshPassbook();
+      },
+      child: ListView(padding: EdgeInsets.zero, children: [
       // ---------- Header: flat navy, gold rule ----------
       Container(
         padding: EdgeInsets.fromLTRB(16, top + 8, 16, 16),
@@ -167,9 +173,9 @@ class HomeTab extends StatelessWidget {
             ),
           ]),
           const SizedBox(height: 6),
-          Text(app.loggedIn ? '${_greet()}, ${Demo.name}' : _greet(), style: sans(16, color: Colors.white, weight: FontWeight.w600)),
+          Text(app.loggedIn ? '${_greet()}, ${Demo.firstName}' : _greet(), style: sans(16, color: Colors.white, weight: FontWeight.w600)),
           const SizedBox(height: 14),
-          const _RateBoard(),
+          _RateBoard(),
           const SizedBox(height: 8),
           Text(Demo.rateStamp, style: sans(12.5, color: C.navyMute)),
           const SizedBox(height: 8),
@@ -207,10 +213,13 @@ class HomeTab extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           _SchemeHero(go: go),
-          if (app.loggedIn) ...[
+          if (app.loggedIn && Demo.payments.isNotEmpty) ...[
             const SizedBox(height: 24),
             SectionTitle('சமீபத்திய தவணைகள்', action: 'அனைத்தும் ›', onAction: () => go(2)),
-            LuxCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: Column(children: [for (final p in Demo.payments) PaymentRow(p, last: p == Demo.payments.last)])),
+            LuxCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: Builder(builder: (_) {
+              final ps = Demo.payments.take(3).toList();
+              return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1)]);
+            })),
           ],
           const SizedBox(height: 24),
           SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
@@ -218,9 +227,9 @@ class HomeTab extends StatelessWidget {
             height: 228,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: schemes.length,
+              itemCount: app.schemes.length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (_, i) => SchemeCard(schemes[i], width: 300),
+              itemBuilder: (_, i) => SchemeCard(app.schemes[i], width: 300),
             ),
           ),
           const SizedBox(height: 24),
@@ -241,7 +250,7 @@ class HomeTab extends StatelessWidget {
           ),
         ]),
       ),
-    ]);
+    ])));
   }
 
   Widget _quick(BuildContext context, IconData i, String t, VoidCallback onTap) => Expanded(
@@ -310,9 +319,9 @@ class _RateBoard extends StatelessWidget {
       decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line2)),
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          col('தங்கம் 22K', rupees(Demo.gold22), rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
+          col('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
           const VerticalDivider(width: 1, thickness: 1, color: C.line),
-          col('வெள்ளி', rupees(Demo.silver, decimals: 2), rupees(Demo.silverChange.abs(), decimals: 2), Demo.silverChange > 0, 'assets/silver.png'),
+          col('வெள்ளி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: 2) : '—', rupees(Demo.silverChange.abs(), decimals: 2), Demo.silverChange > 0, 'assets/silver.png'),
         ]),
       ),
     );
@@ -416,7 +425,7 @@ class SideMenu extends StatelessWidget {
             close();
             go(2);
           }),
-          item(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => showNote(context, 'மாதிரி: OTP மூலம் புது mPIN')),
+          item(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => whatsApp(context, 'வணக்கம், என் mPIN மாற்ற / புது Activation code வேண்டும்.\nமொபைல்: ${app.mobile}')),
           item(Icons.notifications_none, 'அறிவிப்புகள்', () {
             close();
             go(3);
@@ -444,7 +453,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -538,7 +547,7 @@ class ProfileTab extends StatelessWidget {
               _group([
                 _row(Icons.person_outline, 'என் விவரம்', () => go(2), first: true),
                 _row(Icons.menu_book_outlined, 'என் Passbook', () => go(2)),
-                _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => showNote(context, 'மாதிரி: OTP மூலம் புது mPIN')),
+                _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => whatsApp(context, 'வணக்கம், என் mPIN மாற்ற / புது Activation code வேண்டும்.\nமொபைல்: ${app.mobile}')),
                 _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => go(2)),
               ]),
             StatefulBuilder(builder: (context, setLocal) {
@@ -560,7 +569,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nமாதிரி app v0.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'api.dart';
+import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
 
@@ -28,7 +30,7 @@ class PaymentRow extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text.rich(TextSpan(children: [
               TextSpan(text: rupees(amt), style: serif(16.5)),
-              TextSpan(text: '  ${g.toStringAsFixed(3)} கி', style: sans(12.5, color: C.goldText, weight: FontWeight.w600)),
+              if (g > 0) TextSpan(text: '  ${g.toStringAsFixed(3)} கி', style: sans(12.5, color: C.goldText, weight: FontWeight.w600)),
             ])),
             const SizedBox(height: 2),
             Text.rich(TextSpan(children: [
@@ -39,7 +41,7 @@ class PaymentRow extends StatelessWidget {
         ),
         if (receipt)
           OutlinedButton(
-            onPressed: () => showNote(context, 'மாதிரி: தவணை $n ரசீது'),
+            onPressed: () => showReceipt(context, n, date, amt, g),
             style: OutlinedButton.styleFrom(
               foregroundColor: C.navy,
               side: const BorderSide(color: Color(0xFFE2D6BE)),
@@ -63,14 +65,14 @@ class PassbookTab extends StatefulWidget {
 class _PassbookTabState extends State<PassbookTab> {
   int sub = 0;
 
-  int get paid => Demo.payments.length;
-  int get total => Demo.payments.fold(0, (s, p) => s + (p[2] as int));
-  double get grams => Demo.payments.fold(0.0, (s, p) => s + (p[3] as double));
+  int get paid => Demo.paidCount;
+  int get total => Demo.total;
+  double get grams => Demo.gramsTotal;
 
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
-    return Column(children: [
+    return AnimatedBuilder(animation: app, builder: (context, _) => Column(children: [
       Container(
         padding: EdgeInsets.fromLTRB(12, top + 8, 12, 12),
         decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
@@ -89,7 +91,7 @@ class _PassbookTabState extends State<PassbookTab> {
             ]),
           ),
           IconButton(
-            onPressed: () => showNote(context, 'மாதிரி: Passbook PDF'),
+            onPressed: () => openLink(context, Api.site),
             tooltip: 'Passbook PDF',
             style: IconButton.styleFrom(side: const BorderSide(color: Color(0x8CC9A24A))),
             icon: const Icon(Icons.download_outlined, color: C.goldSoft),
@@ -123,12 +125,24 @@ class _PassbookTabState extends State<PassbookTab> {
           child: KeyedSubtree(key: ValueKey(sub), child: [_savings(context), _me(context), _referral(context)][sub]),
         ),
       ),
-    ]);
+    ]));
   }
 
   Widget _savings(BuildContext context) {
-    final pct = paid / Demo.months;
-    return ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
+    final pct = (paid / Demo.months).clamp(0.0, 1.0);
+    final left = (Demo.months - paid).clamp(0, 99);
+    final done = left == 0 && !(Demo.silver && Demo.paidThisMonth);
+    final day = nowIst().day;
+    final st = Demo.paidThisMonth
+        ? (Demo.silver ? 'இந்த மாசம் சேமிச்சாச்சு' : 'செலுத்தியாச்சு')
+        : paid == 0
+            ? 'முதல் தவணை'
+            : day <= 7
+                ? 'நிலுவையில்'
+                : 'தாமதம்';
+    final stColor = Demo.paidThisMonth ? C.green : (st == 'தாமதம்' ? C.red : C.goldText);
+    final canPay = !done && (!Demo.paidThisMonth || Demo.silver);
+    return RefreshIndicator(color: C.navy, onRefresh: app.refreshPassbook, child: ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
       LuxCard(
         inner: true,
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
@@ -140,10 +154,11 @@ class _PassbookTabState extends State<PassbookTab> {
             curve: Curves.easeOutCubic,
             builder: (_, v, __) => Text(rupees(v), style: serif(42, height: 1.25)),
           ),
-          Text.rich(TextSpan(children: [
-            TextSpan(text: 'சேர்ந்த தங்கம் ', style: sans(14)),
-            TextSpan(text: '${grams.toStringAsFixed(3)} கிராம்', style: sans(14, color: C.goldText, weight: FontWeight.w700)),
-          ])),
+          if (Demo.grams)
+            Text.rich(TextSpan(children: [
+              TextSpan(text: 'சேர்ந்த தங்கம் ', style: sans(14)),
+              TextSpan(text: '${grams.toStringAsFixed(3)} கிராம்', style: sans(14, color: C.goldText, weight: FontWeight.w700)),
+            ])),
           const SizedBox(height: 14),
           TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: pct),
@@ -156,7 +171,7 @@ class _PassbookTabState extends State<PassbookTab> {
           ),
           const SizedBox(height: 6),
           Row(children: [
-            Text('$paid / ${Demo.months} தவணை', style: sans(12, color: C.mute)),
+            Text('$paid / ${Demo.months} ${Demo.silver ? 'மாதம்' : 'தவணை'}', style: sans(12, color: C.mute)),
             const Spacer(),
             Text('${(pct * 100).round()}%', style: sans(12, color: C.mute)),
           ]),
@@ -167,7 +182,7 @@ class _PassbookTabState extends State<PassbookTab> {
             child: Row(children: [
               _stat('$paid', 'கட்டியது'),
               const VerticalDivider(width: 1, color: C.line),
-              _stat('${Demo.months - paid}', 'மீதி'),
+              _stat('$left', 'மீதி'),
               const VerticalDivider(width: 1, color: C.line),
               _stat('${Demo.months}', 'மொத்தம்'),
             ]),
@@ -175,7 +190,7 @@ class _PassbookTabState extends State<PassbookTab> {
           const SizedBox(height: 10),
           Text.rich(TextSpan(children: [
             TextSpan(text: 'நகை வாங்கலாம் : ', style: sans(13.5)),
-            TextSpan(text: 'ஜூலை 2027', style: sans(13.5, weight: FontWeight.w700)),
+            TextSpan(text: Demo.buyMonth, style: sans(13.5, weight: FontWeight.w700)),
           ])),
         ]),
       ),
@@ -183,22 +198,23 @@ class _PassbookTabState extends State<PassbookTab> {
       LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            Text('அடுத்த தவணை (${paid + 1}/${Demo.months})', style: sans(13, color: C.mute)),
-            const Spacer(),
+            Expanded(child: Text(done ? 'திட்டம்' : (Demo.paidThisMonth && !Demo.silver ? 'அடுத்த தவணை (${paid + 1}/${Demo.months})' : 'தவணை (${Demo.paidThisMonth ? paid : paid + 1}/${Demo.months})'), style: sans(13, color: C.mute))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: const Color(0xFFE8B4AF))),
-              child: Text('தாமதம்', style: sans(12, color: C.red, weight: FontWeight.w700)),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: stColor.withValues(alpha: .45))),
+              child: Text(done ? 'முடிந்தது ✓' : st, style: sans(12, color: done ? C.green : stColor, weight: FontWeight.w700)),
             ),
           ]),
           const SizedBox(height: 6),
           Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text(rupees(Demo.monthly), style: serif(30)),
-            const Spacer(),
-            Padding(padding: const EdgeInsets.only(bottom: 6), child: Text('7 அக். 2026-க்குள்', style: sans(13, color: C.mute))),
+            Flexible(child: Text(done ? 'எல்லா தவணையும் முடிந்தது' : (Demo.fixed ? rupees(Demo.monthly) : (Demo.silver ? '₹100 முதல்' : 'உங்க விருப்பத் தொகை')), style: serif(done || !Demo.fixed ? 20 : 30))),
+            const SizedBox(width: 8),
+            if (!done) Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(Demo.dueText, style: sans(13, color: C.mute))),
           ]),
-          const SizedBox(height: 12),
-          PrimaryButton('${rupees(Demo.monthly)} இப்போ online-ல கட்டு', onTap: () => _demoPay(context)),
+          if (canPay) ...[
+            const SizedBox(height: 12),
+            PrimaryButton('Online-ல கட்டு', icon: Icons.open_in_new, onTap: () => _pay(context)),
+          ],
         ]),
       ),
       const SizedBox(height: 16),
@@ -212,9 +228,14 @@ class _PassbookTabState extends State<PassbookTab> {
       const SectionTitle('தவணை விவரம்'),
       LuxCard(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(children: [for (final p in Demo.payments) PaymentRow(p, last: p == Demo.payments.last, receipt: true)]),
+        child: Demo.payments.isEmpty
+            ? Padding(padding: const EdgeInsets.all(18), child: Text('இன்னும் தவணை எதுவும் இல்லை. முதல் தவணை கட்டியதும் இங்கே தெரியும்.', style: sans(13.5, color: C.mute, height: 1.6)))
+            : Builder(builder: (_) {
+                final ps = Demo.payments;
+                return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1, receipt: true)]);
+              }),
       ),
-    ]);
+    ]));
   }
 
   Widget _stat(String v, String l) => Expanded(
@@ -232,7 +253,7 @@ class _PassbookTabState extends State<PassbookTab> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: C.line)),
             child: InkWell(
               borderRadius: BorderRadius.circular(14),
-              onTap: () => showNote(context, 'மாதிரி: $t'),
+              onTap: () => t == 'பகிர்' ? shareWhatsApp(context, _shareText()) : t == 'PDF' ? openLink(context, Api.site) : showNote(context, 'கீழே உள்ள தவணை விவரத்தில் ஒவ்வொரு தவணைக்கும் ரசீது இருக்கு'),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Column(children: [
@@ -246,6 +267,37 @@ class _PassbookTabState extends State<PassbookTab> {
         ),
       );
 
+  String _shareText() =>
+      'சுப்புலட்சுமி தங்க மாளிகை · ${Demo.scheme} திட்டம்\nபெயர்: ${Demo.name}\nமொத்த சேமிப்பு: ${rupees(Demo.total)}\nதவணை: ${Demo.paidCount}/${Demo.months}${Demo.grams ? '\nதங்கம்: ${Demo.gramsTotal.toStringAsFixed(3)} கி' : ''}';
+
+  /// Online payment runs on the website (same Cashfree flow, same database checks).
+  void _pay(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: C.ivory,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            const Center(child: RingIcon(Icons.lock_outline, size: 60)),
+            const SizedBox(height: 12),
+            Text('பாதுகாப்பான online payment', textAlign: TextAlign.center, style: serif(20)),
+            const SizedBox(height: 6),
+            Text('Payment எங்கள் website-ல Cashfree மூலம் நடக்கும். அங்கே உங்க மொபைல் எண் + mPIN போட்டு Passbook-ல் "online-ல கட்டு" அழுத்துங்க. பணம் வந்ததும் இந்த app-லயும் தானா தெரியும்.',
+                textAlign: TextAlign.center, style: sans(13.5, color: C.mute, height: 1.6)),
+            const SizedBox(height: 16),
+            PrimaryButton('Website திறக்க', icon: Icons.open_in_new, onTap: () {
+              Navigator.of(ctx).pop();
+              openLink(context, Api.site);
+            }),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  // ignore: unused_element
   void _demoPay(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -312,8 +364,8 @@ class _PassbookTabState extends State<PassbookTab> {
           const Divider(color: C.line),
           row('மொபைல்', m.length == 10 ? '+91 ${m.substring(0, 5)} ${m.substring(5)}' : '—'),
           row('உறுப்பினர் எண்', Demo.member),
-          row('சேர்ந்த நாள்', '1 ஆக. 2026'),
-          row('வாரிசுதாரர்', 'மாதிரி பெயர்'),
+          row('சேர்ந்த நாள்', taDate((app.pb?['start'] ?? '').toString())),
+          row('நகை வாங்கலாம்', Demo.buyMonth),
         ]),
       ),
       const SizedBox(height: 16),
@@ -326,7 +378,7 @@ class _PassbookTabState extends State<PassbookTab> {
           SizedBox(
             height: 46,
             child: OutlinedButton(
-              onPressed: () => showNote(context, 'மாதிரி: WhatsApp கோரிக்கை', ok: false),
+              onPressed: () => whatsApp(context, 'வணக்கம், என் கணக்கையும் தகவல்களையும் நீக்க கோரிக்கை.\nபெயர்: ${Demo.name}\nமொபைல்: ${app.mobile}'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: C.red,
                 side: const BorderSide(color: C.red, width: 1.4),
@@ -349,16 +401,56 @@ class _PassbookTabState extends State<PassbookTab> {
             const SizedBox(height: 10),
             Text('நண்பரை சேர்க்க', style: serif(21)),
             const SizedBox(height: 6),
-            Text('உங்க code-ல நண்பர் சேர்ந்து முதல் தவணை கட்டியதும், இரண்டு பேருக்கும் தள்ளுபடி.', style: sans(13.5, color: C.mute, height: 1.6), textAlign: TextAlign.center),
+            Text('உங்க code-ஐ நண்பருக்கு அனுப்புங்க. அவங்க சேரும்போது இந்த code-ஐ கொடுத்தா உங்களுக்கு பரிசு. விவரம் கடையில்.', style: sans(13.5, color: C.mute, height: 1.6), textAlign: TextAlign.center),
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: C.goldLine), color: const Color(0xFFFFF7E0)),
-              child: Text(Demo.member, style: serif(26, color: C.goldText).copyWith(letterSpacing: 4)),
+              child: Text(Demo.member.isEmpty ? '—' : Demo.member, style: serif(26, color: C.goldText).copyWith(letterSpacing: 4)),
             ),
             const SizedBox(height: 14),
-            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => showNote(context, 'மாதிரி: பகிர்'))),
+            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை தங்க சேமிப்புத் திட்டத்தில் சேருங்க! சேரும்போது என் code ${Demo.member} கொடுங்க.\n${Api.site}'))),
           ]),
         ),
       ]);
+}
+
+
+void showReceipt(BuildContext context, String n, String date, int amt, double g) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: C.ivory,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Center(child: Image.asset('assets/logo.png', height: 52)),
+          const SizedBox(height: 8),
+          Text('தவணை ரசீது', textAlign: TextAlign.center, style: serif(20)),
+          const Divider(height: 24, color: C.line),
+          for (final r in [
+            ['பெயர்', Demo.name],
+            ['திட்டம்', Demo.scheme],
+            ['தவணை எண்', Demo.silver ? n : '$n / ${Demo.months}'],
+            ['தேதி', date],
+            ['தொகை', rupees(amt)],
+            if (g > 0) ['தங்கம்', '${g.toStringAsFixed(3)} கிராம்'],
+          ])
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(children: [
+                SizedBox(width: 110, child: Text(r[0], style: sans(13.5, color: C.mute))),
+                Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
+              ]),
+            ),
+          const SizedBox(height: 14),
+          PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () {
+            Navigator.of(ctx).pop();
+            shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை · தவணை ரசீது\n${Demo.name} · ${Demo.scheme}\nதவணை $n · $date\nதொகை ${rupees(amt)}${g > 0 ? '\nதங்கம் ${g.toStringAsFixed(3)} கி' : ''}');
+          }),
+        ]),
+      ),
+    ),
+  );
 }

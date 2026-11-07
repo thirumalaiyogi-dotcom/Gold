@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'data.dart';
+import 'api.dart';
 import 'links.dart';
+import 'main.dart';
 import 'ui.dart';
 
 /// திட்டங்கள் tab — list of all schemes.
@@ -9,15 +11,15 @@ class SchemesTab extends StatelessWidget {
   const SchemesTab({super.key});
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return AnimatedBuilder(animation: app, builder: (context, _) => SafeArea(
       child: ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
         Text('சேமிப்பு திட்டங்கள்', style: serif(22, color: C.ink, weight: FontWeight.w700)),
         const SizedBox(height: 6),
         Text('உங்களுக்கு விருப்பமான திட்டத்தை தேர்வு செய்து அதைப்பற்றி முழுமையாகத் தெரிந்து கொள்ளுங்கள்.', style: sans(14, color: C.mute, height: 1.6)),
         const SizedBox(height: 14),
-        for (final s in schemes) ...[SchemeCard(s), const SizedBox(height: 14)],
+        for (final s in app.schemes) ...[SchemeCard(s), const SizedBox(height: 14)],
       ]),
-    );
+    ));
   }
 }
 
@@ -300,7 +302,14 @@ class _EnrolPageState extends State<EnrolPage> {
   final amount = TextEditingController(), nominee = TextEditingController();
   String rel = 'கணவர் / மனைவி';
   bool agree = false;
+  bool busy = false;
   String err = '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (app.mobile.length == 10) mobile.text = app.mobile;
+  }
 
   @override
   void dispose() {
@@ -331,13 +340,38 @@ class _EnrolPageState extends State<EnrolPage> {
     return e.isEmpty;
   }
 
-  void _next() {
-    if (!_check()) return;
+  Future<void> _next() async {
+    if (busy || !_check()) return;
     if (step < 3) {
       setState(() => step++);
       return;
     }
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => _EnrolDone(name: name.text.trim(), scheme: sch)));
+    setState(() => busy = true);
+    try {
+      await Api.enrol({
+        'name': name.text.trim(),
+        'mobile': mobile.text.trim(),
+        'address': addr.text.trim(),
+        'city': city.text.trim(),
+        'pincode': pin.text.trim().isEmpty ? null : pin.text.trim(),
+        'scheme': sch.key,
+        'monthly_amount': int.tryParse(amount.text.trim()),
+        'nominee': nominee.text.trim().isEmpty ? null : nominee.text.trim(),
+        'nominee_rel': nominee.text.trim().isEmpty ? null : rel,
+      });
+      if (!mounted) return;
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => _EnrolDone(name: name.text.trim(), scheme: sch)));
+    } on ApiError catch (e) {
+      setState(() {
+        busy = false;
+        err = e.duplicate ? 'இந்த மொபைல் எண்ணுக்கு ஏற்கனவே ஒரு விண்ணப்பம் நிலுவையில் இருக்கு. கடையை தொடர்பு கொள்ளுங்க.' : 'அனுப்ப முடியல. விவரங்களை சரிபார்த்து மறுபடி முயற்சிக்கவும்.';
+      });
+    } catch (_) {
+      setState(() {
+        busy = false;
+        err = 'இணைய இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்.';
+      });
+    }
   }
 
   InputDecoration _dec(String l, {String? hint}) => InputDecoration(
@@ -375,7 +409,7 @@ class _EnrolPageState extends State<EnrolPage> {
       body = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Text('திட்டம்', style: sans(13, color: C.mute, weight: FontWeight.w600)),
         const SizedBox(height: 8),
-        for (final s in schemes)
+        for (final s in app.schemes)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: InkWell(
@@ -477,10 +511,10 @@ class _EnrolPageState extends State<EnrolPage> {
                 }))),
             const SizedBox(width: 10),
           ],
-          Expanded(flex: 2, child: PrimaryButton(step < 3 ? 'அடுத்து' : 'விண்ணப்பம் அனுப்பு', onTap: _next)),
+          Expanded(flex: 2, child: PrimaryButton(step < 3 ? 'அடுத்து' : (busy ? 'அனுப்புகிறது…' : 'விண்ணப்பம் அனுப்பு'), onTap: _next)),
         ]),
         const SizedBox(height: 14),
-        Center(child: Text('மாதிரி app: விண்ணப்பம் உண்மையில் அனுப்பப்படாது', style: sans(12, color: C.mute))),
+        Center(child: Text('விண்ணப்பம் கடைக்கு செல்லும். கடை approve பண்ணியதும் WhatsApp-ல் தகவல் வரும்.', textAlign: TextAlign.center, style: sans(12, color: C.mute))),
       ]),
     );
   }
