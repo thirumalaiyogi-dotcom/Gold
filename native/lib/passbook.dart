@@ -63,8 +63,6 @@ class PassbookTab extends StatefulWidget {
 }
 
 class _PassbookTabState extends State<PassbookTab> {
-  int sub = 0;
-
   int get paid => Demo.paidCount;
   int get total => Demo.total;
   double get grams => Demo.gramsTotal;
@@ -91,40 +89,14 @@ class _PassbookTabState extends State<PassbookTab> {
             ]),
           ),
           IconButton(
-            onPressed: () => openLink(context, Api.site),
-            tooltip: 'Passbook PDF',
+            onPressed: () => shareWhatsApp(context, _shareText()),
+            tooltip: 'பகிர்',
             style: IconButton.styleFrom(side: const BorderSide(color: Color(0x8CC9A24A))),
-            icon: const Icon(Icons.download_outlined, color: C.goldSoft),
+            icon: const Icon(Icons.share_outlined, color: C.goldSoft),
           ),
         ]),
       ),
-      Container(
-        color: C.paper,
-        child: Row(children: [
-          for (final (i, t) in const [(0, 'சேமிப்பு'), (1, 'என் விவரம்'), (2, 'Referral')])
-            Expanded(
-              child: InkWell(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() => sub = i);
-                },
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: 48,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(border: Border(bottom: BorderSide(color: sub == i ? C.gold : C.line2, width: sub == i ? 2.5 : 1))),
-                  child: Text(t, style: sans(14.5, color: sub == i ? C.navy : C.mute, weight: sub == i ? FontWeight.w700 : FontWeight.w400)),
-                ),
-              ),
-            ),
-        ]),
-      ),
-      Expanded(
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 200),
-          child: KeyedSubtree(key: ValueKey(sub), child: [_savings(context), _me(context), _referral(context)][sub]),
-        ),
-      ),
+      Expanded(child: _savings(context)),
     ]));
   }
 
@@ -217,15 +189,8 @@ class _PassbookTabState extends State<PassbookTab> {
           ],
         ]),
       ),
-      const SizedBox(height: 16),
-      Row(children: [
-        _action(context, Icons.picture_as_pdf_outlined, 'PDF'),
-        _action(context, Icons.receipt_long_outlined, 'ரசீது'),
-        _action(context, Icons.share_outlined, 'பகிர்'),
-        _action(context, Icons.list_alt, 'வரலாறு'),
-      ]),
       const SizedBox(height: 20),
-      const SectionTitle('தவணை விவரம்'),
+      const SectionTitle('தவணை வரலாறு'),
       LuxCard(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Demo.payments.isEmpty
@@ -243,28 +208,6 @@ class _PassbookTabState extends State<PassbookTab> {
           Text(v, style: serif(22)),
           Text(l, style: sans(12, color: C.mute)),
         ]),
-      );
-
-  Widget _action(BuildContext context, IconData i, String t) => Expanded(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Material(
-            color: C.paper,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: C.line)),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () => t == 'பகிர்' ? shareWhatsApp(context, _shareText()) : t == 'PDF' ? openLink(context, Api.site) : showNote(context, 'கீழே உள்ள தவணை விவரத்தில் ஒவ்வொரு தவணைக்கும் ரசீது இருக்கு'),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Column(children: [
-                  Icon(i, color: C.navy, size: 22),
-                  const SizedBox(height: 6),
-                  Text(t, style: sans(12)),
-                ]),
-              ),
-            ),
-          ),
-        ),
       );
 
   String _shareText() =>
@@ -332,7 +275,62 @@ class _PassbookTabState extends State<PassbookTab> {
     HapticFeedback.mediumImpact();
   }
 
-  Widget _me(BuildContext context) {
+}
+
+
+void showReceipt(BuildContext context, String n, String date, int amt, double g) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: C.ivory,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Center(child: Image.asset('assets/logo.png', height: 52)),
+          const SizedBox(height: 8),
+          Text('தவணை ரசீது', textAlign: TextAlign.center, style: serif(20)),
+          const Divider(height: 24, color: C.line),
+          for (final r in [
+            ['பெயர்', Demo.name],
+            ['திட்டம்', Demo.scheme],
+            ['தவணை எண்', Demo.silver ? n : '$n / ${Demo.months}'],
+            ['தேதி', date],
+            ['தொகை', rupees(amt)],
+            if (g > 0) ['தங்கம்', '${g.toStringAsFixed(3)} கிராம்'],
+          ])
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(children: [
+                SizedBox(width: 110, child: Text(r[0], style: sans(13.5, color: C.mute))),
+                Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
+              ]),
+            ),
+          const SizedBox(height: 14),
+          PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () {
+            Navigator.of(ctx).pop();
+            shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை · தவணை ரசீது\n${Demo.name} · ${Demo.scheme}\nதவணை $n · $date\nதொகை ${rupees(amt)}${g > 0 ? '\nதங்கம் ${g.toStringAsFixed(3)} கி' : ''}');
+          }),
+        ]),
+      ),
+    ),
+  );
+}
+
+
+Widget _page(String title, Widget body) => Builder(
+      builder: (context) => Scaffold(
+        backgroundColor: C.ivory,
+        appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text(title, style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
+        body: AnimatedBuilder(animation: app, builder: (_, __) => body),
+      ),
+    );
+
+/// என் விவரம் — opened from the கணக்கு tab.
+class MyDetailsPage extends StatelessWidget {
+  const MyDetailsPage({super.key});
+  @override
+  Widget build(BuildContext context) {
     final m = app.mobile;
     Widget row(String k, String v) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -341,7 +339,7 @@ class _PassbookTabState extends State<PassbookTab> {
             Expanded(child: Text(v, style: sans(14.5, weight: FontWeight.w600))),
           ]),
         );
-    return ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
+    return _page('என் விவரம்', ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
       LuxCard(
         child: Column(children: [
           Row(children: [
@@ -389,10 +387,15 @@ class _PassbookTabState extends State<PassbookTab> {
           ),
         ]),
       ),
-    ]);
+    ]));
   }
+}
 
-  Widget _referral(BuildContext context) => ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
+/// Referral — opened from the கணக்கு tab.
+class ReferralPage extends StatelessWidget {
+  const ReferralPage({super.key});
+  @override
+  Widget build(BuildContext context) => _page('நண்பரை சேர்க்க', ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
         LuxCard(
           inner: true,
           padding: const EdgeInsets.all(22),
@@ -412,45 +415,5 @@ class _PassbookTabState extends State<PassbookTab> {
             SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை தங்க சேமிப்புத் திட்டத்தில் சேருங்க! சேரும்போது என் code ${Demo.member} கொடுங்க.\n${Api.site}'))),
           ]),
         ),
-      ]);
-}
-
-
-void showReceipt(BuildContext context, String n, String date, int amt, double g) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: C.ivory,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-    builder: (ctx) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
-        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Center(child: Image.asset('assets/logo.png', height: 52)),
-          const SizedBox(height: 8),
-          Text('தவணை ரசீது', textAlign: TextAlign.center, style: serif(20)),
-          const Divider(height: 24, color: C.line),
-          for (final r in [
-            ['பெயர்', Demo.name],
-            ['திட்டம்', Demo.scheme],
-            ['தவணை எண்', Demo.silver ? n : '$n / ${Demo.months}'],
-            ['தேதி', date],
-            ['தொகை', rupees(amt)],
-            if (g > 0) ['தங்கம்', '${g.toStringAsFixed(3)} கிராம்'],
-          ])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(children: [
-                SizedBox(width: 110, child: Text(r[0], style: sans(13.5, color: C.mute))),
-                Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
-              ]),
-            ),
-          const SizedBox(height: 14),
-          PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () {
-            Navigator.of(ctx).pop();
-            shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை · தவணை ரசீது\n${Demo.name} · ${Demo.scheme}\nதவணை $n · $date\nதொகை ${rupees(amt)}${g > 0 ? '\nதங்கம் ${g.toStringAsFixed(3)} கி' : ''}');
-          }),
-        ]),
-      ),
-    ),
-  );
+      ]));
 }

@@ -40,7 +40,7 @@ class SchemeCard extends StatelessWidget {
       decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        InkWell(
+        _grow(InkWell(
           onTap: () => openScheme(context, s),
           child: Container(
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
@@ -64,7 +64,7 @@ class SchemeCard extends StatelessWidget {
               _Coin(s),
             ]),
           ),
-        ),
+        )),
         Padding(
           padding: const EdgeInsets.all(12),
           child: IntrinsicHeight(
@@ -79,6 +79,9 @@ class SchemeCard extends StatelessWidget {
     );
     return width == null ? card : SizedBox(width: width, child: card);
   }
+
+  // In the home carousel all cards share the tallest height: the maroon header takes the extra space.
+  Widget _grow(Widget w) => width == null ? w : Expanded(child: w);
 }
 
 class _Coin extends StatelessWidget {

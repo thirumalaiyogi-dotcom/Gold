@@ -223,13 +223,15 @@ class HomeTab extends StatelessWidget {
           ],
           const SizedBox(height: 24),
           SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
-          SizedBox(
-            height: 272,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: app.schemes.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (_, i) => SchemeCard(app.schemes[i], width: 300),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicHeight(
+              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                for (var i = 0; i < app.schemes.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 12),
+                  SchemeCard(app.schemes[i], width: 300),
+                ],
+              ]),
             ),
           ),
           const SizedBox(height: 24),
@@ -419,7 +421,7 @@ class SideMenu extends StatelessWidget {
           ),
           item(Icons.person_outline, 'என் விவரம்', () {
             close();
-            go(2);
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyDetailsPage()));
           }),
           item(Icons.menu_book_outlined, 'என் Passbook', () {
             close();
@@ -432,7 +434,7 @@ class SideMenu extends StatelessWidget {
           }),
           item(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () {
             close();
-            go(2);
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()));
           }),
           item(Icons.diamond_outlined, 'சேமிப்புத் திட்டங்கள்', () {
             close();
@@ -545,10 +547,10 @@ class ProfileTab extends StatelessWidget {
             ],
             if (app.loggedIn)
               _group([
-                _row(Icons.person_outline, 'என் விவரம்', () => go(2), first: true),
+                _row(Icons.person_outline, 'என் விவரம்', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyDetailsPage())), first: true),
                 _row(Icons.menu_book_outlined, 'என் Passbook', () => go(2)),
                 _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => whatsApp(context, 'வணக்கம், என் mPIN மாற்ற / புது Activation code வேண்டும்.\nமொபைல்: ${app.mobile}')),
-                _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => go(2)),
+                _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()))),
               ]),
             StatefulBuilder(builder: (context, setLocal) {
               return _group([
