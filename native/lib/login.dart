@@ -285,7 +285,7 @@ class _MobileScreenState extends State<MobileScreen> {
         const SizedBox(height: 14),
         Shake(
           trigger: shake,
-          child: SizedBox(height: 40, child: Center(child: FittedBox(child: Text(shown, maxLines: 1, style: sans(v.isEmpty ? 17 : 26, color: v.isEmpty ? const Color(0xFFB8A690) : C.navy, weight: FontWeight.w600, letterSpacing: v.isEmpty ? 0 : 1.5))))),
+          child: SizedBox(height: 40, child: Center(child: FittedBox(child: Text(shown, maxLines: 1, style: sans(v.isEmpty ? 17 : 26, color: v.isEmpty ? const Color(0xFFB8A690) : C.navy, weight: FontWeight.w600).copyWith(letterSpacing: v.isEmpty ? 0 : 1.5))))),
         ),
         SizedBox(height: 22, child: Center(child: Text(err, style: sans(13, color: C.red)))),
         KeyPad(onKey: _key),
