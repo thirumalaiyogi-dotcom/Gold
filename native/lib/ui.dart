@@ -19,7 +19,8 @@ class C {
   static const goldLine = Color(0xFFD9C08A);
   static const goldSoft = Color(0xFFE8D29A);
   static const line = Color(0xFFECE4D0);
-  static const line2 = Color(0xFFE3D6B4);
+  static const line2 = Color(0xFFE8D9B9); // soft champagne border
+  static const ivory2 = Color(0xFFF5F0E5);
   static const red = Color(0xFFC63C45);
   static const green = Color(0xFF24865B);
   static const navyMute = Color(0xFFEAD9B8);
@@ -65,7 +66,7 @@ class LuxCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: C.paper,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFF0E8D6)),
+        border: Border.all(color: C.line2),
         boxShadow: const [BoxShadow(color: Color(0x0F6E1423), blurRadius: 20, offset: Offset(0, 6))],
       ),
       clipBehavior: Clip.antiAlias,

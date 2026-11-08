@@ -236,9 +236,9 @@ class HomeTab extends StatelessWidget {
         await app.refreshPassbook();
       },
       child: ListView(padding: EdgeInsets.zero, children: [
-      // ---------- Header: flat navy, gold rule ----------
+      // ---------- Header: warm ivory; only the savings card / promos wear velvet ----------
       Container(
-        decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
+        decoration: const BoxDecoration(color: C.ivory),
         child: Stack(children: [
         KolamBg(festive: Fest.today != null, child: Padding(
         padding: EdgeInsets.fromLTRB(16, top + 8, 16, 18),
@@ -255,13 +255,13 @@ class HomeTab extends StatelessWidget {
                   tapFeel();
                   onOpenMenu();
                 },
-                style: IconButton.styleFrom(side: const BorderSide(color: Color(0x8CC9A24A))),
-                icon: const Icon(Icons.menu, color: C.goldSoft),
+                style: IconButton.styleFrom(backgroundColor: C.paper, side: const BorderSide(color: C.line2)),
+                icon: const Icon(Icons.menu, color: C.navy),
               ),
             ),
           ]),
           const SizedBox(height: 6),
-          Text(app.loggedIn ? '${_greet()}, ${Demo.firstName} 🙏' : _greet(), style: sans(16, color: Colors.white, weight: FontWeight.w600)),
+          Text(app.loggedIn ? '${_greet()}, ${Demo.firstName} 🙏' : _greet(), style: sans(16.5, color: C.ink, weight: FontWeight.w700)),
           const FestRibbon(),
           const SizedBox(height: 14),
           if (app.loggedIn && app.pb != null) ...[
@@ -272,7 +272,7 @@ class HomeTab extends StatelessWidget {
             const _RateBoard(),
           const SizedBox(height: 8),
           Demo.rateIsToday || Demo.gold22 == 0
-              ? Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.navyMute))
+              ? Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.mute))
               : Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(color: const Color(0xFFFFF4D6), borderRadius: BorderRadius.circular(99)),
@@ -284,19 +284,20 @@ class HomeTab extends StatelessWidget {
                 ),
           if (Demo.goldChange != 0 || Demo.silverChange != 0) ...[
             const SizedBox(height: 4),
-            Text('▲▼ முந்தைய விலையோடு ஒப்பிட்டு', style: sans(11.5, color: C.navyMute)),
+            Text('▲▼ முந்தைய விலையோடு ஒப்பிட்டு', style: sans(11.5, color: C.mute)),
           ],
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
             style: OutlinedButton.styleFrom(
-              foregroundColor: C.goldSoft,
-              side: const BorderSide(color: Color(0x99C9A24A)),
+              foregroundColor: C.navy,
+              backgroundColor: C.paper,
+              side: const BorderSide(color: C.line2),
               shape: const StadiumBorder(),
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             ),
             icon: const Icon(Icons.show_chart, size: 18),
-            label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.goldSoft, weight: FontWeight.w600)),
+            label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
           ),
         ]),
       )),
@@ -445,7 +446,7 @@ class _RateBoard extends StatelessWidget {
     if (Demo.gold22 == 0 && !app.rateError && app.rate == null) {
       return Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: C.ivory, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
         child: const Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 70, height: 12), SizedBox(height: 10), Skeleton(width: 110, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
           SizedBox(width: 16),
@@ -454,7 +455,7 @@ class _RateBoard extends StatelessWidget {
       );
     }
     return Container(
-      decoration: BoxDecoration(color: C.ivory, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.goldLine), boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 16, offset: Offset(0, 6))]),
+      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2), boxShadow: const [BoxShadow(color: Color(0x0F6E1423), blurRadius: 18, offset: Offset(0, 6))]),
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           col('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange == 0 ? '' : rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
@@ -603,7 +604,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.10', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.11', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -723,7 +724,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.10', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.11', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -788,11 +789,11 @@ class _SavingsHero extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xB84A0D18), Color(0x8C801F32)]),
-            border: Border.all(color: const Color(0xA6D6B56D)),
-            boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 20, offset: Offset(0, 8))],
+          decoration: velvetDeco(
+            radius: BorderRadius.circular(20),
+            alignment: Alignment.topLeft,
+            frame: Border.all(color: const Color(0xA6D6B56D)),
+            shadow: const [BoxShadow(color: Color(0x406E1423), blurRadius: 22, offset: Offset(0, 10))],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -802,9 +803,12 @@ class _SavingsHero extends StatelessWidget {
                   Text(Demo.scheme, style: sans(14, color: Colors.white, weight: FontWeight.w600, height: 1.4)),
                 ]),
               ),
-              const Icon(Icons.chevron_right_rounded, color: C.goldSoft),
+              SizedBox(width: 58, height: 58, child: DecoratedBox(
+                decoration: BoxDecoration(shape: BoxShape.circle, boxShadow: [BoxShadow(color: C.gold.withValues(alpha: .45), blurRadius: 16)]),
+                child: GoldShine(loop: true, pause: const Duration(seconds: 5), child: coinImage(silver: Demo.silver)),
+              )),
             ]),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             GoldShine(
               delay: const Duration(milliseconds: 1100),
               child: TweenAnimationBuilder<double>(
@@ -867,8 +871,9 @@ class _RateStrip extends StatelessWidget {
           ]),
         );
     return Material(
-      color: C.ivory,
-      borderRadius: BorderRadius.circular(16),
+      color: C.paper,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: C.line2)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
