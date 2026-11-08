@@ -402,3 +402,30 @@
   // RQ (requests) and RT (rate) change asynchronously → light refresh
   setInterval(() => { if (built && cur === "dash") renderDash(); }, 4000);
 })();
+
+/* ===== Notification history: delete one entry / clear all (history only — sent notifications cannot be recalled) ===== */
+(function () {
+  if (!document.documentElement.hasAttribute("data-s6") || typeof window.loadPushLog !== "function") return;
+  const E = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  window.loadPushLog = async function () { // eslint-disable-line no-global-assign
+    const box = document.getElementById("pnlog"); if (!box) return;
+    const { data, error } = await sb.from("gold_push_log").select("*").order("created_at", { ascending: false }).limit(30);
+    if (error) { box.innerHTML = '<div class="mut">' + E(error.message) + "</div>"; return; }
+    const rows = data || [];
+    box.innerHTML = rows.length
+      ? rows.map((r) => `<div class="s6log"><div class="t"><b>${E(r.title)}</b><small>${E(new Date(r.created_at).toLocaleString("ta-IN"))} · ✅ ${r.sent} · ❌ ${r.failed}${String(r.by_email || "") === "auto" ? " · தானியங்கி" : ""}</small></div><button type="button" class="x" data-pl="${E(r.id)}" aria-label="நீக்கு">நீக்கு</button></div>`).join("") +
+        `<button type="button" class="s6link s6clr" data-plall="1">எல்லா வரலாற்றையும் அழி</button>`
+      : '<div class="mut">இன்னும் இல்ல</div>';
+  };
+  document.addEventListener("click", async (e) => {
+    const one = e.target.closest("[data-pl]"), all = e.target.closest("[data-plall]");
+    if (!one && !all) return;
+    const ok = await window.ASK(one ? "இந்த notification-ஐ வரலாற்றில் இருந்து நீக்கவா?\n(ஏற்கனவே phone-களுக்கு போனது திரும்ப வராது.)" : "எல்லா notification வரலாற்றையும் அழிக்கவா?\n(ஏற்கனவே phone-களுக்கு போனது திரும்ப வராது.)");
+    if (!ok) return;
+    const q = sb.from("gold_push_log").delete();
+    const { error } = one ? await q.eq("id", one.dataset.pl) : await q.gt("id", 0);
+    if (error) alert("நீக்க முடியல: " + error.message); else alert(one ? "நீக்கியாச்சு ✅" : "வரலாறு அழிக்கப்பட்டது ✅");
+    window.loadPushLog();
+  });
+  if (document.getElementById("pnlog")) window.loadPushLog();
+})();

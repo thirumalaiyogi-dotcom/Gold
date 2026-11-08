@@ -204,3 +204,10 @@ html[data-s6] #adm .s6list button:last-child{border-bottom:0!important}
 html[data-s6] #adm .s6list button>span:not(.chev){flex:1!important;min-width:0}
 html[data-s6] #adm .s6qa button{margin:0!important;width:auto!important;min-height:0!important;box-shadow:var(--s-sh)!important}
 html[data-s6] #adm .s6list .chev{flex:none!important;width:20px}
+/* notification history rows */
+.s6log{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--s-ln2)}
+.s6log .t{flex:1;min-width:0}
+.s6log b{display:block;font-size:14.5px;font-weight:600;overflow-wrap:anywhere}
+.s6log small{display:block;color:var(--s-mut);font-size:12px;margin-top:2px}
+html[data-s6] #adm .s6log .x{flex:none;width:auto!important;min-height:34px!important;height:34px;padding:0 12px!important;margin:0!important;border-radius:99px!important;border:1px solid #EDC6C9!important;background:#fff!important;color:var(--s-err)!important;font:inherit;font-size:12.5px!important;font-weight:700;cursor:pointer;box-shadow:none!important}
+html[data-s6] #adm .s6clr{margin-top:8px!important;color:var(--s-err)!important;width:auto!important;min-height:0!important;background:none!important;border:0!important;box-shadow:none!important;padding:6px 0!important}
