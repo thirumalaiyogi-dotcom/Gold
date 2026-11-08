@@ -238,7 +238,6 @@ class HomeTab extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
       // ---------- Header: warm ivory; only the savings card / promos wear velvet ----------
       Container(
-        decoration: const BoxDecoration(color: C.ivory),
         child: Stack(children: [
         KolamBg(festive: Fest.today != null, child: Padding(
         padding: EdgeInsets.fromLTRB(16, top + 8, 16, 18),
@@ -604,7 +603,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.11', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.12', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -724,7 +723,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.11', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.12', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -986,7 +985,7 @@ class _DemoPassbookPageState extends State<DemoPassbookPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       body: Column(children: [
         Expanded(child: PassbookTab(onBack: () => Navigator.of(context).pop())),
         Container(

@@ -43,7 +43,11 @@ class _LoginFrame extends StatelessWidget {
         Expanded(
           child: Container(
             width: double.infinity,
-            decoration: const BoxDecoration(color: C.ivory, borderRadius: BorderRadius.vertical(top: Radius.circular(28))),
+            decoration: const BoxDecoration(
+              color: C.ivory,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              image: DecorationImage(image: ResizeImage(AssetImage('assets/ivory_bg.jpg'), width: 900), fit: BoxFit.cover, alignment: Alignment.bottomCenter),
+            ),
             child: SafeArea(top: false, child: child),
           ),
         ),
@@ -357,7 +361,7 @@ class _PinScreenState extends State<PinScreen> {
         Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 450),
-            pageBuilder: (_, __, ___) => const MainShell(),
+            pageBuilder: (_, __, ___) => const IvoryBg(child: MainShell()),
             transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
           ),
           (_) => false,

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -901,4 +902,31 @@ class CoinDots extends StatelessWidget {
         ),
     ]);
   }
+}
+
+
+/// Warm ivory + champagne page background (owner's image). Decoration only at the
+/// edges, plain cream in the middle, so white cards stay easy to read.
+const _ivoryImg = ResizeImage(AssetImage('assets/ivory_bg.jpg'), width: 900);
+
+class IvoryBg extends StatelessWidget {
+  const IvoryBg({super.key, required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+        decoration: const BoxDecoration(
+          color: C.ivory,
+          image: DecorationImage(image: _ivoryImg, fit: BoxFit.cover, alignment: Alignment.center),
+        ),
+        child: child,
+      );
+}
+
+/// Every pushed page gets the ivory background underneath its (transparent) Scaffold,
+/// so the picture slides together with the page.
+class IvoryPageTransitions extends PageTransitionsBuilder {
+  const IvoryPageTransitions();
+  @override
+  Widget buildTransitions<T>(PageRoute<T> route, BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
+      const CupertinoPageTransitionsBuilder().buildTransitions(route, context, animation, secondaryAnimation, IvoryBg(child: child));
 }

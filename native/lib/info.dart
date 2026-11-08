@@ -6,7 +6,7 @@ import 'notify.dart';
 import 'ui.dart';
 
 Widget _scaffold(String title, Widget body) => Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text(title, style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
       body: body,
     );

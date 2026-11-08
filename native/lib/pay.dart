@@ -147,7 +147,7 @@ class _PayPageState extends State<PayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('தவணை செலுத்த', style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
       body: SafeArea(child: st == _St.ok ? _done() : (st == _St.fail ? _failed() : _form())),
     );

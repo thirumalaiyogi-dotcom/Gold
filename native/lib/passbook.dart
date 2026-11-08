@@ -351,7 +351,7 @@ void showReceipt(BuildContext context, String n, String date, int amt, double g)
 
 Widget _page(String title, Widget body) => Builder(
       builder: (context) => Scaffold(
-        backgroundColor: C.ivory,
+        backgroundColor: Colors.transparent,
         appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text(title, style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
         body: AnimatedBuilder(animation: app, builder: (_, __) => body),
       ),

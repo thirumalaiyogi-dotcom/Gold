@@ -149,7 +149,7 @@ class SchemeDetailPage extends StatelessWidget {
       [s.fixed ? Icons.scale_outlined : Icons.sell_outlined, s.fixed ? 'கிராம் கணக்கு' : (s.silver ? 'வெள்ளி நகை' : 'சேதாரம் & செய்கூலி தள்ளுபடி')],
     ];
     return Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: C.paper,
         surfaceTintColor: C.paper,
@@ -486,7 +486,7 @@ class _EnrolPageState extends State<EnrolPage> {
       ]);
     }
     return Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('திட்டத்தில் சேர', style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
         Row(children: [
@@ -529,7 +529,7 @@ class _EnrolDone extends StatelessWidget {
   final Scheme scheme;
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: C.ivory,
+        backgroundColor: Colors.transparent,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24),

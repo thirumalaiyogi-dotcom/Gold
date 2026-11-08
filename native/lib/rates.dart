@@ -42,7 +42,7 @@ class _RatePageState extends State<RatePage> {
     final appBar = AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('விலை நிலவரம்', style: sans(16.5, color: C.ink, weight: FontWeight.w700)));
     if (rows == null) {
       return Scaffold(
-        backgroundColor: C.ivory,
+        backgroundColor: Colors.transparent,
         appBar: appBar,
         body: failed
             ? Center(
@@ -66,7 +66,7 @@ class _RatePageState extends State<RatePage> {
     ];
     if (h.length < 2) {
       return Scaffold(
-        backgroundColor: C.ivory,
+        backgroundColor: Colors.transparent,
         appBar: appBar,
         body: Center(child: Padding(padding: const EdgeInsets.all(30), child: Text('இந்த காலத்துக்கு போதுமான விலை பதிவு இல்ல. கடை தினமும் விலை பதிவு செய்ததும் graph வரும்.', textAlign: TextAlign.center, style: sans(14.5, color: C.mute, height: 1.6)))),
       );
@@ -98,7 +98,7 @@ class _RatePageState extends State<RatePage> {
         );
 
     return Scaffold(
-      backgroundColor: C.ivory,
+      backgroundColor: Colors.transparent,
       appBar: appBar,
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
         Container(

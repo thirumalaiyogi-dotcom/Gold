@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -212,10 +211,10 @@ class StmApp extends StatelessWidget {
     final base = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: C.navy, primary: C.navy, surface: C.ivory),
-      scaffoldBackgroundColor: C.ivory,
+      scaffoldBackgroundColor: Colors.transparent, // ivory picture comes from IvoryPageTransitions
       pageTransitionsTheme: PageTransitionsTheme(builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.android: IvoryPageTransitions(),
+        TargetPlatform.iOS: IvoryPageTransitions(),
       }),
     );
     return MaterialApp(
