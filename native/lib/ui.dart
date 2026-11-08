@@ -113,9 +113,15 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ConstrainedBox(
         constraints: const BoxConstraints(minHeight: 50),
-        child: FilledButton(
+        child: DecoratedBox(
+          // maroon buttons wear the same velvet as the headers
+          decoration: gold
+              ? const BoxDecoration()
+              : velvetDeco(radius: BorderRadius.circular(12), alignment: Alignment.center, shadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 10, offset: Offset(0, 4))]),
+          child: FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: gold ? C.gold : C.navy,
+            backgroundColor: gold ? C.gold : Colors.transparent,
+            shadowColor: Colors.transparent,
             foregroundColor: gold ? C.navy : C.goldSoft,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -130,6 +136,7 @@ class PrimaryButton extends StatelessWidget {
             if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
             Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
           ]),
+        ),
         ),
       );
 }
@@ -313,10 +320,10 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
         onTap: widget.onDone, // accessibility: a plain tap still works for screen readers
         child: Container(
           height: h,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(h),
-            gradient: const LinearGradient(colors: [C.navy2, C.navy]),
-            boxShadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 14, offset: Offset(0, 6))],
+          decoration: velvetDeco(
+            radius: BorderRadius.circular(h),
+            alignment: Alignment.center,
+            shadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 14, offset: Offset(0, 6))],
           ),
           child: Stack(alignment: Alignment.centerLeft, children: [
             // gold fill that follows the coin
@@ -584,46 +591,10 @@ class KolamBg extends StatelessWidget {
   final Widget child;
   final bool festive;
   @override
-  Widget build(BuildContext context) => CustomPaint(painter: _Kolam(festive ? .11 : .065), child: child);
+  // Owner (2026-11-08): only the velvet background, no dot-kolam on top. Kept as a pass-through so callers stay unchanged.
+  Widget build(BuildContext context) => child;
 }
 
-class _Kolam extends CustomPainter {
-  _Kolam(this.a);
-  final double a;
-  @override
-  void paint(Canvas canvas, Size s) {
-    const g = 34.0;
-    final line = Paint()
-      ..color = C.goldSoft.withValues(alpha: a)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    final dot = Paint()..color = C.goldSoft.withValues(alpha: a * 1.6);
-    canvas.save();
-    canvas.clipRect(Offset.zero & s);
-    for (var y = 0.0; y < s.height + g; y += g) {
-      for (var x = 0.0; x < s.width + g; x += g) {
-        final odd = ((x / g).round() + (y / g).round()).isOdd;
-        canvas.drawCircle(Offset(x, y), 1.4, dot);
-        if (odd) {
-          // diamond loop around the dot, kolam style
-          final p = Path()
-            ..moveTo(x, y - g / 2)
-            ..quadraticBezierTo(x + g / 2, y - g / 2, x + g / 2, y)
-            ..quadraticBezierTo(x + g / 2, y + g / 2, x, y + g / 2)
-            ..quadraticBezierTo(x - g / 2, y + g / 2, x - g / 2, y)
-            ..quadraticBezierTo(x - g / 2, y - g / 2, x, y - g / 2);
-          canvas.drawPath(p, line);
-        } else {
-          canvas.drawCircle(Offset(x, y), g * .18, line);
-        }
-      }
-    }
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _Kolam o) => o.a != a;
-}
 
 /// Festival of the day (Tamil Nadu government holiday list 2026 / 2027).
 class Fest {
