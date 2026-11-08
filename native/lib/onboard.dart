@@ -32,8 +32,10 @@ class _BootState extends State<Boot> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: C.navy,
-        body: KolamBg(
+        backgroundColor: C.navy2,
+        body: Container(
+          decoration: velvetDeco(alignment: Alignment.center),
+          child: KolamBg(
           child: SizedBox.expand(
             child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               TweenAnimationBuilder<double>(
@@ -53,6 +55,7 @@ class _BootState extends State<Boot> {
               ),
             ]),
           ),
+        ),
         ),
       );
 }
@@ -219,7 +222,7 @@ class _OnboardingState extends State<Onboarding> {
     return Scaffold(
       backgroundColor: C.navy,
       body: Container(
-        decoration: const BoxDecoration(gradient: RadialGradient(center: Alignment(0, -.3), radius: 1.1, colors: [Color(0xFF8A2333), C.navy, C.navy2])),
+        decoration: velvetDeco(alignment: Alignment.center),
         child: SafeArea(
           child: Column(children: [
             Align(

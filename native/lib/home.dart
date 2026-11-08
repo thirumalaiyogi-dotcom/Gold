@@ -171,7 +171,7 @@ class _BottomNav extends StatelessWidget {
       [Icons.person_outline, 'கணக்கு', Icons.person],
     ];
     return Container(
-      decoration: const BoxDecoration(color: C.paper, border: Border(top: BorderSide(color: C.line2))),
+      decoration: const BoxDecoration(color: C.ivory, border: Border(top: BorderSide(color: Color(0xFFE9DCBC))), boxShadow: [BoxShadow(color: Color(0x0F4A0D18), blurRadius: 12, offset: Offset(0, -3))]),
       child: SafeArea(
         top: false,
         child: SizedBox(
@@ -238,7 +238,7 @@ class HomeTab extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
       // ---------- Header: flat navy, gold rule ----------
       Container(
-        decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
+        decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
         child: Stack(children: [
         if (Fest.today != null) const Positioned.fill(child: Sparkles()),
         KolamBg(festive: Fest.today != null, child: Padding(
@@ -326,6 +326,11 @@ class HomeTab extends StatelessWidget {
           ]),
           const SizedBox(height: 24),
           if (app.loggedIn && app.pb != null) const _NextDue() else _SchemeHero(go: go),
+          if (app.notices.isNotEmpty) ...[
+            const SizedBox(height: 28),
+            SectionTitle('அறிவிப்புகள்', action: 'அனைத்தும் ›', onAction: () => go(3)),
+            _NoticePreview(app.notices.first, onTap: () => go(3)),
+          ],
           if (app.loggedIn && Demo.payments.isNotEmpty) ...[
             const SizedBox(height: 28),
             SectionTitle('சமீபத்திய தவணைகள்', action: 'அனைத்தும் ›', onAction: () => go(2)),
@@ -441,7 +446,7 @@ class _RateBoard extends StatelessWidget {
     if (Demo.gold22 == 0 && !app.rateError && app.rate == null) {
       return Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18)),
+        decoration: BoxDecoration(color: C.ivory, borderRadius: BorderRadius.circular(18)),
         child: const Row(children: [
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 70, height: 12), SizedBox(height: 10), Skeleton(width: 110, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
           SizedBox(width: 16),
@@ -450,7 +455,7 @@ class _RateBoard extends StatelessWidget {
       );
     }
     return Container(
-      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
+      decoration: BoxDecoration(color: C.ivory, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.goldLine), boxShadow: const [BoxShadow(color: Color(0x33000000), blurRadius: 16, offset: Offset(0, 6))]),
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           col('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange == 0 ? '' : rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
@@ -471,7 +476,7 @@ class _SchemeHero extends StatelessWidget {
     return Stack(children: [
       Container(
         padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
-        decoration: BoxDecoration(color: C.navy, borderRadius: BorderRadius.circular(18)),
+        decoration: velvetDeco(radius: BorderRadius.circular(18), alignment: Alignment.center, shadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 18, offset: Offset(0, 8))]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('சுப்புலட்சுமி தங்க மாளிகை', style: sans(12, color: C.gold, weight: FontWeight.w600).copyWith(letterSpacing: 1.2)),
           const SizedBox(height: 8),
@@ -538,7 +543,7 @@ class SideMenu extends StatelessWidget {
         return ListView(padding: EdgeInsets.zero, children: [
           Container(
             padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 22, 20, 20),
-            decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
+            decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
             child: Column(children: [
               Container(
                 width: 64,
@@ -599,7 +604,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.8', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.9', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -655,11 +660,7 @@ class ProfileTab extends StatelessWidget {
         final m = app.mobile;
         final head = Container(
           padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [C.navy, C.navy2]),
-            border: Border.all(color: const Color(0x66E5C98B)),
-          ),
+          decoration: velvetDeco(radius: BorderRadius.circular(20), alignment: Alignment.topLeft, frame: Border.all(color: const Color(0x80D6B56D))),
           child: Row(children: [
             Container(
               width: 56,
@@ -723,7 +724,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.8', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.9', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -790,8 +791,9 @@ class _SavingsHero extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0x26FFFFFF), Color(0x0DFFFFFF)]),
-            border: Border.all(color: const Color(0x80E5C98B)),
+            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xB84A0D18), Color(0x8C801F32)]),
+            border: Border.all(color: const Color(0xA6D6B56D)),
+            boxShadow: const [BoxShadow(color: Color(0x40000000), blurRadius: 20, offset: Offset(0, 8))],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -823,6 +825,16 @@ class _SavingsHero extends StatelessWidget {
             SingleChildScrollView(scrollDirection: Axis.horizontal, child: CoinDots(total: months, paid: paid, silver: Demo.silver)),
             const SizedBox(height: 8),
             Text('$paid / $months ${Demo.silver ? 'மாதம்' : 'தவணை'} · நகை வாங்கலாம்: ${Demo.buyMonth}', style: sans(12.5, color: C.navyMute)),
+            if (Demo.fixed && !Demo.schemeDone) ...[
+              const SizedBox(height: 10),
+              Container(height: 1, color: const Color(0x40E8D29A)),
+              const SizedBox(height: 10),
+              Row(children: [
+                Text('மாதத் தவணை', style: sans(12.5, color: C.navyMute)),
+                const Spacer(),
+                Text(rupees(Demo.monthly), style: serif(16, color: C.goldSoft, weight: FontWeight.w700)),
+              ]),
+            ],
           ]),
         ),
       ),
@@ -856,7 +868,7 @@ class _RateStrip extends StatelessWidget {
           ]),
         );
     return Material(
-      color: C.paper,
+      color: C.ivory,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -1021,3 +1033,42 @@ class _DemoPassbookPageState extends State<DemoPassbookPage> {
   }
 }
 
+
+
+/// Latest notice on home (important updates).
+class _NoticePreview extends StatelessWidget {
+  const _NoticePreview(this.n, {required this.onTap});
+  final Map<String, dynamic> n;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    final body = (n['body'] ?? '').toString().trim();
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: () {
+          tapFeel();
+          onTap();
+        },
+        child: LuxCard(
+          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const RingIcon(Icons.campaign_outlined, size: 44),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text((n['title'] ?? '').toString(), maxLines: 2, overflow: TextOverflow.ellipsis, style: sans(15, weight: FontWeight.w700, height: 1.4)),
+                if (body.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(body, maxLines: 2, overflow: TextOverflow.ellipsis, style: sans(13.5, color: C.mute, height: 1.5)),
+                ],
+                const SizedBox(height: 6),
+                Text(taDate((n['created_at'] ?? '').toString()), style: sans(12, color: C.goldText, weight: FontWeight.w600)),
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}

@@ -22,9 +22,7 @@ class _LoginFrame extends StatelessWidget {
       backgroundColor: C.navy,
       // maroon glow + dot-kolam behind the logo (and behind the rounded corners of the sheet)
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(center: Alignment(0, -.78), radius: .75, colors: [Color(0xFF8A2333), C.navy]),
-        ),
+        decoration: velvetDeco(),
         child: KolamBg(
           festive: true,
           child: Column(children: [

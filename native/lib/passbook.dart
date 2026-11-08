@@ -94,7 +94,7 @@ class _PassbookTabState extends State<PassbookTab> {
     final top = MediaQuery.of(context).padding.top;
     return AnimatedBuilder(animation: app, builder: (context, _) => Column(children: [
       Container(
-        decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
+        decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
         child: KolamBg(child: Padding(
         padding: EdgeInsets.fromLTRB(12, top + 8, 12, 12),
         child: Row(children: [

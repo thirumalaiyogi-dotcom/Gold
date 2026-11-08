@@ -34,7 +34,7 @@ class AboutPage extends StatelessWidget {
       ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(18), gradient: const LinearGradient(colors: [C.navy, C.navy2])),
+          decoration: velvetDeco(radius: BorderRadius.circular(18), alignment: Alignment.center),
           child: Column(children: [
             Image.asset('assets/logo.png', height: 64),
             const SizedBox(height: 10),

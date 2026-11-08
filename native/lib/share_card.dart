@@ -51,7 +51,7 @@ class PassbookCard extends StatelessWidget {
         child: Column(mainAxisSize: MainAxisSize.min, children: [
           Container(
             width: double.infinity,
-            color: C.navy,
+            decoration: velvetDeco(alignment: Alignment.topLeft),
             child: KolamBg(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
@@ -100,7 +100,7 @@ class CertificateCard extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(color: C.navy2, borderRadius: BorderRadius.circular(22)),
       child: Container(
-        decoration: BoxDecoration(color: C.navy, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.gold, width: 1.5)),
+        decoration: velvetDeco(radius: BorderRadius.circular(16), alignment: Alignment.center, frame: Border.all(color: C.gold, width: 1.5)),
         clipBehavior: Clip.antiAlias,
         child: KolamBg(
           festive: true,

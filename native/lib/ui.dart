@@ -9,14 +9,15 @@ import 'package:google_fonts/google_fonts.dart';
 class C {
   static const navy = Color(0xFF6E1423);
   static const navy2 = Color(0xFF4A0D18);
-  static const ivory = Color(0xFFFBF8F1);
+  static const ivory = Color(0xFFFAF7EF);
+  static const navy3 = Color(0xFF801F32);
   static const paper = Color(0xFFFFFFFF);
-  static const ink = Color(0xFF252525);
-  static const mute = Color(0xFF777777);
-  static const gold = Color(0xFFC9A45C);
+  static const ink = Color(0xFF392027);
+  static const mute = Color(0xFF81747A);
+  static const gold = Color(0xFFD6B56D);
   static const goldText = Color(0xFF8A6A2E);
   static const goldLine = Color(0xFFD9C08A);
-  static const goldSoft = Color(0xFFE5C98B);
+  static const goldSoft = Color(0xFFE8D29A);
   static const line = Color(0xFFECE4D0);
   static const line2 = Color(0xFFE3D6B4);
   static const red = Color(0xFFC63C45);
@@ -566,13 +567,24 @@ Widget coinImage({bool silver = false, bool dim = false}) {
   return ClipOval(child: dim ? Opacity(opacity: .25, child: img) : img);
 }
 
+/// Maroon velvet + gold light (brand reference image), used for hero surfaces.
+const _velvet = ResizeImage(AssetImage('assets/velvet.jpg'), width: 1080);
+
+BoxDecoration velvetDeco({BorderRadius? radius, Border? border, Alignment alignment = Alignment.topCenter, BoxBorder? frame, List<BoxShadow>? shadow}) => BoxDecoration(
+      color: C.navy2,
+      borderRadius: radius,
+      border: frame ?? border,
+      boxShadow: shadow,
+      image: DecorationImage(image: _velvet, fit: BoxFit.cover, alignment: alignment),
+    );
+
 /// Faint dot-kolam lattice used behind the maroon headers (shop signature).
 class KolamBg extends StatelessWidget {
   const KolamBg({super.key, required this.child, this.festive = false});
   final Widget child;
   final bool festive;
   @override
-  Widget build(BuildContext context) => CustomPaint(painter: _Kolam(festive ? .16 : .09), child: child);
+  Widget build(BuildContext context) => CustomPaint(painter: _Kolam(festive ? .11 : .065), child: child);
 }
 
 class _Kolam extends CustomPainter {

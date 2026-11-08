@@ -44,7 +44,7 @@ class SchemeCard extends StatelessWidget {
           onTap: () => openScheme(context, s),
           child: Container(
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
-            decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [C.navy, C.navy2])),
+            decoration: velvetDeco(alignment: Alignment.topLeft),
             child: Row(children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -159,10 +159,7 @@ class SchemeDetailPage extends StatelessWidget {
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 100), children: [
         Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [C.navy, C.navy2]),
-          ),
+          decoration: velvetDeco(radius: BorderRadius.circular(20), alignment: Alignment.topLeft, frame: Border.all(color: const Color(0x80D6B56D))),
           child: Row(children: [
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
