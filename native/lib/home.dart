@@ -271,6 +271,7 @@ class HomeTab extends StatelessWidget {
             const _RateStrip(),
           ] else
             const _RateBoard(),
+          const _RateSpark(),
           const SizedBox(height: 8),
           Demo.rateIsToday || Demo.gold22 == 0
               ? Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.navyMute))
@@ -599,7 +600,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.7', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -723,7 +724,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.7', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -1014,4 +1015,95 @@ class _DemoPassbookPageState extends State<DemoPassbookPage> {
       ]),
     );
   }
+}
+
+
+/// Last 7 rate days as a thin gold line (header). Hidden when history is short.
+class _RateSpark extends StatefulWidget {
+  const _RateSpark();
+  @override
+  State<_RateSpark> createState() => _RateSparkState();
+}
+
+class _RateSparkState extends State<_RateSpark> {
+  static List<double>? _cache;
+  List<double>? v = _cache;
+
+  @override
+  void initState() {
+    super.initState();
+    if (v == null) _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final h = await Api.history(12);
+      final xs = <double>[for (final r in h) if (r['rate22'] != null) (num.tryParse('${r['rate22']}') ?? 0).toDouble()]..removeWhere((e) => e <= 0);
+      _cache = xs.length > 7 ? xs.sublist(xs.length - 7) : xs;
+      if (mounted) setState(() => v = _cache);
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final xs = v;
+    if (xs == null || xs.length < 3) return const SizedBox.shrink();
+    final ch = xs.last - xs.first;
+    final up = ch >= 0;
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Row(children: [
+        Text('${xs.length} நாள்', style: sans(11.5, color: C.navyMute)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 1100),
+            curve: Curves.easeOutCubic,
+            builder: (_, t, __) => CustomPaint(size: const Size(double.infinity, 34), painter: _SparkLine(xs, t)),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Text(ch == 0 ? 'மாற்றமில்லை' : '${up ? '▲' : '▼'} ${rupees(ch.abs())}', style: sans(12, color: ch == 0 ? C.navyMute : (up ? const Color(0xFF7FD6A4) : const Color(0xFFFF9A9A)), weight: FontWeight.w700)),
+      ]),
+    );
+  }
+}
+
+class _SparkLine extends CustomPainter {
+  _SparkLine(this.v, this.t);
+  final List<double> v;
+  final double t;
+  @override
+  void paint(Canvas canvas, Size s) {
+    final lo = v.reduce((a, b) => a < b ? a : b), hi = v.reduce((a, b) => a > b ? a : b);
+    final span = (hi - lo) == 0 ? 1.0 : hi - lo;
+    Offset pt(int i) => Offset(i / (v.length - 1) * s.width, 3 + (1 - (v[i] - lo) / span) * (s.height - 6));
+    final line = Path()..moveTo(pt(0).dx, pt(0).dy);
+    for (var i = 1; i < v.length; i++) {
+      line.lineTo(pt(i).dx, pt(i).dy);
+    }
+    canvas.save();
+    canvas.clipRect(Rect.fromLTWH(0, 0, s.width * t + 4, s.height));
+    final fill = Path.from(line)
+      ..lineTo(s.width, s.height)
+      ..lineTo(0, s.height)
+      ..close();
+    canvas.drawPath(fill, Paint()..shader = const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x55E5C98B), Color(0x00E5C98B)]).createShader(Offset.zero & s));
+    canvas.drawPath(line, Paint()
+      ..color = C.goldSoft
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round);
+    canvas.restore();
+    if (t > .95) {
+      final e = pt(v.length - 1);
+      canvas.drawCircle(e, 5, Paint()..color = const Color(0x55E5C98B));
+      canvas.drawCircle(e, 3, Paint()..color = Colors.white);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SparkLine o) => o.t != t || o.v != v;
 }

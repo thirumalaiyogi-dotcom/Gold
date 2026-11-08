@@ -5,25 +5,64 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'login.dart';
 import 'ui.dart';
 
-/// First screen decider: intro slides once, then the welcome screen.
-class Boot extends StatelessWidget {
+/// First screen decider: gold splash, then intro slides once, then the welcome screen.
+class Boot extends StatefulWidget {
   const Boot({super.key});
-  static Future<bool> _seen() async {
-    try {
-      return (await SharedPreferences.getInstance()).getBool('ob_seen') ?? false;
-    } catch (_) {
-      return true;
-    }
+  @override
+  State<Boot> createState() => _BootState();
+}
+
+class _BootState extends State<Boot> {
+  @override
+  void initState() {
+    super.initState();
+    _go();
+  }
+
+  Future<void> _go() async {
+    final r = await Future.wait([_seenIntro(), Future.delayed(const Duration(milliseconds: 1700), () => true)]);
+    if (!mounted) return;
+    final seen = r[0];
+    Navigator.of(context).pushReplacement(PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (_, __, ___) => seen ? const WelcomeScreen() : const Onboarding(),
+      transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+    ));
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<bool>(
-        future: _seen(),
-        builder: (_, s) {
-          if (!s.hasData) return const Scaffold(backgroundColor: C.navy);
-          return s.data! ? const WelcomeScreen() : const Onboarding();
-        },
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: C.navy,
+        body: KolamBg(
+          child: SizedBox.expand(
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 700),
+                curve: Curves.easeOutCubic,
+                builder: (_, v, child) => Opacity(opacity: v, child: Transform.scale(scale: .85 + v * .15, child: child)),
+                child: GoldShine(delay: const Duration(milliseconds: 650), child: Image.asset('assets/logo.png', width: 210)),
+              ),
+              const SizedBox(height: 18),
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 900),
+                curve: Curves.easeOut,
+                builder: (_, v, child) => Opacity(opacity: v, child: child),
+                child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி', style: sans(14, color: C.goldSoft, weight: FontWeight.w600).copyWith(letterSpacing: 1)),
+              ),
+            ]),
+          ),
+        ),
       );
+}
+
+Future<bool> _seenIntro() async {
+  try {
+    return (await SharedPreferences.getInstance()).getBool('ob_seen') ?? false;
+  } catch (_) {
+    return true;
+  }
 }
 
 /// 4 intro slides — same content as the website's first-open slides.

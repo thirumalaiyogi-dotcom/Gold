@@ -6,6 +6,8 @@ import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
 import 'pay.dart';
+import 'share_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentRow extends StatelessWidget {
   const PaymentRow(this.p, {super.key, this.last = false, this.receipt = false});
@@ -69,6 +71,25 @@ class _PassbookTabState extends State<PassbookTab> {
   double get grams => Demo.gramsTotal;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeCertificate());
+  }
+
+  /// First time a customer finishes every installment, open the greeting card once.
+  Future<void> _maybeCertificate() async {
+    if (app.demoPb != null || !app.loggedIn || Demo.silver || !Demo.schemeDone || Demo.paidCount == 0) return;
+    try {
+      final sp = await SharedPreferences.getInstance();
+      final k = 'cert_${app.mobile}_${Demo.schemeKey}_${(app.pb?['start'] ?? '')}';
+      if (sp.getBool(k) == true || !mounted) return;
+      await sp.setBool(k, true);
+      if (!mounted) return;
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShareCardPage(certificate: true)));
+    } catch (_) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
     return AnimatedBuilder(animation: app, builder: (context, _) => Column(children: [
@@ -91,7 +112,7 @@ class _PassbookTabState extends State<PassbookTab> {
             ]),
           ),
           IconButton(
-            onPressed: () => shareWhatsApp(context, _shareText()),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShareCardPage())),
             tooltip: 'பகிர்',
             style: IconButton.styleFrom(side: const BorderSide(color: Color(0x8CC9A24A))),
             icon: const Icon(Icons.share_outlined, color: C.goldSoft),
@@ -178,6 +199,13 @@ class _PassbookTabState extends State<PassbookTab> {
             TextSpan(text: 'நகை வாங்கலாம் : ', style: sans(13.5)),
             TextSpan(text: Demo.buyMonth, style: sans(13.5, weight: FontWeight.w700)),
           ])),
+          if (done && !Demo.silver && paid > 0) ...[
+            const SizedBox(height: 14),
+            GoldShine(
+              loop: true,
+              child: PrimaryButton('🎉 நிறைவு வாழ்த்து அட்டை', gold: true, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ShareCardPage(certificate: true)))),
+            ),
+          ],
         ]),
       ),
       const SizedBox(height: 16),
@@ -232,8 +260,6 @@ class _PassbookTabState extends State<PassbookTab> {
         ]),
       );
 
-  String _shareText() =>
-      'சுப்புலட்சுமி தங்க மாளிகை · ${Demo.scheme} திட்டம்\nபெயர்: ${Demo.name}\nமொத்த சேமிப்பு: ${rupees(Demo.total)}\nதவணை: ${Demo.paidCount}/${Demo.months}${Demo.grams ? '\nதங்கம்: ${Demo.gramsTotal.toStringAsFixed(3)} கி' : ''}';
 
   /// Online payment runs on the website (same Cashfree flow, same database checks).
   Future<void> _pay(BuildContext context) async {
