@@ -6,7 +6,7 @@ Keeps every element id, function name, Supabase call and business rule. Changes:
   3. confirm()/prompt() → in-app dialogs (await ASK / ASKTXT); alert() is replaced at runtime by adm-shell.js.
   4. Bug fixes: IST date in saveRate + remind; old blue colours in the customer detail sheet.
   5. adm-pro (latest source) + adm-shell (new shell) injected before </body>.
-Usage: python3 build_staff_new.py staff.html staff-new.html
+Usage (2026-11-08 onwards): python3 build_staff_new.py staff-old.html staff.html   (staff-old.html = pre-v6 source)
 """
 import re
 import sys
