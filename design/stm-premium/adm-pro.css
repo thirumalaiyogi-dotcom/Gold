@@ -1,0 +1,78 @@
+/* ===== STM Admin Pro: staff roles, request approvals, Excel report ===== */
+.ap{--m:var(--a-maroon,#6E1423);--b:var(--a-burg,#4A0D18);--g:var(--a-gold,#C9A45C);--gs:var(--a-gold-soft,#E5C98B);--g50:var(--a-gold-50,#F6EEDC);--iv:var(--a-ivory,#FBF8F1);--ln:var(--a-line,#EADFC8);--ink:var(--a-ink,#252525);--mut:var(--a-mut,#777);--ok:#24865B;--ok50:#E7F3EC;--err:#C63C45;--err50:#FBEAEA}
+.ap *{box-sizing:border-box}
+.ap-h{display:flex;align-items:center;gap:10px;margin:0 0 4px}
+.ap-h h2{margin:0;font-size:18px;flex:1}
+.ap-sub{color:var(--mut);font-size:13px;margin:0 0 14px;line-height:1.5}
+.ap-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--m);background:var(--m);color:#fff;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ap-btn:active{transform:scale(.98)}
+.ap-btn.o{background:#fff;color:var(--m)}
+.ap-btn.ok{background:var(--ok);border-color:var(--ok)}
+.ap-btn.no{background:#fff;color:var(--err);border-color:#E9C1C4}
+.ap-btn.sm{min-height:36px;padding:0 12px;font-size:13px;border-radius:10px}
+.ap-btn[disabled]{opacity:.5;pointer-events:none}
+.ap-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ap-list{display:flex;flex-direction:column;gap:10px}
+.ap-item{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--ln);border-radius:14px;background:#fff}
+.ap-av{flex:0 0 44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--m);background:var(--g50);border:1px solid var(--gs);font-size:16px}
+.ap-main{flex:1;min-width:0}
+.ap-main b{display:block;font-size:15.5px;color:var(--ink);overflow-wrap:anywhere}
+.ap-main small{display:block;color:var(--mut);font-size:12.5px;line-height:1.55;overflow-wrap:anywhere}
+.ap-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.ap-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:var(--g50);color:#7A5A16;border:1px solid var(--gs)}
+.ap-chip.r-super_admin{background:var(--m);color:#fff;border-color:var(--m)}
+.ap-chip.r-admin{background:#F3E6E8;color:var(--m);border-color:#E3C6CB}
+.ap-chip.r-manager{background:#E8EEF8;color:#24477E;border-color:#C9D6EC}
+.ap-chip.r-accounts{background:var(--ok50);color:var(--ok);border-color:#BFDCCB}
+.ap-chip.r-support{background:#F2F2F2;color:#555;border-color:#DDD}
+.ap-chip.off{background:var(--err50);color:var(--err);border-color:#EDC6C9}
+.ap-acts{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.ap-empty{padding:26px 14px;text-align:center;color:var(--mut);border:1px dashed var(--ln);border-radius:14px;background:var(--iv)}
+.ap-empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+.ap-badge{min-width:22px;height:22px;padding:0 7px;border-radius:99px;background:var(--err);color:#fff;font-size:12px;font-weight:800;display:inline-grid;place-items:center}
+.ap-me{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mut);margin:6px 2px 0}
+/* bottom sheet */
+.ap-ov{position:fixed;inset:0;z-index:9999;background:rgba(30,10,14,.45);display:flex;align-items:flex-end;justify-content:center;opacity:0;transition:opacity .2s}
+.ap-ov.on{opacity:1}
+.ap-sheet{width:100%;max-width:560px;max-height:92vh;overflow:auto;background:#fff;border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));transform:translateY(30px);transition:transform .25s}
+.ap-ov.on .ap-sheet{transform:none}
+.ap-grab{width:42px;height:5px;border-radius:9px;background:#E3D9C6;margin:4px auto 12px}
+.ap-sheet h3{margin:0 0 4px;font-size:19px;color:var(--ink)}
+.ap-f{display:block;margin:12px 0 0}
+.ap-f>span{display:block;font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.ap-f input,.ap-f select{width:100%;min-height:46px;border:1px solid var(--ln);border-radius:12px;padding:0 12px;font:inherit;font-size:15px;background:#fff;color:var(--ink)}
+.ap-f input:focus,.ap-f select:focus{outline:2px solid var(--gs);border-color:var(--g)}
+.ap-roles{display:grid;gap:8px}
+.ap-role{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1.5px solid var(--ln);border-radius:14px;cursor:pointer;background:#fff}
+.ap-role input{margin-top:3px;accent-color:var(--m);width:18px;height:18px}
+.ap-role b{display:block;font-size:14.5px}
+.ap-role small{display:block;color:var(--mut);font-size:12.5px;line-height:1.5}
+.ap-role:has(input:checked){border-color:var(--m);background:#FFF9F3;box-shadow:0 0 0 3px rgba(110,20,35,.08)}
+.ap-pw{display:flex;gap:8px}
+.ap-pw input{flex:1;font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+.ap-row{display:flex;gap:10px;margin-top:16px}
+.ap-row>*{flex:1}
+.ap-msg{margin-top:10px;font-size:13.5px;min-height:1em}
+.ap-msg.e{color:var(--err)}.ap-msg.s{color:var(--ok)}
+.ap-note{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--g50);color:#5A4410;font-size:12.5px;line-height:1.55}
+/* excel */
+.ap-xl{display:grid;gap:10px}
+.ap-xl .ap-f{margin:0}
+.ap-sheets{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ap-sheets label{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--ln);border-radius:12px;font-size:13px;font-weight:600;background:#fff}
+.ap-sheets input{accent-color:var(--m);width:17px;height:17px}
+.ap-xlic{width:44px;height:44px;border-radius:12px;background:#E7F3EC;display:grid;place-items:center;flex:0 0 44px}
+.ap-xlic svg{width:24px;height:24px;stroke:#1D6F42;fill:none;stroke-width:2}
+@media (max-width:420px){.ap-sheets{grid-template-columns:1fr}}
+/* sheet inputs: override the panel's global input styles */
+.ap-sheet input:not([type=radio]):not([type=checkbox]),.ap-sheet select{height:46px!important;min-height:46px!important;max-height:46px;margin:0!important;padding:0 12px!important;border:1.5px solid var(--ln)!important;border-radius:12px!important;font-size:15px!important;line-height:46px;box-sizing:border-box!important}
+.ap-sheet .ap-pw .ap-btn{height:46px;min-height:46px;flex:0 0 52px;padding:0}
+.ap-role b{color:var(--ink)!important}
+.ap-role input[type=radio]{flex:0 0 18px;min-height:0!important;height:18px!important;margin:3px 0 0!important}
+/* 5 tabs (with Staff) on phones */
+@media (max-width:899px){html[data-a5][data-style] #stabs.ap5{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+ html[data-a5][data-style] #stabs.ap5 button{font-size:11px!important;padding:6px 2px!important}}
+.ap-f>span.ap-pw{display:flex;margin:0}
+#adm .ap-sheets label{padding:9px 10px;min-height:0;margin:0}
+#adm .ap-sheets input[type=checkbox]{min-height:0!important;height:17px!important;margin:0!important}
+#adm .ap-xl select{margin:0!important}
