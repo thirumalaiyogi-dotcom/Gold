@@ -106,62 +106,97 @@ class RingIcon extends StatelessWidget {
       );
 }
 
+/// Button design system (2026-11-09):
+/// primary  = maroon #6E1423, white text
+/// gold     = champagne #D6B56D, dark burgundy text
+/// outline  = white, maroon text, #E8D9B9 border
+/// disabled = #EAE4DA, muted text. One height (52), one radius (14).
+const kBtnRadius = 14.0;
+const kBtnHeight = 52.0;
+const kDisabledBg = Color(0xFFEAE4DA);
+const kDisabledFg = Color(0xFF9A8F86);
+
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton(this.label, {super.key, required this.onTap, this.gold = false, this.icon});
+  const PrimaryButton(this.label, {super.key, required this.onTap, this.gold = false, this.icon, this.busy = false});
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool gold;
   final IconData? icon;
+  final bool busy;
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 50),
-        child: DecoratedBox(
-          // maroon buttons wear the same velvet as the headers
-          decoration: gold
-              ? const BoxDecoration()
-              : velvetDeco(radius: BorderRadius.circular(12), alignment: Alignment.center, shadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 10, offset: Offset(0, 4))]),
-          child: FilledButton(
-          style: FilledButton.styleFrom(
-            backgroundColor: gold ? C.gold : Colors.transparent,
-            shadowColor: Colors.transparent,
-            foregroundColor: gold ? C.navy : C.goldSoft,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            minimumSize: const Size(0, 50),
-            textStyle: sans(15, weight: FontWeight.w700, height: 1.25),
-          ),
-          onPressed: () {
-            tapFeel();
-            onTap();
-          },
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
-            Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
-          ]),
+  Widget build(BuildContext context) {
+    final fg = gold ? C.navy2 : Colors.white;
+    final enabled = onTap != null && !busy;
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: kBtnHeight),
+      child: FilledButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith((s) {
+            if (s.contains(WidgetState.disabled)) return busy ? (gold ? C.gold : C.navy) : kDisabledBg;
+            if (s.contains(WidgetState.pressed)) return gold ? const Color(0xFFC4A25A) : C.navy2;
+            return gold ? C.gold : C.navy;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) && !busy ? kDisabledFg : fg),
+          overlayColor: WidgetStateProperty.all(Colors.white.withValues(alpha: .08)),
+          elevation: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) || s.contains(WidgetState.pressed) ? 0 : 2),
+          shadowColor: WidgetStateProperty.all(const Color(0x556E1423)),
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(kBtnRadius))),
+          side: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.focused) ? const BorderSide(color: C.gold, width: 2) : BorderSide.none),
+          padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 16, vertical: 10)),
+          minimumSize: WidgetStateProperty.all(const Size(0, kBtnHeight)),
+          textStyle: WidgetStateProperty.all(sans(15, weight: FontWeight.w700, height: 1.25)),
         ),
-        ),
-      );
+        onPressed: enabled
+            ? () {
+                tapFeel();
+                onTap!();
+              }
+            : null,
+        child: busy
+            ? SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4, color: fg))
+            : Row(mainAxisSize: MainAxisSize.min, children: [
+                if (icon != null) ...[Icon(icon, size: 19), const SizedBox(width: 8)],
+                Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
+              ]),
+      ),
+    );
+  }
 }
 
 class OutlineBtn extends StatelessWidget {
   const OutlineBtn(this.label, {super.key, required this.onTap, this.light = false, this.icon});
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final bool light;
   final IconData? icon;
   @override
   Widget build(BuildContext context) => ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 50),
+        constraints: const BoxConstraints(minHeight: kBtnHeight),
         child: OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: light ? Colors.white : C.navy,
-            side: BorderSide(color: light ? const Color(0x73FFFFFF) : const Color(0xFFE2D6BE)),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            minimumSize: const Size(0, 50),
-            textStyle: sans(14.5, weight: FontWeight.w600, height: 1.25),
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith((s) {
+              if (light) return s.contains(WidgetState.pressed) ? const Color(0x26FFFFFF) : Colors.transparent;
+              if (s.contains(WidgetState.disabled)) return kDisabledBg;
+              return s.contains(WidgetState.pressed) ? const Color(0xFFF7EFE0) : C.paper;
+            }),
+            foregroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) ? kDisabledFg : (light ? Colors.white : C.navy)),
+            overlayColor: WidgetStateProperty.all(C.navy.withValues(alpha: .05)),
+            side: WidgetStateProperty.resolveWith((s) {
+              if (s.contains(WidgetState.focused)) return const BorderSide(color: C.gold, width: 2);
+              if (s.contains(WidgetState.pressed)) return BorderSide(color: light ? Colors.white : C.gold, width: 1.2);
+              return BorderSide(color: light ? const Color(0x73FFFFFF) : C.line2, width: 1.2);
+            }),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(kBtnRadius))),
+            padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 14, vertical: 10)),
+            minimumSize: WidgetStateProperty.all(const Size(0, kBtnHeight)),
+            textStyle: WidgetStateProperty.all(sans(14.5, weight: FontWeight.w700, height: 1.25)),
           ),
-          onPressed: onTap,
+          onPressed: onTap == null
+              ? null
+              : () {
+                  tapFeel();
+                  onTap!();
+                },
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 6)],
             Flexible(child: Text(label, textAlign: TextAlign.center, maxLines: 2, softWrap: true)),
@@ -198,35 +233,68 @@ class KeyPad extends StatelessWidget {
   final void Function(String key) onKey;
   @override
   Widget build(BuildContext context) {
-    Widget key(String k) {
-      if (k.isEmpty) return const SizedBox.shrink();
-      return Material(
-        color: C.paper,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14), side: const BorderSide(color: C.line)),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(14),
-          onTap: () {
-            HapticFeedback.selectionClick();
-            onKey(k);
-          },
-          child: Center(
-            child: k == 'del'
-                ? const Icon(Icons.backspace_outlined, color: C.navy, semanticLabel: 'அழி')
-                : Text(k, style: sans(24, color: C.navy, weight: FontWeight.w600)),
-          ),
-        ),
-      );
-    }
-
     const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'];
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
       childAspectRatio: 1.75,
-      children: keys.map(key).toList(),
+      // shadows need a little room around the keys
+      padding: const EdgeInsets.all(2),
+      children: [for (final k in keys) k.isEmpty ? const SizedBox.shrink() : _PadKey(k, onKey)],
+    );
+  }
+}
+
+/// mPIN key: white, maroon number, thin champagne border, 18px corners;
+/// turns maroon with a white number while pressed.
+class _PadKey extends StatefulWidget {
+  const _PadKey(this.k, this.onKey);
+  final String k;
+  final void Function(String key) onKey;
+  @override
+  State<_PadKey> createState() => _PadKeyState();
+}
+
+class _PadKeyState extends State<_PadKey> {
+  bool down = false;
+  void _set(bool v) {
+    if (down != v) setState(() => down = v);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = down ? Colors.white : C.navy;
+    return Semantics(
+      button: true,
+      label: widget.k == 'del' ? 'அழி' : widget.k,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => _set(true),
+        onTapCancel: () => _set(false),
+        onTapUp: (_) {
+          Future.delayed(const Duration(milliseconds: 90), () {
+            if (mounted) _set(false);
+          });
+        },
+        onTap: () {
+          HapticFeedback.selectionClick();
+          widget.onKey(widget.k);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 90),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: down ? C.navy : C.paper,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: down ? C.navy : const Color(0xFFE2CC97), width: 1),
+            boxShadow: down ? const [] : const [BoxShadow(color: Color(0x146E1423), blurRadius: 8, offset: Offset(0, 3))],
+          ),
+          child: widget.k == 'del' ? Icon(Icons.backspace_outlined, color: fg) : Text(widget.k, style: sans(24, color: fg, weight: FontWeight.w600)),
+        ),
+      ),
     );
   }
 }
@@ -322,10 +390,10 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
         onTap: widget.onDone, // accessibility: a plain tap still works for screen readers
         child: Container(
           height: h,
-          decoration: velvetDeco(
-            radius: BorderRadius.circular(h),
-            alignment: Alignment.center,
-            shadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 14, offset: Offset(0, 6))],
+          decoration: BoxDecoration(
+            color: C.navy,
+            borderRadius: BorderRadius.circular(h),
+            boxShadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 12, offset: Offset(0, 5))],
           ),
           child: Stack(alignment: Alignment.centerLeft, children: [
             // gold fill that follows the coin

@@ -514,7 +514,7 @@ class _EnrolPageState extends State<EnrolPage> {
                 }))),
             const SizedBox(width: 10),
           ],
-          Expanded(flex: 2, child: PrimaryButton(step < 3 ? 'அடுத்து' : (busy ? 'அனுப்புகிறது…' : 'விண்ணப்பம் அனுப்பு'), onTap: _next)),
+          Expanded(flex: 2, child: PrimaryButton(step < 3 ? 'அடுத்து' : (busy ? 'அனுப்புகிறது…' : 'விண்ணப்பம் அனுப்பு'), busy: busy, onTap: _next)),
         ]),
         const SizedBox(height: 14),
         Center(child: Text('விண்ணப்பம் கடைக்கு செல்லும். கடை approve பண்ணியதும் WhatsApp-ல் தகவல் வரும்.', textAlign: TextAlign.center, style: sans(12, color: C.mute))),

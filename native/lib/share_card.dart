@@ -184,7 +184,7 @@ class _ShareCardPageState extends State<ShareCardPage> {
               ),
             ),
             const SizedBox(height: 22),
-            PrimaryButton(busy ? 'தயாராகிறது…' : 'படமாக பகிர் (WhatsApp)', gold: widget.certificate, icon: Icons.share_outlined, onTap: () async {
+            PrimaryButton(busy ? 'தயாராகிறது…' : 'படமாக பகிர் (WhatsApp)', gold: widget.certificate, icon: Icons.share_outlined, busy: busy, onTap: () async {
               if (busy) return;
               setState(() => busy = true);
               await shareImage(context, key, _text, widget.certificate ? 'stm_vazhthu.png' : 'stm_passbook.png');

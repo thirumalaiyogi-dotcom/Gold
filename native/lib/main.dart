@@ -212,6 +212,43 @@ class StmApp extends StatelessWidget {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(seedColor: C.navy, primary: C.navy, surface: C.ivory),
       scaffoldBackgroundColor: Colors.transparent, // ivory picture comes from IvoryPageTransitions
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.disabled) ? const Color(0xFFF4F0EA) : Colors.white),
+        trackColor: WidgetStateProperty.resolveWith((s) {
+          if (s.contains(WidgetState.disabled)) return kDisabledBg;
+          return s.contains(WidgetState.selected) ? C.navy : const Color(0xFFE8DCCB);
+        }),
+        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+        overlayColor: WidgetStateProperty.all(C.navy.withValues(alpha: .08)),
+        thumbIcon: WidgetStateProperty.all(null),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: C.navy,
+          disabledForegroundColor: kDisabledFg,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kBtnRadius)),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: C.navy,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: kDisabledBg,
+          disabledForegroundColor: kDisabledFg,
+          minimumSize: const Size(0, kBtnHeight),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kBtnRadius)),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: C.navy,
+          backgroundColor: C.paper,
+          disabledForegroundColor: kDisabledFg,
+          side: const BorderSide(color: C.line2, width: 1.2),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kBtnRadius)),
+        ),
+      ),
       pageTransitionsTheme: PageTransitionsTheme(builders: {
         TargetPlatform.android: IvoryPageTransitions(),
         TargetPlatform.iOS: IvoryPageTransitions(),

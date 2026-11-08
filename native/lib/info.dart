@@ -133,7 +133,6 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
   Widget build(BuildContext context) {
     Widget sw(String k, IconData i, String t, String sub) => SwitchListTile(
           value: v[k]!,
-          activeThumbColor: C.navy,
           secondary: Icon(i, color: C.navy),
           title: Text(t, style: sans(15, weight: FontWeight.w700)),
           subtitle: Text(sub, style: sans(12.5, color: C.mute, height: 1.4)),

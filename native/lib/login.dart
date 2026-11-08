@@ -96,7 +96,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget option({required IconData icon, required String title, required String sub, required bool primary, required VoidCallback onTap}) {
       final card = Material(
-        color: primary ? Colors.transparent : C.paper,
+        color: primary ? C.navy : C.paper,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: primary ? Colors.transparent : C.line2)),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -125,7 +125,7 @@ class WelcomeScreen extends StatelessWidget {
         ),
       );
       return primary
-          ? GoldShine(loop: true, delay: const Duration(milliseconds: 1200), pause: const Duration(milliseconds: 4000), color: const Color(0x66FFF1BF), child: DecoratedBox(decoration: velvetDeco(radius: BorderRadius.circular(16), alignment: Alignment.center), child: card))
+          ? GoldShine(loop: true, delay: const Duration(milliseconds: 1200), pause: const Duration(milliseconds: 4000), color: const Color(0x66FFF1BF), child: card)
           : card;
     }
 
@@ -304,7 +304,7 @@ class _MobileScreenState extends State<MobileScreen> {
         AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
           opacity: v.length == 10 ? 1 : .5,
-          child: PrimaryButton('தொடரவும்', onTap: _next),
+          child: PrimaryButton('தொடரவும்', busy: busy, onTap: _next),
         ),
         const SizedBox(height: 14),
         const _HelpTiles(),
@@ -556,7 +556,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         _field('புது 6 இலக்க mPIN*', _p1, secret: true),
         _field('mPIN மறுபடி*', _p2, secret: true),
         if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
-        PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', onTap: _save),
+        PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', busy: busy, onTap: _save),
         const SizedBox(height: 14),
         Center(
           child: TextButton(
