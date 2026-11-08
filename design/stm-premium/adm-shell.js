@@ -142,7 +142,7 @@
     const top = doc.createElement("div"); top.className = "s6top s6"; top.id = "s6top";
     top.innerHTML = `<button type="button" class="s6back" aria-label="பின் செல்ல">${svg("back")}</button><img class="lg" src="${T(() => LOGO, "icon-192.png")}" alt=""><h1 id="s6title">Dashboard</h1><button type="button" class="s6me" id="s6me" aria-haspopup="menu"><i>?</i><span>Staff</span></button><div class="s6menu" id="s6menu" role="menu"></div>`;
     adm.before(top);
-    top.querySelector(".s6back").onclick = back;
+    top.querySelector(".s6back").onclick = () => back();
     $i("s6me").onclick = (e) => { e.stopPropagation(); $i("s6menu").classList.toggle("on"); };
     doc.addEventListener("click", () => $i("s6menu").classList.remove("on"));
     // bottom nav
@@ -166,6 +166,8 @@
     placeCards();
     buildDash(); buildCust(); buildSettings();
     navTo("dash", true);
+    try { history.replaceState({ s6base: 1 }, ""); } catch (e) {}
+    armHistory();
     // the old tab switcher is still used by other code (staffTab) → route it here
     window.staffTab = (k) => navTo({ today: "dash", cust: "cust", notify: "notify", set: "set" }[k] || "dash", true);
     window.S6 = { go: navTo };
@@ -192,6 +194,8 @@
     const sb = doc.querySelector('#stabs [data-ap="staff"]'); if (sb) sb.style.display = "none";
   }
 
+  // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
+  const PARENT = { pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
@@ -201,15 +205,42 @@
     if (!replace && k !== cur) { if (PAGES[k].sub) stack.push(cur); else stack = []; }
     if (!PAGES[k].sub) stack = [];
     cur = k;
+    closeOverlays();
     doc.querySelectorAll(".s6p").forEach((p) => p.classList.toggle("on", p.dataset.p === k));
-    const navKey = PAGES[k].sub ? (stack.find((x) => !PAGES[x].sub) || "set") : k;
+    const navKey = PAGES[k].sub ? (stack.find((x) => !PAGES[x].sub) || PARENT[k] || "set") : k;
     doc.querySelectorAll("#s6nav [data-n]").forEach((b) => b.classList.toggle("on", b.dataset.n === navKey));
     doc.querySelectorAll("#s6side [data-n]").forEach((b) => b.classList.toggle("on", b.dataset.n === k));
     $i("s6title").textContent = PAGES[k].t;
-    $i("s6top").classList.toggle("sub", !!PAGES[k].sub && stack.length > 0);
+    $i("s6top").classList.toggle("sub", !!PAGES[k].sub); // every sub page has a back button
     scrollTo({ top: 0 });
   }
-  function back() { const p = stack.pop(); navTo(p || "dash", true); }
+
+  // ---------- one back logic for the top-bar back button AND the phone's back button ----------
+  // order: open popup / sheet → sub page → its parent → Dashboard → (twice) leave the panel
+  function openOverlay() {
+    const cdv = $i("cdv"); if (cdv && !cdv.classList.contains("hide")) return () => T(() => closeCD(), cdv.classList.add("hide"));
+    const dlg = doc.querySelector(".s6ov"); if (dlg) return () => (dlg.querySelector('[data-v="0"]') || dlg.querySelector('[data-v="1"]')).click();
+    const sh = [...doc.querySelectorAll(".ap-ov")].pop(); if (sh) return () => sh.click();
+    const wlc = $i("wlc"); if (wlc) return () => wlc.remove();
+    const mn = $i("s6menu"); if (mn && mn.classList.contains("on")) return () => mn.classList.remove("on");
+    return null;
+  }
+  function closeOverlays() { let n = 0, c; while ((c = openOverlay()) && n++ < 5) c(); }
+  let exitArmed = 0;
+  function back() {
+    const ov = openOverlay(); if (ov) { ov(); return true; }
+    if (PAGES[cur] && PAGES[cur].sub) { const p = stack.pop(); navTo(p || PARENT[cur] || "set", true); return true; }
+    if (cur !== "dash") { navTo("dash", true); return true; }
+    return false; // already on Dashboard
+  }
+  // keep one extra history entry so the phone's back button comes to us first
+  function armHistory() { try { if (!(history.state && history.state.s6)) history.pushState({ s6: 1 }, ""); } catch (e) {} }
+  window.addEventListener("popstate", () => {
+    if (!built || $i("adm").classList.contains("hide")) return;
+    if (back()) { armHistory(); return; }
+    if (Date.now() - exitArmed < 2500) { try { history.back(); } catch (e) {} return; } // second back on Dashboard → leave
+    exitArmed = Date.now(); toast("வெளியேற மீண்டும் back அழுத்துங்க"); armHistory();
+  });
 
   // =============== who am I / role ===============
   const ROLE_TA = { super_admin: "உரிமையாளர்", admin: "நிர்வாகி", manager: "மேலாளர்", accounts: "கணக்காளர்", support: "உதவியாளர்" };
