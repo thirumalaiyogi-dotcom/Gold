@@ -211,3 +211,48 @@ html[data-s6] #adm .s6list .chev{flex:none!important;width:20px}
 .s6log small{display:block;color:var(--s-mut);font-size:12px;margin-top:2px}
 html[data-s6] #adm .s6log .x{flex:none;width:auto!important;min-height:34px!important;height:34px;padding:0 12px!important;margin:0!important;border-radius:99px!important;border:1px solid #EDC6C9!important;background:#fff!important;color:var(--s-err)!important;font:inherit;font-size:12.5px!important;font-weight:700;cursor:pointer;box-shadow:none!important}
 html[data-s6] #adm .s6clr{margin-top:8px!important;color:var(--s-err)!important;width:auto!important;min-height:0!important;background:none!important;border:0!important;box-shadow:none!important;padding:6px 0!important}
+/* ---------- segmented switch ---------- */
+.s6seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#fff;border:1px solid var(--s-ln);border-radius:12px;margin-bottom:10px}
+html[data-s6] #adm .s6seg button{min-height:40px!important;height:40px;margin:0!important;border:0!important;border-radius:9px!important;background:none!important;color:var(--s-mut)!important;font:inherit;font-size:13.5px!important;font-weight:700!important;box-shadow:none!important;width:auto!important;padding:0 8px!important;cursor:pointer}
+html[data-s6] #adm .s6seg button.on{background:var(--s-mar)!important;color:#fff!important}
+.s6sum{font-size:13px;color:var(--s-mut);margin:2px 2px 8px}.s6sum b{color:var(--s-ink)}
+
+/* ---------- Excel-style grid ---------- */
+.s6grid{background:#fff;border:1px solid var(--s-ln);border-radius:12px;overflow:auto;max-height:calc(100vh - 260px);-webkit-overflow-scrolling:touch;box-shadow:var(--s-sh)}
+@media (min-width:900px){.s6grid{max-height:calc(100vh - 230px)}}
+.s6t{border-collapse:separate;border-spacing:0;width:max-content;min-width:100%;font-size:13px}
+.s6t th,.s6t td{padding:9px 12px;border-bottom:1px solid #F0E8D8;border-right:1px solid #F5EFE3;white-space:nowrap;text-align:left;vertical-align:middle;background:#fff}
+.s6t th{position:sticky;top:0;z-index:2;background:#F7F0E1;color:#5b4a2e;font-weight:700;font-size:12.5px;cursor:pointer;user-select:none;border-bottom:1px solid #E6D8BC}
+.s6t th.on{color:var(--s-mar)}
+.s6t .stk{position:sticky;left:0;z-index:1;box-shadow:1px 0 0 #E6D8BC;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.s6t th.stk{z-index:3}
+.s6t tbody tr:nth-child(even) td{background:#FDFBF6}
+.s6t tbody tr:hover td{background:#FBF3E4}
+.s6t .r{text-align:right;font-variant-numeric:tabular-nums}
+.s6t .b{font-weight:700}
+.s6t a[data-cd]{color:var(--s-ink);font-weight:700;text-decoration:none;cursor:pointer;border-bottom:1px dotted #C9A45C}
+.s6t td.acts a{display:inline-flex;align-items:center;height:28px;padding:0 10px;margin-right:6px;border-radius:99px;border:1px solid var(--s-ln);color:var(--s-mar);font-weight:600;font-size:12px;cursor:pointer;text-decoration:none;background:#fff}
+.s6t td.acts a[data-pay]{background:var(--s-mar);border-color:var(--s-mar);color:#fff}
+.s6t .s6badge{margin:0}
+.s6pager{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;font-size:13px;color:var(--s-mut)}
+html[data-s6] #adm .s6pager button{width:auto!important;min-height:38px!important;margin:0!important;padding:0 14px!important;border-radius:10px!important;border:1px solid var(--s-ln)!important;background:#fff!important;color:var(--s-mar)!important;font:inherit;font-weight:700!important;font-size:13px!important;box-shadow:none!important;cursor:pointer}
+html[data-s6] #adm .s6pager button[disabled]{opacity:.4}
+html[data-s6] .s6p[data-p="cust"] .s6search{top:58px}
+
+/* ---------- payment entry: customer picker ---------- */
+.s6pick{margin:4px 0 10px}
+.s6pres{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+html[data-s6] #adm .s6pres button{display:block!important;width:100%!important;text-align:left!important;min-height:0!important;margin:0!important;padding:10px 12px!important;border:1px solid var(--s-ln)!important;border-radius:10px!important;background:#fff!important;color:var(--s-ink)!important;box-shadow:none!important;font:inherit;cursor:pointer}
+.s6pres b{display:block;font-size:14.5px}.s6pres small{display:block;color:var(--s-mut);font-size:12px}
+.s6psel .s6c{align-items:center;background:var(--s-g50);border-color:var(--s-gs)}
+.s6psel .s6c .m b{display:block;font-size:15px}
+
+/* ---------- hub boxes (notifications) ---------- */
+.s6hub{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+html[data-s6] #adm .s6hub button{display:flex!important;flex-direction:column;align-items:flex-start!important;justify-content:flex-start!important;gap:4px;text-align:left!important;min-height:132px!important;width:auto!important;margin:0!important;padding:16px 14px!important;border:1px solid var(--s-ln)!important;border-radius:16px!important;background:#fff!important;color:var(--s-ink)!important;box-shadow:var(--s-sh)!important;font:inherit;cursor:pointer}
+.s6hub i{width:44px;height:44px;border-radius:13px;background:var(--s-g50);color:var(--s-mar);display:grid;place-items:center;margin-bottom:6px}
+.s6hub i svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.s6hub b{font-size:15px;line-height:1.35}.s6hub small{color:var(--s-mut);font-size:12px;line-height:1.4;font-weight:400}
+@media (min-width:900px){.s6hub{grid-template-columns:repeat(4,1fr)}}
+html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!important;height:34px!important;margin:0!important;padding:0 10px!important;font-size:12.5px!important;border-radius:99px!important;flex:none}
+@media (min-width:900px){.s6pages{max-width:none}}

@@ -115,7 +115,11 @@
   const PAGES = {
     dash: { t: "Dashboard", nav: "dash" },
     cust: { t: "Customers", nav: "cust", cards: ["Customers"] },
-    notify: { t: "அறிவிப்பு", nav: "notify", cards: ["Notification அனுப்பு", "App திறக்கும்போது Poster", "புதிய அறிவிப்பு"], cols: 1 },
+    notify: { t: "அறிவிப்பு", nav: "notify" },
+    nsend: { t: "Notification அனுப்பு", sub: 1, cards: ["Notification அனுப்பு"] },
+    nposter: { t: "App Poster", sub: 1, cards: ["App திறக்கும்போது Poster"] },
+    nnotice: { t: "அறிவிப்புகள்", sub: 1, cards: ["புதிய அறிவிப்பு"] },
+    nlog: { t: "அனுப்பிய வரலாறு", sub: 1 },
     set: { t: "அமைப்பு", nav: "set" },
     pay: { t: "தவணை பதிவு", sub: 1, cards: ["தவணை பதிவு"] },
     rate: { t: "தங்கம் / வெள்ளி விலை", sub: 1, cards: ["இன்றைய 22K விலை", "பழைய விலை சேர்க்க"] },
@@ -164,7 +168,7 @@
     pages.innerHTML = Object.keys(PAGES).map((k) => `<section class="s6p${PAGES[k].cols ? " cols" : ""}" data-p="${k}" aria-label="${E(PAGES[k].t)}"></section>`).join("");
     adm.appendChild(pages);
     placeCards();
-    buildDash(); buildCust(); buildSettings();
+    buildDash(); buildCust(); buildSettings(); buildNotify(); buildPicker();
     navTo("dash", true);
     try { history.replaceState({ s6base: 1 }, ""); } catch (e) {}
     armHistory();
@@ -195,12 +199,13 @@
   }
 
   // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
-  const PARENT = { pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
+  const PARENT = { nsend: "notify", nposter: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
     if (k === "staff") T(() => window.APRO.renderStaff(), null);
     if (k === "cust") renderCust();
+    if (k === "pay") { buildPicker(); paintSel(); }
     if (k === "dash") renderDash();
     if (!replace && k !== cur) { if (PAGES[k].sub) stack.push(cur); else stack = []; }
     if (!PAGES[k].sub) stack = [];
@@ -326,46 +331,130 @@
     doc.querySelectorAll('[data-dot="dash"]').forEach((x) => { x.textContent = rq; x.classList.toggle("on", rq > 0); });
   }
 
-  // =============== customers: search + filters + modern list ===============
-  let F = { q: "", st: "all", sch: "" };
+  // =============== customers & payments: Excel-style tables (search, filters, sort, pages) ===============
+  // built for thousands of rows: only one page (50 rows) is drawn at a time
+  let F = { q: "", st: "all", sch: "", sort: "name", dir: 1, page: 0 };
+  let G = { q: "", per: "month", mode: "", sch: "", sort: "date", dir: -1, page: 0 };
+  let VIEW = "c";
+  const PER = 50;
   function buildCust() {
     const p = P("cust");
-    p.insertAdjacentHTML("afterbegin", `<div class="s6search s6"><div class="s6sbox">${svg("search")}<input id="s6q" type="search" placeholder="பெயர் / மொபைல் / code தேடுங்க" autocomplete="off" aria-label="Customer தேடல்"></div>
-      <div class="s6chips" id="s6chips"></div></div><div class="s6count" id="s6count"></div>`);
-    $i("s6q").addEventListener("input", (e) => { F.q = e.target.value.trim().toLowerCase(); renderCust(); });
-    $i("s6chips").addEventListener("click", (e) => { const b = e.target.closest("[data-st]"); if (b) { F.st = b.dataset.st; renderCust(); } });
-    $i("s6chips").addEventListener("change", (e) => { if (e.target.id === "s6sch") { F.sch = e.target.value; renderCust(); } });
-    const card = cardBy("Customers"); if (card) { const h = card.querySelector(":scope>h2"); if (h) h.style.display = "none"; card.style.cssText += ";background:none!important;border:0!important;box-shadow:none!important;padding:0!important"; }
+    p.insertAdjacentHTML("afterbegin", `<div class="s6seg s6" role="tablist"><button type="button" data-v="c" class="on">Customers</button><button type="button" data-v="p">தவணைகள் (எல்லாம்)</button></div>
+      <div class="s6search s6"><div class="s6sbox">${svg("search")}<input id="s6q" type="search" placeholder="பெயர் / மொபைல் / code தேடுங்க" autocomplete="off" aria-label="தேடல்"></div>
+      <div class="s6chips" id="s6chips"></div></div><div class="s6sum" id="s6count"></div><div class="s6grid" id="s6grid"></div><div class="s6pager" id="s6pager"></div>`);
+    p.querySelector(".s6seg").onclick = (e) => { const b = e.target.closest("[data-v]"); if (!b) return; VIEW = b.dataset.v; p.querySelectorAll(".s6seg button").forEach((x) => x.classList.toggle("on", x === b)); $i("s6q").value = VIEW === "c" ? F.q : G.q; $i("s6q").placeholder = VIEW === "c" ? "பெயர் / மொபைல் / code தேடுங்க" : "பெயர் / மொபைல் / Ref தேடுங்க"; renderCust(); };
+    let t; $i("s6q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { const v = e.target.value.trim().toLowerCase(); if (VIEW === "c") { F.q = v; F.page = 0; } else { G.q = v; G.page = 0; } renderCust(); }, 150); });
+    $i("s6chips").addEventListener("click", (e) => { const b = e.target.closest("[data-st]"); if (!b) return; if (VIEW === "c") { F.st = b.dataset.st; F.page = 0; } else { G.per = b.dataset.st; G.page = 0; } renderCust(); });
+    $i("s6chips").addEventListener("change", (e) => { const v = e.target.value; if (e.target.id === "s6sch") { if (VIEW === "c") { F.sch = v; F.page = 0; } else { G.sch = v; G.page = 0; } } if (e.target.id === "s6mode") { G.mode = v; G.page = 0; } renderCust(); });
+    $i("s6grid").addEventListener("click", (e) => {
+      const th = e.target.closest("th[data-k]");
+      if (th) { const S = VIEW === "c" ? F : G; if (S.sort === th.dataset.k) S.dir *= -1; else { S.sort = th.dataset.k; S.dir = th.dataset.k === "name" || th.dataset.k === "sch" ? 1 : -1; } S.page = 0; renderCust(); return; }
+      const pay = e.target.closest("[data-pay]"); if (pay) { payFor(pay.dataset.pay); return; }
+    });
+    $i("s6pager").addEventListener("click", (e) => { const b = e.target.closest("[data-pg]"); if (!b) return; const S = VIEW === "c" ? F : G; S.page += +b.dataset.pg; renderCust(); $i("s6grid").scrollTop = 0; P("cust").scrollIntoView({ block: "start" }); });
+    // the old list container stays (its click handlers: data-cd / data-em / data-ac) — the table is drawn inside it
+    const cl = $i("cl"); if (cl) $i("s6grid").appendChild(cl);
+    const card = cardBy("Customers"); if (card) card.style.display = "none";
+  }
+  const istYM = (d) => new Date(new Date(d).getTime() + 330 * 60000).toISOString().slice(0, 7);
+  const pdate = (d) => { const s = String(d || "").slice(0, 10); return s ? s.split("-").reverse().join("-") : ""; };
+  const MODE = { cash: "பணம்", upi: "UPI", card: "Card", bank: "Bank", online: "Online (app)" };
+  function sorter(S, getters) { const g = getters[S.sort] || getters.name; return (a, b) => { const x = g(a), y = g(b); return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y), "ta")) * S.dir; }; }
+  const th = (S, k, l, cls) => `<th data-k="${k}" class="${cls || ""}${S.sort === k ? " on" : ""}" scope="col">${l}${S.sort === k ? (S.dir > 0 ? " ▲" : " ▼") : ""}</th>`;
+  function pager(S, total) {
+    const pages = Math.max(1, Math.ceil(total / PER)); if (S.page >= pages) S.page = pages - 1; if (S.page < 0) S.page = 0;
+    $i("s6pager").innerHTML = total > PER ? `<button type="button" data-pg="-1" ${S.page ? "" : "disabled"}>‹ முந்தைய</button><span>${S.page * PER + 1}–${Math.min(total, (S.page + 1) * PER)} / ${N(total)}</span><button type="button" data-pg="1" ${S.page < pages - 1 ? "" : "disabled"}>அடுத்த ›</button>` : "";
   }
   function renderCust() {
     const C = window.CU, cl = $i("cl"); if (!Array.isArray(C) || !cl) return;
-    const rows = C.map((c) => ({ c, s: custStat(c) }));
-    const cnt = { all: rows.length, due: rows.filter((r) => r.s.due).length, paid: rows.filter((r) => r.s.paidNow).length, done: rows.filter((r) => r.s.done).length, np: rows.filter((r) => r.s.np).length };
     const keys = [...new Set(C.map((c) => c.scheme))];
-    const chips = $i("s6chips");
-    if (chips) chips.innerHTML = [["all", "எல்லாம்"], ["due", "நிலுவை"], ["paid", "இந்த மாதம் கட்டியவர்"], ["np", "செயல்படுத்தல் பாக்கி"], ["done", "முடிந்தது"]]
-      .map(([k, l]) => `<button type="button" data-st="${k}" class="${F.st === k ? "on" : ""}">${l}<i>${cnt[k]}</i></button>`).join("") +
-      `<select id="s6sch" aria-label="திட்டம்"><option value="">எல்லா திட்டமும்</option>${keys.map((k) => `<option value="${E(k)}"${F.sch === k ? " selected" : ""}>${E(T(() => SN[k], k))}</option>`).join("")}</select>`;
-    const q = F.q;
-    const list = rows.filter(({ c, s }) => (F.st === "all" || (F.st === "due" && s.due) || (F.st === "paid" && s.paidNow) || (F.st === "done" && s.done) || (F.st === "np" && s.np))
-      && (!F.sch || c.scheme === F.sch)
-      && (!q || [c.name, c.mobile, c.ref_code, c.email].some((v) => String(v || "").toLowerCase().includes(q))));
-    $i("s6count").textContent = `${list.length} / ${rows.length} customers`;
-    // same data-* actions as before: data-cd (விவரம்), data-em (email மாற்ற), data-ac (புது activation code)
-    cl.className = "s6cl s6";
-    cl.innerHTML = list.length ? list.map(({ c, s }) => {
-      const badge = s.np ? '<span class="s6badge np">செயல்படுத்தல் பாக்கி</span>' : s.done ? '<span class="s6badge done">முடிந்தது</span>' : s.paidNow ? '<span class="s6badge ok">இந்த மாதம் கட்டியாச்சு</span>' : '<span class="s6badge due">இந்த மாதம் நிலுவை</span>';
-      return `<div class="s6c"><div class="av">${E(ini(c.name))}</div><div class="m"><a data-cd="${E(c.id)}">${E(c.name)}</a>
-        <small>${E(c.mobile || "")} · ${E(T(() => SN[c.scheme], c.scheme))} · ${s.n}/${s.mo}${c.ref_code ? " · 🎁 " + E(c.ref_code) : ""}</small>
-        <small>${c.email ? "✉️ " + E(c.email) : "✉️ Email இல்ல"}</small>${badge}
-        <div class="acts"><a data-cd="${E(c.id)}">விவரம்</a>${can("cust.write") ? `<a data-em="${E(c.id)}">Email மாற்று</a><a data-ac="${E(c.id)}">🔑 புது code</a>` : ""}</div></div>
-        <div class="amt"><b>₹${N(s.tot)}</b>${T(() => GR(c.scheme), false) ? `<small>${s.g.toFixed(3)} கி</small>` : ""}</div></div>`;
-    }).join("") : `<div class="s6empty"><b>Customer யாரும் இல்ல</b>${q || F.st !== "all" || F.sch ? "தேடலை / filter-ஐ மாத்திப் பாருங்க." : "புதிய Customer சேர்த்ததும் இங்கே வருவாங்க."}</div>`;
+    const schSel = (S) => `<select id="s6sch" aria-label="திட்டம்"><option value="">எல்லா திட்டமும்</option>${keys.map((k) => `<option value="${E(k)}"${S.sch === k ? " selected" : ""}>${E(T(() => SN[k], k))}</option>`).join("")}</select>`;
+    cl.className = "s6"; cl.removeAttribute("style");
+    if (VIEW === "c") {
+      const rows = C.map((c) => ({ c, s: custStat(c), last: (c.gold_payments || []).reduce((m, p) => (String(p.paid_on) > m ? String(p.paid_on) : m), "") }));
+      const cnt = { all: rows.length, due: rows.filter((r) => r.s.due).length, paid: rows.filter((r) => r.s.paidNow).length, done: rows.filter((r) => r.s.done).length, np: rows.filter((r) => r.s.np).length };
+      $i("s6chips").innerHTML = [["all", "எல்லாம்"], ["due", "நிலுவை"], ["paid", "இந்த மாதம் கட்டியவர்"], ["np", "செயல்படுத்தல் பாக்கி"], ["done", "முடிந்தது"]]
+        .map(([k, l]) => `<button type="button" data-st="${k}" class="${F.st === k ? "on" : ""}">${l}<i>${N(cnt[k])}</i></button>`).join("") + schSel(F);
+      const q = F.q;
+      const list = rows.filter(({ c, s }) => (F.st === "all" || (F.st === "due" && s.due) || (F.st === "paid" && s.paidNow) || (F.st === "done" && s.done) || (F.st === "np" && s.np))
+        && (!F.sch || c.scheme === F.sch) && (!q || [c.name, c.mobile, c.ref_code, c.email].some((v) => String(v || "").toLowerCase().includes(q))));
+      list.sort(sorter(F, { name: (r) => r.c.name || "", mob: (r) => r.c.mobile || "", sch: (r) => T(() => SN[r.c.scheme], r.c.scheme), amt: (r) => +r.c.monthly_amount || 0, n: (r) => r.s.n, tot: (r) => r.s.tot, g: (r) => r.s.g, last: (r) => r.last, st: (r) => (r.s.np ? 0 : r.s.due ? 1 : r.s.paidNow ? 2 : 3), join: (r) => String(r.c.start_date || "") }));
+      const tot = list.reduce((a, r) => a + r.s.tot, 0);
+      $i("s6count").innerHTML = `<b>${N(list.length)}</b> / ${N(rows.length)} customers · மொத்தம் <b>₹${N(tot)}</b>`;
+      pager(F, list.length);
+      const pageRows = list.slice(F.page * PER, F.page * PER + PER);
+      const w = can("cust.write"), pw = can("pay.write");
+      cl.innerHTML = list.length ? `<table class="s6t"><thead><tr>${th(F, "name", "பெயர்", "stk")}${th(F, "mob", "மொபைல்")}${th(F, "sch", "திட்டம்")}${th(F, "amt", "மாதத் தொகை", "r")}${th(F, "n", "தவணை", "r")}${th(F, "tot", "மொத்தம் ₹", "r")}${th(F, "g", "கிராம்", "r")}${th(F, "last", "கடைசி தவணை")}${th(F, "st", "இந்த மாதம்")}${th(F, "join", "சேர்ந்த நாள்")}<th scope="col">Code</th><th scope="col">செயல்</th></tr></thead><tbody>` +
+        pageRows.map(({ c, s, last }) => {
+          const st = s.np ? '<span class="s6badge np">செயல்படுத்தல் பாக்கி</span>' : s.done ? '<span class="s6badge done">முடிந்தது</span>' : s.paidNow ? '<span class="s6badge ok">கட்டியாச்சு</span>' : '<span class="s6badge due">நிலுவை</span>';
+          return `<tr><td class="stk"><a data-cd="${E(c.id)}">${E(c.name)}</a></td><td>${E(c.mobile || "")}</td><td>${E(T(() => SN[c.scheme], c.scheme))}</td><td class="r">${c.monthly_amount ? N(c.monthly_amount) : "—"}</td><td class="r">${s.n}/${s.mo}</td><td class="r b">${N(s.tot)}</td><td class="r">${T(() => GR(c.scheme), false) ? s.g.toFixed(3) : "—"}</td><td>${pdate(last) || "—"}</td><td>${st}</td><td>${pdate(c.start_date) || "—"}</td><td>${E(c.ref_code || "")}</td>
+            <td class="acts">${pw && !s.done ? `<a data-pay="${E(c.id)}">தவணை</a>` : ""}${w ? `<a data-ac="${E(c.id)}">🔑 code</a><a data-em="${E(c.id)}">✉️ Email</a>` : ""}</td></tr>`;
+        }).join("") + `</tbody></table>` : `<div class="s6empty"><b>Customer யாரும் இல்ல</b>${q || F.st !== "all" || F.sch ? "தேடலை / filter-ஐ மாத்திப் பாருங்க." : "புதிய Customer சேர்த்ததும் இங்கே வருவாங்க."}</div>`;
+    } else {
+      const now = istNow().toISOString().slice(0, 7), lm = (() => { const d = istNow(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - 1); return d.toISOString().slice(0, 7); })(), today = istNow().toISOString().slice(0, 10);
+      const all = [];
+      C.forEach((c) => (c.gold_payments || []).slice().sort((a, b) => String(a.paid_on).localeCompare(String(b.paid_on))).forEach((p, i) => all.push({ c, p, i: i + 1, day: new Date(new Date(p.paid_on).getTime() + 330 * 60000).toISOString().slice(0, 10) })));
+      const inPer = (r) => G.per === "all" || (G.per === "today" && r.day === today) || (G.per === "month" && r.day.slice(0, 7) === now) || (G.per === "last" && r.day.slice(0, 7) === lm);
+      const cnt = { today: all.filter((r) => r.day === today).length, month: all.filter((r) => r.day.slice(0, 7) === now).length, last: all.filter((r) => r.day.slice(0, 7) === lm).length, all: all.length };
+      const modes = [...new Set(all.map((r) => r.p.mode || ""))];
+      $i("s6chips").innerHTML = [["today", "இன்று"], ["month", "இந்த மாதம்"], ["last", "கடந்த மாதம்"], ["all", "எல்லாம்"]].map(([k, l]) => `<button type="button" data-st="${k}" class="${G.per === k ? "on" : ""}">${l}<i>${N(cnt[k])}</i></button>`).join("") +
+        `<select id="s6mode" aria-label="முறை"><option value="">எல்லா முறையும்</option>${modes.map((m) => `<option value="${E(m)}"${G.mode === m ? " selected" : ""}>${E(MODE[m] || m || "பதியல")}</option>`).join("")}</select>` + schSel(G);
+      const q = G.q;
+      const list = all.filter((r) => inPer(r) && (!G.mode || (r.p.mode || "") === G.mode) && (!G.sch || r.c.scheme === G.sch) && (!q || [r.c.name, r.c.mobile, r.p.ref].some((v) => String(v || "").toLowerCase().includes(q))));
+      list.sort(sorter(G, { date: (r) => String(r.p.paid_on), name: (r) => r.c.name || "", sch: (r) => T(() => SN[r.c.scheme], r.c.scheme), amt: (r) => +r.p.amount || 0, mode: (r) => r.p.mode || "", g: (r) => +r.p.grams || 0 }));
+      const tot = list.reduce((a, r) => a + (+r.p.amount || 0), 0);
+      $i("s6count").innerHTML = `<b>${N(list.length)}</b> தவணை · மொத்தம் <b>₹${N(tot)}</b>`;
+      pager(G, list.length);
+      const pageRows = list.slice(G.page * PER, G.page * PER + PER);
+      cl.innerHTML = list.length ? `<table class="s6t"><thead><tr>${th(G, "date", "தேதி", "stk")}${th(G, "name", "பெயர்")}<th scope="col">மொபைல்</th>${th(G, "sch", "திட்டம்")}<th scope="col" class="r">தவணை எண்</th>${th(G, "amt", "தொகை ₹", "r")}${th(G, "mode", "முறை")}<th scope="col" class="r">விலை ₹/கி</th>${th(G, "g", "கிராம்", "r")}</tr></thead><tbody>` +
+        pageRows.map((r) => `<tr><td class="stk">${pdate(r.day)}</td><td><a data-cd="${E(r.c.id)}">${E(r.c.name)}</a></td><td>${E(r.c.mobile || "")}</td><td>${E(T(() => SN[r.c.scheme], r.c.scheme))}</td><td class="r">${r.i}</td><td class="r b">${N(r.p.amount)}</td><td>${E(MODE[r.p.mode] || r.p.mode || "—")}</td><td class="r">${r.p.gold_rate ? N(r.p.gold_rate) : "—"}</td><td class="r">${r.p.grams ? (+r.p.grams).toFixed(3) : "—"}</td></tr>`).join("") +
+        `</tbody></table>` : `<div class="s6empty"><b>இந்த காலத்தில் தவணை இல்ல</b>வேற காலம் / filter தேர்வு பண்ணுங்க.</div>`;
+    }
   }
+
+  // =============== payment entry: searchable customer picker (works with thousands of customers) ===============
+  function buildPicker() {
+    const pc = $i("pc"); if (!pc || $i("s6pick")) return;
+    pc.style.display = "none";
+    pc.insertAdjacentHTML("beforebegin", `<div class="s6pick s6" id="s6pick"><div class="s6sbox">${svg("search")}<input id="s6pq" type="search" placeholder="Customer பெயர் / மொபைல் தேடுங்க" autocomplete="off" aria-label="Customer தேடல்"></div><div class="s6pres" id="s6pres" role="listbox"></div><div class="s6psel" id="s6psel"></div></div>`);
+    const res = $i("s6pres"), inp = $i("s6pq");
+    inp.addEventListener("input", () => {
+      const q = inp.value.trim().toLowerCase(), C = window.CU || [];
+      if (!q) { res.innerHTML = ""; return; }
+      const hits = C.filter((c) => [c.name, c.mobile, c.ref_code].some((v) => String(v || "").toLowerCase().includes(q))).slice(0, 8);
+      res.innerHTML = hits.length ? hits.map((c) => { const s = custStat(c); return `<button type="button" role="option" data-pick="${E(c.id)}"><b>${E(c.name)}</b><small>${E(c.mobile || "")} · ${E(T(() => SN[c.scheme], c.scheme))} · ${s.n}/${s.mo}${s.paidNow ? " · இந்த மாதம் கட்டியாச்சு" : ""}</small></button>`; }).join("") : '<div class="s6empty" style="padding:12px">யாரும் இல்ல</div>';
+    });
+    res.addEventListener("click", (e) => { const b = e.target.closest("[data-pick]"); if (b) choose(b.dataset.pick); });
+    $i("s6psel").addEventListener("click", (e) => { if (e.target.closest("[data-unpick]")) { pc.value = ""; pc.dispatchEvent(new Event("change")); paintSel(); inp.focus(); } });
+    paintSel();
+  }
+  function choose(id) { const pc = $i("pc"); if (!pc) return; if (![...pc.options].some((o) => o.value === String(id))) return; pc.value = String(id); pc.dispatchEvent(new Event("change")); $i("s6pq").value = ""; $i("s6pres").innerHTML = ""; paintSel(); const a = $i("pa"); if (a) a.focus(); }
+  function paintSel() {
+    const el = $i("s6psel"), pc = $i("pc"); if (!el || !pc) return;
+    const c = (window.CU || []).find((x) => String(x.id) === String(pc.value));
+    $i("s6pq").parentElement.style.display = c ? "none" : "";
+    el.innerHTML = c ? `<div class="s6c"><div class="av">${E(ini(c.name))}</div><div class="m"><b>${E(c.name)}</b><small>${E(c.mobile || "")} · ${E(T(() => SN[c.scheme], c.scheme))}</small></div><button type="button" class="s6link" data-unpick="1">மாற்ற</button></div>` : "";
+  }
+  function payFor(id) { navTo("pay"); buildPicker(); choose(id); }
+
+  // =============== notifications hub: one box per job ===============
+  function buildNotify() {
+    const p = P("notify"); if (!p || $i("s6nhub")) return;
+    // history gets its own page
+    const log = $i("pnlog");
+    if (log) { const c = doc.createElement("div"); c.className = "card"; c.innerHTML = "<h2>அனுப்பிய notification-கள்</h2>"; const lbl = log.previousElementSibling; if (lbl && /அனுப்பியவை/.test(lbl.textContent)) lbl.remove(); c.appendChild(log); P("nlog").appendChild(c); }
+    p.insertAdjacentHTML("afterbegin", `<div class="s6hub s6" id="s6nhub">
+      <button type="button" data-go="nsend"><i>${svg("bell")}</i><b>Notification அனுப்பு</b><small>Customers phone-க்கு உடனே</small></button>
+      ${can("settings.write") ? `<button type="button" data-go="nposter"><i>${svg("poster")}</i><b>App Poster</b><small>App திறந்ததும் வரும் படம்</small></button>` : ""}
+      <button type="button" data-go="nnotice"><i>${svg("more")}</i><b>அறிவிப்புகள்</b><small>App-ல உள்ள அறிவிப்பு பட்டியல்</small></button>
+      <button type="button" data-go="nlog"><i>${svg("remind")}</i><b>அனுப்பிய வரலாறு</b><small>பார்க்க / நீக்க</small></button></div>`);
+    p.onclick = (e) => { const b = e.target.closest("[data-go]"); if (b) navTo(b.dataset.go); };
+  }
+
   // re-render after every data load (load() rebuilds #cl with the old markup)
   if (typeof window.load === "function") {
     const orig = window.load;
-    window.load = async function () { const r = await orig.apply(this, arguments); renderCust(); renderDash(); return r; }; // eslint-disable-line no-global-assign
+    window.load = async function () { const r = await orig.apply(this, arguments); renderCust(); renderDash(); T(() => paintSel(), null); return r; }; // eslint-disable-line no-global-assign
   }
 
   // =============== settings home ===============

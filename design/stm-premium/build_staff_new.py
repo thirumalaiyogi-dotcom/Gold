@@ -65,6 +65,15 @@ for a, b in [('border-bottom:1px solid #eef2f8', 'border-bottom:1px solid #F3ECD
              ('border:0;background:#f1f4f9;font-size:20px', 'border:0;background:#F7F0E1;font-size:20px')]:
     sub(a, b)
 
+# 4c. scale: Supabase returns at most 1,000 rows per request → read customers and this month's payments page by page
+sub('async function load(){', 'async function PAGED(mk){let all=[],i=0;for(;;){const r=await mk().range(i,i+999);if(r.error)return r;const d=r.data||[];all=all.concat(d);if(d.length<1000||i>=500000)break;i+=1000}return {data:all,error:null}}\nasync function load(){')
+sub('let {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name");',
+    'let {data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name").order("id"));')
+sub('({data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name"));',
+    '({data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name").order("id")));')
+sub('const {data,error}=await sb.from("gold_payments").select("amount,mode,paid_on").gte("paid_on",mon+"T00:00:00+05:30");',
+    'const {data,error}=await PAGED(()=>sb.from("gold_payments").select("amount,mode,paid_on").gte("paid_on",mon+"T00:00:00+05:30").order("id"));')
+
 # 5. inject latest adm-pro + adm-shell
 s = re.sub(r'\n?<!-- adm-pro:start -->.*?<!-- adm-pro:end -->\n?', '\n', s, flags=re.S)
 s = re.sub(r'\n?<!-- adm-shell:start -->.*?<!-- adm-shell:end -->\n?', '\n', s, flags=re.S)
