@@ -183,16 +183,16 @@
     sheet(`<h3>${edit ? "Role மாற்ற" : "புது Staff சேர்க்க"}</h3><p class="ap-sub">${edit ? E(s.email) : "Staff-ஓட email-ம் ஒரு தற்காலிக password-ம் கொடுங்க. முதல் login-க்கு பிறகு அவங்க மாத்திக்கலாம்."}</p>
       <label class="ap-f"><span>பெயர்</span><input id="apn" maxlength="60" value="${E(s ? s.name || "" : "")}" placeholder="உதா: முருகன்"></label>
       ${edit ? "" : `<label class="ap-f"><span>Email</span><input id="ape" type="email" inputmode="email" autocomplete="off" placeholder="staff@gmail.com"></label>
-      <label class="ap-f"><span>தற்காலிக Password</span><span class="ap-pw"><input id="app" value="${pass}" autocomplete="off"><button type="button" class="ap-btn o sm" id="apcp">${svg("copy")}</button></span></label>`}
+      <label class="ap-f"><span>தற்காலிக Password</span><span class="ap-pw"><input id="appw" value="${pass}" autocomplete="off"><button type="button" class="ap-btn o sm" id="apcp">${svg("copy")}</button></span></label>`}
       <div class="ap-f"><span>Role (அனுமதி)</span><div class="ap-roles">${roles}</div></div>
       <div class="ap-msg" id="apm"></div>
       <div class="ap-row"><button type="button" class="ap-btn o" data-close>ரத்து</button><button type="button" class="ap-btn" id="apsv">${edit ? "சேமி" : "சேர்"}</button></div>`,
       (sh, close) => {
-        const cp = sh.querySelector("#apcp"); if (cp) cp.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(sh.querySelector("#app").value); toast("Password copy ஆச்சு"); };
+        const cp = sh.querySelector("#apcp"); if (cp) cp.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(sh.querySelector("#appw").value); toast("Password copy ஆச்சு"); };
         sh.querySelector("#apsv").onclick = async (ev) => {
           const btn = ev.currentTarget, m = sh.querySelector("#apm");
           const role = (sh.querySelector('input[name="aprole"]:checked') || {}).value, name = sh.querySelector("#apn").value.trim();
-          const body = edit ? { action: "update", email: s.email, role, name } : { action: "add", email: sh.querySelector("#ape").value.trim(), password: sh.querySelector("#app").value, role, name };
+          const body = edit ? { action: "update", email: s.email, role, name } : { action: "add", email: sh.querySelector("#ape").value.trim(), password: sh.querySelector("#appw").value, role, name };
           if (!edit && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) { m.className = "ap-msg e"; m.textContent = "சரியான email போடுங்க"; return; }
           btn.disabled = true; m.className = "ap-msg"; m.textContent = "சேமிக்கிறது…";
           const r = await fn("staff-admin", body); btn.disabled = false;
@@ -214,12 +214,12 @@
   function passSheet(s) {
     const pass = genPass();
     sheet(`<h3>புது Password</h3><p class="ap-sub">${E(s.name || s.email)} · பழைய password வேலை செய்யாது.</p>
-      <label class="ap-f"><span>புது Password</span><span class="ap-pw"><input id="app" value="${pass}" autocomplete="off"></span></label>
+      <label class="ap-f"><span>புது Password</span><span class="ap-pw"><input id="appw" value="${pass}" autocomplete="off"></span></label>
       <div class="ap-msg" id="apm"></div>
       <div class="ap-row"><button type="button" class="ap-btn o" data-close>ரத்து</button><button type="button" class="ap-btn" id="apsv">மாற்று</button></div>`,
       (sh, close) => {
         sh.querySelector("#apsv").onclick = async () => {
-          const pw = sh.querySelector("#app").value, m = sh.querySelector("#apm");
+          const pw = sh.querySelector("#appw").value, m = sh.querySelector("#apm");
           const r = await fn("staff-admin", { action: "password", email: s.email, password: pw });
           if (!r.ok) { m.className = "ap-msg e"; m.textContent = errText(r.err); return; }
           close(); shareLogin(s.email, pw, s.name, s.role);
@@ -260,7 +260,7 @@
       window.REQD = q;
       const set = (id, v) => { const el = doc.getElementById(id); if (el) el.value = v || ""; };
       set("nn", q.name); set("nm", q.mobile); set("ne", q.email); set("ns", q.scheme); set("na", q.monthly_amount); set("nr", q.ref_code); set("ndob", q.dob); set("nanv", q.anniv);
-      if (window.staffTab) window.staffTab("cust");
+      if (window.S6) window.S6.go("newcust"); else if (window.staffTab) window.staffTab("cust");
       const f = cardByTitle("புதிய Customer");
       if (f) { f.style.display = ""; f.scrollIntoView({ behavior: "smooth", block: "start" }); f.style.boxShadow = "0 0 0 3px #E5C98B"; setTimeout(() => (f.style.boxShadow = ""), 2500); }
       toast("விவரம் நிரப்பியாச்சு. ID proof பார்த்து 'சேர்' அழுத்துங்க.");
