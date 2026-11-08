@@ -599,7 +599,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -717,7 +717,14 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            // hidden for customers: long-press the version line to open the sample passbook
+            GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
+              },
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.6', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            ),
           ]),
         );
       },
@@ -903,6 +910,107 @@ class _NextDue extends StatelessWidget {
             },
           ),
         ],
+      ]),
+    );
+  }
+}
+
+
+/// Sample passbook (owner preview): pick a scheme and how many installments are paid.
+/// Data lives only in memory; nothing is written to the shop database and no payment runs.
+class DemoPassbookPage extends StatefulWidget {
+  const DemoPassbookPage({super.key});
+  @override
+  State<DemoPassbookPage> createState() => _DemoPassbookPageState();
+}
+
+class _DemoPassbookPageState extends State<DemoPassbookPage> {
+  late Scheme sc = app.schemes.first;
+  int paid = 11;
+
+  @override
+  void initState() {
+    super.initState();
+    paid = sc.months;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _apply());
+  }
+
+  @override
+  void dispose() {
+    app.demoPb = null; // back to the real passbook
+    WidgetsBinding.instance.addPostFrameCallback((_) => app.setDemo(null));
+    super.dispose();
+  }
+
+  void _apply() {
+    final now = nowIst();
+    final int p = paid > sc.months ? sc.months : (paid < 0 ? 0 : paid);
+    final start = DateTime(now.year, now.month - (p > 0 ? p - 1 : 0), 5);
+    final amt = sc.silver ? 500 : (sc.fixed ? 2000 : 1000);
+    final rate = sc.silver ? 210 : 13160;
+    String d(DateTime x) => '${x.year}-${x.month.toString().padLeft(2, '0')}-${x.day.toString().padLeft(2, '0')}';
+    app.setDemo({
+      'name': 'மாதிரி வாடிக்கையாளர்',
+      'scheme': sc.key,
+      'start': d(start),
+      'monthly_amount': amt,
+      'refer': {'code': 'DEMO01'},
+      'payments': [
+        for (var i = 0; i < p; i++)
+          {'on': d(DateTime(start.year, start.month + i, 5)), 'amount': amt, 'grams': sc.grams ? double.parse((amt / rate).toStringAsFixed(3)) : 0},
+      ],
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: C.ivory,
+      body: Column(children: [
+        Expanded(child: PassbookTab(onBack: () => Navigator.of(context).pop())),
+        Container(
+          padding: EdgeInsets.fromLTRB(16, 10, 16, 10 + MediaQuery.of(context).padding.bottom),
+          decoration: const BoxDecoration(color: Color(0xFFFFF4D6), border: Border(top: BorderSide(color: C.goldLine))),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+            Text('மாதிரி Passbook · database-ல எதுவும் சேமிக்காது', style: sans(12.5, color: const Color(0xFF5A4410), weight: FontWeight.w700)),
+            const SizedBox(height: 6),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                for (final s in app.schemes)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: ChoiceChip(
+                      label: Text(s.name, style: sans(13, weight: FontWeight.w600)),
+                      selected: s.key == sc.key,
+                      selectedColor: C.goldSoft,
+                      onSelected: (_) {
+                        setState(() {
+                          sc = s;
+                          paid = paid > s.months ? s.months : paid;
+                        });
+                        _apply();
+                      },
+                    ),
+                  ),
+              ]),
+            ),
+            Row(children: [
+              Text('கட்டியது: $paid / ${sc.months}', style: sans(13.5, weight: FontWeight.w700)),
+              Expanded(
+                child: Slider(
+                  value: paid.toDouble(),
+                  min: 0,
+                  max: sc.months.toDouble(),
+                  divisions: sc.months,
+                  activeColor: C.navy,
+                  onChanged: (v) => setState(() => paid = v.round()),
+                  onChangeEnd: (_) => _apply(),
+                ),
+              ),
+            ]),
+          ]),
+        ),
       ]),
     );
   }

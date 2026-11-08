@@ -23,7 +23,7 @@ DateTime nowIst() => DateTime.now().toUtc().add(const Duration(hours: 5, minutes
 
 /// Live values (from Supabase) with the old Demo names, so screens stay simple.
 class Demo {
-  static Map<String, dynamic> get _pb => app.pb ?? const {};
+  static Map<String, dynamic> get _pb => app.demoPb ?? app.pb ?? const {};
   static Map<String, dynamic> get _rt => app.rate ?? const {};
   static String get name => (_pb['name'] ?? '').toString().trim().isEmpty ? 'வாடிக்கையாளர்' : _pb['name'].toString().trim();
   static String get firstName => name.split(RegExp(r'\s+')).first;
@@ -107,6 +107,12 @@ class AppState extends ChangeNotifier {
   bool loggedIn = false;
   bool haptics = true;
   Map<String, dynamic>? pb;
+  /// Sample passbook for the hidden preview screen only (never saved, never sent).
+  Map<String, dynamic>? demoPb;
+  void setDemo(Map<String, dynamic>? d) {
+    demoPb = d;
+    notifyListeners();
+  }
   Map<String, dynamic>? rate;
   bool rateError = false;
   List<Map<String, dynamic>> notices = [];

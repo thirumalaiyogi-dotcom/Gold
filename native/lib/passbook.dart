@@ -237,6 +237,10 @@ class _PassbookTabState extends State<PassbookTab> {
 
   /// Online payment runs on the website (same Cashfree flow, same database checks).
   Future<void> _pay(BuildContext context) async {
+    if (app.demoPb != null) {
+      showNote(context, 'இது மாதிரி Passbook. உண்மையான பணம் எதுவும் கட்டப்படாது.');
+      return;
+    }
     final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const PayPage()));
     if (ok == true) app.refreshPassbook();
   }
