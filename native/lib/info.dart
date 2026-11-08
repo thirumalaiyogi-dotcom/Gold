@@ -116,7 +116,7 @@ class NotifySettingsPage extends StatefulWidget {
 }
 
 class _NotifySettingsPageState extends State<NotifySettingsPage> {
-  final v = <String, bool>{'n_due': true, 'n_notice': true, 'n_rate': true};
+  final v = <String, bool>{'n_due': true, 'n_notice': true, 'n_rate': true, 'n_greet': true};
 
   @override
   void initState() {
@@ -139,7 +139,9 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
           subtitle: Text(sub, style: sans(12.5, color: C.mute, height: 1.4)),
           onChanged: (x) {
             setState(() => v[k] = x);
-            Notify.setOn(k, x);
+            Notify.setOn(k, x).then((_) {
+              if (k == 'n_greet') scheduleGreetings();
+            });
           },
         );
     return _scaffold(
@@ -153,6 +155,8 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
             sw('n_notice', Icons.campaign_outlined, 'கடை அறிவிப்புகள்', 'சலுகைகள், புதிய திட்டங்கள், கடை செய்திகள்'),
             const Divider(height: 1, color: C.line),
             sw('n_rate', Icons.trending_up, 'இன்றைய தங்க விலை', 'கடை விலை பதிவு செய்ததும் தினமும் ஒரு முறை'),
+            const Divider(height: 1, color: C.line),
+            sw('n_greet', Icons.wb_sunny_outlined, 'தினசரி வணக்கம்', 'காலை 7, மதியம் 1, இரவு 8 மணி · Internet இல்லாமலும் வரும்'),
           ]),
         ),
         const SizedBox(height: 16),

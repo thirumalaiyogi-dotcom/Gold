@@ -1,7 +1,7 @@
 name: stm_proto
 description: "சுப்புலட்சுமி தங்க மாளிகை — native app prototype (Flutter, mock data only)"
 publish_to: 'none'
-version: 0.9.1+13
+version: 0.9.2+14
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -19,6 +19,7 @@ dependencies:
   firebase_core: ^3.15.0
   firebase_messaging: ^15.2.0
   app_badge_plus: ^1.2.4
+  timezone: ^0.10.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.1

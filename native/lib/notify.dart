@@ -8,6 +8,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
 import 'api.dart';
@@ -45,7 +47,13 @@ class Notify {
     } catch (_) {}
   }
 
+  static bool _tzReady = false;
   static Future<void> init() async {
+    if (!_tzReady) {
+      tzdata.initializeTimeZones();
+      tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
+      _tzReady = true;
+    }
     await _p.initialize(const InitializationSettings(android: AndroidInitializationSettings(_icon)));
     // Channels created up-front so Firebase (FCM) messages land in the same named channels.
     final a = _p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
@@ -53,6 +61,7 @@ class Notify {
       ['stm_notice', 'கடை அறிவிப்புகள்'],
       ['stm_due', 'தவணை நினைவூட்டல்'],
       ['stm_rate', 'இன்றைய விலை'],
+      ['stm_greet', 'தினசரி வணக்கம்'],
     ]) {
       await a?.createNotificationChannel(AndroidNotificationChannel(c[0], c[1], importance: Importance.high, showBadge: true));
     }
@@ -132,6 +141,7 @@ class Notify {
       final sp = await SharedPreferences.getInstance();
       unread.value = sp.getInt('unread') ?? 0;
       await badge(unread.value);
+      await scheduleGreetings();
       await check();
     } catch (e) {
       debugPrint('notify start: $e');
@@ -147,8 +157,12 @@ class Notify {
   static String _day(DateTime d) => d.toIso8601String().substring(0, 10);
 
   /// Called after login / passbook refresh so background reminders know the status.
-  static Future<void> saveAccount({required bool paidThisMonth, required bool done, required bool silver}) async {
+  static Future<void> saveAccount({required bool paidThisMonth, required bool done, required bool silver, String firstName = ''}) async {
     final sp = await SharedPreferences.getInstance();
+    if (firstName.isNotEmpty && sp.getString('fname') != firstName) {
+      await sp.setString('fname', firstName);
+      await scheduleGreetings();
+    }
     await sp.setBool('acct', true);
     await sp.setBool('done', done);
     await sp.setBool('silver', silver);
@@ -163,6 +177,7 @@ class Notify {
     await badge(0);
     try {
       await _p.cancelAll();
+      await scheduleGreetings(); // cancelAll also removes scheduled greetings — put them back
     } catch (_) {}
   }
 
@@ -255,6 +270,90 @@ class Notify {
   }
 }
 
+/// Daily greetings — scheduled on the phone itself (like an alarm), so they come
+/// at the set time even with mobile data / Wi-Fi off. The next 7 days are kept
+/// scheduled; every app open / background run tops it up.
+extension Greetings on Notify {
+  static const slots = [
+    [7, 0, 'காலை வணக்கம்'],
+    [13, 0, 'மதிய வணக்கம்'],
+    [20, 0, 'இரவு வணக்கம்'],
+  ];
+  static const texts = [
+    [
+      'இனிய காலை வணக்கம் 🌅 இன்றைய நாள் இனிதாக அமையட்டும்.',
+      'காலை வணக்கம் ☀️ உங்கள் நாள் தங்கம் போல் ஜொலிக்கட்டும்.',
+      'இனிய காலை வணக்கம் 🙏 மகிழ்ச்சியும் வளமும் பெருகட்டும்.',
+      'காலை வணக்கம் 🌸 நம்பிக்கையுடன் இந்த நாளைத் தொடங்குங்கள்.',
+      'இனிய காலை வணக்கம் 🌼 சிறு சேமிப்பு, பெரிய மகிழ்ச்சி!',
+      'காலை வணக்கம் ☀️ குடும்பத்துடன் இனிய நாளாக அமையட்டும்.',
+      'இனிய காலை வணக்கம் 🙏 இன்று எல்லாம் நல்லதாக நடக்கட்டும்.',
+    ],
+    [
+      'மதிய வணக்கம் 🌤️ சாப்பிட்டீங்களா? கொஞ்சம் ஓய்வும் எடுங்க.',
+      'இனிய மதிய வணக்கம் 🙏 உங்கள் நாள் நல்லபடியாகப் போகட்டும்.',
+      'மதிய வணக்கம் ☀️ இன்றைய தங்க விலையை app-ல பாருங்க.',
+      'மதிய வணக்கம் 🌿 வேலைக்கு நடுவுல கொஞ்சம் தண்ணீர் குடிங்க.',
+      'இனிய மதிய வணக்கம் 😊 மீதி நாளும் இனிதாக அமையட்டும்.',
+      'மதிய வணக்கம் 🌤️ உங்கள் உழைப்புக்கு நல்ல பலன் கிடைக்கட்டும்.',
+      'இனிய மதிய வணக்கம் 🙏 மகிழ்ச்சியான மதியப் பொழுது!',
+    ],
+    [
+      'இனிய இரவு வணக்கம் 🌙 நிம்மதியான உறக்கம் அமையட்டும்.',
+      'இரவு வணக்கம் ✨ நாளைய நாள் இன்னும் சிறப்பாக அமையட்டும்.',
+      'இனிய இரவு வணக்கம் 🌙 குடும்பத்துடன் இனிய இரவாக அமையட்டும்.',
+      'இரவு வணக்கம் 🌟 இன்றைய உழைப்புக்கு நல்ல ஓய்வு எடுங்க.',
+      'இனிய இரவு வணக்கம் 🙏 நல்ல கனவுகள் காணுங்கள்.',
+      'இரவு வணக்கம் 🌙 அமைதியும் ஆரோக்கியமும் நிறையட்டும்.',
+      'இனிய இரவு வணக்கம் ✨ நாளை சந்திப்போம்!',
+    ],
+  ];
+}
+
+const _greetBase = 500; // ids 500..520 (7 days × 3)
+
+Future<void> scheduleGreetings() async {
+  try {
+    await Notify.init();
+    final p = Notify._p;
+    for (var id = _greetBase; id < _greetBase + 21; id++) {
+      await p.cancel(id);
+    }
+    final sp = await SharedPreferences.getInstance();
+    if (!(sp.getBool('n_greet') ?? true)) return;
+    final name = sp.getString('fname') ?? '';
+    final now = tz.TZDateTime.now(tz.local);
+    for (var d = 0; d < 7; d++) {
+      final day = now.add(Duration(days: d));
+      final doy = day.difference(tz.TZDateTime(tz.local, day.year)).inDays;
+      for (var k = 0; k < 3; k++) {
+        final sl = Greetings.slots[k];
+        final at = tz.TZDateTime(tz.local, day.year, day.month, day.day, sl[0] as int, sl[1] as int);
+        if (!at.isAfter(now)) continue;
+        final list = Greetings.texts[k];
+        final body = '${list[doy % list.length]}\n— சுப்புலட்சுமி தங்க மாளிகை';
+        await p.zonedSchedule(
+          _greetBase + d * 3 + k,
+          name.isEmpty ? '${sl[2]} 🙏' : '${sl[2]} $name 🙏',
+          body,
+          at,
+          NotificationDetails(
+            android: AndroidNotificationDetails('stm_greet', 'தினசரி வணக்கம்',
+                importance: Importance.defaultImportance,
+                priority: Priority.defaultPriority,
+                icon: Notify._icon,
+                color: const Color(0xFF6E1423),
+                styleInformation: BigTextStyleInformation(body)),
+          ),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        );
+      }
+    }
+  } catch (e) {
+    debugPrint('greet: $e');
+  }
+}
+
 /// Background entry point (runs in its own isolate, every ~3 hours when online).
 @pragma('vm:entry-point')
 void callbackDispatcher() {
@@ -262,6 +361,7 @@ void callbackDispatcher() {
     WidgetsFlutterBinding.ensureInitialized();
     try {
       await Notify.init();
+      await scheduleGreetings();
       await Notify.check();
     } catch (_) {}
     return true;

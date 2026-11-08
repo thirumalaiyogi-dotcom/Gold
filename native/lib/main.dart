@@ -145,7 +145,7 @@ class AppState extends ChangeNotifier {
 
   void _syncNotify() {
     try {
-      Notify.saveAccount(paidThisMonth: Demo.paidThisMonth, done: Demo.paidCount >= Demo.months, silver: Demo.silver);
+      Notify.saveAccount(paidThisMonth: Demo.paidThisMonth, done: Demo.paidCount >= Demo.months, silver: Demo.silver, firstName: Demo.firstName);
     } catch (_) {}
   }
 
