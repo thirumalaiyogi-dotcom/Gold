@@ -14,6 +14,7 @@ import 'ui.dart';
 import 'notify.dart';
 import 'api.dart';
 import 'info.dart';
+import 'pay.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -163,11 +164,11 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const items = [
-      [Icons.home_outlined, 'முகப்பு'],
-      [Icons.diamond_outlined, 'திட்டங்கள்'],
-      [Icons.menu_book_outlined, 'Passbook'],
-      [Icons.notifications_none, 'அறிவிப்பு'],
-      [Icons.person_outline, 'கணக்கு'],
+      [Icons.home_outlined, 'முகப்பு', Icons.home_rounded],
+      [Icons.diamond_outlined, 'திட்டங்கள்', Icons.diamond],
+      [Icons.menu_book_outlined, 'Passbook', Icons.menu_book_rounded],
+      [Icons.notifications_none, 'அறிவிப்பு', Icons.notifications],
+      [Icons.person_outline, 'கணக்கு', Icons.person],
     ];
     return Container(
       decoration: const BoxDecoration(color: C.paper, border: Border(top: BorderSide(color: C.line2))),
@@ -182,22 +183,28 @@ class _BottomNav extends StatelessWidget {
                 child: InkWell(
                   onTap: () => onTap(i),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    i == 3
-                        ? ValueListenableBuilder<int>(
-                            valueListenable: Notify.unread,
-                            builder: (_, n, child) => Badge(isLabelVisible: n > 0, label: Text('$n'), backgroundColor: C.red, child: child),
-                            child: Icon(items[i][0] as IconData, color: on ? C.navy : C.mute, size: 24),
-                          )
-                        : Icon(items[i][0] as IconData, color: on ? C.navy : C.mute, size: 24),
-                    const SizedBox(height: 2),
-                    Text(items[i][1] as String, style: sans(11.5, color: on ? C.navy : C.mute, weight: on ? FontWeight.w700 : FontWeight.w400)),
-                    const SizedBox(height: 3),
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: on ? 5 : 0,
-                      height: 5,
-                      decoration: const BoxDecoration(color: C.gold, shape: BoxShape.circle),
+                      duration: const Duration(milliseconds: 260),
+                      curve: Curves.easeOutCubic,
+                      padding: EdgeInsets.symmetric(horizontal: on ? 16 : 10, vertical: 3),
+                      decoration: BoxDecoration(color: on ? const Color(0xFFF6EAD0) : Colors.transparent, borderRadius: BorderRadius.circular(99)),
+                      child: TweenAnimationBuilder<double>(
+                        key: ValueKey('nav$i$on'),
+                        tween: Tween<double>(begin: on ? 0.8 : 1.0, end: 1.0),
+                        duration: const Duration(milliseconds: 420),
+                        curve: Curves.elasticOut,
+                        builder: (_, v, child) => Transform.scale(scale: v, child: child),
+                        child: i == 3
+                            ? ValueListenableBuilder<int>(
+                                valueListenable: Notify.unread,
+                                builder: (_, n, child) => Badge(isLabelVisible: n > 0, label: Text('$n'), backgroundColor: C.red, child: child),
+                                child: Icon((on ? items[i][2] : items[i][0]) as IconData, color: on ? C.navy : C.mute, size: 24),
+                              )
+                            : Icon((on ? items[i][2] : items[i][0]) as IconData, color: on ? C.navy : C.mute, size: 24),
+                      ),
                     ),
+                    const SizedBox(height: 3),
+                    Text(items[i][1] as String, style: sans(11.5, color: on ? C.navy : C.mute, weight: on ? FontWeight.w700 : FontWeight.w400)),
                   ]),
                 ),
               );
@@ -231,8 +238,11 @@ class HomeTab extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
       // ---------- Header: flat navy, gold rule ----------
       Container(
-        padding: EdgeInsets.fromLTRB(16, top + 8, 16, 16),
         decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
+        child: Stack(children: [
+        if (Fest.today != null) const Positioned.fill(child: Sparkles()),
+        KolamBg(festive: Fest.today != null, child: Padding(
+        padding: EdgeInsets.fromLTRB(16, top + 8, 16, 18),
         child: Column(children: [
           Row(children: [
             const SizedBox(width: 48),
@@ -252,9 +262,15 @@ class HomeTab extends StatelessWidget {
             ),
           ]),
           const SizedBox(height: 6),
-          Text(app.loggedIn ? '${_greet()}, ${Demo.firstName}' : _greet(), style: sans(16, color: Colors.white, weight: FontWeight.w600)),
+          Text(app.loggedIn ? '${_greet()}, ${Demo.firstName} 🙏' : _greet(), style: sans(16, color: Colors.white, weight: FontWeight.w600)),
+          const FestRibbon(),
           const SizedBox(height: 14),
-          _RateBoard(),
+          if (app.loggedIn && app.pb != null) ...[
+            _SavingsHero(go: go),
+            const SizedBox(height: 12),
+            const _RateStrip(),
+          ] else
+            const _RateBoard(),
           const SizedBox(height: 8),
           Demo.rateIsToday || Demo.gold22 == 0
               ? Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.navyMute))
@@ -284,9 +300,11 @@ class HomeTab extends StatelessWidget {
             label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.goldSoft, weight: FontWeight.w600)),
           ),
         ]),
+      )),
+      ]),
       ),
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // ---------- Quick actions ----------
           Row(children: [
@@ -306,17 +324,17 @@ class HomeTab extends StatelessWidget {
             const SizedBox(width: 8),
             _chip(context, Icons.place_outlined, 'வழி காட்டு', () => openMaps(context)),
           ]),
-          const SizedBox(height: 20),
-          _SchemeHero(go: go),
+          const SizedBox(height: 24),
+          if (app.loggedIn && app.pb != null) const _NextDue() else _SchemeHero(go: go),
           if (app.loggedIn && Demo.payments.isNotEmpty) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             SectionTitle('சமீபத்திய தவணைகள்', action: 'அனைத்தும் ›', onAction: () => go(2)),
             LuxCard(padding: const EdgeInsets.symmetric(horizontal: 16), child: Builder(builder: (_) {
               final ps = Demo.payments.take(3).toList();
               return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1)]);
             })),
           ],
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -329,7 +347,7 @@ class HomeTab extends StatelessWidget {
               ]),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 28),
           LuxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('எங்கள் கடை', style: serif(19)),
@@ -420,8 +438,19 @@ class _RateBoard extends StatelessWidget {
             ]),
           ),
         );
+    if (Demo.gold22 == 0 && !app.rateError && app.rate == null) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18)),
+        child: const Row(children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 70, height: 12), SizedBox(height: 10), Skeleton(width: 110, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
+          SizedBox(width: 16),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 60, height: 12), SizedBox(height: 10), Skeleton(width: 90, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
+        ]),
+      );
+    }
     return Container(
-      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line2)),
+      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
       child: IntrinsicHeight(
         child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           col('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange == 0 ? '' : rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
@@ -570,7 +599,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -688,7 +717,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.4', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.5', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },
@@ -731,4 +760,150 @@ void showWhyGold(BuildContext context) {
       ),
     ),
   );
+}
+
+
+/// Home hero for logged-in customers: their own savings first, the rate second.
+class _SavingsHero extends StatelessWidget {
+  const _SavingsHero({required this.go});
+  final ValueChanged<int> go;
+  @override
+  Widget build(BuildContext context) {
+    final paid = Demo.paidCount, months = Demo.months;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          tapFeel();
+          go(2);
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0x26FFFFFF), Color(0x0DFFFFFF)]),
+            border: Border.all(color: const Color(0x80E5C98B)),
+          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              Expanded(child: Text('உங்க சேமிப்பு · ${Demo.scheme}', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(12, color: C.goldSoft, weight: FontWeight.w600).copyWith(letterSpacing: 1.1))),
+              const Icon(Icons.chevron_right_rounded, color: C.goldSoft),
+            ]),
+            const SizedBox(height: 4),
+            GoldShine(
+              delay: const Duration(milliseconds: 1100),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: Demo.total.toDouble()),
+                duration: const Duration(milliseconds: 1000),
+                curve: Curves.easeOutCubic,
+                builder: (_, v, __) => FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(rupees(v), style: serif(40, color: Colors.white, weight: FontWeight.w700, height: 1.2)),
+                ),
+              ),
+            ),
+            if (Demo.grams)
+              Text('${Demo.gramsTotal.toStringAsFixed(3)} கிராம் தங்கம் சேர்ந்தது', style: sans(13.5, color: C.goldSoft, weight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            SingleChildScrollView(scrollDirection: Axis.horizontal, child: CoinDots(total: months, paid: paid, silver: Demo.silver)),
+            const SizedBox(height: 8),
+            Text('$paid / $months ${Demo.silver ? 'மாதம்' : 'தவணை'} · நகை வாங்கலாம்: ${Demo.buyMonth}', style: sans(12.5, color: C.navyMute)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// Compact one-line rate (logged-in home). Tap → rate page.
+class _RateStrip extends StatelessWidget {
+  const _RateStrip();
+  static int _dec(double v) => (v * 100).round() % 100 == 0 ? 0 : 2;
+  @override
+  Widget build(BuildContext context) {
+    Widget part(String img, String label, String value, num change, {int dec = 0}) => Expanded(
+          child: Row(children: [
+            Image.asset(img, height: 22),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(label, style: sans(11.5, color: C.mute)),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: value, style: serif(18, height: 1.2)),
+                    if (change != 0) TextSpan(text: '  ${change > 0 ? '▲' : '▼'}${rupees(change.abs(), decimals: dec)}', style: sans(11.5, color: change > 0 ? C.green : C.red, weight: FontWeight.w700)),
+                  ])),
+                ),
+              ]),
+            ),
+          ]),
+        );
+    return Material(
+      color: C.paper,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: IntrinsicHeight(
+            child: Row(children: [
+              part('assets/gold.png', 'தங்கம் 22K · 1 கி', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange),
+              const VerticalDivider(width: 20, color: C.line),
+              part('assets/silver.png', 'வெள்ளி · 1 கி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—', Demo.silverChange,
+                  dec: _dec(Demo.silverChange.toDouble())),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Next installment card on home (logged-in): due date + swipe to pay, in thumb reach.
+class _NextDue extends StatelessWidget {
+  const _NextDue();
+  @override
+  Widget build(BuildContext context) {
+    final paid = Demo.paidCount;
+    final done = Demo.schemeDone;
+    final title = done
+        ? 'எல்லா தவணையும் முடிந்தது ✓'
+        : Demo.paidThisMonth && !Demo.silver
+            ? 'இந்த மாத தவணை செலுத்தியாச்சு ✓'
+            : (Demo.silver ? 'இந்த மாத சேமிப்பு' : 'தவணை ${paid + 1} / ${Demo.months}');
+    return LuxCard(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          Expanded(child: Text(title, style: serif(18, color: done || (Demo.paidThisMonth && !Demo.silver) ? C.green : C.navy))),
+          if (!done && Demo.fixed) Text(rupees(Demo.monthly), style: serif(20, weight: FontWeight.w700)),
+        ]),
+        if (!done) ...[
+          const SizedBox(height: 4),
+          Row(children: [
+            const Icon(Icons.event_outlined, size: 16, color: C.mute),
+            const SizedBox(width: 6),
+            Expanded(child: Text(Demo.paidThisMonth && !Demo.silver ? 'அடுத்த தவணை ${Demo.dueText}' : Demo.dueText, style: sans(13, color: C.mute))),
+          ]),
+        ],
+        if (Demo.canPay) ...[
+          const SizedBox(height: 14),
+          SwipeToPay(
+            label: 'தவணை செலுத்த',
+            silver: Demo.silver,
+            onDone: () async {
+              final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const PayPage()));
+              if (ok == true) app.refreshPassbook();
+            },
+          ),
+        ],
+      ]),
+    );
+  }
 }

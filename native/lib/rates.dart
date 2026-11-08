@@ -44,15 +44,17 @@ class _RatePageState extends State<RatePage> {
       return Scaffold(
         backgroundColor: C.ivory,
         appBar: appBar,
-        body: Center(
+        body: failed
+            ? Center(
           child: failed
               ? Column(mainAxisSize: MainAxisSize.min, children: [
                   Text('விலை விவரம் ஏற்ற முடியல', style: sans(15)),
                   const SizedBox(height: 10),
                   OutlineBtn('மீண்டும் முயற்சி', onTap: _load),
                 ])
-              : const CircularProgressIndicator(color: C.navy),
-        ),
+              : const SizedBox.shrink(),
+        )
+            : const Padding(padding: EdgeInsets.all(16), child: Column(children: [Skeleton(height: 120, radius: 18), SizedBox(height: 16), Skeleton(height: 220, radius: 18), SizedBox(height: 16), SkeletonList(count: 2)])),
       );
     }
     // [days-back, value] from real history; empty days skipped

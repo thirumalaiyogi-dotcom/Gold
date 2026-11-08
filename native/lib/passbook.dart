@@ -73,8 +73,9 @@ class _PassbookTabState extends State<PassbookTab> {
     final top = MediaQuery.of(context).padding.top;
     return AnimatedBuilder(animation: app, builder: (context, _) => Column(children: [
       Container(
-        padding: EdgeInsets.fromLTRB(12, top + 8, 12, 12),
         decoration: const BoxDecoration(color: C.navy, border: Border(bottom: BorderSide(color: C.gold, width: 2))),
+        child: KolamBg(child: Padding(
+        padding: EdgeInsets.fromLTRB(12, top + 8, 12, 12),
         child: Row(children: [
           IconButton(
             onPressed: widget.onBack,
@@ -96,15 +97,31 @@ class _PassbookTabState extends State<PassbookTab> {
             icon: const Icon(Icons.share_outlined, color: C.goldSoft),
           ),
         ]),
-      ),
+      ))),
       Expanded(child: _savings(context)),
+      // one-hand use: the pay coin stays at the bottom, in thumb reach
+      if (Demo.canPay)
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+          decoration: const BoxDecoration(
+            color: C.paper,
+            border: Border(top: BorderSide(color: C.line)),
+            boxShadow: [BoxShadow(color: Color(0x146E1423), blurRadius: 16, offset: Offset(0, -4))],
+          ),
+          child: SwipeToPay(
+            label: 'தவணை செலுத்த',
+            amount: Demo.fixed ? rupees(Demo.monthly) : null,
+            silver: Demo.silver,
+            onDone: () => _pay(context),
+          ),
+        ),
     ]));
   }
 
   Widget _savings(BuildContext context) {
     final pct = (paid / Demo.months).clamp(0.0, 1.0);
     final left = (Demo.months - paid).clamp(0, 99);
-    final done = left == 0 && !(Demo.silver && Demo.paidThisMonth);
+    final done = Demo.schemeDone;
     final day = nowIst().day;
     final st = Demo.paidThisMonth
         ? (Demo.silver ? 'இந்த மாசம் சேமிச்சாச்சு' : 'செலுத்தியாச்சு')
@@ -114,20 +131,20 @@ class _PassbookTabState extends State<PassbookTab> {
                 ? 'நிலுவையில்'
                 : 'தாமதம்';
     final stColor = Demo.paidThisMonth ? C.green : (st == 'தாமதம்' ? C.red : C.goldText);
-    final canPay = !done && (!Demo.paidThisMonth || Demo.silver);
-    return RefreshIndicator(color: C.navy, onRefresh: app.refreshPassbook, child: ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
+    final canPay = Demo.canPay;
+    return RefreshIndicator(color: C.navy, onRefresh: app.refreshPassbook, child: ListView(padding: const EdgeInsets.fromLTRB(16, 22, 16, 28), children: [
       LuxCard(
         inner: true,
-        padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
+        padding: const EdgeInsets.fromLTRB(20, 26, 20, 20),
         child: Column(children: [
-          Text('மொத்த சேமிப்பு', style: sans(12.5, color: C.goldText, weight: FontWeight.w600).copyWith(letterSpacing: 1)),
+          Text('மொத்த சேமிப்பு', style: sans(12, color: C.goldText, weight: FontWeight.w600).copyWith(letterSpacing: 1.6)),
           GoldShine(
             delay: const Duration(milliseconds: 1000),
             child: TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: total.toDouble()),
               duration: const Duration(milliseconds: 900),
               curve: Curves.easeOutCubic,
-              builder: (_, v, __) => Text(rupees(v), style: serif(42, height: 1.25)),
+              builder: (_, v, __) => Text(rupees(v), style: serif(46, height: 1.2, weight: FontWeight.w700)),
             ),
           ),
           if (Demo.grams)
@@ -136,16 +153,9 @@ class _PassbookTabState extends State<PassbookTab> {
               TextSpan(text: '${grams.toStringAsFixed(3)} கிராம்', style: sans(14, color: C.goldText, weight: FontWeight.w700)),
             ])),
           const SizedBox(height: 14),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: pct),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeOutCubic,
-            builder: (_, v, __) => ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(value: v, minHeight: 6, backgroundColor: const Color(0xFFF0EADB), color: C.gold),
-            ),
-          ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
+          CoinStack(total: Demo.months, paid: paid, silver: Demo.silver, labels: Demo.monthLabels),
+          const SizedBox(height: 12),
           Row(children: [
             Text('$paid / ${Demo.months} ${Demo.silver ? 'மாதம்' : 'தவணை'}', style: sans(12, color: C.mute)),
             const Spacer(),
@@ -192,8 +202,12 @@ class _PassbookTabState extends State<PassbookTab> {
             ]),
           ],
           if (canPay) ...[
-            const SizedBox(height: 16),
-            SwipeToPay(label: 'தவணை செலுத்த', silver: Demo.silver, onDone: () => _pay(context)),
+            const SizedBox(height: 10),
+            Row(children: [
+              const Icon(Icons.south_rounded, size: 16, color: C.goldText),
+              const SizedBox(width: 6),
+              Expanded(child: Text('கீழே உள்ள காசை வலப்பக்கம் இழுத்து செலுத்துங்க', style: sans(12.5, color: C.goldText, weight: FontWeight.w600))),
+            ]),
           ],
         ]),
       ),

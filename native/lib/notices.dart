@@ -18,7 +18,7 @@ class NoticesTab extends StatelessWidget {
             Text('அறிவிப்புகள்', style: serif(22, color: C.ink, weight: FontWeight.w700)),
             const SizedBox(height: 12),
             if (!app.noticesLoaded)
-              const Padding(padding: EdgeInsets.all(40), child: Center(child: CircularProgressIndicator(color: C.navy)))
+              const SkeletonList(count: 3)
             else if (app.notices.isEmpty)
               Padding(padding: const EdgeInsets.all(30), child: Center(child: Text('இப்போதைக்கு புது அறிவிப்பு எதுவும் இல்லை.', style: sans(14, color: C.mute))))
             else
@@ -26,7 +26,7 @@ class NoticesTab extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+                  decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFF0E8D6)), boxShadow: const [BoxShadow(color: Color(0x0F6E1423), blurRadius: 18, offset: Offset(0, 6))]),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Expanded(child: Text((n['title'] ?? '').toString(), style: sans(15.5, weight: FontWeight.w700))),

@@ -17,6 +17,8 @@ String taDate(String iso) {
   return d == null ? iso : '${d.day} ${_taMon[d.month - 1]} ${d.year}';
 }
 
+String taMonth(int m) => _taMon[(m - 1) % 12];
+
 DateTime nowIst() => DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
 
 /// Live values (from Supabase) with the old Demo names, so screens stay simple.
@@ -62,6 +64,17 @@ class Demo {
     if (s == null) return '—';
     final d = DateTime(s.year, s.month + months);
     return '${_taMonLong[d.month - 1]} ${d.year}';
+  }
+
+  /// Every installment paid (silver keeps saving monthly).
+  static bool get schemeDone => (months - paidCount) <= 0 && !(silver && paidThisMonth);
+  static bool get canPay => !schemeDone && (!paidThisMonth || silver);
+
+  /// Short month name for each installment, from the start date.
+  static List<String> get monthLabels {
+    final s = DateTime.tryParse((_pb['start'] ?? '').toString());
+    if (s == null) return const [];
+    return [for (var i = 0; i < months; i++) taMonth(s.month + i)];
   }
 
   static String get dueText {
