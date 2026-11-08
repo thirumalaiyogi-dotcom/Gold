@@ -42,6 +42,12 @@ class Api {
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
+  /// Opening poster — same gold_popup rows the website uses (staff panel → Poster).
+  static Future<List<Map<String, dynamic>>> popups() async {
+    final d = await _get('gold_popup?select=id,image_url,link,starts_on,ends_on&active=eq.true&order=created_at.desc&limit=5');
+    return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+
   static Future<List<Map<String, dynamic>>> extraSchemes() async {
     final d = await _get('gold_schemes?select=*&active=eq.true&order=created_at.asc');
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();

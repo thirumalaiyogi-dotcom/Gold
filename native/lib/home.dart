@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data.dart';
 import 'links.dart';
@@ -11,6 +12,7 @@ import 'main.dart';
 import 'passbook.dart';
 import 'ui.dart';
 import 'notify.dart';
+import 'api.dart';
 import 'info.dart';
 
 class MainShell extends StatefulWidget {
@@ -22,6 +24,74 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int tab = 0;
   final _key = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 900), _poster);
+  }
+
+  /// Website-style opening poster: once a day per poster, within its start / end dates.
+  Future<void> _poster() async {
+    try {
+      final today = DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30)).toIso8601String().substring(0, 10);
+      final rows = await Api.popups();
+      Map<String, dynamic>? r;
+      for (final x in rows) {
+        final s = '${x['starts_on'] ?? ''}', e = '${x['ends_on'] ?? ''}';
+        if ((s.isEmpty || s == 'null' || s.compareTo(today) <= 0) && (e.isEmpty || e == 'null' || e.compareTo(today) >= 0)) {
+          r = x;
+          break;
+        }
+      }
+      if (r == null || '${r['image_url'] ?? ''}'.isEmpty || !mounted) return;
+      final sp = await SharedPreferences.getInstance();
+      final key = 'pop_${r['id']}';
+      if (sp.getString(key) == today) return;
+      final img = NetworkImage('${r['image_url']}');
+      await precacheImage(img, context);
+      if (!mounted) return;
+      await sp.setString(key, today);
+      final link = '${r['link'] ?? '/'}';
+      final go2 = await showGeneralDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: 'poster',
+        barrierColor: Colors.black54,
+        transitionDuration: const Duration(milliseconds: 320),
+        transitionBuilder: (_, a, __, child) => ScaleTransition(scale: CurvedAnimation(parent: a, curve: Curves.easeOutBack), child: FadeTransition(opacity: a, child: child)),
+        pageBuilder: (ctx, _, __) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Stack(clipBehavior: Clip.none, children: [
+              GestureDetector(
+                onTap: () => Navigator.of(ctx).pop(true),
+                child: ClipRRect(borderRadius: BorderRadius.circular(20), child: Image(image: img, fit: BoxFit.contain)),
+              ),
+              Positioned(
+                right: -10,
+                top: -14,
+                child: Material(
+                  color: C.navy,
+                  shape: const CircleBorder(side: BorderSide(color: Colors.white, width: 2)),
+                  child: IconButton(onPressed: () => Navigator.of(ctx).pop(false), tooltip: 'மூட', icon: const Icon(Icons.close, color: Colors.white)),
+                ),
+              ),
+            ]),
+          ),
+        ),
+      );
+      if (go2 == true && mounted) {
+        if (link.contains('#p')) {
+          go(2);
+        } else if (link.contains('#scx')) {
+          go(1);
+        } else if (link.contains('#n')) {
+          go(3);
+        }
+      }
+    } catch (_) {}
+  }
 
   void go(int i) {
     if (i == 2 && !app.loggedIn) {
@@ -500,7 +570,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -618,7 +688,7 @@ class ProfileTab extends StatelessWidget {
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
             const SizedBox(height: 18),
-            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.2', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+            Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.3', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
           ]),
         );
       },
