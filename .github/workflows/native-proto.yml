@@ -81,7 +81,8 @@ jobs:
           {
             flutter pub get
             dart run flutter_launcher_icons
-            flutter build apk --release
+            # retry: GitHub-hosted Gradle download sometimes returns 504
+            for t in 1 2 3; do flutter build apk --release && break; echo "build attempt $t failed, retrying"; sleep 30; done
           } 2>&1 | tee build-android.log
       - name: Publish APK + log to branch native-build
         if: always()
