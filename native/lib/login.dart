@@ -87,7 +87,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget option({required IconData icon, required String title, required String sub, required bool primary, required VoidCallback onTap}) {
-      return Material(
+      final card = Material(
         color: primary ? C.navy : C.paper,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: BorderSide(color: primary ? C.navy : C.line2)),
         child: InkWell(
@@ -116,6 +116,7 @@ class WelcomeScreen extends StatelessWidget {
           ),
         ),
       );
+      return primary ? GoldShine(loop: true, delay: const Duration(milliseconds: 1200), pause: const Duration(milliseconds: 4000), color: const Color(0x66FFF1BF), child: card) : card;
     }
 
     final h = MediaQuery.of(context).size.height;

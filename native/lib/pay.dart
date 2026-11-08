@@ -215,7 +215,8 @@ class _PayPageState extends State<PayPage> {
     ]);
   }
 
-  Widget _done() => Padding(
+  Widget _done() => Stack(children: [
+        Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           TweenAnimationBuilder<double>(
@@ -229,7 +230,7 @@ class _PayPageState extends State<PayPage> {
                 height: 110,
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(shape: BoxShape.circle, color: C.goldSoft, boxShadow: [BoxShadow(color: C.gold.withValues(alpha: .5), blurRadius: 30)]),
-                child: ClipOval(child: Image.asset('assets/coin.png', fit: BoxFit.cover)),
+                child: GoldShine(loop: true, pause: const Duration(milliseconds: 1600), child: ClipOval(child: Image.asset('assets/coin.png', fit: BoxFit.cover))),
               ),
             ),
           ),
@@ -240,7 +241,9 @@ class _PayPageState extends State<PayPage> {
           const SizedBox(height: 28),
           PrimaryButton('Passbook பார்க்க', onTap: () => Navigator.of(context).pop(true)),
         ]),
-      );
+        ),
+        const Positioned.fill(child: GoldConfetti()),
+      ]);
 
   Widget _failed() => Padding(
         padding: const EdgeInsets.all(24),

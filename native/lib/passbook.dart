@@ -121,11 +121,14 @@ class _PassbookTabState extends State<PassbookTab> {
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
         child: Column(children: [
           Text('மொத்த சேமிப்பு', style: sans(12.5, color: C.goldText, weight: FontWeight.w600).copyWith(letterSpacing: 1)),
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0, end: total.toDouble()),
-            duration: const Duration(milliseconds: 900),
-            curve: Curves.easeOutCubic,
-            builder: (_, v, __) => Text(rupees(v), style: serif(42, height: 1.25)),
+          GoldShine(
+            delay: const Duration(milliseconds: 1000),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: total.toDouble()),
+              duration: const Duration(milliseconds: 900),
+              curve: Curves.easeOutCubic,
+              builder: (_, v, __) => Text(rupees(v), style: serif(42, height: 1.25)),
+            ),
           ),
           if (Demo.grams)
             Text.rich(TextSpan(children: [

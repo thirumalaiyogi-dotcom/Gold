@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -428,4 +430,108 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
       );
     });
   }
+}
+
+
+/// Gold shine: a soft light band sweeps across [child] (text, coin or button).
+/// Once by default; [loop] repeats it after [pause]. Used only in a few special places.
+class GoldShine extends StatefulWidget {
+  const GoldShine({super.key, required this.child, this.loop = false, this.delay = const Duration(milliseconds: 500), this.pause = const Duration(milliseconds: 3500), this.color = const Color(0xD9FFF4CF)});
+  final Widget child;
+  final bool loop;
+  final Duration delay, pause;
+  final Color color;
+  @override
+  State<GoldShine> createState() => _GoldShineState();
+}
+
+class _GoldShineState extends State<GoldShine> with SingleTickerProviderStateMixin {
+  late final AnimationController c = AnimationController(vsync: this, duration: const Duration(milliseconds: 1300));
+
+  @override
+  void initState() {
+    super.initState();
+    c.addStatusListener((s) {
+      if (s == AnimationStatus.completed && widget.loop) {
+        Future.delayed(widget.pause, () {
+          if (mounted) c.forward(from: 0);
+        });
+      }
+    });
+    Future.delayed(widget.delay, () {
+      if (mounted) c.forward(from: 0);
+    });
+  }
+
+  @override
+  void dispose() {
+    c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: c,
+        child: widget.child,
+        builder: (_, child) {
+          if (c.value == 0 || c.value == 1) return child!;
+          final x = -1.6 + 3.2 * Curves.easeInOut.transform(c.value);
+          return ShaderMask(
+            blendMode: BlendMode.srcATop,
+            shaderCallback: (r) => LinearGradient(
+              begin: Alignment(x - .8, -1),
+              end: Alignment(x + .8, 1),
+              colors: [Colors.transparent, widget.color, Colors.transparent],
+              stops: const [.35, .5, .65],
+            ).createShader(r),
+            child: child,
+          );
+        },
+      );
+}
+
+/// Small burst of falling gold flakes (payment success).
+class GoldConfetti extends StatefulWidget {
+  const GoldConfetti({super.key});
+  @override
+  State<GoldConfetti> createState() => _GoldConfettiState();
+}
+
+class _GoldConfettiState extends State<GoldConfetti> with SingleTickerProviderStateMixin {
+  late final AnimationController c = AnimationController(vsync: this, duration: const Duration(milliseconds: 2600))..forward();
+  final rnd = math.Random(7);
+  late final parts = List.generate(46, (_) => [rnd.nextDouble(), rnd.nextDouble() * .35, .55 + rnd.nextDouble() * .6, rnd.nextDouble() * 6.28, 3 + rnd.nextDouble() * 5, rnd.nextInt(3).toDouble()]);
+
+  @override
+  void dispose() {
+    c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(child: AnimatedBuilder(animation: c, builder: (_, __) => CustomPaint(size: Size.infinite, painter: _Flakes(parts, c.value))));
+}
+
+class _Flakes extends CustomPainter {
+  _Flakes(this.p, this.t);
+  final List<List<double>> p;
+  final double t;
+  static const cols = [Color(0xFFE5C98B), Color(0xFFC9A45C), Color(0xFFFFF1BF)];
+  @override
+  void paint(Canvas canvas, Size s) {
+    final fade = t < .75 ? 1.0 : (1 - (t - .75) / .25);
+    for (final q in p) {
+      final y = (-.1 + q[1] + t * q[2]) * s.height;
+      final x = q[0] * s.width + math.sin(t * 6 + q[3]) * 14;
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(q[3] + t * 8);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromCenter(center: Offset.zero, width: q[4], height: q[4] * 1.8), const Radius.circular(1.5)),
+          Paint()..color = cols[q[5].toInt()].withValues(alpha: fade));
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _Flakes o) => o.t != t;
 }
