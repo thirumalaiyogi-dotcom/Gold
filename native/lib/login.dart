@@ -20,14 +20,18 @@ class _LoginFrame extends StatelessWidget {
     final top = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: C.navy,
-      body: Column(children: [
+      // maroon glow + dot-kolam behind the logo (and behind the rounded corners of the sheet)
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(center: Alignment(0, -.78), radius: .75, colors: [Color(0xFF8A2333), C.navy]),
+        ),
+        child: KolamBg(
+          festive: true,
+          child: Column(children: [
         Container(
           height: heroHeight + top,
           width: double.infinity,
           padding: EdgeInsets.only(top: top),
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(center: Alignment(0, .1), radius: .8, colors: [Color(0xFF8A2333), C.navy]),
-          ),
           child: Stack(children: [
             Center(child: Hero(tag: 'logo', child: Image.asset('assets/logo.png', height: heroHeight * .42))),
             if (onBack != null)
@@ -46,6 +50,8 @@ class _LoginFrame extends StatelessWidget {
           ),
         ),
       ]),
+        ),
+      ),
     );
   }
 }
