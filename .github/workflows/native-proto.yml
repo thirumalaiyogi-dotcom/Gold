@@ -82,6 +82,8 @@ jobs:
             flutter pub get
             dart run flutter_launcher_icons
             # retry: GitHub-hosted Gradle download sometimes returns 504
+            sed -i 's#https\\://github.com/gradle/gradle-distributions/releases/download/v\([0-9.]*\)/gradle-\([0-9.]*\)-all.zip#https\\://services.gradle.org/distributions/gradle-\2-bin.zip#' android/gradle/wrapper/gradle-wrapper.properties || true
+            grep distributionUrl android/gradle/wrapper/gradle-wrapper.properties || true
             for t in 1 2 3; do flutter build apk --release && break; echo "build attempt $t failed, retrying"; sleep 30; done
           } 2>&1 | tee build-android.log
       - name: Publish APK + log to branch native-build
@@ -90,7 +92,8 @@ jobs:
           OUT="$RUNNER_TEMP/out"; mkdir -p "$OUT"
           cp build-android.log flutter-version.txt "$OUT/" 2>/dev/null || true
           cp build/app/outputs/flutter-apk/app-release.apk "$OUT/stm-native-proto.apk" 2>/dev/null || true
-          echo "commit=$GITHUB_SHA result=${{ steps.build.outcome }} built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
+          RES=${{ steps.build.outcome }}; [ -f "$OUT/stm-native-proto.apk" ] || RES=failure
+          echo "commit=$GITHUB_SHA result=$RES built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
           cd "$OUT"
           git init -q -b native-build
           git config user.name "github-actions[bot]"
