@@ -454,14 +454,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     super.dispose();
   }
 
-  InputDecoration _dec() => InputDecoration(
-        filled: true,
-        fillColor: C.paper,
-        counterText: '',
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.line2)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.navy, width: 1.6)),
-      );
+  InputDecoration _dec() => formDeco();
 
   Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false}) => Padding(
         padding: const EdgeInsets.only(bottom: 14),

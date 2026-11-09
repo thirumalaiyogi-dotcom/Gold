@@ -21,7 +21,9 @@ class C {
   static const goldSoft = Color(0xFFE8D29A);
   static const line = Color(0xFFECE4D0);
   static const line2 = Color(0xFFE8D9B9); // soft champagne border
-  static const ivory2 = Color(0xFFF5F0E5);
+  static const ivory2 = Color(0xFFF5F0E5); // champagne cream
+  static const formBg = Color(0xFFFFFDF8); // warm white forms
+  static const head = Color(0xFF4A0D18); // headings
   static const red = Color(0xFFC63C45);
   static const green = Color(0xFF24865B);
   static const navyMute = Color(0xFFEAD9B8);
@@ -66,9 +68,9 @@ class LuxCard extends StatelessWidget {
     final card = Container(
       decoration: BoxDecoration(
         color: C.paper,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: C.line2),
-        boxShadow: const [BoxShadow(color: Color(0x0F6E1423), blurRadius: 20, offset: Offset(0, 6))],
+        boxShadow: const [BoxShadow(color: Color(0x0D4A0D18), blurRadius: 16, offset: Offset(0, 4))],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -76,7 +78,11 @@ class LuxCard extends StatelessWidget {
         Padding(padding: padding, child: child),
       ]),
     );
-    if (!inner) return card;
+    return card;
+  }
+
+  // ignore: unused_element
+  Widget _oldInner(Widget card) {
     return Stack(children: [
       card,
       Positioned.fill(
@@ -216,7 +222,7 @@ class SectionTitle extends StatelessWidget {
         child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(text, style: serif(20, height: 1.3)),
+              Text(text, style: serif(20, color: C.head, height: 1.3)),
               const SizedBox(height: 5),
               Container(width: 28, height: 2.5, decoration: BoxDecoration(color: C.gold, borderRadius: BorderRadius.circular(2))),
             ]),
@@ -998,3 +1004,38 @@ class IvoryPageTransitions extends PageTransitionsBuilder {
   Widget buildTransitions<T>(PageRoute<T> route, BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) =>
       const CupertinoPageTransitionsBuilder().buildTransitions(route, context, animation, secondaryAnimation, IvoryBg(child: child));
 }
+
+
+/// Inner information box: ivory, no border, soft separation inside white cards.
+class InfoBox extends StatelessWidget {
+  const InfoBox({super.key, required this.child, this.padding = const EdgeInsets.symmetric(vertical: 12, horizontal: 8)});
+  final Widget child;
+  final EdgeInsets padding;
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: padding,
+        decoration: BoxDecoration(color: C.ivory, borderRadius: BorderRadius.circular(14)),
+        child: child,
+      );
+}
+
+/// Form field look: warm white, champagne border, maroon focus.
+InputDecoration formDeco({String? label, String? hint, String? prefix, TextStyle? prefixStyle}) => InputDecoration(
+      labelText: label,
+      hintText: hint,
+      prefixText: prefix,
+      prefixStyle: prefixStyle,
+      filled: true,
+      fillColor: C.formBg,
+      counterText: '',
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      labelStyle: sans(14, color: C.mute),
+      floatingLabelStyle: sans(14, color: C.navy, weight: FontWeight.w600),
+      hintStyle: sans(14.5, color: const Color(0xFFB4A99F)),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.line2)),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.line2)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.navy, width: 1.6)),
+      disabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFEFE8DC))),
+      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.red)),
+      focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.red, width: 1.6)),
+    );

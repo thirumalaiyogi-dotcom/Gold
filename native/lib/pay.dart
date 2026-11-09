@@ -170,15 +170,8 @@ class _PayPageState extends State<PayPage> {
             enabled: !busy && !(Demo.fixed && Demo.monthly > 0),
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
-            style: serif(28, color: C.ink, weight: FontWeight.w700),
-            decoration: InputDecoration(
-              prefixText: '₹ ',
-              prefixStyle: serif(28, color: C.ink, weight: FontWeight.w700),
-              hintText: '${minAmt}',
-              filled: true,
-              fillColor: C.paper,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.line2)),
-            ),
+            style: serif(28, color: C.navy, weight: FontWeight.w700),
+            decoration: formDeco(prefix: '₹ ', prefixStyle: serif(28, color: C.navy, weight: FontWeight.w700), hint: '${minAmt}'),
             onChanged: (_) => setState(() => msg = ''),
           ),
           if (!Demo.fixed) ...[

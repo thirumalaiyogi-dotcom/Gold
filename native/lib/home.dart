@@ -266,7 +266,7 @@ class HomeTab extends StatelessWidget {
           if (app.loggedIn && app.pb != null) ...[
             _SavingsHero(go: go),
             const SizedBox(height: 12),
-            const _RateStrip(),
+            const _RateBoard(),
           ] else
             const _RateBoard(),
           const SizedBox(height: 8),
@@ -286,18 +286,8 @@ class HomeTab extends StatelessWidget {
             Text('▲▼ முந்தைய விலையோடு ஒப்பிட்டு', style: sans(11.5, color: C.mute)),
           ],
           const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: C.navy,
-              backgroundColor: C.paper,
-              side: const BorderSide(color: C.line2),
-              shape: const StadiumBorder(),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            ),
-            icon: const Icon(Icons.show_chart, size: 18),
-            label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
-          ),
+          const SizedBox(height: 6),
+          const _RateHistoryBanner(),
         ]),
       )),
       ]),
@@ -423,48 +413,94 @@ class _RateBoard extends StatelessWidget {
   static int _dec(double v) => (v * 100).round() % 100 == 0 ? 0 : 2;
   @override
   Widget build(BuildContext context) {
-    Widget col(String label, String value, String change, bool up, String img) => Expanded(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                Expanded(child: Text(label, style: sans(13, color: C.mute))),
-                Image.asset(img, height: 26),
-              ]),
-              const SizedBox(height: 2),
-              FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(value, style: serif(28, height: 1.15))),
-              const SizedBox(height: 2),
-              Row(children: [
-                Text('1 கிராம்', style: sans(12.5, color: C.mute)),
-                const Spacer(),
-                if (change.isNotEmpty) Text('${up ? '▲' : '▼'} $change', style: sans(12.5, color: up ? C.green : C.red, weight: FontWeight.w700)),
-              ]),
-            ]),
+    void open() => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage()));
+    Widget tile(String label, String value, num change, int dec, String img) => Expanded(
+          child: Material(
+            color: C.paper,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: C.line2)),
+            shadowColor: const Color(0x334A0D18),
+            elevation: 1.5,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: open,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+                child: Row(children: [
+                  Image.asset(img, width: 46, height: 40, fit: BoxFit.contain),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(12.5, color: C.head, weight: FontWeight.w700)),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text.rich(TextSpan(children: [
+                          TextSpan(text: value, style: serif(22, color: C.navy, weight: FontWeight.w700, height: 1.25)),
+                          TextSpan(text: '/g', style: sans(13, color: C.mute)),
+                        ])),
+                      ),
+                      Text(change == 0 ? 'மாற்றமில்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)}',
+                          style: sans(12.5, color: change == 0 ? C.mute : (change > 0 ? C.green : C.red), weight: FontWeight.w700)),
+                    ]),
+                  ),
+                ]),
+              ),
+            ),
           ),
         );
     if (Demo.gold22 == 0 && !app.rateError && app.rate == null) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
-        child: const Row(children: [
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 70, height: 12), SizedBox(height: 10), Skeleton(width: 110, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
-          SizedBox(width: 16),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 60, height: 12), SizedBox(height: 10), Skeleton(width: 90, height: 26), SizedBox(height: 8), Skeleton(width: 60, height: 10)])),
-        ]),
-      );
+      Widget sk() => Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(20), border: Border.all(color: C.line2)),
+              child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 60, height: 12), SizedBox(height: 10), Skeleton(width: 90, height: 22), SizedBox(height: 8), Skeleton(width: 50, height: 10)]),
+            ),
+          );
+      return Row(children: [sk(), const SizedBox(width: 12), sk()]);
     }
-    return Container(
-      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2), boxShadow: const [BoxShadow(color: Color(0x0F6E1423), blurRadius: 18, offset: Offset(0, 6))]),
-      child: IntrinsicHeight(
-        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          col('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange == 0 ? '' : rupees(Demo.goldChange.abs()), Demo.goldChange > 0, 'assets/gold.png'),
-          const VerticalDivider(width: 1, thickness: 1, color: C.line),
-          col('வெள்ளி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—',
-              Demo.silverChange == 0 ? '' : rupees(Demo.silverChange.abs(), decimals: _dec(Demo.silverChange)), Demo.silverChange > 0, 'assets/silver.png'),
-        ]),
-      ),
-    );
+    return Row(children: [
+      tile('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange, 0, 'assets/gold.png'),
+      const SizedBox(width: 12),
+      tile('வெள்ளி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—', Demo.silverChange, _dec(Demo.silverChange.toDouble()), 'assets/silver.png'),
+    ]);
   }
+}
+
+/// "Gold rate history" — an important action, so it wears the velvet.
+class _RateHistoryBanner extends StatelessWidget {
+  const _RateHistoryBanner();
+  @override
+  Widget build(BuildContext context) => Material(
+        color: Colors.transparent,
+        child: Ink(
+          decoration: velvetDeco(
+            radius: BorderRadius.circular(20),
+            alignment: Alignment.center,
+            frame: Border.all(color: const Color(0xB3D6B56D)),
+            shadow: const [BoxShadow(color: Color(0x2E4A0D18), blurRadius: 14, offset: Offset(0, 6))],
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () {
+              tapFeel();
+              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage()));
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+              child: Row(children: [
+                const Icon(Icons.insights_rounded, color: C.gold, size: 30),
+                const SizedBox(width: 14),
+                Expanded(child: Text('தங்கம் விலை வரலாறு', style: sans(16, color: Colors.white, weight: FontWeight.w700))),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: C.gold)),
+                  child: Text('மேலும் ›', style: sans(13, color: C.goldSoft, weight: FontWeight.w700)),
+                ),
+              ]),
+            ),
+          ),
+        ),
+      );
 }
 
 class _SchemeHero extends StatelessWidget {
@@ -603,7 +639,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.14', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.15', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -631,7 +667,7 @@ class ProfileTab extends StatelessWidget {
               width: 36,
               height: 36,
               alignment: Alignment.center,
-              decoration: BoxDecoration(color: color == C.red ? const Color(0xFFFBEAEA) : const Color(0xFFF6EEDC), borderRadius: BorderRadius.circular(10)),
+              decoration: BoxDecoration(color: color == C.red ? const Color(0xFFFBEAEA) : C.ivory2, borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, size: 20, color: color == C.red ? C.red : C.navy),
             ),
             const SizedBox(width: 12),
@@ -723,7 +759,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.14', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.15', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -838,54 +874,6 @@ class _SavingsHero extends StatelessWidget {
               ]),
             ],
           ]),
-        ),
-      ),
-    );
-  }
-}
-
-/// Compact one-line rate (logged-in home). Tap → rate page.
-class _RateStrip extends StatelessWidget {
-  const _RateStrip();
-  static int _dec(double v) => (v * 100).round() % 100 == 0 ? 0 : 2;
-  @override
-  Widget build(BuildContext context) {
-    Widget part(String img, String label, String value, num change, {int dec = 0}) => Expanded(
-          child: Row(children: [
-            Image.asset(img, height: 22),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(label, style: sans(11.5, color: C.mute)),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text.rich(TextSpan(children: [
-                    TextSpan(text: value, style: serif(18, height: 1.2)),
-                    if (change != 0) TextSpan(text: '  ${change > 0 ? '▲' : '▼'}${rupees(change.abs(), decimals: dec)}', style: sans(11.5, color: change > 0 ? C.green : C.red, weight: FontWeight.w700)),
-                  ])),
-                ),
-              ]),
-            ),
-          ]),
-        );
-    return Material(
-      color: C.paper,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: C.line2)),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: IntrinsicHeight(
-            child: Row(children: [
-              part('assets/gold.png', 'தங்கம் 22K · 1 கி', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange),
-              const VerticalDivider(width: 20, color: C.line),
-              part('assets/silver.png', 'வெள்ளி · 1 கி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—', Demo.silverChange,
-                  dec: _dec(Demo.silverChange.toDouble())),
-            ]),
-          ),
         ),
       ),
     );

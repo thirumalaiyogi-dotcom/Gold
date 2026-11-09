@@ -185,14 +185,16 @@ class _PassbookTabState extends State<PassbookTab> {
           const SizedBox(height: 12),
           const Divider(height: 1, color: C.line),
           const SizedBox(height: 10),
-          IntrinsicHeight(
-            child: Row(children: [
-              _stat('$paid', 'கட்டியது'),
-              const VerticalDivider(width: 1, color: C.line),
-              _stat('$left', 'மீதி'),
-              const VerticalDivider(width: 1, color: C.line),
-              _stat('${Demo.months}', 'மொத்தம்'),
-            ]),
+          InfoBox(
+            child: IntrinsicHeight(
+              child: Row(children: [
+                _stat('$paid', 'கட்டியது'),
+                const VerticalDivider(width: 1, color: C.line2),
+                _stat('$left', 'மீதி'),
+                const VerticalDivider(width: 1, color: C.line2),
+                _stat('${Demo.months}', 'மொத்தம்'),
+              ]),
+            ),
           ),
           const SizedBox(height: 10),
           Text.rich(TextSpan(children: [

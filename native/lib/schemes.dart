@@ -262,7 +262,7 @@ class SchemeDetailPage extends StatelessWidget {
 
   Widget _pill(String t, {bool gold = false}) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        decoration: BoxDecoration(color: gold ? C.goldSoft : const Color(0xFFF6EEDC), borderRadius: BorderRadius.circular(99)),
+        decoration: BoxDecoration(color: gold ? C.goldSoft : C.ivory2, borderRadius: BorderRadius.circular(99)),
         child: Text(t, style: sans(12.5, color: C.navy2, weight: FontWeight.w600)),
       );
 }
@@ -377,15 +377,7 @@ class _EnrolPageState extends State<EnrolPage> {
     }
   }
 
-  InputDecoration _dec(String l, {String? hint}) => InputDecoration(
-        labelText: l,
-        hintText: hint,
-        filled: true,
-        fillColor: C.paper,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.line2)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.line2)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: C.gold, width: 1.6)),
-      );
+  InputDecoration _dec(String l, {String? hint}) => formDeco(label: l, hint: hint);
 
   Widget _field(TextEditingController c, String l, {TextInputType? kb, String? hint, int lines = 1}) => Padding(
         padding: const EdgeInsets.only(bottom: 12),
@@ -424,7 +416,7 @@ class _EnrolPageState extends State<EnrolPage> {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: s.key == sch.key ? const Color(0xFFF6EEDC) : C.paper,
+                  color: s.key == sch.key ? C.ivory2 : C.paper,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: s.key == sch.key ? C.gold : C.line2, width: s.key == sch.key ? 1.6 : 1),
                 ),
