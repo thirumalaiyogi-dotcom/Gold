@@ -13,6 +13,7 @@ import 'passbook.dart';
 import 'ui.dart';
 import 'notify.dart';
 import 'api.dart';
+import 'bio.dart';
 import 'info.dart';
 import 'pay.dart';
 
@@ -632,7 +633,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.17', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.18', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -729,6 +730,7 @@ class ProfileTab extends StatelessWidget {
               return _group([
                 _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
                     first: true, trailing: Switch(value: app.haptics, onChanged: (v) => setLocal(() => app.haptics = v))),
+                if (app.loggedIn) const _BioRow(),
                 _row(Icons.notifications_active_outlined, 'Notification அமைப்பு', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotifySettingsPage()))),
                 _row(Icons.info_outline, 'எங்களைப் பற்றி', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage()))),
                 _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
@@ -752,7 +754,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.17', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.18', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -1052,6 +1054,73 @@ class _NoticePreview extends StatelessWidget {
             ),
           ]),
         ),
+      ),
+    );
+  }
+}
+
+
+/// கணக்கு → அமைப்புகள்: fingerprint login on / off (shown only on phones with a fingerprint).
+class _BioRow extends StatefulWidget {
+  const _BioRow();
+  @override
+  State<_BioRow> createState() => _BioRowState();
+}
+
+class _BioRowState extends State<_BioRow> {
+  bool? can, on;
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final c = await Bio.available();
+    final o = await Bio.enabledFor(app.mobile);
+    if (mounted) {
+      setState(() {
+        can = c;
+        on = o;
+      });
+    }
+  }
+
+  Future<void> _set(bool v) async {
+    if (v) {
+      final ok = await Bio.enable(app.mobile, app.pin);
+      if (!ok && mounted) showNote(context, 'கைரேகை சரிபார்ப்பு முடியல. மறுபடி முயற்சிக்கவும்.');
+    } else {
+      await Bio.disable();
+    }
+    await _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (can != true) return const SizedBox.shrink();
+    return InkWell(
+      onTap: () => _set(!(on ?? false)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: const BoxDecoration(border: Border(top: BorderSide(color: Color(0xFFF1E9D8)))),
+        child: Row(children: [
+          Container(
+            width: 40,
+            height: 40,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: C.ivory2, borderRadius: BorderRadius.circular(12)),
+            child: const Icon(Icons.fingerprint, color: C.navy, size: 22),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text('கைரேகை login', style: sans(15.5, color: C.ink)),
+              Text('mPIN போடாம விரல் வெச்சே திறக்க', style: sans(12.5, color: C.mute)),
+            ]),
+          ),
+          Switch(value: on ?? false, onChanged: _set),
+        ]),
       ),
     );
   }

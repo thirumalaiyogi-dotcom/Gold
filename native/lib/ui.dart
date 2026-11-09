@@ -235,8 +235,9 @@ class SectionTitle extends StatelessWidget {
 
 /// Number keypad used for mobile number and mPIN.
 class KeyPad extends StatelessWidget {
-  const KeyPad({super.key, required this.onKey});
+  const KeyPad({super.key, required this.onKey, this.bio = false});
   final void Function(String key) onKey;
+  final bool bio; // show the fingerprint key (bottom-left)
   @override
   Widget build(BuildContext context) {
     const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'];
@@ -249,7 +250,7 @@ class KeyPad extends StatelessWidget {
       childAspectRatio: 1.75,
       // shadows need a little room around the keys
       padding: const EdgeInsets.all(2),
-      children: [for (final k in keys) k.isEmpty ? const SizedBox.shrink() : _PadKey(k, onKey)],
+      children: [for (final k in keys) k.isEmpty ? (bio ? _PadKey('bio', onKey) : const SizedBox.shrink()) : _PadKey(k, onKey)],
     );
   }
 }
@@ -275,7 +276,7 @@ class _PadKeyState extends State<_PadKey> {
     final fg = down ? Colors.white : C.navy;
     return Semantics(
       button: true,
-      label: widget.k == 'del' ? 'அழி' : widget.k,
+      label: widget.k == 'del' ? 'அழி' : (widget.k == 'bio' ? 'கைரேகை' : widget.k),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (_) => _set(true),
@@ -298,7 +299,7 @@ class _PadKeyState extends State<_PadKey> {
             border: Border.all(color: down ? C.navy : const Color(0xFFE2CC97), width: 1),
             boxShadow: down ? const [] : const [BoxShadow(color: Color(0x146E1423), blurRadius: 8, offset: Offset(0, 3))],
           ),
-          child: widget.k == 'del' ? Icon(Icons.backspace_outlined, color: fg) : Text(widget.k, style: sans(24, color: fg, weight: FontWeight.w600)),
+          child: widget.k == 'del' ? Icon(Icons.backspace_outlined, color: fg) : widget.k == 'bio' ? Icon(Icons.fingerprint, size: 30, color: fg) : Text(widget.k, style: sans(24, color: fg, weight: FontWeight.w600)),
         ),
       ),
     );

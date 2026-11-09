@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
+import 'bio.dart';
 import 'home.dart';
 import 'links.dart';
 import 'main.dart';
@@ -326,8 +327,32 @@ class _PinScreenState extends State<PinScreen> {
   int shake = 0;
   bool busy = false;
 
+  bool bio = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Bio.enabledFor(widget.mobile).then((on) {
+      if (!mounted || !on) return;
+      setState(() => bio = true);
+      _bio(); // open the fingerprint prompt straight away
+    });
+  }
+
+  Future<void> _bio() async {
+    if (busy) return;
+    final p = await Bio.unlock(widget.mobile);
+    if (p == null || !mounted) return;
+    setState(() => v = p);
+    await _login(viaBio: true);
+  }
+
   Future<void> _key(String k) async {
     if (busy) return;
+    if (k == 'bio') {
+      _bio();
+      return;
+    }
     setState(() {
       err = '';
       if (k == 'del') {
@@ -336,7 +361,11 @@ class _PinScreenState extends State<PinScreen> {
         v += k;
       }
     });
-    if (v.length == 6) {
+    if (v.length == 6) await _login();
+  }
+
+  Future<void> _login({bool viaBio = false}) async {
+    {
       setState(() => busy = true);
       Map<String, dynamic>? d;
       String? fail;
@@ -358,6 +387,8 @@ class _PinScreenState extends State<PinScreen> {
         HapticFeedback.mediumImpact();
         app.login(widget.mobile, v, d);
         SavedMobile.set(widget.mobile);
+        if (!viaBio) await Bio.offer(context, widget.mobile, v);
+        if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 450),
@@ -368,6 +399,13 @@ class _PinScreenState extends State<PinScreen> {
         );
       } else {
         HapticFeedback.heavyImpact();
+        if (viaBio && d != null && (d['wrong'] == true || d['locked_otp'] == true)) {
+          // stored mPIN no longer matches (changed elsewhere): forget it, ask for the mPIN
+          await Bio.disable();
+          bio = false;
+          fail = 'mPIN மாறியிருக்கு. புது mPIN போடுங்க; அப்புறம் கைரேகையை மறுபடி இயக்கலாம்.';
+        }
+        if (!mounted) return;
         setState(() {
           busy = false;
           v = '';
@@ -407,7 +445,7 @@ class _PinScreenState extends State<PinScreen> {
         const SizedBox(height: 14),
         Shake(trigger: shake, child: _Dots(v.length)),
         SizedBox(height: 26, child: Center(child: Text(err, style: sans(12.5, color: C.red)))),
-        KeyPad(onKey: _key),
+        KeyPad(onKey: _key, bio: bio),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
@@ -513,6 +551,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         final d = await Api.login(_m.text, _p1.text);
         if (!mounted) return;
         if (d != null && d['name'] != null) {
+          Bio.disable();
           app.login(_m.text, _p1.text, d);
           Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false);
           return;

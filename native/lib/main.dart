@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'api.dart';
+import 'bio.dart';
 import 'data.dart';
 import 'login.dart';
 import 'notify.dart';
@@ -180,6 +181,7 @@ class AppState extends ChangeNotifier {
   }
 
   void logout() {
+    Bio.disable();
     loggedIn = false;
     pin = '';
     pb = null;

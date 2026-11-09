@@ -54,6 +54,9 @@ jobs:
           grep -n "INTERNET\|android:label" "$M"
           sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>\n    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>#' "$M"
           cp -r android_res/* android/app/src/main/res/
+          # local_auth (fingerprint) needs a FragmentActivity
+          find android/app/src/main -name 'MainActivity.kt' -exec sed -i 's/FlutterActivity/FlutterFragmentActivity/g' {} +
+          grep -rn "FlutterFragmentActivity" android/app/src/main/kotlin || true
           python3 - <<'PY'
           import pathlib
           p = pathlib.Path("android/app/src/main/AndroidManifest.xml")
