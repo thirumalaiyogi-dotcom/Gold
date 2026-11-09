@@ -8,7 +8,7 @@ class Shop {
   static const phone1 = '+919791918344';
   static const phone2 = '+919344395078';
   static const waNumber = '919791918344';
-  static const maps = 'https://www.google.com/maps/search/?api=1&query=51b+Gangai+Amman+Kovil+St+Gandhi+Bazar+Puliyangudi+627855';
+  static const maps = 'https://maps.app.goo.gl/iSgYseucFYJ5mivV9';
   static const privacy = 'https://gold.thirumalaiyogi.workers.dev/privacy.html';
 }
 
