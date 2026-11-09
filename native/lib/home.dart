@@ -300,8 +300,19 @@ class HomeTab extends StatelessWidget {
             Text('▲▼ முந்தைய விலையோடு ஒப்பிட்டு', style: sans(11.5, color: C.mute)),
           ],
           const SizedBox(height: 8),
-          const SizedBox(height: 6),
-          const _RateHistoryBanner(),
+          OutlinedButton.icon(
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: C.navy,
+              backgroundColor: C.paper,
+              side: const BorderSide(color: C.line2),
+              shape: const StadiumBorder(),
+              minimumSize: const Size(0, 44),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+            ),
+            icon: const Icon(Icons.show_chart, size: 18),
+            label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
+          ),
         ]),
       )),
       ]),
@@ -485,43 +496,6 @@ class _RateBoard extends StatelessWidget {
   }
 }
 
-/// "Gold rate history" — an important action, so it wears the velvet.
-class _RateHistoryBanner extends StatelessWidget {
-  const _RateHistoryBanner();
-  @override
-  Widget build(BuildContext context) => Material(
-        color: Colors.transparent,
-        child: Ink(
-          decoration: velvetDeco(
-            radius: BorderRadius.circular(20),
-            alignment: Alignment.center,
-            frame: Border.all(color: const Color(0xB3D6B56D)),
-            shadow: const [BoxShadow(color: Color(0x2E4A0D18), blurRadius: 14, offset: Offset(0, 6))],
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () {
-              tapFeel();
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage()));
-            },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
-              child: Row(children: [
-                const Icon(Icons.insights_rounded, color: C.gold, size: 30),
-                const SizedBox(width: 14),
-                Expanded(child: Text('தங்கம் விலை வரலாறு', style: sans(16, color: Colors.white, weight: FontWeight.w700))),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: C.gold)),
-                  child: Text('மேலும் ›', style: sans(13, color: C.goldSoft, weight: FontWeight.w700)),
-                ),
-              ]),
-            ),
-          ),
-        ),
-      );
-}
-
 class _SchemeHero extends StatelessWidget {
   const _SchemeHero({required this.go});
   final ValueChanged<int> go;
@@ -658,7 +632,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.16', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.17', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -778,7 +752,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.16', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.17', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
@@ -845,7 +819,7 @@ class _SavingsHero extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           decoration: velvetDeco(
             radius: BorderRadius.circular(20),
-            alignment: Alignment.topLeft,
+            alignment: Alignment.center,
             frame: Border.all(color: const Color(0xA6D6B56D)),
             shadow: const [BoxShadow(color: Color(0x406E1423), blurRadius: 22, offset: Offset(0, 10))],
           ),
@@ -853,7 +827,7 @@ class _SavingsHero extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('உங்க சேமிப்பு', style: sans(12, color: C.goldSoft, weight: FontWeight.w600).copyWith(letterSpacing: 1.1)),
+                  Text('உங்க சேமிப்பு', style: sans(13, color: C.goldSoft, weight: FontWeight.w700).copyWith(letterSpacing: 1.1)),
                   Text(Demo.scheme, style: sans(14, color: Colors.white, weight: FontWeight.w600, height: 1.4)),
                 ]),
               ),
