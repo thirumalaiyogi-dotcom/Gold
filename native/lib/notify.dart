@@ -338,10 +338,47 @@ extension Greetings on Notify {
 
 const _greetBase = 500; // ids 500..520 (7 days × 3)
 
+/// "Alarms & reminders" permission (Android 12+). Without it Android may delay or drop
+/// the timed greetings, especially on vivo / oppo phones when the app is closed.
+Future<bool> exactAlarmsOk() async {
+  try {
+    await Notify.init();
+    final a = Notify._p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    return await a?.canScheduleExactNotifications() ?? true;
+  } catch (_) {
+    return true;
+  }
+}
+
+Future<void> askExactAlarms() async {
+  try {
+    final a = Notify._p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    await a?.requestExactAlarmsPermission();
+  } catch (_) {}
+}
+
+/// Next greeting that is really waiting in Android (for the settings screen), or null.
+Future<String?> nextGreeting() async {
+  try {
+    await Notify.init();
+    final ids = (await Notify._p.pendingNotificationRequests()).map((r) => r.id).where((i) => i >= _greetBase && i < _greetBase + 21).toList()..sort();
+    if (ids.isEmpty) return null;
+    final i = ids.first - _greetBase, d = i ~/ 3, k = i % 3;
+    final sl = Greetings.slots[k];
+    final day = d == 0 ? 'இன்று' : (d == 1 ? 'நாளை' : '$d நாளில்');
+    final h = sl[0] as int, m = sl[1] as int;
+    final h12 = h > 12 ? h - 12 : h;
+    return '$day ${sl[2]} · $h12:${m.toString().padLeft(2, '0')} ${h < 12 ? 'காலை' : (h < 16 ? 'மதியம்' : 'இரவு')} (${ids.length} திட்டமிட்டது)';
+  } catch (_) {
+    return null;
+  }
+}
+
 Future<void> scheduleGreetings() async {
   try {
     await Notify.init();
     final p = Notify._p;
+    final exact = await exactAlarmsOk();
     for (var id = _greetBase; id < _greetBase + 21; id++) {
       await p.cancel(id);
     }
@@ -371,12 +408,16 @@ Future<void> scheduleGreetings() async {
                 color: const Color(0xFF6E1423),
                 styleInformation: BigTextStyleInformation(body)),
           ),
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          androidScheduleMode: exact ? AndroidScheduleMode.exactAllowWhileIdle : AndroidScheduleMode.inexactAllowWhileIdle,
         );
       }
     }
+    await sp.remove('greet_err');
   } catch (e) {
     debugPrint('greet: $e');
+    try {
+      (await SharedPreferences.getInstance()).setString('greet_err', '$e');
+    } catch (_) {}
   }
 }
 

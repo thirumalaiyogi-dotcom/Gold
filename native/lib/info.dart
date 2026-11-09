@@ -117,15 +117,41 @@ class NotifySettingsPage extends StatefulWidget {
 
 class _NotifySettingsPageState extends State<NotifySettingsPage> {
   final v = <String, bool>{'n_due': true, 'n_notice': true, 'n_rate': true, 'n_greet': true};
+  bool exact = true;
+  String? next;
+  bool loaded = false;
+
+  Future<void> _status() async {
+    final e = await exactAlarmsOk();
+    final n = await nextGreeting();
+    if (!mounted) return;
+    setState(() {
+      exact = e;
+      next = n;
+      loaded = true;
+    });
+  }
+
+  // back from the Android permission page → re-schedule and refresh the status
+  late final AppLifecycleListener _life = AppLifecycleListener(onResume: () => scheduleGreetings().then((_) => _status()));
+
+  @override
+  void dispose() {
+    _life.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+    _life;
     () async {
       for (final k in v.keys.toList()) {
         v[k] = await Notify.isOn(k);
       }
       if (mounted) setState(() {});
+      await scheduleGreetings(); // make sure the greetings are really in Android's queue
+      await _status();
     }();
   }
 
@@ -139,7 +165,7 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
           onChanged: (x) {
             setState(() => v[k] = x);
             Notify.setOn(k, x).then((_) {
-              if (k == 'n_greet') scheduleGreetings();
+              if (k == 'n_greet') scheduleGreetings().then((_) => _status());
             });
           },
         );
@@ -158,6 +184,29 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
             sw('n_greet', Icons.wb_sunny_outlined, 'தினசரி வணக்கம்', 'காலை 7, மதியம் 1, இரவு 8 மணி · Internet இல்லாமலும் வரும்'),
           ]),
         ),
+        if (v['n_greet']! && loaded) ...[
+          const SizedBox(height: 14),
+          LuxCard(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Icon(next != null ? Icons.check_circle_outline : Icons.error_outline, color: next != null ? C.green : C.red, size: 20),
+                const SizedBox(width: 8),
+                Expanded(child: Text(next != null ? 'அடுத்த வணக்கம்: $next' : 'வணக்கம் திட்டமிடப்படல. App-ஐ மூடி திறந்து பாருங்க.', style: sans(13.5, color: C.ink, height: 1.5))),
+              ]),
+              if (!exact) ...[
+                const SizedBox(height: 12),
+                Text('சரியான நேரத்துக்கு வர, phone-ல "Alarms & reminders" அனுமதி தேவை. இல்லைன்னா phone வணக்கத்தை தள்ளிப்போடலாம் அல்லது விட்டுடலாம்.',
+                    style: sans(13, color: C.mute, height: 1.6)),
+                const SizedBox(height: 10),
+                PrimaryButton('அனுமதி கொடுக்க', icon: Icons.alarm_on_outlined, onTap: () async {
+                  await askExactAlarms();
+                  await scheduleGreetings();
+                  await _status();
+                }),
+              ],
+            ]),
+          ),
+        ],
       ]),
     );
   }
