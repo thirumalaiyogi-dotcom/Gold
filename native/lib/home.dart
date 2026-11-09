@@ -26,10 +26,24 @@ class _MainShellState extends State<MainShell> {
   int tab = 0;
   final _key = GlobalKey<ScaffoldState>();
 
+  late final AppLifecycleListener _life;
+
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(milliseconds: 900), _poster);
+    Notify.refresh();
+    // back from the background: pick up notifications that arrived while the app was closed
+    _life = AppLifecycleListener(onResume: () {
+      Notify.refresh();
+      app.loadPublic();
+    });
+  }
+
+  @override
+  void dispose() {
+    _life.dispose();
+    super.dispose();
   }
 
   /// Website-style opening poster: once a day per poster, within its start / end dates.
@@ -424,13 +438,13 @@ class _RateBoard extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               onTap: open,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 14, 12, 14),
+                padding: const EdgeInsets.fromLTRB(10, 14, 10, 14),
                 child: Row(children: [
-                  Image.asset(img, width: 46, height: 40, fit: BoxFit.contain),
-                  const SizedBox(width: 10),
+                  Image.asset(img, width: 38, height: 34, fit: BoxFit.contain),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(12.5, color: C.head, weight: FontWeight.w700)),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+                      FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text(label, maxLines: 1, style: sans(12.5, color: C.head, weight: FontWeight.w700))),
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
@@ -439,8 +453,13 @@ class _RateBoard extends StatelessWidget {
                           TextSpan(text: '/g', style: sans(13, color: C.mute)),
                         ])),
                       ),
-                      Text(change == 0 ? 'மாற்றமில்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)}',
-                          style: sans(12.5, color: change == 0 ? C.mute : (change > 0 ? C.green : C.red), weight: FontWeight.w700)),
+                      // always one line, so both cards keep the same height
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(change == 0 ? '● மாற்றம் இல்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)}',
+                            maxLines: 1, style: sans(12.5, color: change == 0 ? C.mute : (change > 0 ? C.green : C.red), weight: FontWeight.w700)),
+                      ),
                     ]),
                   ),
                 ]),
@@ -458,11 +477,11 @@ class _RateBoard extends StatelessWidget {
           );
       return Row(children: [sk(), const SizedBox(width: 12), sk()]);
     }
-    return Row(children: [
+    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       tile('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange, 0, 'assets/gold.png'),
       const SizedBox(width: 12),
       tile('வெள்ளி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—', Demo.silverChange, _dec(Demo.silverChange.toDouble()), 'assets/silver.png'),
-    ]);
+    ]));
   }
 }
 
@@ -639,7 +658,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.15', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.16', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -759,7 +778,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.15', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.16', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );

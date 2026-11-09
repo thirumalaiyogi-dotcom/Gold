@@ -551,12 +551,13 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
         PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', busy: busy, onTap: _save),
         const SizedBox(height: 14),
-        Center(
-          child: TextButton(
-            onPressed: () => whatsApp(context, 'வணக்கம், எனக்கு Activation code வரல. புது code வேண்டும்.\nமொபைல் எண்: ${_m.text}'),
-            child: Text('Code வரலையா? Telegram OTP மூலம் mPIN வைக்க ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
-          ),
-        ),
+        Text('Code வரலையா? கடைக்கு வர வேண்டாம், இங்கேயே கேளுங்க:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(child: OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => whatsApp(context, 'வணக்கம், எனக்கு Activation code வரல. புது code வேண்டும்.\nமொபைல் எண்: ${_m.text}'))),
+          const SizedBox(width: 10),
+          Expanded(child: OutlineBtn('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
+        ]),
       ]),
     );
   }

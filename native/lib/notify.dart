@@ -169,9 +169,35 @@ class Notify {
     if (paidThisMonth) await sp.setString('paid_ym', _day(_ist()).substring(0, 7));
   }
 
+  /// Notices newer than this were not yet opened when the tab was entered (shown as "புதுசு").
+  static final readBefore = ValueNotifier<String>('');
+
+  /// Re-read the count written by the background isolate (FCM / WorkManager) and the
+  /// notices list, so the bell inside the app shows the same number as the app icon.
+  static Future<void> refresh() async {
+    try {
+      final sp = await SharedPreferences.getInstance();
+      await sp.reload();
+      var n = sp.getInt('unread') ?? 0;
+      final read = sp.getString('read_notice');
+      if (read != null) {
+        final list = await Api.notices();
+        final fresh = list.where((x) => '${x['created_at'] ?? ''}'.compareTo(read) > 0).length;
+        if (fresh > n) {
+          n = fresh;
+          await sp.setInt('unread', n);
+          await badge(n);
+        }
+      }
+      unread.value = n;
+    } catch (_) {}
+  }
+
   /// Opening the அறிவிப்பு tab clears the count.
   static Future<void> markRead() async {
     final sp = await SharedPreferences.getInstance();
+    readBefore.value = sp.getString('read_notice') ?? DateTime.now().toUtc().subtract(const Duration(days: 3)).toIso8601String();
+    await sp.setString('read_notice', DateTime.now().toUtc().toIso8601String());
     await sp.setInt('unread', 0);
     unread.value = 0;
     await badge(0);

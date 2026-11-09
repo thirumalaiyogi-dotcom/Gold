@@ -158,11 +158,6 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
             sw('n_greet', Icons.wb_sunny_outlined, 'தினசரி வணக்கம்', 'காலை 7, மதியம் 1, இரவு 8 மணி · Internet இல்லாமலும் வரும்'),
           ]),
         ),
-        const SizedBox(height: 16),
-        OutlineBtn('சோதனை notification அனுப்பு', onTap: () => Notify.test()),
-        const SizedBox(height: 12),
-        Text('App icon மேல சிவப்பு எண் வர, சில phone-ல (vivo / oppo) Settings → Notifications → இந்த app → "Desktop icon badges" ON பண்ணணும்.',
-            style: sans(12.5, color: C.mute, height: 1.6)),
       ]),
     );
   }
