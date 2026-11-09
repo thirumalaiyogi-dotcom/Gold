@@ -54,6 +54,7 @@ jobs:
           grep -n "INTERNET\|android:label" "$M"
           sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>\n    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>#' "$M"
           cp -r android_res/* android/app/src/main/res/
+          cp android_extra/proguard-rules.pro android/app/proguard-rules.pro
           # local_auth (fingerprint) needs a FragmentActivity
           find android/app/src/main -name 'MainActivity.kt' -exec sed -i 's/FlutterActivity/FlutterFragmentActivity/g' {} +
           grep -rn "FlutterFragmentActivity" android/app/src/main/kotlin || true
@@ -82,6 +83,10 @@ jobs:
           s = p.read_text()
           s = s.replace("compileOptions {", "compileOptions {\n        isCoreLibraryDesugaringEnabled = true", 1)
           s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+          # keep rules for scheduled notifications (see android_extra/proguard-rules.pro)
+          rel = 'signingConfig = signingConfigs.getByName("debug")'
+          assert rel in s, "release block not found"
+          s = s.replace(rel, rel + '\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")', 1)
           p.write_text(s)
           PY
           grep -n "Desugar\|desugar" android/app/build.gradle.kts

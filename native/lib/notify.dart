@@ -369,6 +369,20 @@ Future<String?> nextGreeting() async {
     final h = sl[0] as int, m = sl[1] as int;
     final h12 = h > 12 ? h - 12 : h;
     return '$day ${sl[2]} · $h12:${m.toString().padLeft(2, '0')} ${h < 12 ? 'காலை' : (h < 16 ? 'மதியம்' : 'இரவு')} (${ids.length} திட்டமிட்டது)';
+  } catch (e) {
+    try {
+      (await SharedPreferences.getInstance()).setString('greet_err', 'pending: $e');
+    } catch (_) {}
+    return null;
+  }
+}
+
+/// Last scheduling error (shown small on the settings screen so it can be reported).
+Future<String?> greetError() async {
+  try {
+    final sp = await SharedPreferences.getInstance();
+    await sp.reload();
+    return sp.getString('greet_err');
   } catch (_) {
     return null;
   }

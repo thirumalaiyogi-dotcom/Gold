@@ -119,15 +119,18 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
   final v = <String, bool>{'n_due': true, 'n_notice': true, 'n_rate': true, 'n_greet': true};
   bool exact = true;
   String? next;
+  String? gerr;
   bool loaded = false;
 
   Future<void> _status() async {
     final e = await exactAlarmsOk();
     final n = await nextGreeting();
+    final ge = n == null ? await greetError() : null;
     if (!mounted) return;
     setState(() {
       exact = e;
       next = n;
+      gerr = ge;
       loaded = true;
     });
   }
@@ -193,6 +196,10 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
                 const SizedBox(width: 8),
                 Expanded(child: Text(next != null ? 'அடுத்த வணக்கம்: $next' : 'வணக்கம் திட்டமிடப்படல. App-ஐ மூடி திறந்து பாருங்க.', style: sans(13.5, color: C.ink, height: 1.5))),
               ]),
+              if (next == null && gerr != null) ...[
+                const SizedBox(height: 8),
+                SelectableText('விவரம்: ${gerr!.length > 220 ? gerr!.substring(0, 220) : gerr}', style: sans(11.5, color: C.mute, height: 1.5)),
+              ],
               if (!exact) ...[
                 const SizedBox(height: 12),
                 Text('சரியான நேரத்துக்கு வர, phone-ல "Alarms & reminders" அனுமதி தேவை. இல்லைன்னா phone வணக்கத்தை தள்ளிப்போடலாம் அல்லது விட்டுடலாம்.',
