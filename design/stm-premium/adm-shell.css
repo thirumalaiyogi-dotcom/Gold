@@ -256,3 +256,13 @@ html[data-s6] #adm .s6hub button{display:flex!important;flex-direction:column;al
 @media (min-width:900px){.s6hub{grid-template-columns:repeat(4,1fr)}}
 html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!important;height:34px!important;margin:0!important;padding:0 10px!important;font-size:12.5px!important;border-radius:99px!important;flex:none}
 @media (min-width:900px){.s6pages{max-width:none}}
+
+/* my password dialog */
+.s6dlg.s6mypw h3{margin:0 0 12px;font-size:18px;color:var(--s-mar)}
+.s6dlg.s6mypw label{display:block;font-size:13.5px;font-weight:600;color:var(--s-ink);margin:0 0 6px}
+.s6dlg.s6mypw label small{font-weight:400;color:#81747A}
+.s6dlg.s6mypw input[type=password],.s6dlg.s6mypw input[type=text]{margin:0 0 12px;background:#FFFDF8;border-color:#E8D9B9}
+.s6dlg.s6mypw input:focus{outline:none;border-color:var(--s-mar);box-shadow:0 0 0 3px rgba(110,20,35,.12)}
+.s6dlg.s6mypw label.sh{display:flex;align-items:center;gap:8px;font-weight:500;margin:2px 0 6px;cursor:pointer}
+.s6dlg.s6mypw label.sh input{width:18px;height:18px;margin:0;accent-color:var(--s-mar)}
+.s6dlg.s6mypw .er{min-height:20px;margin:0 0 8px;color:var(--s-err);font-size:13.5px}
