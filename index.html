@@ -2778,14 +2778,12 @@ const refLink=c=>APP_URL+"/?ref="+encodeURIComponent(c);
 const playLink=c=>"https://play.google.com/store/apps/details?id="+PLAY_ID+"&referrer="+encodeURIComponent("ref="+c);
 (function(){try{const u=new URL(location.href),c=(u.searchParams.get("ref")||"").trim().toUpperCase();if(/^[A-Z0-9]{3,12}$/.test(c)){localStorage.setItem("stm_ref",JSON.stringify({c,t:Date.now()}));u.searchParams.delete("ref");history.replaceState(history.state,"",u.pathname+(u.search||"")+u.hash)}}catch(e){}})();
 function refSaved(){try{const o=JSON.parse(localStorage.getItem("stm_ref")||"null");if(o&&o.c&&Date.now()-o.t<60*864e5)return o.c}catch(e){}return ""}
-function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count,earn=n*r.per+(r.bonus?r.per:0);
- const msg=`வணக்கம்! ${SHOP}-ல் தங்கநகை சேமிப்புத் திட்டத்தில் சேர இந்த link-ஐ தொடுங்க (என் code ${r.code} தானா சேர்ந்துடும்). முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி கிடைக்கும்!\n\n🔗 ${refLink(r.code)}${PLAY_ID?`\n📱 Android app: ${playLink(r.code)}`:""}`;
- const ms=(lbl,k,max)=>k?`<div class="pbms"><span>${lbl}: ${esc(k)}</span><b>${Math.min(n,max)}/${max}</b><div class="pbbar sm"><i style="width:${Math.min(100,n/max*100)}%"></i></div></div>`:"";
- return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>Referral விவரம்</h3><p class="pbrsub">நண்பரை சேர்த்து பரிசு பெறுங்க</p>
- <div class="pbcode"><div><small>உங்க referral code</small><b>${esc(r.code)}</b></div><div class="pbcodeb"><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button><button type="button" class="pbcopy pbshare" data-rshare="${encodeURIComponent(msg)}">${PBI.sh}<span>பகிர்</span></button></div></div>
- <p class="pbnote">நண்பர் சேர்ந்து முதல் தவணை கட்டியதும் இரண்டு பேருக்கும் ₹${r.per} தள்ளுபடி (12 வது மாத நகை கொள்முதலில்).</p>
- <div class="pbst two"><span><b>${n}</b><small>சேர்த்தவங்க</small></span><span><b>₹${f(earn)}</b><small>மொத்த பரிசு</small></span></div>${r.bonus?'<p class="pbnote ok">நண்பர் மூலம் வந்த பரிசு ✔</p>':""}
- ${ms("5 பேர்",r.ms5,5)}${ms("10 பேர்",r.ms10,10)}
+function refCard(d){if(!d.refer)return "";const r=d.refer,n=r.count||0,pct=(r.pct!=null?r.pct:5),earn=r.earned!=null?r.earned:0,pend=r.pending!=null?r.pending:0,given=r.given||0;
+ const msg=`வணக்கம்! ${SHOP}-ன் தங்கநகை சேமிப்புத் திட்டத்தில் சேர இந்த link-ஐ தொடுங்க (என் Reference code ${r.code} தானா சேர்ந்துடும்). App-ல் சேரும்போது "Reference code" box-ல் ${r.code} கொடுங்கள்.\n\n🔗 ${refLink(r.code)}${PLAY_ID?`\n📱 Android app: ${playLink(r.code)}`:""}`;
+ return `<div class="pbcard pbref noprint"><h3><span class="pbgi">${PBI.gift}</span>நண்பரை சேர்க்க</h3><p class="pbrsub">உங்கள் Reference Code-ஐ உங்களுடைய நண்பர்களுக்கு அனுப்புங்கள்.</p>
+ <div class="pbcode"><div><small>உங்க Reference code</small><b>${esc(r.code)}</b></div><div class="pbcodeb"><button type="button" class="pbcopy" data-copy="${esc(r.code)}">${PBI.cp}<span>Copy</span></button><button type="button" class="pbcopy pbshare" data-rshare="${encodeURIComponent(msg)}">${PBI.sh}<span>பகிர்</span></button></div></div>
+ <p class="pbnote">உங்கள் நண்பர் சேரும்போது "Reference code" என்ற box-ல் உங்களுடைய code-ஐ கொடுத்தால், அவர் செலுத்தும் முதல் தவணைத் தொகையில் ${esc(String(pct))}% உங்களுடைய கணக்கில் பரிசுத் தொகையாக வரவு வைக்கப்படும்.</p>
+ <div class="pbst" style="margin:10px 0 4px"><span><b>${n}</b><small>சேர்ந்த நண்பர்கள்</small></span><span><b>₹${f(earn)}</b><small>மொத்த பரிசு</small></span><span><b>₹${f(pend)}</b><small>பாக்கி</small></span></div>${given>0?`<p class="pbnote ok">வரவு வைத்தது ₹${f(given)} ✔</p>`:""}
  <a class="pbbtn pbwa" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?text=${encodeURIComponent(waT(msg))}">${PBI.wa}நண்பருக்கு WhatsApp-ல் அனுப்பு</a></div>`}
 
 // Scheme detail pages

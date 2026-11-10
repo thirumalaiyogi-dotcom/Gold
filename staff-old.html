@@ -536,8 +536,8 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <div id="acb"></div>
   <div class="card"><h2>புதிய கோரிக்கைகள்</h2><div id="rq"></div></div>
   <div class="card"><h2>Refer & Earn அமைப்பு</h2>
-  <label class="mut">ஒவ்வொரு நண்பருக்கும் பரிசு (₹, இரண்டு பேருக்கும்)</label><input id="rc1" type="number" inputmode="numeric">
-  <label class="mut">5 பேர் சேர்ந்தா பரிசு</label><input id="rc2"><label class="mut">10 பேர் சேர்ந்தா பரிசு</label><input id="rc3">
+  <label class="mut">நண்பரின் முதல் தவணையில் சேர்த்தவருக்கு பரிசு (%)</label><input id="rc1" type="number" inputmode="decimal" min="0" max="50" step="0.5">
+  <p class="mut" style="margin:6px 0 10px;font-size:13px">உதாரணம்: 5 என்றால், நண்பர் முதல் தவணை ₹2,000 கட்டினால் சேர்த்தவருக்கு ₹100 பரிசுத் தொகை. சேமிப்புடன் சேராது, தனியாக காட்டும்.</p>
   <button class="btn" id="rsave">சேமி</button></div>
   <div class="card"><h2>Refer பரிசுகள்</h2><div id="rl"></div></div>
   <div class="card"><h2>புதிய அறிவிப்பு</h2>
@@ -763,14 +763,16 @@ loadNotices();
 // Customer logout
 
 // Passbook share / PDF
-function rewards(data){const RC=window.RC||{per_ref:200},per=RC.per_ref;
- const rows=data.map(c=>{const n=data.filter(x=>x.ref_by==c.id&&x.gold_payments.length>0).length,own=(c.ref_by&&c.gold_payments.length>0)?per:0,earn=n*per+own;
-  return {c,n,earn,pend:earn-(c.ref_given||0)}}).filter(r=>r.earn>0);
- $("rl").innerHTML=rows.length?rows.map(r=>`<div class="row" style="align-items:center"><span>${esc(r.c.name)}<br><span class="mut">சேர்த்தவங்க ${r.n} · பரிசு ₹${f(r.earn)} · பாக்கி ₹${f(r.pend)}${r.n>=10?" · 🎁 "+esc(RC.ms10||""):r.n>=5?" · 🎁 "+esc(RC.ms5||""):""}</span></span>${r.pend>0?`<a data-gv="${r.c.id}" data-amt="${r.earn}" style="color:#1f7a4d;font-weight:700">வழங்கியாச்சு</a>`:""}</div>`).join(""):'<div class="mut">இன்னும் பரிசு எதுவும் இல்ல</div>'}
+function rewards(data){const RC=window.RC||{pct:5},pct=+(RC.pct??5);
+ // owner rule (10 Nov 2026): pct % of each referred friend's FIRST instalment, for the referrer only
+ const first=x=>{const ps=(x.gold_payments||[]).slice().sort((a,b)=>String(a.paid_on).localeCompare(String(b.paid_on)));return ps.length?+ps[0].amount||0:0};
+ const rows=data.map(c=>{const fr=data.filter(x=>x.ref_by==c.id&&x.gold_payments.length>0),n=fr.length,earn=fr.reduce((t,x)=>t+Math.round(first(x)*pct/100),0);
+  return {c,n,earn,pend:Math.max(0,earn-(c.ref_given||0))}}).filter(r=>r.earn>0);
+ $("rl").innerHTML=rows.length?rows.map(r=>`<div class="row" style="align-items:center"><span>${esc(r.c.name)}<br><span class="mut">சேர்த்தவங்க ${r.n} · பரிசு ₹${f(r.earn)} · பாக்கி ₹${f(r.pend)}</span></span>${r.pend>0?`<a data-gv="${r.c.id}" data-amt="${r.earn}" style="color:#1f7a4d;font-weight:700">வழங்கியாச்சு</a>`:""}</div>`).join(""):'<div class="mut">இன்னும் பரிசு எதுவும் இல்ல</div>'}
 $("rl").addEventListener("click",async e=>{const id=e.target.dataset.gv;if(!id)return;await sb.from("gold_customers").update({ref_given:+e.target.dataset.amt}).eq("id",id);load()});
 async function loadCfg(){const {data}=await sb.from("gold_refer_cfg").select("*").eq("id",1).maybeSingle();
- window.RC=data||{per_ref:200,ms5:"வெள்ளி நாணயம்",ms10:"₹1,000 தள்ளுபடி"};$("rc1").value=RC.per_ref;$("rc2").value=RC.ms5||"";$("rc3").value=RC.ms10||""}
-$("rsave").onclick=async()=>{const r={id:1,per_ref:+$("rc1").value||0,ms5:$("rc2").value.trim(),ms10:$("rc3").value.trim()};
+ window.RC=data||{pct:5};$("rc1").value=RC.pct??5}
+$("rsave").onclick=async()=>{const v=+$("rc1").value;if(!(v>=0&&v<=50))return alert("0 முதல் 50 % வரை போடுங்க");const r={id:1,pct:v};
  const {error}=await sb.from("gold_refer_cfg").upsert(r);if(error)return alert(error.message);window.RC=r;alert("சேமிக்கப்பட்டது ✅")};
 loadCfg();
 

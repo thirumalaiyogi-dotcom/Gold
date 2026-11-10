@@ -196,6 +196,34 @@ class _PassbookTabState extends State<PassbookTab> {
               ]),
             ),
           ),
+          // referral reward: a separate balance, not part of the savings total
+          if (Demo.refCount > 0 || Demo.refEarned > 0) ...[
+            const SizedBox(height: 10),
+            Material(
+              color: const Color(0xFFFFF7E0),
+              borderRadius: BorderRadius.circular(14),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage())),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(14), border: Border.all(color: C.goldLine)),
+                  child: Row(children: [
+                    const Icon(Icons.card_giftcard, color: C.navy, size: 22),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('பரிசுத் தொகை (${Demo.refCount} நண்பர்)', style: sans(13.5, color: C.ink, weight: FontWeight.w700)),
+                        Text('வரவு வைத்தது ${rupees(Demo.refGiven)} · பாக்கி ${rupees(Demo.refPending)}', style: sans(12, color: C.mute)),
+                      ]),
+                    ),
+                    Text(rupees(Demo.refEarned), style: serif(19, color: C.navy, weight: FontWeight.w700)),
+                    const Icon(Icons.chevron_right, color: C.mute),
+                  ]),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 10),
           Text.rich(TextSpan(children: [
             TextSpan(text: 'நகை வாங்கலாம் : ', style: sans(13.5)),
@@ -425,6 +453,14 @@ class MyDetailsPage extends StatelessWidget {
 }
 
 /// Referral — opened from the கணக்கு tab.
+Widget _refStat(String v, String l) => Expanded(
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        FittedBox(fit: BoxFit.scaleDown, child: Text(v, style: serif(19, color: C.navy, weight: FontWeight.w700))),
+        const SizedBox(height: 2),
+        Text(l, textAlign: TextAlign.center, style: sans(11.5, color: C.mute)),
+      ]),
+    );
+
 Widget _refStep(String n, String t) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -466,9 +502,28 @@ class ReferralPage extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 _refStep('1', 'உங்கள் Reference Code-ஐ நண்பருக்கு அனுப்புங்கள்.'),
                 _refStep('2', 'அவர்கள் Digigold App-ல் சேரும்போது "Reference code" என்ற box-ல் உங்களுடைய code-ஐ கொடுக்க வேண்டும்.'),
-                _refStep('3', 'உங்களுடைய நண்பர் செலுத்தும் முதல் தவணைத் தொகையில் 5% உங்களுடைய கணக்கில் பரிசுத் தொகையாக வரவு வைக்கப்படும்.'),
+                _refStep('3', 'உங்களுடைய நண்பர் செலுத்தும் முதல் தவணைத் தொகையில் ${Demo.refPct}% உங்களுடைய கணக்கில் பரிசுத் தொகையாக வரவு வைக்கப்படும்.'),
               ]),
             ),
+            const SizedBox(height: 14),
+            // live reward numbers from the passbook
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+              child: IntrinsicHeight(
+                child: Row(children: [
+                  _refStat('${Demo.refCount}', 'சேர்ந்த நண்பர்கள்'),
+                  const VerticalDivider(width: 1, color: C.line2),
+                  _refStat(rupees(Demo.refEarned), 'மொத்த பரிசு'),
+                  const VerticalDivider(width: 1, color: C.line2),
+                  _refStat(rupees(Demo.refPending), 'பாக்கி'),
+                ]),
+              ),
+            ),
+            if (Demo.refGiven > 0) ...[
+              const SizedBox(height: 6),
+              Text('வரவு வைத்தது: ${rupees(Demo.refGiven)}', style: sans(12.5, color: C.green, weight: FontWeight.w600)),
+            ],
             const SizedBox(height: 14),
             SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்புத் திட்டத்தில் சேருங்கள்! App-ல் சேரும்போது "Reference code" box-ல் என் code ${Demo.member} கொடுங்கள்.\n${Api.site}'))),
           ]),

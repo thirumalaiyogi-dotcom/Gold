@@ -28,6 +28,17 @@ class Demo {
   static String get name => (_pb['name'] ?? '').toString().trim().isEmpty ? 'வாடிக்கையாளர்' : _pb['name'].toString().trim();
   static String get firstName => name.split(RegExp(r'\s+')).first;
   static String get member => ((_pb['refer'] is Map) ? (_pb['refer']['code'] ?? '') : '').toString();
+  static Map get _ref => (_pb['refer'] is Map) ? _pb['refer'] as Map : const {};
+  static int _ri(String k) => (num.tryParse('${_ref[k] ?? 0}') ?? 0).toInt();
+  /// Referral reward (5% of each friend's first instalment, owner rule 10 Nov 2026).
+  static int get refCount => _ri('count');
+  static int get refEarned => _ri('earned');
+  static int get refGiven => _ri('given');
+  static int get refPending => _ri('pending');
+  static String get refPct {
+    final p = num.tryParse('${_ref['pct'] ?? 5}') ?? 5;
+    return p == p.roundToDouble() ? '${p.toInt()}' : '$p';
+  }
   static String get schemeKey => (_pb['scheme'] ?? '').toString();
   static String get scheme => app.schemeName(schemeKey);
   static int get months => app.schemeMonths(schemeKey);
