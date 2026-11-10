@@ -1,5 +1,5 @@
 # STM Digi Gold — Play Store release build (manual).
-# App id com.subbulakshmi.stmdigigold, label "STM Digi Gold", signed with the Play upload key
+# App id com.subbulakshmi.thangamaligai, label "STM Digi Gold", signed with the Play upload key
 # from GitHub Secrets (never printed, deleted after the build). Output → branch native-release:
 #   stm-digigold-<version>.aab (upload this to Play Console) + .apk (for a quick phone test) + logs.
 name: STM Digi Gold release (Play)
@@ -110,7 +110,7 @@ jobs:
           g = pathlib.Path("android/app/build.gradle.kts"); s = g.read_text()
           old = 'applicationId = "com.subbulakshmi.stm_proto"'
           assert old in s, "applicationId line not found"
-          s = s.replace(old, 'applicationId = "com.subbulakshmi.stmdigigold"', 1)
+          s = s.replace(old, 'applicationId = "com.subbulakshmi.thangamaligai"', 1)
           sign = """android {
               signingConfigs {
                   create("release") {
@@ -160,7 +160,7 @@ jobs:
           cp build/app/outputs/bundle/release/app-release.aab "$OUT/stm-digigold-${{ inputs.version }}.aab" 2>/dev/null || true
           cp build/app/outputs/flutter-apk/app-release.apk "$OUT/stm-digigold-${{ inputs.version }}.apk" 2>/dev/null || true
           RES=${{ steps.build.outcome }}; ls "$OUT"/*.aab >/dev/null 2>&1 || RES=failure
-          echo "commit=$GITHUB_SHA result=$RES version=${{ inputs.version }} app_id=com.subbulakshmi.stmdigigold built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
+          echo "commit=$GITHUB_SHA result=$RES version=${{ inputs.version }} app_id=com.subbulakshmi.thangamaligai built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
           rm -f "$RUNNER_TEMP/upload.jks"
           cd "$OUT"
           git init -q -b native-release
