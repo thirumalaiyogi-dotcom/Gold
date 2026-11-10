@@ -261,6 +261,16 @@ class StmApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: base.copyWith(textTheme: GoogleFonts.notoSansTamilTextTheme(base.textTheme)),
       home: const Boot(),
+      // Phones differ: Samsung / vivo "font size" settings can make Tamil text 1.3–1.6x bigger and
+      // break layouts. Keep the user's choice but within a range the screens are designed for.
+      builder: (context, child) {
+        final mq = MediaQuery.of(context);
+        final scale = mq.textScaler.scale(14) / 14;
+        return MediaQuery(
+          data: mq.copyWith(textScaler: TextScaler.linear(scale.clamp(0.9, 1.15).toDouble())),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }

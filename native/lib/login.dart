@@ -19,6 +19,8 @@ class _LoginFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
+    final sh = MediaQuery.of(context).size.height;
+    final heroHeight = sh < 700 ? this.heroHeight * .72 : this.heroHeight;
     return Scaffold(
       backgroundColor: C.navy,
       // maroon glow + dot-kolam behind the logo (and behind the rounded corners of the sheet)
@@ -299,7 +301,7 @@ class _MobileScreenState extends State<MobileScreen> {
           trigger: shake,
           child: SizedBox(height: 40, child: Center(child: FittedBox(child: Text(shown, maxLines: 1, style: sans(v.isEmpty ? 17 : 26, color: v.isEmpty ? const Color(0xFFB8A690) : C.navy, weight: FontWeight.w600).copyWith(letterSpacing: v.isEmpty ? 0 : 1.5))))),
         ),
-        SizedBox(height: 22, child: Center(child: Text(err, style: sans(13, color: C.red)))),
+        _ErrLine(err),
         KeyPad(onKey: _key),
         const SizedBox(height: 14),
         AnimatedOpacity(
@@ -444,7 +446,7 @@ class _PinScreenState extends State<PinScreen> {
         ),
         const SizedBox(height: 14),
         Shake(trigger: shake, child: _Dots(v.length)),
-        SizedBox(height: 26, child: Center(child: Text(err, style: sans(12.5, color: C.red)))),
+        _ErrLine(err),
         KeyPad(onKey: _key, bio: bio),
         Align(
           alignment: Alignment.centerRight,
@@ -600,4 +602,26 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
       ]),
     );
   }
+}
+
+
+/// Error / info line above the keypad: at least one line tall, grows to two or three lines
+/// on narrow phones or big font settings instead of hiding behind the keys.
+class _ErrLine extends StatelessWidget {
+  const _ErrLine(this.text);
+  final String text;
+  @override
+  Widget build(BuildContext context) => AnimatedSize(
+        duration: const Duration(milliseconds: 180),
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 24),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Center(
+              child: Text(text, textAlign: TextAlign.center, style: sans(13, color: C.red, weight: FontWeight.w600, height: 1.45)),
+            ),
+          ),
+        ),
+      );
 }

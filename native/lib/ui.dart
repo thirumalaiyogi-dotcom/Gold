@@ -241,13 +241,16 @@ class KeyPad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'];
+    // shorter keys on short screens so the number, message, keypad and button all fit
+    final h = MediaQuery.of(context).size.height;
+    final ratio = h < 640 ? 2.4 : (h < 720 ? 2.1 : (h < 800 ? 1.9 : 1.75));
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 3,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
-      childAspectRatio: 1.75,
+      childAspectRatio: ratio,
       // shadows need a little room around the keys
       padding: const EdgeInsets.all(2),
       children: [for (final k in keys) k.isEmpty ? (bio ? _PadKey('bio', onKey) : const SizedBox.shrink()) : _PadKey(k, onKey)],

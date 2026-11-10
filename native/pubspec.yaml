@@ -1,7 +1,7 @@
 name: stm_proto
 description: "சுப்புலட்சுமி தங்க மாளிகை — native app prototype (Flutter, mock data only)"
 publish_to: 'none'
-version: 0.9.22+34
+version: 0.9.23+35
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
