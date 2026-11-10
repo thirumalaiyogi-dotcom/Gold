@@ -302,7 +302,7 @@ class _EnrolPageState extends State<EnrolPage> {
   int step = 0;
   late Scheme sch = widget.initial;
   final name = TextEditingController(), mobile = TextEditingController(), addr = TextEditingController(), city = TextEditingController(), pin = TextEditingController();
-  final amount = TextEditingController(), nominee = TextEditingController();
+  final amount = TextEditingController(), nominee = TextEditingController(), refc = TextEditingController();
   String rel = 'கணவர் / மனைவி';
   bool agree = false;
   bool busy = false;
@@ -316,7 +316,7 @@ class _EnrolPageState extends State<EnrolPage> {
 
   @override
   void dispose() {
-    for (final c in [name, mobile, addr, city, pin, amount, nominee]) {
+    for (final c in [name, mobile, addr, city, pin, amount, nominee, refc]) {
       c.dispose();
     }
     super.dispose();
@@ -337,7 +337,12 @@ class _EnrolPageState extends State<EnrolPage> {
       final a = int.tryParse(amount.text.trim()) ?? 0;
       if (a < sch.minAmount || a > 100000) e = 'மாத தவணை ${rupees(sch.minAmount)} முதல் ₹1,00,000 வரை';
     } else if (step == 3) {
-      if (!agree) e = 'விதிமுறைகளை ஒப்புக்கொள்ளுங்க';
+      final r = refc.text.trim().toUpperCase();
+      if (r.isNotEmpty && !RegExp(r'^[A-Z0-9]{3,12}$').hasMatch(r)) {
+        e = 'Reference code சரியில்லை (எழுத்தும் எண்ணும் மட்டும், எ.கா. SL1024)';
+      } else if (!agree) {
+        e = 'விதிமுறைகளை ஒப்புக்கொள்ளுங்க';
+      }
     }
     setState(() => err = e);
     return e.isEmpty;
@@ -361,6 +366,7 @@ class _EnrolPageState extends State<EnrolPage> {
         'monthly_amount': int.tryParse(amount.text.trim()),
         'nominee': nominee.text.trim().isEmpty ? null : nominee.text.trim(),
         'nominee_rel': nominee.text.trim().isEmpty ? null : rel,
+        'ref_code': refc.text.trim().isEmpty ? null : refc.text.trim().toUpperCase(),
       });
       if (!mounted) return;
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => _EnrolDone(name: name.text.trim(), scheme: sch)));
@@ -458,7 +464,9 @@ class _EnrolPageState extends State<EnrolPage> {
           items: const ['கணவர் / மனைவி', 'மகன்', 'மகள்', 'தந்தை', 'தாய்', 'மற்றவர்'].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
           onChanged: (v) => setState(() => rel = v ?? rel),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
+        _field(refc, 'Reference code (இருந்தால்)', hint: 'நண்பர் கொடுத்த code, எ.கா. SL1024'),
+        const SizedBox(height: 2),
         LuxCard(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('சுருக்கம்', style: sans(13, color: C.mute, weight: FontWeight.w600)),
@@ -509,7 +517,7 @@ class _EnrolPageState extends State<EnrolPage> {
           Expanded(flex: 2, child: PrimaryButton(step < 3 ? 'அடுத்து' : (busy ? 'அனுப்புகிறது…' : 'விண்ணப்பம் அனுப்பு'), busy: busy, onTap: _next)),
         ]),
         const SizedBox(height: 14),
-        Center(child: Text('விண்ணப்பம் கடைக்கு செல்லும். கடை approve பண்ணியதும் WhatsApp-ல் தகவல் வரும்.', textAlign: TextAlign.center, style: sans(12, color: C.mute))),
+        Center(child: Text('விண்ணப்பம் எங்கள் நிறுவனத்திற்குச் செல்லும். எங்கள் நிறுவனம் approve செய்தவுடன் உங்களுடைய WhatsApp-ல் தகவல் வரும்.', textAlign: TextAlign.center, style: sans(12, color: C.mute))),
       ]),
     );
   }
@@ -530,7 +538,7 @@ class _EnrolDone extends StatelessWidget {
               const SizedBox(height: 18),
               Text('விண்ணப்பம் அனுப்பப்பட்டது', textAlign: TextAlign.center, style: serif(22, color: C.ink, weight: FontWeight.w700)),
               const SizedBox(height: 8),
-              Text('நன்றி $name! ${scheme.name} திட்டத்துக்கான உங்க விண்ணப்பம் கடைக்கு வந்துவிட்டது. கடை approve பண்ணியதும் WhatsApp-ல் Activation code வரும்.',
+              Text('நன்றி $name! ${scheme.name} திட்டத்திற்கான உங்களுடைய விண்ணப்பம் எங்கள் நிறுவனத்திற்கு வந்துவிட்டது. எங்கள் நிறுவனம் உங்கள் விண்ணப்பத்தை approve செய்தவுடன் உங்களுடைய WhatsApp-ல் Activation code வரும்.',
                   textAlign: TextAlign.center, style: sans(14.5, color: C.mute, height: 1.7)),
               const SizedBox(height: 24),
               PrimaryButton('முகப்புக்கு செல்ல', onTap: () => Navigator.of(context).pop()),

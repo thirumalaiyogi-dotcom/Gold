@@ -58,7 +58,7 @@ class Notify {
     // Channels created up-front so Firebase (FCM) messages land in the same named channels.
     final a = _p.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     for (final c in const [
-      ['stm_notice', 'கடை அறிவிப்புகள்'],
+      ['stm_notice', 'நிறுவன அறிவிப்புகள்'],
       ['stm_due', 'தவணை நினைவூட்டல்'],
       ['stm_rate', 'இன்றைய விலை'],
       ['stm_greet', 'தினசரி வணக்கம்'],
@@ -93,7 +93,7 @@ class Notify {
         await badge(c);
         final due = '${m.data['tag'] ?? ''}'.startsWith('due');
         await _show(DateTime.now().millisecondsSinceEpoch ~/ 1000 % 100000, n.title ?? 'சுப்புலட்சுமி தங்க மாளிகை', n.body ?? '',
-            due ? 'stm_due' : 'stm_notice', due ? 'தவணை நினைவூட்டல்' : 'கடை அறிவிப்புகள்', c);
+            due ? 'stm_due' : 'stm_notice', due ? 'தவணை நினைவூட்டல்' : 'நிறுவன அறிவிப்புகள்', c);
       });
       fm.onTokenRefresh.listen((_) => linkFcm());
       _fcmReady = true;
@@ -214,7 +214,7 @@ class Notify {
     await sp.setInt('unread', n);
     unread.value = n;
     await badge(n);
-    await _show(9, 'சுப்புலட்சுமி தங்க மாளிகை', 'இது ஒரு சோதனை அறிவிப்பு. இப்படித்தான் கடை அறிவிப்புகள் வரும் 🙏', 'stm_notice', 'கடை அறிவிப்புகள்', n);
+    await _show(9, 'சுப்புலட்சுமி தங்க மாளிகை', 'இது ஒரு சோதனை அறிவிப்பு. இப்படித்தான் கடை அறிவிப்புகள் வரும் 🙏', 'stm_notice', 'நிறுவன அறிவிப்புகள்', n);
   }
 
   /// One pass of all three checks. Safe to call from the app or from the background job.
@@ -241,7 +241,7 @@ class Notify {
               await badge(count);
               var id = 100;
               for (final n in fresh.take(3)) {
-                await _show(id++, '${n['title'] ?? 'புதிய அறிவிப்பு'}', '${n['body'] ?? ''}', 'stm_notice', 'கடை அறிவிப்புகள்', count);
+                await _show(id++, '${n['title'] ?? 'புதிய அறிவிப்பு'}', '${n['body'] ?? ''}', 'stm_notice', 'நிறுவன அறிவிப்புகள்', count);
               }
               await sp.setString('seen_notice', stamps.last);
             }

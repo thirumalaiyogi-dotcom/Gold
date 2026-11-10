@@ -90,7 +90,7 @@ class PrivacyPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(color: const Color(0xFFFFF4D6), borderRadius: BorderRadius.circular(12), border: Border.all(color: C.goldSoft)),
-            child: Text('DRAFT — கடை உரிமையாளர் சரிபார்க்க வேண்டும். கடைசியாக மாற்றியது: 23 Oct 2026', style: sans(12.5, color: const Color(0xFF5A4410), height: 1.5)),
+            child: Text('DRAFT — நிறுவன உரிமையாளர் சரிபார்க்க வேண்டும். கடைசியாக மாற்றியது: 23 Oct 2026', style: sans(12.5, color: const Color(0xFF5A4410), height: 1.5)),
           ),
           const SizedBox(height: 12),
           for (final s in _sec)
@@ -178,11 +178,11 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
         LuxCard(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Column(children: [
-            sw('n_due', Icons.event_available_outlined, 'தவணை நினைவூட்டல்', 'மாதம் 1, 4, 7 தேதிகளில் — தவணை கட்டலைன்னா மட்டும்'),
+            sw('n_due', Icons.event_available_outlined, 'தவணை நினைவூட்டல்', 'மாதம் 1, 4, 7 தேதிகளில் — தவணை செலுத்தவில்லை என்றால் மட்டும்'),
             const Divider(height: 1, color: C.line),
-            sw('n_notice', Icons.campaign_outlined, 'கடை அறிவிப்புகள்', 'சலுகைகள், புதிய திட்டங்கள், கடை செய்திகள்'),
+            sw('n_notice', Icons.campaign_outlined, 'நிறுவன அறிவிப்புகள்', 'சலுகைகள், புதிய திட்டங்கள், நிறுவனம் தொடர்பான செய்திகள்'),
             const Divider(height: 1, color: C.line),
-            sw('n_rate', Icons.trending_up, 'இன்றைய தங்க விலை', 'கடை விலை பதிவு செய்ததும் தினமும் ஒரு முறை'),
+            sw('n_rate', Icons.trending_up, 'இன்றைய தங்க விலை', 'நிறுவனம் விலையை பதிவு செய்தவுடன் தினமும் ஒருமுறை'),
             const Divider(height: 1, color: C.line),
             sw('n_greet', Icons.wb_sunny_outlined, 'தினசரி வணக்கம்', 'காலை 7, மதியம் 1, இரவு 8 மணி · Internet இல்லாமலும் வரும்'),
           ]),

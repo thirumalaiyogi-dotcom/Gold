@@ -425,6 +425,21 @@ class MyDetailsPage extends StatelessWidget {
 }
 
 /// Referral — opened from the கணக்கு tab.
+Widget _refStep(String n, String t) => Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(
+          width: 24,
+          height: 24,
+          margin: const EdgeInsets.only(top: 1, right: 10),
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(color: C.navy, shape: BoxShape.circle),
+          child: Text(n, style: sans(12.5, color: Colors.white, weight: FontWeight.w700)),
+        ),
+        Expanded(child: Text(t, style: sans(13.5, color: C.ink, height: 1.6))),
+      ]),
+    );
+
 class ReferralPage extends StatelessWidget {
   const ReferralPage({super.key});
   @override
@@ -437,15 +452,25 @@ class ReferralPage extends StatelessWidget {
             const SizedBox(height: 10),
             Text('நண்பரை சேர்க்க', style: serif(21)),
             const SizedBox(height: 6),
-            Text('உங்க code-ஐ நண்பருக்கு அனுப்புங்க. அவங்க சேரும்போது இந்த code-ஐ கொடுத்தா உங்களுக்கு பரிசு. விவரம் கடையில்.', style: sans(13.5, color: C.mute, height: 1.6), textAlign: TextAlign.center),
+            Text('உங்கள் Reference Code-ஐ உங்களுடைய நண்பர்களுக்கு அனுப்புங்கள்.', style: sans(14.5, color: C.ink, weight: FontWeight.w600, height: 1.6), textAlign: TextAlign.center),
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), border: Border.all(color: C.goldLine), color: const Color(0xFFFFF7E0)),
               child: Text(Demo.member.isEmpty ? '—' : Demo.member, style: serif(26, color: C.goldText).copyWith(letterSpacing: 4)),
             ),
+            const SizedBox(height: 16),
+            // how it works (wording from the company owner, 10 Nov 2026)
+            InfoBox(
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _refStep('1', 'உங்கள் Reference Code-ஐ நண்பருக்கு அனுப்புங்கள்.'),
+                _refStep('2', 'அவர்கள் Digigold App-ல் சேரும்போது "Reference code" என்ற box-ல் உங்களுடைய code-ஐ கொடுக்க வேண்டும்.'),
+                _refStep('3', 'உங்களுடைய நண்பர் செலுத்தும் முதல் தவணைத் தொகையில் 5% உங்களுடைய கணக்கில் பரிசுத் தொகையாக வரவு வைக்கப்படும்.'),
+              ]),
+            ),
             const SizedBox(height: 14),
-            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை தங்க சேமிப்புத் திட்டத்தில் சேருங்க! சேரும்போது என் code ${Demo.member} கொடுங்க.\n${Api.site}'))),
+            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்புத் திட்டத்தில் சேருங்கள்! App-ல் சேரும்போது "Reference code" box-ல் என் code ${Demo.member} கொடுங்கள்.\n${Api.site}'))),
           ]),
         ),
       ]));

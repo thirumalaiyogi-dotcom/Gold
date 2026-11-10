@@ -138,7 +138,7 @@ class WelcomeScreen extends StatelessWidget {
       child: ListView(padding: const EdgeInsets.fromLTRB(22, 22, 22, 18), children: [
         Text('வணக்கம்.. வருக..!', style: serif(25)),
         const SizedBox(height: 6),
-        Text('சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.', style: sans(14, color: C.ink, weight: FontWeight.w600, height: 1.5)),
+        Text('சுப்புலட்சுமி தங்கமாளிகை-யின் தங்கநகை சேமிப்பிற்கான செயலி (App)-க்கு உங்களை அன்புடன் வரவேற்கிறோம்.', style: sans(14, color: C.ink, weight: FontWeight.w600, height: 1.5)),
         const SizedBox(height: 6),
         Text('உங்கள் தங்க சேமிப்பை பார்க்கவோ அல்லது தங்க சேமிப்புத் திட்டங்களைப் பற்றிய விவரங்களைத் தெரிந்து கொள்வதற்கோ கீழே உள்ள விருப்பங்களில் ஒன்றைத் தேர்வு செய்யுங்கள்.', style: sans(13.5, color: C.mute, height: 1.5)),
         const SizedBox(height: 16),
