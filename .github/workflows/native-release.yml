@@ -1,0 +1,170 @@
+# STM Digi Gold — Play Store release build (manual).
+# App id com.subbulakshmi.stmdigigold, label "STM Digi Gold", signed with the Play upload key
+# from GitHub Secrets (never printed, deleted after the build). Output → branch native-release:
+#   stm-digigold-<version>.aab (upload this to Play Console) + .apk (for a quick phone test) + logs.
+name: STM Digi Gold release (Play)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version name (Play-ல் தெரியும்), e.g. 1.0.0"
+        required: true
+        default: "1.0.0"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: native-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: native
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Cache Gradle downloads (survives GitHub download outages)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: gradle-${{ runner.os }}-${{ hashFiles('native/pubspec.yaml') }}
+          restore-keys: gradle-${{ runner.os }}-
+      - name: Generate platform folders
+        run: |
+          flutter --version | tee flutter-version.txt
+          flutter create --org com.subbulakshmi --project-name stm_proto --platforms android,ios .
+          rm -rf test
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.INTERNET"/>#' "$M"
+          sed -i 's/android:label="stm_proto"/android:label="தங்க மாளிகை (மாதிரி)"/' "$M"
+          grep -n "INTERNET\|android:label" "$M"
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET"/>#&\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>\n    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>\n    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>\n    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>#' "$M"
+          cp -r android_res/* android/app/src/main/res/
+          cp android_extra/proguard-rules.pro android/app/proguard-rules.pro
+          # local_auth (fingerprint) needs a FragmentActivity
+          find android/app/src/main -name 'MainActivity.kt' -exec sed -i 's/FlutterActivity/FlutterFragmentActivity/g' {} +
+          grep -rn "FlutterFragmentActivity" android/app/src/main/kotlin || true
+          python3 - <<'PY'
+          import pathlib
+          p = pathlib.Path("android/app/src/main/AndroidManifest.xml")
+          s = p.read_text()
+          s = s.replace('<uses-permission android:name="android.permission.INTERNET"/>', '<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>\n    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>', 1)
+          rec = """        <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+                  <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+                      <intent-filter>
+                          <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                          <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                          <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                          <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+                      </intent-filter>
+                  </receiver>
+              </application>"""
+          s = s.replace("</application>", rec, 1)
+          p.write_text(s)
+          PY
+          grep -c "ScheduledNotification" android/app/src/main/AndroidManifest.xml
+          python3 - <<'PY'
+          import re, pathlib
+          p = pathlib.Path("android/app/build.gradle.kts")
+          s = p.read_text()
+          s = s.replace("compileOptions {", "compileOptions {\n        isCoreLibraryDesugaringEnabled = true", 1)
+          s += '\ndependencies {\n    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")\n}\n'
+          # keep rules for scheduled notifications (see android_extra/proguard-rules.pro)
+          rel = 'signingConfig = signingConfigs.getByName("debug")'
+          assert rel in s, "release block not found"
+          s = s.replace(rel, rel + '\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")', 1)
+          p.write_text(s)
+          PY
+          grep -n "Desugar\|desugar" android/app/build.gradle.kts
+      - name: Release identity (STM Digi Gold) + upload-key signing
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          SP: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KP: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          if [ -z "$KS_B64" ] || [ -z "$SP" ] || [ -z "$KP" ] || [ -z "$ALIAS" ]; then
+            echo "::error::GitHub Secrets இல்லை: ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_PASSWORD, ANDROID_KEY_ALIAS நான்கும் வேண்டும்."
+            exit 1
+          fi
+          echo "$KS_B64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          keytool -list -keystore "$RUNNER_TEMP/upload.jks" -storepass "$SP" -alias "$ALIAS" > /dev/null || { echo "::error::Keystore / password / alias பொருந்தல."; exit 1; }
+          echo "STM_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+          python3 - <<'PY'
+          import pathlib
+          g = pathlib.Path("android/app/build.gradle.kts"); s = g.read_text()
+          old = 'applicationId = "com.subbulakshmi.stm_proto"'
+          assert old in s, "applicationId line not found"
+          s = s.replace(old, 'applicationId = "com.subbulakshmi.stmdigigold"', 1)
+          sign = """android {
+              signingConfigs {
+                  create("release") {
+                      storeFile = file(System.getenv("STM_KEYSTORE_PATH"))
+                      storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                      keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                      keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+                  }
+              }"""
+          assert "android {" in s
+          s = s.replace("android {", sign, 1)
+          dbg = 'signingConfig = signingConfigs.getByName("debug")'
+          assert dbg in s
+          s = s.replace(dbg, 'signingConfig = signingConfigs.getByName("release")', 1)
+          g.write_text(s)
+          m = pathlib.Path("android/app/src/main/AndroidManifest.xml"); t = m.read_text()
+          t = t.replace('android:label="STM Digi Gold (Test)"', 'android:label="STM Digi Gold"')
+          assert 'android:label="STM Digi Gold"' in t
+          m.write_text(t)
+          PY
+          grep -n "applicationId\|signingConfigs.getByName" android/app/build.gradle.kts
+          grep -n "android:label" android/app/src/main/AndroidManifest.xml
+      - name: Build signed AAB (Play) + APK
+        id: build
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          FB_APP_ID: ${{ vars.FB_APP_ID_RELEASE }}
+        run: |
+          set -o pipefail
+          NUM=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
+          DEF=""; [ -n "$FB_APP_ID" ] && DEF="--dart-define=FB_APP_ID=$FB_APP_ID"
+          {
+            flutter pub get
+            dart run flutter_launcher_icons
+            sed -i 's#https\\://github.com/gradle/gradle-distributions/releases/download/v\([0-9.]*\)/gradle-\([0-9.]*\)-all.zip#https\\://services.gradle.org/distributions/gradle-\2-bin.zip#' android/gradle/wrapper/gradle-wrapper.properties
+            for t in 1 2 3; do flutter build appbundle --release --build-name "${{ inputs.version }}" --build-number "$NUM" $DEF && break; echo "build attempt $t failed, retrying"; sleep 30; done
+            flutter build apk --release --build-name "${{ inputs.version }}" --build-number "$NUM" $DEF
+          } 2>&1 | tee build-release.log
+          keytool -printcert -jarfile build/app/outputs/flutter-apk/app-release.apk | grep -i "SHA256" | head -1 | tee -a build-release.log
+      - name: Publish to branch native-release
+        if: always()
+        run: |
+          OUT="$RUNNER_TEMP/out"; mkdir -p "$OUT"
+          cp build-release.log flutter-version.txt "$OUT/" 2>/dev/null || true
+          cp build/app/outputs/bundle/release/app-release.aab "$OUT/stm-digigold-${{ inputs.version }}.aab" 2>/dev/null || true
+          cp build/app/outputs/flutter-apk/app-release.apk "$OUT/stm-digigold-${{ inputs.version }}.apk" 2>/dev/null || true
+          RES=${{ steps.build.outcome }}; ls "$OUT"/*.aab >/dev/null 2>&1 || RES=failure
+          echo "commit=$GITHUB_SHA result=$RES version=${{ inputs.version }} app_id=com.subbulakshmi.stmdigigold built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
+          rm -f "$RUNNER_TEMP/upload.jks"
+          cd "$OUT"
+          git init -q -b native-release
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -q -m "STM Digi Gold release ${{ inputs.version }} ($RES) from $GITHUB_SHA"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" native-release

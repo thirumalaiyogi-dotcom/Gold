@@ -70,7 +70,8 @@ class Notify {
   // ---------- Firebase (FCM): instant push from the shop ----------
   static const fbOptions = FirebaseOptions(
     apiKey: 'AIzaSyAkwonB9H8DxoLdeA0ZJ36qkJ759jRcDTk',
-    appId: '1:742720250332:android:b5b66132e6ca609f5bef19',
+    // the Play build (com.subbulakshmi.stmdigigold) passes its own Firebase Android app id via --dart-define
+    appId: String.fromEnvironment('FB_APP_ID', defaultValue: '1:742720250332:android:b5b66132e6ca609f5bef19'),
     messagingSenderId: '742720250332',
     projectId: 'stm-gold',
     storageBucket: 'stm-gold.firebasestorage.app',
