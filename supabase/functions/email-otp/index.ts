@@ -1,6 +1,9 @@
 // Supabase Edge Function: email-otp
 // வாடிக்கையாளர் பதிவில் உள்ள email-க்கு 6 இலக்க OTP அனுப்பி, சரிபார்த்து, புது mPIN அமைக்கும்.
+import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 // Secrets (Supabase → Edge Functions → Secrets):
+//   GMAIL_USER + GMAIL_APP_PASSWORD = (இருந்தால்) Gmail வழியா அனுப்பும் — Google App Password (16 எழுத்து)
+//   இல்லையென்றால் Brevo:
 //   BREVO_API_KEY = Brevo → SMTP & API → API keys
 //   MAIL_FROM     = Brevo-ல verify செய்த sender email (உதா: stmgold2021@gmail.com)
 // Code DB-ல hash-ஆ மட்டும் (gold_email_otp, service_role மட்டும்). 10 நிமிடம் செல்லும், 5 தவறு வரை.
@@ -59,11 +62,27 @@ async function rateOk(m: string): Promise<string | null> {
   return null;
 }
 
+const mailReady = () =>
+  !!(Deno.env.get("GMAIL_USER") && Deno.env.get("GMAIL_APP_PASSWORD")) || !!(Deno.env.get("BREVO_API_KEY") && Deno.env.get("MAIL_FROM"));
+
+async function gmailSend(to: string, name: string, subject: string, html: string, text: string) {
+  const user = Deno.env.get("GMAIL_USER")!.trim(), pass = Deno.env.get("GMAIL_APP_PASSWORD")!.replace(/\s/g, "");
+  const client = new SMTPClient({ connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } } });
+  try {
+    await client.send({ from: `Subbulakshmi Thanga Maligai <${user}>`, to, subject, content: text, html });
+  } catch (e) {
+    const m = String((e as Error)?.message || e).toLowerCase();
+    console.log("gmail", m.slice(0, 200));
+    throw new Error(/535|username and password|badcredentials|auth/.test(m) ? "mail:gmail_login" : "mail:gmail");
+  } finally {
+    try { await client.close(); } catch (_) { /* ignore */ }
+  }
+}
+
 async function sendMail(to: string, name: string, code: string) {
   const key = Deno.env.get("BREVO_API_KEY"), from = Deno.env.get("MAIL_FROM");
-  if (!key || !from) throw new Error("not_ready");
-  if (key.trim().startsWith("xsmtpsib")) throw new Error("mail:smtp_key"); // SMTP key ≠ API key
-  if (!key.trim().startsWith("xkeysib")) throw new Error("mail:key_format");
+  const useGmail = !!(Deno.env.get("GMAIL_USER") && Deno.env.get("GMAIL_APP_PASSWORD"));
+  if (!useGmail && (!key || !from)) throw new Error("not_ready");
   const html = `<!doctype html><html><body style="margin:0;background:#FAF7EF;font-family:Arial,sans-serif;color:#392027">
 <div style="max-width:440px;margin:0 auto;padding:24px 16px">
 <div style="background:#4A0D18;color:#F1E4D0;border-radius:16px 16px 0 0;padding:18px 20px;font-size:18px;font-weight:bold">${SHOP}</div>
@@ -73,15 +92,20 @@ async function sendMail(to: string, name: string, code: string) {
 <div style="font-size:32px;letter-spacing:8px;font-weight:bold;color:#6E1423;text-align:center;background:#F5F0E5;border-radius:12px;padding:14px 0">${code}</div>
 <p style="margin:16px 0 0;font-size:13px;color:#81747A;line-height:1.6">இந்த OTP 10 நிமிடம் மட்டும் செல்லும். இதை யாரிடமும் (கடை ஊழியர் உட்பட) பகிர வேண்டாம். நீங்கள் கேட்கவில்லை என்றால் இந்த email-ஐ விட்டுவிடுங்கள்.</p>
 </div></div></body></html>`;
+  const subject = `உங்கள் OTP ${code} – ${SHOP}`;
+  const text = `வணக்கம் ${name}, உங்கள் OTP: ${code} (10 நிமிடம் செல்லும்). யாரிடமும் பகிர வேண்டாம். – ${SHOP}`;
+  if (useGmail) return await gmailSend(to, name, subject, html, text);
+  if (key!.trim().startsWith("xsmtpsib")) throw new Error("mail:smtp_key"); // SMTP key ≠ API key
+  if (!key!.trim().startsWith("xkeysib")) throw new Error("mail:key_format");
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
-    headers: { "api-key": key.trim(), "Content-Type": "application/json", accept: "application/json" },
+    headers: { "api-key": key!.trim(), "Content-Type": "application/json", accept: "application/json" },
     body: JSON.stringify({
-      sender: { name: "Subbulakshmi Thanga Maligai", email: from.trim() },
+      sender: { name: "Subbulakshmi Thanga Maligai", email: from!.trim() },
       to: [{ email: to, name }],
-      subject: `உங்கள் OTP ${code} – ${SHOP}`,
+      subject,
       htmlContent: html,
-      textContent: `வணக்கம் ${name}, உங்கள் OTP: ${code} (10 நிமிடம் செல்லும்). யாரிடமும் பகிர வேண்டாம். – ${SHOP}`,
+      textContent: text,
     }),
   });
   if (!r.ok) {
@@ -126,7 +150,7 @@ Deno.serve(async (req) => {
       if (!rows.length) return json({ ok: false, err: "nomatch" }, 400);
       const email = String(rows[0].email || "").trim().toLowerCase();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ ok: false, err: "noemail" }, 400);
-      if (!Deno.env.get("BREVO_API_KEY") || !Deno.env.get("MAIL_FROM")) return json({ ok: false, err: "not_ready" }, 503);
+      if (!mailReady()) return json({ ok: false, err: "not_ready" }, 503);
       const lim = await rateOk(m);
       if (lim) return json({ ok: false, err: lim }, 429);
       const code = sixDigits();
