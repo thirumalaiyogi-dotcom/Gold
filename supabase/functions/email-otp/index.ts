@@ -62,6 +62,8 @@ async function rateOk(m: string): Promise<string | null> {
 async function sendMail(to: string, name: string, code: string) {
   const key = Deno.env.get("BREVO_API_KEY"), from = Deno.env.get("MAIL_FROM");
   if (!key || !from) throw new Error("not_ready");
+  if (key.trim().startsWith("xsmtpsib")) throw new Error("mail:smtp_key"); // SMTP key ≠ API key
+  if (!key.trim().startsWith("xkeysib")) throw new Error("mail:key_format");
   const html = `<!doctype html><html><body style="margin:0;background:#FAF7EF;font-family:Arial,sans-serif;color:#392027">
 <div style="max-width:440px;margin:0 auto;padding:24px 16px">
 <div style="background:#4A0D18;color:#F1E4D0;border-radius:16px 16px 0 0;padding:18px 20px;font-size:18px;font-weight:bold">${SHOP}</div>
@@ -73,16 +75,24 @@ async function sendMail(to: string, name: string, code: string) {
 </div></div></body></html>`;
   const r = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
-    headers: { "api-key": key, "Content-Type": "application/json", accept: "application/json" },
+    headers: { "api-key": key.trim(), "Content-Type": "application/json", accept: "application/json" },
     body: JSON.stringify({
-      sender: { name: "Subbulakshmi Thanga Maligai", email: from },
+      sender: { name: "Subbulakshmi Thanga Maligai", email: from.trim() },
       to: [{ email: to, name }],
       subject: `உங்கள் OTP ${code} – ${SHOP}`,
       htmlContent: html,
       textContent: `வணக்கம் ${name}, உங்கள் OTP: ${code} (10 நிமிடம் செல்லும்). யாரிடமும் பகிர வேண்டாம். – ${SHOP}`,
     }),
   });
-  if (!r.ok) throw new Error("mail:" + r.status);
+  if (!r.ok) {
+    const t = (await r.text().catch(() => "")).toLowerCase();
+    const why = /ip address|unrecogni[sz]ed ip|authorised ip|authorized ip/.test(t) ? "ip"
+      : /sender|from/.test(t) ? "sender"
+      : /key not found|api key|unauthori[sz]ed|invalid key/.test(t) ? "key"
+      : /credit|plan|suspend|blocked/.test(t) ? "account" : "other";
+    console.log("brevo", r.status, t.slice(0, 200));
+    throw new Error(`mail:${r.status}:${why}`);
+  }
 }
 
 // code சரியா? (consume=true ஆனா பயன்படுத்திய பின் அழிக்கும்)
