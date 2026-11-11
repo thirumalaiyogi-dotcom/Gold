@@ -1,6 +1,5 @@
 // Supabase Edge Function: email-otp
 // வாடிக்கையாளர் பதிவில் உள்ள email-க்கு 6 இலக்க OTP அனுப்பி, சரிபார்த்து, புது mPIN அமைக்கும்.
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
 // Secrets (Supabase → Edge Functions → Secrets):
 //   GMAIL_USER + GMAIL_APP_PASSWORD = (இருந்தால்) Gmail வழியா அனுப்பும் — Google App Password (16 எழுத்து)
 //   இல்லையென்றால் Brevo:
@@ -65,17 +64,92 @@ async function rateOk(m: string): Promise<string | null> {
 const mailReady = () =>
   !!(Deno.env.get("GMAIL_USER") && Deno.env.get("GMAIL_APP_PASSWORD")) || !!(Deno.env.get("BREVO_API_KEY") && Deno.env.get("MAIL_FROM"));
 
-async function gmailSend(to: string, name: string, subject: string, html: string, text: string) {
+// Gmail SMTP (465, TLS) — சின்ன நேரடி client; தமிழ் subject/body சரியா encode ஆகும் (base64).
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = (s: string) => {
+  const b = enc.encode(s);
+  let r = "";
+  for (let i = 0; i < b.length; i += 0x8000) r += String.fromCharCode(...b.subarray(i, i + 0x8000));
+  return btoa(r);
+};
+const wrap76 = (s: string) => s.replace(/.{1,76}/g, "$&\r\n");
+function encWord(s: string) {
+  // RFC 2047: ஒவ்வொரு encoded-word-ம் 75 எழுத்துக்குள்; UTF-8 எழுத்தை நடுவில் உடைக்காம.
+  const parts: string[] = [];
+  let cur = "";
+  for (const ch of s) {
+    if (enc.encode(cur + ch).length > 39) { parts.push(cur); cur = ch; } else cur += ch;
+  }
+  if (cur) parts.push(cur);
+  return parts.map((p) => `=?UTF-8?B?${b64(p)}?=`).join("\r\n ");
+}
+
+async function gmailSend(to: string, _name: string, subject: string, html: string, text: string) {
   const user = Deno.env.get("GMAIL_USER")!.trim(), pass = Deno.env.get("GMAIL_APP_PASSWORD")!.replace(/\s/g, "");
-  const client = new SMTPClient({ connection: { hostname: "smtp.gmail.com", port: 465, tls: true, auth: { username: user, password: pass } } });
+  const conn = await Deno.connectTls({ hostname: "smtp.gmail.com", port: 465 });
+  let buf = "";
+  const read = async (): Promise<string> => {
+    const chunk = new Uint8Array(4096);
+    while (true) {
+      const lines = buf.split("\r\n");
+      for (let k = 0; k < lines.length - 1; k++) {
+        if (/^\d{3} /.test(lines[k])) {
+          const out = lines.slice(0, k + 1).join("\n");
+          buf = lines.slice(k + 1).join("\r\n");
+          return out;
+        }
+      }
+      const n = await conn.read(chunk);
+      if (n === null) throw new Error("closed");
+      buf += dec.decode(chunk.subarray(0, n));
+    }
+  };
+  const cmd = async (line: string | null, want: string) => {
+    if (line !== null) await conn.write(enc.encode(line + "\r\n"));
+    const r = await read();
+    if (!r.split("\n").pop()!.startsWith(want)) throw new Error(r.slice(0, 160));
+    return r;
+  };
   try {
-    await client.send({ from: `Subbulakshmi Thanga Maligai <${user}>`, to, subject, content: text, html });
+    await cmd(null, "220");
+    await cmd("EHLO stmgold", "250");
+    await cmd("AUTH LOGIN", "334");
+    await cmd(b64(user), "334");
+    await cmd(b64(pass), "235");
+    await cmd(`MAIL FROM:<${user}>`, "250");
+    await cmd(`RCPT TO:<${to}>`, "250");
+    await cmd("DATA", "354");
+    const bnd = "stm" + crypto.randomUUID().replace(/-/g, "");
+    const msg = [
+      `From: ${encWord("Subbulakshmi Thanga Maligai")} <${user}>`,
+      `To: <${to}>`,
+      `Subject: ${encWord(subject)}`,
+      `Date: ${new Date().toUTCString()}`,
+      `Message-ID: <${crypto.randomUUID()}@stmgold.otp>`,
+      "MIME-Version: 1.0",
+      `Content-Type: multipart/alternative; boundary="${bnd}"`,
+      "",
+      `--${bnd}`,
+      'Content-Type: text/plain; charset="UTF-8"',
+      "Content-Transfer-Encoding: base64",
+      "",
+      wrap76(b64(text)),
+      `--${bnd}`,
+      'Content-Type: text/html; charset="UTF-8"',
+      "Content-Transfer-Encoding: base64",
+      "",
+      wrap76(b64(html)),
+      `--${bnd}--`,
+      ".",
+    ].join("\r\n");
+    await cmd(msg, "250");
+    await conn.write(enc.encode("QUIT\r\n")).catch(() => {});
   } catch (e) {
     const m = String((e as Error)?.message || e).toLowerCase();
     console.log("gmail", m.slice(0, 200));
-    throw new Error(/535|username and password|badcredentials|auth/.test(m) ? "mail:gmail_login" : "mail:gmail");
+    throw new Error(/^535|username and password|badcredentials/.test(m) ? "mail:gmail_login" : "mail:gmail");
   } finally {
-    try { await client.close(); } catch (_) { /* ignore */ }
+    try { conn.close(); } catch (_) { /* ignore */ }
   }
 }
 
