@@ -161,13 +161,14 @@ async function sendMail(to: string, name: string, code: string) {
 <div style="max-width:440px;margin:0 auto;padding:24px 16px">
 <div style="background:#4A0D18;color:#F1E4D0;border-radius:16px 16px 0 0;padding:18px 20px;font-size:18px;font-weight:bold">${SHOP}</div>
 <div style="background:#fff;border:1px solid #E8D9B9;border-top:0;border-radius:0 0 16px 16px;padding:22px 20px">
+<p style="margin:0 0 12px;font-size:15px">Your OTP code is <b>${code}</b></p>
 <p style="margin:0 0 10px">வணக்கம் ${name},</p>
 <p style="margin:0 0 16px;line-height:1.6">உங்கள் தங்க சேமிப்பு App-ல் mPIN அமைக்க இந்த OTP-ஐ போடுங்கள்:</p>
 <div style="font-size:32px;letter-spacing:8px;font-weight:bold;color:#6E1423;text-align:center;background:#F5F0E5;border-radius:12px;padding:14px 0">${code}</div>
 <p style="margin:16px 0 0;font-size:13px;color:#81747A;line-height:1.6">இந்த OTP 10 நிமிடம் மட்டும் செல்லும். இதை யாரிடமும் (கடை ஊழியர் உட்பட) பகிர வேண்டாம். நீங்கள் கேட்கவில்லை என்றால் இந்த email-ஐ விட்டுவிடுங்கள்.</p>
 </div></div></body></html>`;
-  const subject = `உங்கள் OTP ${code} – ${SHOP}`;
-  const text = `வணக்கம் ${name}, உங்கள் OTP: ${code} (10 நிமிடம் செல்லும்). யாரிடமும் பகிர வேண்டாம். – ${SHOP}`;
+  const subject = `${code} is your OTP – ${SHOP}`;
+  const text = `Your OTP code is ${code}\n\nவணக்கம் ${name}, உங்கள் OTP: ${code} (10 நிமிடம் செல்லும்). யாரிடமும் பகிர வேண்டாம். – ${SHOP}`;
   if (useGmail) return await gmailSend(to, name, subject, html, text);
   if (key!.trim().startsWith("xsmtpsib")) throw new Error("mail:smtp_key"); // SMTP key ≠ API key
   if (!key!.trim().startsWith("xkeysib")) throw new Error("mail:key_format");

@@ -337,6 +337,10 @@ nav button svg{width:22px;height:22px}
 #d3{display:none}
 .otp-note{text-align:center;color:#555;font-size:14px;margin:4px 0 10px;line-height:1.6}
 #ot .lk a{cursor:pointer}
+.pwrap{position:relative;display:block}
+.pwrap>input{width:100%;box-sizing:border-box;padding-right:92px!important}
+.pbtn{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:40px;min-width:44px;padding:0 10px;border:1px solid #E8D9B9;border-radius:10px;background:#FFFDF8;color:#6E1423;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;margin:0}
+.pbtn.eye{padding:0 8px;font-size:18px;line-height:1}
 #ot #oterr{height:auto;min-height:20px;line-height:1.6;margin:10px 0 8px;position:static;overflow:visible}
 #ot #oterr+#rcap+.lk{position:static;clear:both;margin-top:8px}
 .lnbk{display:block;margin:12px 0 0;font-size:16px;color:var(--b2161D1);font-weight:700;cursor:pointer}
@@ -2143,7 +2147,7 @@ html[data-p5] .sdpur.ag{color:#4F4840!important;background:linear-gradient(180de
  </div>
  <div id="ot2" class="hide">
   <p class="otp-note"><b id="otsh"></b> நம்பருக்கு <span id="otvia">SMS</span>-ல 6 இலக்க OTP அனுப்பியிருக்கோம்.</p>
-  <label>OTP*</label><input id="otc" type="tel" inputmode="numeric" maxlength="6" autocomplete="one-time-code">
+  <label>OTP*</label><div class="pwrap"><input id="otc" type="tel" inputmode="numeric" maxlength="6" autocomplete="one-time-code"><button type="button" class="pbtn" id="otpaste" aria-label="Copy செய்த OTP-ஐ ஒட்டு">📋 Paste</button></div>
   <button class="yb" id="otb2">OTP சரிபார்</button>
   <div class="lk"><a id="otr">OTP மறுபடி அனுப்பு</a> · <a id="otbk">நம்பர் மாத்த</a></div>
  </div>
@@ -2957,6 +2961,14 @@ async function sendEM(){OTV="em";const m=$("otm").value.trim();
  if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&d.err=="noemail"?"உங்க பதிவில் Email இல்ல. கடையில் Email சேர்க்கச் சொல்லுங்க, அல்லது Activation code கேளுங்க.":d&&d.err=="not_ready"?"Email OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":d&&d.err=="wait"?"1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.":d&&d.err=="too_many"?"இன்னைக்கு அதிக தடவை code கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.":"Email அனுப்ப முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.")+(d&&d.err?" ("+d.err+")":""));
  OTM=m;otT=Date.now()+60000;$("otvia").textContent="Email ("+(d.to||"")+")";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
 $("otbe").onclick=sendEM;
+// OTP paste: Email-ல் copy செய்த 6 இலக்க எண்ணை ஒட்டு; App-க்கு திரும்பும்போது (focus) தானா முயற்சி
+const pickCode=t=>{const m=String(t||"").match(/(?:^|\D)(\d{6})(?!\d)/);return m?m[1]:null};
+$("otpaste").onclick=async()=>{try{const c=pickCode(await navigator.clipboard.readText());if(c){$("otc").value=c;otErr("")}else otErr("Copy செய்த OTP இல்ல. Email-ல் OTP-ஐ நீண்ட நேரம் அழுத்தி Copy செய்யுங்க.")}catch(e){$("otc").focus();otErr("OTP box-ஐ நீண்ட நேரம் அழுத்தி Paste செய்யுங்க.")}};
+$("otc").addEventListener("paste",e=>{const c=pickCode((e.clipboardData||window.clipboardData).getData("text"));if(c){e.preventDefault();$("otc").value=c}});
+// PIN/password: கண் பட்டன் (காட்ட / மறைக்க)
+document.querySelectorAll('#av input[type=password],#ot input[type=password]').forEach(i=>{if(i.closest(".pwrap"))return;const w=document.createElement("div");w.className="pwrap";i.parentNode.insertBefore(w,i);w.appendChild(i);i.style.paddingRight="56px";
+ const b=document.createElement("button");b.type="button";b.className="pbtn eye";b.setAttribute("aria-label","PIN காட்டு");b.textContent="👁";
+ b.onclick=()=>{const show=i.type=="password";i.type=show?"tel":"password";b.textContent=show?"🙈":"👁";b.setAttribute("aria-label",show?"PIN மறை":"PIN காட்டு")};w.appendChild(b)});
 $("otb1").onclick=()=>SMS_VIA=="gw"?sendGW():sendOT();$("otr").onclick=()=>{otStep(1);OTV=="em"?sendEM():OTV=="tg"?sendTG():OTV=="gw"?sendGW():sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
 $("otac").onclick=()=>{vis("ot",false);$("avm").value=$("otm").value;vis("av",true)};

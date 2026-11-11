@@ -494,23 +494,13 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     super.dispose();
   }
 
-  InputDecoration _dec() => formDeco();
 
-  Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false}) => Padding(
+  Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false, bool paste = false}) => Padding(
         padding: const EdgeInsets.only(bottom: 14),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label, style: sans(14, color: C.navy, weight: FontWeight.w700)),
           const SizedBox(height: 6),
-          TextField(
-            controller: c,
-            autofocus: focus,
-            obscureText: secret,
-            keyboardType: TextInputType.number,
-            maxLength: max,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: sans(17, color: C.ink, weight: FontWeight.w600),
-            decoration: _dec(),
-          ),
+          DigitField(controller: c, max: max, secret: secret, focus: focus, paste: paste),
         ]),
       );
 
@@ -616,6 +606,21 @@ class EmailOtpScreen extends StatefulWidget {
 }
 
 class _EmailOtpScreenState extends State<EmailOtpScreen> {
+  // Gmail-ல் OTP-ஐ copy செய்து App-க்கு திரும்பி வந்தா, தானா நிரப்பும்.
+  late final AppLifecycleListener _life = AppLifecycleListener(onResume: () async {
+    if (!sent || _c.text.isNotEmpty) return;
+    final code = await clipCode();
+    if (code != null && mounted) {
+      setState(() => _c.text = code);
+      showNote(context, 'OTP தானா நிரப்பப்பட்டது ✓');
+    }
+  });
+  @override
+  void initState() {
+    super.initState();
+    _life;
+  }
+
   late final _m = TextEditingController(text: widget.mobile);
   final _c = TextEditingController();
   final _p1 = TextEditingController();
@@ -626,6 +631,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
 
   @override
   void dispose() {
+    _life.dispose();
     for (final c in [_m, _c, _p1, _p2]) {
       c.dispose();
     }
@@ -734,21 +740,12 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
     Navigator.of(context).pop();
   }
 
-  Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false}) => Padding(
+  Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false, bool paste = false}) => Padding(
         padding: const EdgeInsets.only(bottom: 14),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(label, style: sans(14, color: C.navy, weight: FontWeight.w700)),
           const SizedBox(height: 6),
-          TextField(
-            controller: c,
-            autofocus: focus,
-            obscureText: secret,
-            keyboardType: TextInputType.number,
-            maxLength: max,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: sans(17, color: C.ink, weight: FontWeight.w600),
-            decoration: formDeco(),
-          ),
+          DigitField(controller: c, max: max, secret: secret, focus: focus, paste: paste),
         ]),
       );
 
@@ -779,7 +776,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
           if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
           PrimaryButton(busy ? 'அனுப்புகிறது…' : 'Email-க்கு OTP அனுப்பு', busy: busy, onTap: _send),
         ] else ...[
-          _field('Email-ல் வந்த OTP*', _c, focus: true),
+          _field('Email-ல் வந்த OTP*', _c, focus: true, paste: true),
           _field('புது 6 இலக்க mPIN*', _p1, secret: true),
           _field('mPIN மறுபடி*', _p2, secret: true),
           if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
@@ -800,6 +797,67 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
           Expanded(child: OutlineBtn('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
         ]),
       ]),
+    );
+  }
+}
+
+/// Clipboard-ல் 6 இலக்க எண் இருந்தா அதை தரும் (Email-ல் இருந்து copy செய்த OTP).
+Future<String?> clipCode() async {
+  try {
+    final d = await Clipboard.getData(Clipboard.kTextPlain);
+    final m = RegExp(r'(?<!\d)(\d{6})(?!\d)').firstMatch(d?.text ?? '');
+    return m?.group(1);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// எண் மட்டும் field: PIN-க்கு கண் (காட்ட / மறைக்க), OTP-க்கு Paste.
+class DigitField extends StatefulWidget {
+  const DigitField({super.key, required this.controller, this.max = 6, this.secret = false, this.focus = false, this.paste = false});
+  final TextEditingController controller;
+  final int max;
+  final bool secret, focus, paste;
+  @override
+  State<DigitField> createState() => _DigitFieldState();
+}
+
+class _DigitFieldState extends State<DigitField> {
+  bool hide = true;
+  @override
+  Widget build(BuildContext context) {
+    Widget? suffix;
+    if (widget.secret) {
+      suffix = IconButton(
+        tooltip: hide ? 'காட்டு' : 'மறை',
+        icon: Icon(hide ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: C.navy),
+        onPressed: () => setState(() => hide = !hide),
+      );
+    } else if (widget.paste) {
+      suffix = TextButton.icon(
+        onPressed: () async {
+          final code = await clipCode();
+          if (!mounted) return;
+          if (code != null) {
+            widget.controller.text = code;
+          } else {
+            showNote(context, 'Copy செய்த OTP இல்ல. Email-ல் OTP-ஐ நீண்ட நேரம் அழுத்தி Copy செய்யுங்க.');
+          }
+        },
+        icon: const Icon(Icons.content_paste, size: 18, color: C.navy),
+        label: Text('Paste', style: sans(13.5, color: C.navy, weight: FontWeight.w700)),
+      );
+    }
+    return TextField(
+      controller: widget.controller,
+      autofocus: widget.focus,
+      obscureText: widget.secret && hide,
+      keyboardType: TextInputType.number,
+      maxLength: widget.max,
+      autofillHints: widget.paste ? const [AutofillHints.oneTimeCode] : null,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      style: sans(17, color: C.ink, weight: FontWeight.w600).copyWith(letterSpacing: widget.secret && hide ? 0 : 2),
+      decoration: formDeco().copyWith(suffixIcon: suffix),
     );
   }
 }
