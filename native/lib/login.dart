@@ -451,7 +451,7 @@ class _PinScreenState extends State<PinScreen> {
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
-            onPressed: () => whatsApp(context, 'வணக்கம், என் mPIN மறந்துட்டேன். புது Activation code வேண்டும்.\nமொபைல் எண்: ${widget.mobile}'),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmailOtpScreen(mobile: widget.mobile))),
             child: Text('mPIN மறந்துட்டீங்களா?', style: sans(14, color: C.navy, weight: FontWeight.w700)),
           ),
         ),
@@ -592,6 +592,8 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
         PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', busy: busy, onTap: _save),
         const SizedBox(height: 14),
+        OutlineBtn('Activation code இல்லையா? Email-ல் OTP பெற', icon: Icons.mail_outline, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmailOtpScreen(mobile: _m.text)))),
+        const SizedBox(height: 14),
         Text('Code வரலையா? கடைக்கு வர வேண்டாம், இங்கேயே கேளுங்க:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
         const SizedBox(height: 8),
         Row(children: [
@@ -604,6 +606,203 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
   }
 }
 
+
+/// mPIN மறந்தால் / Activation code இல்லையென்றால்: பதிவில் உள்ள email-க்கு OTP → புது mPIN.
+class EmailOtpScreen extends StatefulWidget {
+  const EmailOtpScreen({super.key, required this.mobile});
+  final String mobile;
+  @override
+  State<EmailOtpScreen> createState() => _EmailOtpScreenState();
+}
+
+class _EmailOtpScreenState extends State<EmailOtpScreen> {
+  late final _m = TextEditingController(text: widget.mobile);
+  final _c = TextEditingController();
+  final _p1 = TextEditingController();
+  final _p2 = TextEditingController();
+  String err = '', to = '';
+  bool busy = false, sent = false;
+  DateTime _next = DateTime(2000);
+
+  @override
+  void dispose() {
+    for (final c in [_m, _c, _p1, _p2]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  String _msg(String? e) {
+    switch (e) {
+      case 'nomatch':
+        return 'இந்த மொபைல் எண் கடையில் பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.';
+      case 'noemail':
+        return 'உங்க பதிவில் Email இல்ல. கடையில் Email சேர்க்கச் சொல்லுங்க, அல்லது கீழே WhatsApp-ல் Activation code கேளுங்க.';
+      case 'not_ready':
+        return 'Email OTP வசதி இன்னும் தயாராகல. கீழே WhatsApp-ல் Activation code கேளுங்க.';
+      case 'wait':
+        return '1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.';
+      case 'too_many':
+        return 'இன்னைக்கு அதிக தடவை OTP கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.';
+      case 'expired':
+        return 'OTP காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.';
+      case 'code_invalid':
+        return 'OTP தவறு. Email-ல் வந்த 6 இலக்க எண்ணை சரியா போடுங்க.';
+      case 'code_max_attempts_exceeded':
+        return 'நிறைய தவறான முயற்சி. மறுபடி OTP அனுப்புங்க.';
+      case 'net':
+        return 'இணைய இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்.';
+      default:
+        return 'இப்போ முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.${e == null ? '' : ' ($e)'}';
+    }
+  }
+
+  Future<void> _send() async {
+    if (busy) return;
+    if (!RegExp(r'^[6-9]\d{9}$').hasMatch(_m.text)) {
+      HapticFeedback.heavyImpact();
+      setState(() => err = 'சரியான 10 இலக்க மொபைல் எண் போடுங்க');
+      return;
+    }
+    final left = _next.difference(DateTime.now()).inSeconds;
+    if (left > 0) {
+      setState(() => err = '$left வினாடி கழித்து மறுபடி அனுப்பலாம்');
+      return;
+    }
+    setState(() {
+      busy = true;
+      err = '';
+    });
+    final d = await Api.emailOtp({'action': 'send', 'mobile': _m.text});
+    if (!mounted) return;
+    setState(() {
+      busy = false;
+      if (d['ok'] == true) {
+        sent = true;
+        to = '${d['to'] ?? ''}';
+        _next = DateTime.now().add(const Duration(seconds: 60));
+        _c.clear();
+      } else {
+        err = _msg(d['err'] as String?);
+      }
+    });
+    if (d['ok'] != true) HapticFeedback.heavyImpact();
+  }
+
+  Future<void> _save() async {
+    if (busy) return;
+    String? e;
+    if (_c.text.length != 6) {
+      e = 'Email-ல் வந்த 6 இலக்க OTP போடுங்க';
+    } else if (_p1.text.length != 6) {
+      e = '6 இலக்க mPIN போடுங்க';
+    } else if (_p1.text != _p2.text) {
+      e = 'இரண்டு mPIN-ம் ஒன்னா இல்ல';
+    }
+    if (e != null) {
+      HapticFeedback.heavyImpact();
+      setState(() => err = e!);
+      return;
+    }
+    setState(() {
+      busy = true;
+      err = '';
+    });
+    final d = await Api.emailOtp({'action': 'set', 'mobile': _m.text, 'code': _c.text, 'pin': _p1.text});
+    if (!mounted) return;
+    if (d['ok'] != true) {
+      HapticFeedback.heavyImpact();
+      setState(() {
+        busy = false;
+        err = _msg(d['err'] as String?);
+      });
+      return;
+    }
+    HapticFeedback.mediumImpact();
+    try {
+      final l = await Api.login(_m.text, _p1.text);
+      if (!mounted) return;
+      if (l != null && l['name'] != null) {
+        Bio.disable();
+        app.login(_m.text, _p1.text, l);
+        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const MainShell()), (_) => false);
+        return;
+      }
+    } catch (_) {}
+    if (!mounted) return;
+    showNote(context, 'புது mPIN அமைக்கப்பட்டது ✓ இப்போ உள்நுழையுங்க');
+    Navigator.of(context).pop();
+  }
+
+  Widget _field(String label, TextEditingController c, {int max = 6, bool secret = false, bool focus = false}) => Padding(
+        padding: const EdgeInsets.only(bottom: 14),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label, style: sans(14, color: C.navy, weight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          TextField(
+            controller: c,
+            autofocus: focus,
+            obscureText: secret,
+            keyboardType: TextInputType.number,
+            maxLength: max,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            style: sans(17, color: C.ink, weight: FontWeight.w600),
+            decoration: formDeco(),
+          ),
+        ]),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: C.ivory,
+        surfaceTintColor: C.ivory,
+        foregroundColor: C.navy,
+        title: Text('Email-ல் OTP', style: serif(19)),
+      ),
+      body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 30), children: [
+        Center(child: Image.asset('assets/lock.png', height: 58)),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: const Color(0xFFFFF7E0), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE7D49B))),
+          child: Text(
+              sent
+                  ? 'OTP அனுப்பியாச்சு: $to\nInbox-ல் வரலைன்னா Spam / Promotions folder-லயும் பாருங்க. 10 நிமிடம் மட்டும் செல்லும்.'
+                  : 'கடையில் பதிவு செய்த உங்க Email-க்கு 6 இலக்க OTP அனுப்புவோம். அதை போட்டு உங்க சொந்த 6 இலக்க mPIN வைக்கலாம்.',
+              style: sans(13.5, color: const Color(0xFF5A4410), height: 1.6)),
+        ),
+        const SizedBox(height: 16),
+        _field('மொபைல் எண்*', _m, max: 10),
+        if (!sent) ...[
+          if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
+          PrimaryButton(busy ? 'அனுப்புகிறது…' : 'Email-க்கு OTP அனுப்பு', busy: busy, onTap: _send),
+        ] else ...[
+          _field('Email-ல் வந்த OTP*', _c, focus: true),
+          _field('புது 6 இலக்க mPIN*', _p1, secret: true),
+          _field('mPIN மறுபடி*', _p2, secret: true),
+          if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
+          PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', busy: busy, onTap: _save),
+          Center(
+            child: TextButton(
+              onPressed: busy ? null : _send,
+              child: Text('OTP வரலையா? மறுபடி அனுப்பு', style: sans(14, color: C.navy, weight: FontWeight.w700)),
+            ),
+          ),
+        ],
+        const SizedBox(height: 14),
+        Text('Email இல்லையா? Activation code இங்கேயே கேளுங்க:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(child: OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => whatsApp(context, 'வணக்கம், என் mPIN மறந்துட்டேன் / Activation code வேண்டும்.\nமொபைல் எண்: ${_m.text}'))),
+          const SizedBox(width: 10),
+          Expanded(child: OutlineBtn('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
+        ]),
+      ]),
+    );
+  }
+}
 
 /// Error / info line above the keypad: at least one line tall, grows to two or three lines
 /// on narrow phones or big font settings instead of hiding behind the keys.

@@ -64,6 +64,17 @@ class Api {
     return d is bool ? d : null;
   }
 
+  /// Email OTP (edge function email-otp): send → {ok,to}, set → {ok}. Never throws; network error → {ok:false, err:'net'}.
+  static Future<Map<String, dynamic>> emailOtp(Map<String, dynamic> body) async {
+    try {
+      final r = await http.post(Uri.parse('$url/functions/v1/email-otp'), headers: _h, body: jsonEncode(body)).timeout(const Duration(seconds: 25));
+      final d = jsonDecode(utf8.decode(r.bodyBytes));
+      return d is Map ? Map<String, dynamic>.from(d) : {'ok': false, 'err': 'http${r.statusCode}'};
+    } catch (_) {
+      return {'ok': false, 'err': 'net'};
+    }
+  }
+
   static Future<Map<String, dynamic>?> activate(String mobile, String code, String pin) async {
     final d = await rpc('gold_activate', {'p_mobile': mobile, 'p_code': code, 'p_pin': pin});
     return d is Map ? Map<String, dynamic>.from(d) : null;

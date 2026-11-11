@@ -2133,10 +2133,11 @@ html[data-p5] .sdpur.ag{color:#4F4840!important;background:linear-gradient(180de
  <ol class="otsteps" id="otsteps" aria-label="படிகள்"><li>மொபைல்</li><li>OTP</li><li>புது mPIN</li></ol>
  <p class="otnew hide" id="otnew">கடை உங்க விண்ணப்பத்தை <b>ஏற்ற பிறகு</b> இங்கே உங்க சொந்த 6 இலக்க mPIN உருவாக்கலாம். இது ATM-ல புது PIN உருவாக்கற மாதிரி: ஒரே ஒரு தடவை.</p>
  <div id="ot1">
-  <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பரோட <b>Telegram</b>-க்கு 6 இலக்க code வரும்.</p>
+  <p class="otp-note">கடையில் பதிவு செய்த மொபைல் எண் போடுங்க. அந்த நம்பரோட <b>Telegram</b>-க்கோ, பதிவில் உள்ள <b>Email</b>-க்கோ 6 இலக்க code வரும்.</p>
   <label>மொபைல் எண்*</label><input id="otm" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national">
   <button class="yb" id="otb1">OTP அனுப்பு (SMS)</button>
   <button type="button" class="tgb" id="otbt"><svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/><path d="M9 13l8-6"/></svg>Telegram-ல code அனுப்பு</button>
+  <button type="button" class="tgb" id="otbe" style="background:#6E1423"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Email-ல் OTP அனுப்பு</button>
  </div>
  <div id="ot2" class="hide">
   <p class="otp-note"><b id="otsh"></b> நம்பருக்கு <span id="otvia">SMS</span>-ல 6 இலக்க OTP அனுப்பியிருக்கோம்.</p>
@@ -2929,7 +2930,7 @@ async function sendOT(){
   otErr(/too-many-requests/.test(c)?"ரொம்ப அதிக முயற்சி. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.":/quota/.test(c)?"இன்று SMS அனுப்ப முடியல. கடைக்கு WhatsApp பண்ணுங்க.":/invalid-phone/.test(c)?"மொபைல் எண் சரியா இல்ல.":/unauthorized-domain|operation-not-allowed|billing/.test(c)?"OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":"OTP அனுப்ப முடியல. Internet பாத்து மறுபடி முயற்சிக்கவும்.");const why=c?c.replace("auth/",""):String((x&&x.message)||x||"").slice(0,90);if(why)$("oterr").textContent+=" ("+why+")"}
  finally{$("otb1").disabled=false}}
 // Telegram Gateway (Supabase Edge Function: tg-otp)
-const otpFn=()=>OTV=="gw"?"sms-otp":"tg-otp";
+const otpFn=()=>OTV=="gw"?"sms-otp":OTV=="em"?"email-otp":"tg-otp";
 async function tgCall(b){try{const r=await fetch(SB_URL+"/functions/v1/"+otpFn(),{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(b)});return await r.json().catch(()=>({ok:false,err:"http"+r.status}))}catch(e){return {ok:false,err:"net"}}}
 async function sendTG(){const m=$("otm").value.trim();
  if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
@@ -2946,12 +2947,20 @@ async function sendGW(){OTV="gw";const m=$("otm").value.trim();
 const SMS_VIA="off"; // "off" = SMS பட்டன் மறைப்பு, "gw" = Android gateway, "fb" = Firebase (billing ஆன பிறகு)
 if(SMS_VIA=="off")vis("otb1",false); // "gw" = நம்ம Android phone gateway, "fb" = Firebase (billing ஆன பிறகு)
 $("otbt").onclick=()=>{OTV="tg";sendTG()};
-$("otb1").onclick=()=>SMS_VIA=="gw"?sendGW():sendOT();$("otr").onclick=()=>{otStep(1);OTV=="tg"?sendTG():OTV=="gw"?sendGW():sendOT()};$("otbk").onclick=()=>otStep(1);
+// Email OTP (Supabase Edge Function: email-otp) → பதிவில் உள்ள email-க்கு code
+async function sendEM(){OTV="em";const m=$("otm").value.trim();
+ if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
+ const left=Math.ceil((otT-Date.now())/1000);if(left>0)return otErr(left+" வினாடி கழித்து மறுபடி அனுப்பலாம்");
+ otErr("Email-க்கு அனுப்புகிறோம்…");$("otbe").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otbe").disabled=false;
+ if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&d.err=="noemail"?"உங்க பதிவில் Email இல்ல. கடையில் Email சேர்க்கச் சொல்லுங்க, அல்லது Activation code கேளுங்க.":d&&d.err=="not_ready"?"Email OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":d&&d.err=="wait"?"1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.":d&&d.err=="too_many"?"இன்னைக்கு அதிக தடவை code கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.":"Email அனுப்ப முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.")+(d&&d.err?" ("+d.err+")":""));
+ OTM=m;otT=Date.now()+60000;$("otvia").textContent="Email ("+(d.to||"")+")";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
+$("otbe").onclick=sendEM;
+$("otb1").onclick=()=>SMS_VIA=="gw"?sendGW():sendOT();$("otr").onclick=()=>{otStep(1);OTV=="em"?sendEM():OTV=="tg"?sendTG():OTV=="gw"?sendGW():sendOT()};$("otbk").onclick=()=>otStep(1);
 $("otk").onclick=()=>vis("ot",false);
 $("otac").onclick=()=>{vis("ot",false);$("avm").value=$("otm").value;vis("av",true)};
 $("otb2").onclick=async()=>{const t=$("otc").value.trim();
  if(!/^[0-9]{6}$/.test(t))return otErr("SMS-ல வந்த 6 இலக்க OTP-ஐ போடுங்க");
- if(OTV=="tg"||OTV=="gw"){$("otb2").disabled=true;otErr("சரிபார்க்கிறோம்…");const d=await tgCall({action:"check",request_id:TGR,code:t});$("otb2").disabled=false;
+ if(OTV=="tg"||OTV=="gw"||OTV=="em"){$("otb2").disabled=true;otErr("சரிபார்க்கிறோம்…");const d=await tgCall(OTV=="em"?{action:"check",mobile:OTM,code:t}:{action:"check",request_id:TGR,code:t});$("otb2").disabled=false;
   if(!d||!d.ok)return otErr(d&&d.err=="expired"?"Code காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.":d&&d.err=="code_max_attempts_exceeded"?"நிறைய தவறான முயற்சி. மறுபடி code அனுப்புங்க.":"Code தவறு. சரியா பாத்து போடுங்க.");
   TGC=t;$("otp1").value="";$("otp2").value="";otStep(3);return}
  if(!OTC)return otStep(1);
@@ -2962,7 +2971,7 @@ $("otb2").onclick=async()=>{const t=$("otc").value.trim();
 $("otb3").onclick=async()=>{const p=$("otp1").value.trim(),q=$("otp2").value.trim();
  if(!/^[0-9]{6}$/.test(p))return otErr("6 இலக்க PIN வைங்க");if(p!==q)return otErr("இரண்டு PIN-உம் ஒண்ணா இல்ல");
  $("otb3").disabled=true;otErr("PIN அமைக்கிறோம்…");let d=null;
- if(OTV=="tg"||OTV=="gw")d=await tgCall({action:"set",request_id:TGR,code:TGC,pin:p});else try{const r=await fetch(SB_URL+"/functions/v1/otp-pin",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({idToken:IDT,pin:p})});d=await r.json().catch(()=>null)}catch(e){}
+ if(OTV=="em")d=await tgCall({action:"set",mobile:OTM,code:TGC,pin:p});else if(OTV=="tg"||OTV=="gw")d=await tgCall({action:"set",request_id:TGR,code:TGC,pin:p});else try{const r=await fetch(SB_URL+"/functions/v1/otp-pin",{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify({idToken:IDT,pin:p})});d=await r.json().catch(()=>null)}catch(e){}
  $("otb3").disabled=false;
  if(!d||!d.ok)return otErr(d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&(d.err=="expired"||d.err=="token")?"நேரம் முடிஞ்சுடுச்சு. மறுபடி OTP அனுப்புங்க.":"PIN அமைக்க முடியல. மறுபடி முயற்சிக்கவும்.");
  try{FB&&await FB.A.signOut(FB.auth)}catch(e){}
