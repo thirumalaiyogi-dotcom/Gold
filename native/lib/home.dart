@@ -373,7 +373,7 @@ class HomeTab extends StatelessWidget {
                 Expanded(child: OutlineBtn('WhatsApp', icon: Icons.chat_outlined, onTap: () => whatsApp(context))),
               ]),
               const SizedBox(height: 8),
-              OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => openMaps(context)),
+              SizedBox(width: double.infinity, child: OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => openMaps(context))),
             ]),
           ),
         ]),
