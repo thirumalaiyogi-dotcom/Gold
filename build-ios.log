@@ -1,0 +1,79 @@
+Resolving dependencies...
+Downloading packages...
+  _flutterfire_internals 1.3.59 (1.3.79 available)
+  cli_util 0.4.2 (0.6.0 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  dbus 0.7.15 (0.8.0 available)
+  firebase_core 3.15.2 (5.1.0 available)
+  firebase_core_platform_interface 6.0.3 (8.1.1 available)
+  firebase_core_web 2.24.1 (4.1.0 available)
+  firebase_messaging 15.2.10 (17.0.1 available)
+  firebase_messaging_platform_interface 4.6.10 (4.11.1 available)
+  firebase_messaging_web 3.10.10 (4.3.1 available)
+  flutter_local_notifications 19.5.0 (23.0.1 available)
+  flutter_local_notifications_linux 6.0.0 (9.0.0 available)
+  flutter_local_notifications_platform_interface 9.1.0 (13.0.0 available)
+  flutter_local_notifications_windows 1.0.3 (4.0.1 available)
+  flutter_secure_storage 9.2.4 (11.2.0 available)
+  flutter_secure_storage_linux 1.2.3 (3.0.3 available)
+  flutter_secure_storage_macos 3.1.3 (4.0.0 available)
+  flutter_secure_storage_platform_interface 1.1.2 (2.1.1 available)
+  flutter_secure_storage_web 1.2.1 (2.1.1 available)
+  flutter_secure_storage_windows 3.1.2 (4.2.2 available)
+  google_fonts 6.3.3 (9.0.0 available)
+  js 0.6.7 (0.7.2 available)
+  local_auth 2.3.0 (3.0.2 available)
+  local_auth_android 1.0.56 (2.3.0 available)
+  local_auth_darwin 1.6.1 (2.0.5 available)
+  local_auth_windows 1.0.11 (2.0.2 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  share_plus 11.1.0 (13.3.1 available)
+  share_plus_platform_interface 6.1.0 (7.2.0 available)
+  test_api 0.7.14 (0.7.15 available)
+  timezone 0.10.1 (0.11.2 available)
+  vector_math 2.4.3 (2.4.4 available)
+  win32 5.15.0 (6.4.0 available)
+  xml 6.6.1 (7.1.0 available)
+Got dependencies!
+34 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+  ════════════════════════════════════════════
+     FLUTTER LAUNCHER ICONS (v0.14.4)                               
+  ════════════════════════════════════════════
+  
+• Creating default icons Android
+• Creating adaptive icons Android
+• No colors.xml file found in your Android project
+• Creating colors.xml file and adding it to your Android project
+• Overwriting the default Android launcher icon with a new icon
+• Creating mipmap xml file Android
+• Overwriting default iOS launcher icon with new icon
+No platform provided
+
+✓ Successfully generated launcher icons
+Warning: Building for device with codesigning disabled. You will have to manually codesign before deploying to device.
+Xcode is fetching Swift Package Manager dependencies. This may take several minutes...
+  Fetching from https://github.com/firebase/flutterfire...      
+  Fetching from https://github.com/cashfree/core-ios-sdk...     
+  Fetching from https://github.com/firebase/firebase-ios-sdk...     
+  Fetching from https://github.com/google/app-check.git...      
+  Fetching from https://github.com/google/interop-ios-for-google-sdks.git...     
+  Fetching from https://github.com/firebase/leveldb.git...      
+  Fetching from https://github.com/google/abseil-cpp-binary.git...     
+  Fetching from https://github.com/firebase/nanopb.git...       
+  Fetching from https://github.com/google/grpc-binary.git...     
+  Fetching from https://github.com/google/gtm-session-fetcher.git...     
+  Fetching from https://github.com/google/GoogleDataTransport.git...     
+  Fetching from https://github.com/google/GoogleAppMeasurement.git...     
+  Fetching from https://github.com/apple/swift-protobuf.git...     
+  Fetching from https://github.com/google/promises.git...       
+  Fetching from https://github.com/google/GoogleUtilities.git...     
+  Fetching from https://github.com/googleads/google-ads-on-device-conversion-ios-sdk...     
+Building com.subbulakshmi.stmProto for device (ios-release)...
+The following plugins do not support Swift Package Manager for ios:
+  - flutter_secure_storage
+This will become an error in a future version of Flutter. Please contact the plugin maintainers to request Swift Package Manager adoption.
+Running pod install...                                           1,055ms
+Running Xcode build...                                          
+Xcode build done.                                           100.9s
+✓ Built build/ios/iphoneos/Runner.app (30.1MB)
