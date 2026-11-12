@@ -3558,7 +3558,7 @@ function pbDelReq(){try{
  <div class="chhd"><button type="button" id="chxb" aria-label="மூடு">‹</button><div><b id="chxt">கடையிடம் கேளுங்க</b><small id="chxs">பொதுவா சில மணி நேரத்தில் பதில்</small></div><a href="tel:+919791918344" aria-label="கடைக்கு அழை"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div>
  <div id="chxm" aria-live="polite"></div>
  <div id="chxq"></div>
- <div class="chin"><textarea id="chxi" rows="1" maxlength="1000" aria-label="கேள்வி" placeholder="கேள்வியை இங்கே எழுதுங்க…"></textarea><button type="button" id="chxg" aria-label="அனுப்பு"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button></div>
+ <div class="chin"><label class="chat-att" for="chxf" aria-label="படம் அனுப்ப"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-2h6l2 2h3v12H4z"/><circle cx="12" cy="13" r="3.5"/></svg></label><input type="file" id="chxf" accept="image/*" class="hide"><textarea id="chxi" rows="1" maxlength="1000" aria-label="கேள்வி" placeholder="கேள்வியை இங்கே எழுதுங்க…"></textarea><button type="button" id="chxg" aria-label="அனுப்பு"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button></div>
 </div>
 <style>
 .chent{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);max-width:528px;margin:22px auto 4px;padding:14px;border:1px solid var(--ln);border-radius:18px;background:var(--card);font:inherit;color:inherit;text-align:left;cursor:pointer}
@@ -3584,6 +3584,9 @@ function pbDelReq(){try{
 .chin textarea{flex:1;min-width:0;min-height:46px!important;height:46px;box-shadow:none!important;outline-offset:0;resize:none;border:1px solid #E8D9B9;border-radius:22px;padding:11px 16px;font:inherit;font-size:15.5px;max-height:120px;background:#FAF7EF;margin:0}
 .chin button{flex:0 0 48px;height:48px;border-radius:50%;border:0;background:#6E1423;display:grid;place-items:center;cursor:pointer}
 .chin button svg{width:22px;height:22px;fill:#fff}
+.chat-att{flex:0 0 44px;height:48px;display:grid;place-items:center;cursor:pointer;border-radius:50%}
+.chat-att svg{width:24px;height:24px;fill:none;stroke:#6E1423;stroke-width:2}
+.chm img{display:block;max-width:100%;max-height:260px;border-radius:10px;margin-bottom:4px;background:#0001}
 .chin button:disabled{opacity:.5}
 </style>
 <script>
@@ -3591,7 +3594,9 @@ function pbDelReq(){try{
 (function(){
  const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
  const cred=()=>({m:($("cm")||{}).value||"",p:($("cp")||{}).value||""});
- let msgs=[],timer=null,pending=location.hash==="#chat";
+ let msgs=[],timer=null,pending=location.hash==="#chat",SIGN={};
+ const FN=(n,body)=>fetch(SB_URL+"/functions/v1/"+n,{method:"POST",headers:{"Content-Type":"application/json",apikey:SB_KEY,Authorization:"Bearer "+SB_KEY},body:JSON.stringify(body)}).then(r=>r.json()).catch(()=>({ok:false,err:"net"}));
+ async function sign(){const need=msgs.filter(m=>m.i&&!SIGN[m.i]).map(m=>m.i);if(!need.length)return;const c=cred();const d=await FN("chat-img",{action:"sign",mobile:c.m,pin:c.p,paths:need});if(d&&d.urls){Object.assign(SIGN,d.urls);render()}}
  const ist=t=>new Date(new Date(t).getTime()+330*60000);
  const hm=d=>{const h=d.getUTCHours(),m=d.getUTCMinutes();return ((h%12)||12)+":"+String(m).padStart(2,"0")+(h<12?" AM":" PM")};
  const MON=["ஜன.","பிப்.","மார்.","ஏப்.","மே","ஜூன்","ஜூலை","ஆக.","செப்.","அக்.","நவ.","டிச."];
@@ -3600,9 +3605,9 @@ function pbDelReq(){try{
  function badge(n){$("chb1").textContent=n;$("chb1").classList.toggle("hide",!n);$("chsub").textContent=n?("கடையிலிருந்து "+n+" புது பதில்"):"சந்தேகமா? இங்கேயே கேளுங்க, பதில் வரும்"}
  async function unread(){if(!window.PBOK)return badge(0);const c=cred();if(!c.m||!c.p)return;try{const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:9e15,p_mark:false});if(data&&data.ok)badge(data.unread||0)}catch(e){}}
  function render(){const box=$("chxm"),end=box.scrollHeight-box.scrollTop-box.clientHeight<60;let h='<div class="chm w">வணக்கம் 🙏 உங்க சந்தேகத்தை இங்கே கேளுங்க. கடை ஊழியர் இங்கேயே பதில் தருவார்; பதில் வந்ததும் notification வரும். இந்த பேச்சு உங்களுக்கும் கடைக்கும் மட்டும்.</div>',ld="";
-  msgs.forEach(m=>{const d=ist(m.t),dd=day(d);if(dd!==ld){ld=dd;h+='<div class="chd">'+dd+'</div>'}h+='<div class="chm '+(m.s==="c"?"c":"s")+'">'+esc(m.b)+'<small>'+hm(d)+'</small></div>'});
+  msgs.forEach(m=>{const d=ist(m.t),dd=day(d);if(dd!==ld){ld=dd;h+='<div class="chd">'+dd+'</div>'}const im=m.i?(SIGN[m.i]?'<a href="'+esc(SIGN[m.i])+'" target="_blank" rel="noopener"><img src="'+esc(SIGN[m.i])+'" alt="படம்"></a>':'<div class="mut" style="color:inherit;opacity:.8">📷 படம் ஏற்றுகிறது…</div>'):"";h+='<div class="chm '+(m.s==="c"?"c":"s")+'">'+im+(m.i&&/^📷 படம்$/.test(m.b)?"":esc(m.b))+'<small>'+hm(d)+'</small></div>'});
   box.innerHTML=h;$("chxq").innerHTML=msgs.length?"":QUICK.map(q=>'<button type="button">'+esc(q)+'</button>').join("");if(end||!render.done)box.scrollTop=box.scrollHeight;render.done=true}
- async function load(){const c=cred();try{const last=msgs.length?msgs[msgs.length-1].id:0;const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:last,p_mark:true});if(data&&data.ok){const add=(data.msgs||[]).filter(x=>!msgs.some(y=>y.id===x.id));if(add.length||!render.done){msgs=msgs.concat(add);render()}badge(0)}}catch(e){}}
+ async function load(){const c=cred();try{const last=msgs.length?msgs[msgs.length-1].id:0;const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:last,p_mark:true});if(data&&data.ok){const add=(data.msgs||[]).filter(x=>!msgs.some(y=>y.id===x.id));if(add.length||!render.done){msgs=msgs.concat(add);render();sign()}badge(0)}}catch(e){}}
  function open(){if(!window.PBOK){pending=true;if(typeof showLock==="function")showLock();return}
   const h=ist(Date.now()).getUTCHours();$("chxs").textContent=(h<9||h>=21)?"கடை இப்போ மூடியிருக்கு · காலை 9 மணிக்கு மேல் பதில்":"பொதுவா சில மணி நேரத்தில் பதில்";
   $("chx").classList.remove("hide");render.done=false;msgs=[];render();load();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)load()},10000);setTimeout(()=>$("chxi").focus(),200)}
@@ -3612,6 +3617,11 @@ function pbDelReq(){try{
    if(error||!data||!data.ok){alert(data&&data.err==="too_many"?"இன்னைக்கு அதிக செய்திகள் அனுப்பியாச்சு. கடைக்கு அழைக்கவும்.":"அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.")}
    else{$("chxi").value="";$("chxi").style.height="";await load();try{sb.functions.invoke("push",{body:{action:"chat_ask",mobile:c.m,pin:c.p}})}catch(e){}}}
   catch(e){alert("இணைய இணைப்பை சரிபார்க்கவும்")}b.disabled=false}
+ $("chxf").addEventListener("change",async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;const c=cred(),b=$("chxg");b.disabled=true;
+  try{const blob=typeof shrink==="function"?await shrink(f):f;const data=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(blob)});
+   const d=await FN("chat-img",{action:"upload",mobile:c.m,pin:c.p,data,caption:$("chxi").value.trim()});
+   if(!d.ok)alert(d.err==="too_many"?"இன்னைக்கு 10 படம் அனுப்பியாச்சு. நாளை தொடரலாம்.":d.err==="size"||d.err==="type"?"இந்த படத்தை அனுப்ப முடியல (2 MB-க்குள் JPG/PNG படம்).":"படம் அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.");
+   else{$("chxi").value="";await load();FN("push",{action:"chat_ask",mobile:c.m,pin:c.p})}}catch(x){alert("படம் அனுப்ப முடியல")}b.disabled=false});
  $("chent").onclick=open;$("chxb").onclick=close;$("chxg").onclick=send;
  $("chxq").addEventListener("click",e=>{const b=e.target.closest("button");if(b){$("chxi").value=b.textContent;$("chxi").focus()}});
  $("chxi").addEventListener("input",e=>{e.target.style.height="";e.target.style.height=Math.min(120,e.target.scrollHeight)+"px"});

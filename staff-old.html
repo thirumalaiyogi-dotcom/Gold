@@ -1113,10 +1113,13 @@ async function loadChats(){const {data,error}=await sb.from("gold_chat").select(
  if(CH_CUR)openChat(CH_CUR,true)}
 async function openChat(id,quiet){CH_CUR=id;$("chin").placeholder="பதில் எழுதுங்க…";$("chlist").classList.add("hide");$("chthread").classList.remove("hide");$("chpush").classList.add("hide");
  const n=(window.CH_NAMES||{})[id]||{};$("chname").textContent=n.name||"Customer";$("chinfo").textContent=n.mobile?("+91 "+n.mobile):"";
- const {data}=await sb.from("gold_chat").select("id,sender,body,created_at,staff_email").eq("customer_id",id).order("id",{ascending:true}).limit(300);
+ const {data}=await sb.from("gold_chat").select("id,sender,body,image,created_at,staff_email").eq("customer_id",id).order("id",{ascending:true}).limit(300);
+ const imgs=(data||[]).filter(m=>m.image).map(m=>m.image),U={};
+ if(imgs.length){const r=await sb.storage.from("chat").createSignedUrls(imgs,3600);(r.data||[]).forEach(x=>{if(x.signedUrl)U[x.path]=x.signedUrl})}
+ const pic=m=>m.image&&U[m.image]?`<a href="${esc(U[m.image])}" target="_blank" rel="noopener"><img src="${esc(U[m.image])}" alt="படம்" style="display:block;max-width:100%;max-height:260px;border-radius:10px;margin-bottom:4px"></a>`:"";
  const box=$("chmsgs"),atEnd=box.scrollHeight-box.scrollTop-box.clientHeight<60;
  box.innerHTML=(data||[]).map(m=>m.sender==="c"
-  ?`<div style="align-self:flex-start;max-width:80%;background:#fff;border:1px solid #E8D9B9;border-radius:14px 14px 14px 4px;padding:8px 12px"><div style="white-space:pre-wrap">${esc(m.body)}</div><div class="mut" style="font-size:11.5px;text-align:right">${chTime(m.created_at)}</div></div>`
+  ?`<div style="align-self:flex-start;max-width:80%;background:#fff;border:1px solid #E8D9B9;border-radius:14px 14px 14px 4px;padding:8px 12px">${pic(m)}<div style="white-space:pre-wrap">${esc(m.body)}</div><div class="mut" style="font-size:11.5px;text-align:right">${chTime(m.created_at)}</div></div>`
   :`<div style="align-self:flex-end;max-width:80%;background:#6E1423;color:#fff;border-radius:14px 14px 4px 14px;padding:8px 12px"><div style="white-space:pre-wrap">${esc(m.body)}</div><div style="font-size:11.5px;text-align:right;color:#F1D9DD">${esc((m.staff_email||"").split("@")[0])} · ${chTime(m.created_at)}</div></div>`).join("");
  if(!quiet||atEnd)box.scrollTop=box.scrollHeight;
  await sb.from("gold_chat").update({seen:true}).eq("customer_id",id).eq("sender","c").eq("seen",false)}
