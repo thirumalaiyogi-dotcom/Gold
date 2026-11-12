@@ -48,6 +48,18 @@ class Api {
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
+  /// "புதுசு என்ன" stories (staff panel → அறிவிப்பு → புதுசு என்ன). RLS shows only active / not expired rows.
+  static Future<List<Map<String, dynamic>>> whatsNew() async {
+    final d = await _get('gold_whatsnew?select=id,title,image_url,body,btn_label,btn_link&order=sort.asc,created_at.desc&limit=15');
+    return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+
+  /// நகை வகைகள் swipe cards (staff panel → அறிவிப்பு → நகை வகைகள்).
+  static Future<List<Map<String, dynamic>>> categories() async {
+    final d = await _get('gold_categories?select=id,name,image_url,wa_text&order=sort.asc,created_at.asc&limit=20');
+    return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+
   static Future<List<Map<String, dynamic>>> extraSchemes() async {
     final d = await _get('gold_schemes?select=*&active=eq.true&order=created_at.asc');
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();

@@ -16,6 +16,7 @@ import 'api.dart';
 import 'bio.dart';
 import 'info.dart';
 import 'pay.dart';
+import 'stories.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -155,9 +156,11 @@ class _MainShellState extends State<MainShell> {
       ProfileTab(go: go),
     ];
     return PopScope(
-      canPop: tab == 0,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => tab = 0);
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        if (tab != 0) return setState(() => tab = 0);
+        if (await askExit(context, go)) SystemNavigator.pop();
       },
       child: Scaffold(
         key: _key,
@@ -321,6 +324,12 @@ class HomeTab extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // ---------- புதுசு என்ன (stories) ----------
+          if (app.stories.isNotEmpty) ...[
+            const SectionTitle('✨ புதுசு என்ன'),
+            StoryRow(go: go),
+            const SizedBox(height: 22),
+          ],
           // ---------- Quick actions ----------
           Row(children: [
             _quick(context, Icons.menu_book_outlined, 'என்\nPassbook', () => go(2)),
@@ -339,6 +348,12 @@ class HomeTab extends StatelessWidget {
             const SizedBox(width: 8),
             _chip(context, Icons.place_outlined, 'வழி காட்டு', () => openMaps(context)),
           ]),
+          // ---------- நகை வகைகள் (shop photos, swipe) ----------
+          if (app.cats.isNotEmpty) ...[
+            const SizedBox(height: 26),
+            const SectionTitle('💍 நகை வகைகள்'),
+            const CategoryStrip(),
+          ],
           const SizedBox(height: 24),
           if (app.loggedIn && app.pb != null) const _NextDue() else _SchemeHero(go: go),
           if (app.notices.isNotEmpty) ...[
@@ -633,7 +648,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.28', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.29', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -754,7 +769,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.28', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.29', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );

@@ -119,6 +119,8 @@
     notify: { t: "அறிவிப்பு", nav: "notify" },
     nsend: { t: "Notification அனுப்பு", sub: 1, cards: ["Notification அனுப்பு"] },
     nposter: { t: "App Poster", sub: 1, cards: ["App திறக்கும்போது Poster"] },
+    nstory: { t: "புதுசு என்ன", sub: 1, cards: ["புதுசு என்ன"] },
+    ncat: { t: "நகை வகைகள்", sub: 1, cards: ["நகை வகைகள்"] },
     nnotice: { t: "அறிவிப்புகள்", sub: 1, cards: ["புதிய அறிவிப்பு"] },
     nlog: { t: "அனுப்பிய வரலாறு", sub: 1 },
     set: { t: "அமைப்பு", nav: "set" },
@@ -200,7 +202,7 @@
   }
 
   // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
-  const PARENT = { nsend: "notify", nposter: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
+  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
@@ -447,6 +449,8 @@
     p.insertAdjacentHTML("afterbegin", `<div class="s6hub s6" id="s6nhub">
       <button type="button" data-go="nsend"><i>${svg("bell")}</i><b>Notification அனுப்பு</b><small>Customers phone-க்கு உடனே</small></button>
       ${can("settings.write") ? `<button type="button" data-go="nposter"><i>${svg("poster")}</i><b>App Poster</b><small>App திறந்ததும் வரும் படம்</small></button>` : ""}
+      ${can("settings.write") ? `<button type="button" data-go="nstory"><i>${svg("poster")}</i><b>புதுசு என்ன</b><small>App மேல வட்ட stories</small></button>` : ""}
+      ${can("settings.write") ? `<button type="button" data-go="ncat"><i>${svg("img")}</i><b>நகை வகைகள்</b><small>Swipe கட்டங்கள் + கடை photo</small></button>` : ""}
       <button type="button" data-go="nnotice"><i>${svg("more")}</i><b>அறிவிப்புகள்</b><small>App-ல உள்ள அறிவிப்பு பட்டியல்</small></button>
       <button type="button" data-go="nlog"><i>${svg("remind")}</i><b>அனுப்பிய வரலாறு</b><small>பார்க்க / நீக்க</small></button></div>`);
     p.onclick = (e) => { const b = e.target.closest("[data-go]"); if (b) navTo(b.dataset.go); };

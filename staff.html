@@ -506,6 +506,24 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <input id="ppt" maxlength="80" placeholder="Notification தலைப்பு (tick பண்ணினா மட்டும்)">
   <button class="btn" id="ppgo">📢 Poster வெளியிடு</button>
   <div class="mut" style="margin-top:10px">Posters:</div><div id="pplist"></div></div>
+  <div class="card" id="wncard"><h2>✨ புதுசு என்ன (Stories)</h2>
+  <div class="mut">App home-ல மேல வட்ட வட்டமா வரும். தொட்டா முழுப் படமா (story மாதிரி) திறக்கும். புது நகை, offer, விழா எதுவானாலும் போடலாம். நீள்வாக்கு படம் (1080×1600 போல) நல்லது.</div>
+  <input type="file" id="wnf" accept="image/*"><div id="wnimg"></div>
+  <input id="wnt" maxlength="22" placeholder="வட்டத்துக்குக் கீழ வரும் பெயர்* (உதா: தீபாவளி Offer)">
+  <textarea id="wnb" rows="2" maxlength="200" placeholder="படத்துக்குக் கீழ 1–2 வரி (விருப்பம்)"></textarea>
+  <div class="mut">கீழ வரும் button</div>
+  <select id="wnl"><option value="">Button வேண்டாம்</option><option value="wa">WhatsApp-ல் கேட்க</option><option value="schemes">சேமிப்புத் திட்டம் பார்க்க</option><option value="rate">இன்றைய விலை பார்க்க</option></select>
+  <div class="mut">எதுவரை காட்டணும் (காலியா விட்டா எப்போதும்)</div><input type="date" id="wne">
+  <button class="btn" id="wngo">✨ App-ல சேர்</button>
+  <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="wnlist"></div></div>
+  <div class="card" id="catcard"><h2>💍 நகை வகைகள்</h2>
+  <div class="mut">App home-ல swipe பண்ற கட்டங்களா வரும். கடையில எடுத்த photo போடுங்க (சதுரம் அல்லது நீள்வாக்கு). Customer தொட்டா அந்த வகை பற்றி கடைக்கு WhatsApp-ல கேட்பாங்க.</div>
+  <input type="file" id="ctf" accept="image/*"><div id="ctimg"></div>
+  <input id="ctn" maxlength="20" placeholder="வகை பெயர்* (உதா: நெக்லஸ், ஜிமிக்கி, வளையல்)">
+  <input id="ctw" maxlength="120" placeholder="WhatsApp message (விருப்பம் — காலியா விட்டா தானா வரும்)">
+  <input id="cts" type="number" inputmode="numeric" placeholder="வரிசை எண் (1 = முதல்ல; விருப்பம்)">
+  <button class="btn" id="ctgo">💍 வகை சேர்</button>
+  <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="ctlist"></div></div>
   <div class="card" id="pushcard"><h2>🔔 Notification அனுப்பு</h2>
   <div class="mut">அனுமதி கொடுத்த customer-களுக்கு phone-ல notification-ஆ போகும். லாபம் / “பணம் பெருகும்” மாதிரி வாக்குறுதி வேண்டாம். நாளுக்கு ஒன்னுக்கு மேல வேண்டாம்.</div>
   <input id="pnt" maxlength="80" placeholder="தலைப்பு (எ.கா. தீபாவளி வாழ்த்துகள் 🪔)">
@@ -606,7 +624,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat()}
 async function PAGED(mk){let all=[],i=0;for(;;){const r=await mk().range(i,i+999);if(r.error)return r;const d=r.data||[];all=all.concat(d);if(d.length<1000||i>=500000)break;i+=1000}return {data:all,error:null}}
 async function load(){
  let {data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name").order("id"));
@@ -1060,6 +1078,37 @@ $("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster �
  let msg="Poster வெளியாச்சு ✅";
  if($("ppn").checked){const d=await pushFn({action:"send",title:$("ppt").value.trim(),body:"",image:PPIMG,url:$("ppl").value,target:"all"});msg+=d.ok?`\n🔔 ${d.sent} phone-க்கு notification போச்சு`:"\nNotification போகல: "+(d.err||"");loadPushLog()}
  alert(msg);PPIMG="";$("ppf").value="";$("ppimg").innerHTML="";$("pps").value="";$("ppe").value="";$("ppn").checked=false;$("ppt").value="";loadPop()};
+
+// ===== புதுசு என்ன (stories) + நகை வகைகள் (gold_whatsnew / gold_categories) =====
+async function upImg(f,dir,box){$(box).textContent="படம் ஏற்றுகிறது…";
+ const blob=await shrink(f),path=`${dir}/${Date.now()}.jpg`;const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+ const url=sb.storage.from("slides").getPublicUrl(path).data.publicUrl;$(box).innerHTML=`<img src="${url}" style="max-height:220px;border-radius:10px;margin:8px 0;display:block">`;return url}
+const WNL={"":"—",wa:"WhatsApp",schemes:"திட்டம்",rate:"விலை"};
+let WNIMG="",CTIMG="";
+$("wnf").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{WNIMG=await upImg(f,"stories","wnimg")}catch(x){$("wnimg").textContent="";alert(x.message||x)}});
+$("ctf").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{CTIMG=await upImg(f,"cats","ctimg")}catch(x){$("ctimg").textContent="";alert(x.message||x)}});
+async function loadWN(){const {data,error}=await sb.from("gold_whatsnew").select("*").order("sort").order("created_at",{ascending:false});
+ if(error){$("wnlist").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
+ const t=new Date(Date.now()+330*60000).toISOString().slice(0,10);
+ $("wnlist").innerHTML=(data||[]).map(r=>{const live=r.active&&(!r.ends_on||r.ends_on>=t);
+  return `<div class="row"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(r.image_url)}" style="width:54px;height:54px;object-fit:cover;border-radius:50%;border:2px solid #D6B56D"><span><b>${esc(r.title)}</b><br><span class="mut">${live?"🟢 App-ல வருது":"⏸ வரல"} · ${WNL[r.btn_link||""]||"link"} · ${r.ends_on?"→ "+r.ends_on:"எப்போதும்"}</span></span></span><span><a data-wa="${r.id}" data-on="${r.active?0:1}" style="color:${r.active?"#b00020":"#1f7a4d"};text-decoration:underline">${r.active?"நிறுத்து":"மீண்டும் போடு"}</a><br><a data-wd="${r.id}" style="color:#777;text-decoration:underline">நீக்கு</a></span></div>`}).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
+$("wnlist").addEventListener("click",async e=>{const a=e.target.closest("[data-wa],[data-wd]");if(!a)return;
+ if(a.dataset.wd){if(!await ASK("இதை நீக்கவா?"))return;await sb.from("gold_whatsnew").delete().eq("id",+a.dataset.wd)}
+ else await sb.from("gold_whatsnew").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.wa);loadWN()});
+$("wngo").onclick=async()=>{if(!WNIMG)return alert("முதல்ல படம் போடுங்க");const t=$("wnt").value.trim();if(!t)return alert("பெயர் போடுங்க");
+ const l=$("wnl").value,b=$("wngo");b.disabled=true;
+ const {error}=await sb.from("gold_whatsnew").insert({title:t,image_url:WNIMG,body:$("wnb").value.trim()||null,btn_link:l||null,btn_label:l?{wa:"WhatsApp-ல் கேட்க",schemes:"சேமிப்புத் திட்டம் பார்க்க",rate:"இன்றைய விலை பார்க்க"}[l]:null,ends_on:$("wne").value||null,active:true});
+ b.disabled=false;if(error)return alert(error.message);alert("App-ல சேர்ந்தாச்சு ✅");WNIMG="";$("wnf").value="";$("wnimg").innerHTML="";$("wnt").value="";$("wnb").value="";$("wnl").value="";$("wne").value="";loadWN()};
+async function loadCat(){const {data,error}=await sb.from("gold_categories").select("*").order("sort").order("created_at");
+ if(error){$("ctlist").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
+ $("ctlist").innerHTML=(data||[]).map(r=>`<div class="row"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(r.image_url)}" style="width:64px;height:64px;object-fit:cover;border-radius:10px"><span><b>${esc(r.name)}</b><br><span class="mut">${r.active?"🟢 App-ல வருது":"⏸ வரல"} · வரிசை ${r.sort}</span></span></span><span><a data-ca="${r.id}" data-on="${r.active?0:1}" style="color:${r.active?"#b00020":"#1f7a4d"};text-decoration:underline">${r.active?"நிறுத்து":"மீண்டும் போடு"}</a><br><a data-cd="${r.id}" style="color:#777;text-decoration:underline">நீக்கு</a></span></div>`).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
+$("ctlist").addEventListener("click",async e=>{const a=e.target.closest("[data-ca],[data-cd]");if(!a)return;
+ if(a.dataset.cd){if(!await ASK("இந்த வகையை நீக்கவா?"))return;await sb.from("gold_categories").delete().eq("id",+a.dataset.cd)}
+ else await sb.from("gold_categories").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.ca);loadCat()});
+$("ctgo").onclick=async()=>{if(!CTIMG)return alert("முதல்ல photo போடுங்க");const n=$("ctn").value.trim();if(!n)return alert("வகை பெயர் போடுங்க");
+ const b=$("ctgo");b.disabled=true;
+ const {error}=await sb.from("gold_categories").insert({name:n,image_url:CTIMG,wa_text:$("ctw").value.trim()||null,sort:+$("cts").value||0,active:true});
+ b.disabled=false;if(error)return alert(error.message);alert("வகை சேர்ந்தாச்சு ✅");CTIMG="";$("ctf").value="";$("ctimg").innerHTML="";$("ctn").value="";$("ctw").value="";$("cts").value="";loadCat()};
 
 </script>
 <script>
@@ -2034,6 +2083,8 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
     notify: { t: "அறிவிப்பு", nav: "notify" },
     nsend: { t: "Notification அனுப்பு", sub: 1, cards: ["Notification அனுப்பு"] },
     nposter: { t: "App Poster", sub: 1, cards: ["App திறக்கும்போது Poster"] },
+    nstory: { t: "புதுசு என்ன", sub: 1, cards: ["புதுசு என்ன"] },
+    ncat: { t: "நகை வகைகள்", sub: 1, cards: ["நகை வகைகள்"] },
     nnotice: { t: "அறிவிப்புகள்", sub: 1, cards: ["புதிய அறிவிப்பு"] },
     nlog: { t: "அனுப்பிய வரலாறு", sub: 1 },
     set: { t: "அமைப்பு", nav: "set" },
@@ -2115,7 +2166,7 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
   }
 
   // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
-  const PARENT = { nsend: "notify", nposter: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
+  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
@@ -2362,6 +2413,8 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
     p.insertAdjacentHTML("afterbegin", `<div class="s6hub s6" id="s6nhub">
       <button type="button" data-go="nsend"><i>${svg("bell")}</i><b>Notification அனுப்பு</b><small>Customers phone-க்கு உடனே</small></button>
       ${can("settings.write") ? `<button type="button" data-go="nposter"><i>${svg("poster")}</i><b>App Poster</b><small>App திறந்ததும் வரும் படம்</small></button>` : ""}
+      ${can("settings.write") ? `<button type="button" data-go="nstory"><i>${svg("poster")}</i><b>புதுசு என்ன</b><small>App மேல வட்ட stories</small></button>` : ""}
+      ${can("settings.write") ? `<button type="button" data-go="ncat"><i>${svg("img")}</i><b>நகை வகைகள்</b><small>Swipe கட்டங்கள் + கடை photo</small></button>` : ""}
       <button type="button" data-go="nnotice"><i>${svg("more")}</i><b>அறிவிப்புகள்</b><small>App-ல உள்ள அறிவிப்பு பட்டியல்</small></button>
       <button type="button" data-go="nlog"><i>${svg("remind")}</i><b>அனுப்பிய வரலாறு</b><small>பார்க்க / நீக்க</small></button></div>`);
     p.onclick = (e) => { const b = e.target.closest("[data-go]"); if (b) navTo(b.dataset.go); };

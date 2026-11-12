@@ -127,6 +127,8 @@ class AppState extends ChangeNotifier {
   Map<String, dynamic>? rate;
   bool rateError = false;
   List<Map<String, dynamic>> notices = [];
+  List<Map<String, dynamic>> stories = [];
+  List<Map<String, dynamic>> cats = [];
   bool noticesLoaded = false;
   List<Scheme> schemes = List.of(offlineSchemes);
 
@@ -159,6 +161,12 @@ class AppState extends ChangeNotifier {
     try {
       final ex = await Api.extraSchemes();
       schemes = [...baseSchemes, ...ex.map(Scheme.fromDb)];
+    } catch (_) {}
+    notifyListeners();
+    try {
+      final r = await Future.wait([Api.whatsNew(), Api.categories()]);
+      stories = r[0].where((x) => '${x['image_url'] ?? ''}'.startsWith('http')).toList();
+      cats = r[1].where((x) => '${x['image_url'] ?? ''}'.startsWith('http')).toList();
     } catch (_) {}
     notifyListeners();
   }
