@@ -47,8 +47,15 @@ function mask(e: string) {
   return (u.length <= 2 ? u[0] + "•" : u.slice(0, 2) + "•".repeat(Math.min(6, u.length - 2))) + "@" + d;
 }
 
+// வரம்பு கணக்கு இந்திய நேரப்படி இன்று நள்ளிரவு 12 முதல் (மறுநாள் 12 மணிக்கு reset).
+function istMidnight() {
+  const IST = 5.5 * 3600 * 1000;
+  const d = new Date(Date.now() + IST);
+  d.setUTCHours(0, 0, 0, 0);
+  return new Date(d.getTime() - IST).toISOString();
+}
 async function rateOk(m: string): Promise<string | null> {
-  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const since = istMidnight();
   const r = await sbReq(`gold_otp_log?select=sent_at&mobile=eq.${m}&sent_at=gte.${since}&order=sent_at.desc&limit=10`);
   if (!r.ok) return "rate_db";
   const rows = await r.json().catch(() => []);
