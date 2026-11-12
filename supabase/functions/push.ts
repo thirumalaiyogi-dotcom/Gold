@@ -3,6 +3,8 @@
 // Supabase → Edge Functions → Deploy a new function → Via Editor → பெயர்: push → இதை முழுசா paste → Deploy
 // Secrets எதுவும் தேவையில்ல — அனுப்பும் key-ஐ function முதல் தடவை தானே உருவாக்கி gold_push_cfg-ல வைக்கும்.
 // "Verify JWT" ON-ஆவே இருக்கட்டும்.
+// v6 (2026-11-12): chat — staff_sub (staff phones get "new question"), chat_ask (customer → staff), chat_reply (staff → that customer).
+//     Staff-only subscriptions (staff_email set, no customer) are left out of customer broadcasts.
 // v4: Native app (Android) phone-களுக்கு Firebase (FCM) வழியா அனுப்புதல்.
 //     FCM token-கள் அதே gold_push_subs table-ல endpoint = "fcm:<token>" ஆ சேமிக்கப்படும் (புது table இல்ல).
 //     FCM அனுப்ப secret: FCM_SERVICE_ACCOUNT = Firebase service account JSON (முழுசா). இல்லைன்னா FCM phone-கள் தவிர்க்கப்படும்.
@@ -274,6 +276,70 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
+    // ---------- Chat ----------
+    // Staff phone/browser opts in for "new question" pushes (staff login required)
+    if (action === "staff_sub") {
+      const who = await staffEmail(req);
+      if (!who) return json({ ok: false, err: "staff" }, 401);
+      const s = b.sub || {};
+      const endpoint = String(s.endpoint || ""), p256dh = String(s.keys?.p256dh || ""), auth = String(s.keys?.auth || "");
+      if (!okEndpoint(endpoint) || endpoint.length > 1000 || !/^[A-Za-z0-9_-]{40,200}$/.test(p256dh) || !/^[A-Za-z0-9_-]{8,60}$/.test(auth))
+        return json({ ok: false, err: "sub" }, 400);
+      const r = await rest("gold_push_subs", {
+        method: "POST",
+        headers: { Prefer: "resolution=merge-duplicates" },
+        body: JSON.stringify({ endpoint, p256dh, auth, fails: 0, staff_email: who.email }),
+      });
+      return json({ ok: r.ok }, r.ok ? 200 : 500);
+    }
+    if (action === "staff_count") {
+      const who = await staffEmail(req);
+      if (!who) return json({ ok: false, err: "staff" }, 401);
+      const r = await rest("gold_push_subs?select=endpoint&staff_email=not.is.null");
+      return json({ ok: true, count: Array.isArray(r.data) ? r.data.length : 0 });
+    }
+
+    // Customer just sent a chat message (app / website) → push to staff phones
+    if (action === "chat_ask") {
+      const m = String(b.mobile || "").trim(), pin = String(b.pin || "").trim();
+      if (!/^[6-9][0-9]{9}$/.test(m) || !/^[0-9]{4,6}$/.test(pin)) return json({ ok: false, err: "auth" }, 400);
+      const lg = await rest("rpc/gold_login", { method: "POST", body: JSON.stringify({ p_mobile: m, p_pin: pin }) });
+      const d = lg.data;
+      if (!lg.ok || !d || !d.name || d.wrong || d.locked || d.locked_otp) return json({ ok: false, err: "auth" }, 401);
+      const c = await rest(`gold_customers?select=id,name&mobile=eq.${m}&limit=1`);
+      const cust = Array.isArray(c.data) ? c.data[0] : null;
+      if (!cust) return json({ ok: false, err: "auth" }, 401);
+      const since = new Date(Date.now() - 3 * 60000).toISOString();
+      const lm = await rest(`gold_chat?select=body&customer_id=eq.${cust.id}&sender=eq.c&created_at=gte.${since}&order=id.desc&limit=1`);
+      const last = Array.isArray(lm.data) ? lm.data[0] : null;
+      if (!last) return json({ ok: true, sent: 0 }); // nothing new → no push
+      const sr = await rest("gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails&staff_email=not.is.null");
+      const subs: any[] = Array.isArray(sr.data) ? sr.data : [];
+      if (!subs.length) return json({ ok: true, sent: 0 });
+      await vapid();
+      const payload = JSON.stringify({ title: clip(`💬 ${cust.name} — பதில் கொடுக்கவும்`, 80), body: clip(last.body, 160), url: "/staff.html#chat", tag: "chat" });
+      const r = await deliver(subs, () => payload);
+      return json({ ok: true, ...r });
+    }
+
+    // Staff replied → push to that customer's phones (app + website)
+    if (action === "chat_reply") {
+      const who = await staffEmail(req);
+      if (!who) return json({ ok: false, err: "staff" }, 401);
+      const cid = String(b.customer_id || "");
+      if (!/^[0-9a-f-]{36}$/i.test(cid)) return json({ ok: false, err: "customer" }, 400);
+      const lm = await rest(`gold_chat?select=body&customer_id=eq.${cid}&sender=eq.s&order=id.desc&limit=1`);
+      const last = Array.isArray(lm.data) ? lm.data[0] : null;
+      if (!last) return json({ ok: false, err: "nomsg" }, 400);
+      const sr = await rest(`gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails&customer_id=eq.${cid}`);
+      const subs: any[] = Array.isArray(sr.data) ? sr.data : [];
+      if (!subs.length) return json({ ok: true, sent: 0, total: 0 });
+      await vapid();
+      const payload = JSON.stringify({ title: "கடை பதில் அளித்துள்ளது 💬", body: clip(last.body, 200), url: "/#chat", tag: "chat" });
+      const r = await deliver(subs, () => payload);
+      return json({ ok: true, ...r, total: subs.length });
+    }
+
     if (action === "cron") {
       const t = String(b.token || "");
       const cfg = await rest("gold_cron_cfg?select=token&id=eq.1");
@@ -288,8 +354,9 @@ Deno.serve(async (req) => {
       const email = who.email;
       const target = ["all", "customers", "due"].includes(b.target) ? b.target : "all";
 
-      const sr = await rest("gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails");
+      const sr = await rest("gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails,staff_email");
       let subs: any[] = Array.isArray(sr.data) ? sr.data : [];
+      subs = subs.filter((s) => !(s.staff_email && !s.customer_id)); // staff-only phones don't get customer broadcasts
       if (target !== "all") subs = subs.filter((s) => s.customer_id);
       if (target === "due") {
         const since = ymIST() + "-01";

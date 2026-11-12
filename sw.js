@@ -62,8 +62,11 @@ self.addEventListener("notificationclick", (e) => {
   const target = new URL(path, self.registration.scope).href;
   e.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    // staff chat pushes open staff.html, customer pushes the customer page — prefer a tab of the same page
+    const want = new URL(target).pathname;
     for (const c of all) {
-      if (c.url.startsWith(self.registration.scope)) {
+      const cp = new URL(c.url).pathname;
+      if (c.url.startsWith(self.registration.scope) && (cp === want || (want === "/" && cp === "/index.html"))) {
         await c.focus();
         c.postMessage({ type: "open", hash: new URL(target).hash });
         return;
