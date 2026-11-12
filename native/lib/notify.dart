@@ -77,6 +77,9 @@ class Notify {
     storageBucket: 'stm-gold.firebasestorage.app',
   );
   static bool _fcmReady = false;
+  /// chat: a shop reply arrived (refresh badge) / user tapped a chat push (open chat)
+  static final chatPing = ValueNotifier<int>(0);
+  static final openChat = ValueNotifier<int>(0);
 
   static Future<void> startFcm() async {
     try {
@@ -84,9 +87,20 @@ class Notify {
       FirebaseMessaging.onBackgroundMessage(fcmBackground);
       final fm = FirebaseMessaging.instance;
       await fm.requestPermission();
+      FirebaseMessaging.onMessageOpenedApp.listen((m) {
+        if ('${m.data['tag'] ?? ''}' == 'chat') openChat.value++;
+      });
+      final first = await fm.getInitialMessage();
+      if (first != null && '${first.data['tag'] ?? ''}' == 'chat') openChat.value++;
       FirebaseMessaging.onMessage.listen((m) async {
         final n = m.notification;
         if (n == null) return;
+        if ('${m.data['tag'] ?? ''}' == 'chat') {
+          // shop replied while the app is open: chat badge, not the notices counter
+          chatPing.value++;
+          await _show(DateTime.now().millisecondsSinceEpoch ~/ 1000 % 100000, n.title ?? 'கடை பதில்', n.body ?? '', 'stm_notice', 'நிறுவன அறிவிப்புகள்', unread.value);
+          return;
+        }
         final sp = await SharedPreferences.getInstance();
         final c = (sp.getInt('unread') ?? 0) + 1;
         await sp.setInt('unread', c);

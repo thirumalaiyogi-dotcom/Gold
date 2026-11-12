@@ -17,6 +17,7 @@ import 'bio.dart';
 import 'info.dart';
 import 'pay.dart';
 import 'stories.dart';
+import 'chat.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -35,16 +36,30 @@ class _MainShellState extends State<MainShell> {
     super.initState();
     Future.delayed(const Duration(milliseconds: 900), _poster);
     Notify.refresh();
+    refreshChatUnread();
+    Notify.chatPing.addListener(refreshChatUnread);
+    Notify.openChat.addListener(_openChatFromPush);
+    if (Notify.openChat.value > 0) Future.delayed(const Duration(milliseconds: 600), _openChatFromPush);
     // back from the background: pick up notifications that arrived while the app was closed
     _life = AppLifecycleListener(onResume: () {
       Notify.refresh();
       app.loadPublic();
+      refreshChatUnread();
     });
+  }
+
+  int _chatSeen = 0;
+  void _openChatFromPush() {
+    if (!mounted || Notify.openChat.value == _chatSeen) return;
+    _chatSeen = Notify.openChat.value;
+    openChat(context);
   }
 
   @override
   void dispose() {
     _life.dispose();
+    Notify.chatPing.removeListener(refreshChatUnread);
+    Notify.openChat.removeListener(_openChatFromPush);
     super.dispose();
   }
 
@@ -359,6 +374,8 @@ class HomeTab extends StatelessWidget {
             _NoticePreview(app.notices.first, onTap: () => go(3)),
           ],
           const SizedBox(height: 28),
+          const ChatEntry(),
+          const SizedBox(height: 14),
           LuxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('எங்கள் கடை', style: serif(19)),
@@ -582,7 +599,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.31', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.32', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -692,7 +709,11 @@ class ProfileTab extends StatelessWidget {
               ], title: 'அமைப்புகள்');
             }),
             _group([
-              _row(Icons.call_outlined, 'கடைக்கு அழை · 97919 18344', () => callShop(context), first: true),
+              _row(Icons.forum_outlined, 'கடையிடம் கேளுங்க (App-ல்)', () => openChat(context), first: true,
+                  trailing: ValueListenableBuilder<int>(
+                      valueListenable: chatUnread,
+                      builder: (_, n, __) => n > 0 ? Badge(label: Text('$n'), backgroundColor: C.red) : const Icon(Icons.chevron_right, color: C.mute))),
+              _row(Icons.call_outlined, 'கடைக்கு அழை · 97919 18344', () => callShop(context)),
               _row(Icons.chat_outlined, 'WhatsApp-ல் பேச', () => whatsApp(context)),
               _row(Icons.location_on_outlined, 'வழி காட்டு', () => openMaps(context)),
             ], title: 'உதவி & தொடர்பு'),
@@ -703,7 +724,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.31', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.32', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );
