@@ -2218,6 +2218,7 @@ html[data-p5] .sdpur.ag{color:#4F4840!important;background:linear-gradient(180de
 <div class="dots2" id="d2"></div>
 </div><div class="xside">
 <div class="xcard xpb" id="pss"></div>
+<button type="button" class="chent" id="chent"><span class="chic"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 21 12z"/></svg><i id="chb1" class="hide"></i></span><span><b>கடையிடம் கேளுங்க</b><small id="chsub">சந்தேகமா? இங்கேயே கேளுங்க, பதில் வரும்</small></span><em>›</em></button>
 <div class="xsh"><h2 class="sh">எங்கள் கடை</h2></div>
 <div class="xcard xstore"><div class="simg" id="simg" role="img" aria-label="கடை புகைப்படம்">🏪</div><div class="xsi"><b>சுப்புலட்சுமி தங்கமாளிகை</b>
 <p class="xrow"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 0 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><span>51b, கங்கை அம்மன் கோவில் தெரு, காந்தி பஜார், புளியங்குடி – 627855</span></p>
@@ -3552,5 +3553,74 @@ function pbDelReq(){try{
  if(box)box.addEventListener("click",e=>{const b=e.target.closest('[data-pf="me"],[data-pf="rf"]');if(b)window.P5PB=b.dataset.pf},true);
 })();
 
+</script>
+<div id="chx" class="ov hide" role="dialog" aria-modal="true" aria-labelledby="chxt">
+ <div class="chhd"><button type="button" id="chxb" aria-label="மூடு">‹</button><div><b id="chxt">கடையிடம் கேளுங்க</b><small id="chxs">பொதுவா சில மணி நேரத்தில் பதில்</small></div><a href="tel:+919791918344" aria-label="கடைக்கு அழை"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></a></div>
+ <div id="chxm" aria-live="polite"></div>
+ <div id="chxq"></div>
+ <div class="chin"><textarea id="chxi" rows="1" maxlength="1000" aria-label="கேள்வி" placeholder="கேள்வியை இங்கே எழுதுங்க…"></textarea><button type="button" id="chxg" aria-label="அனுப்பு"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button></div>
+</div>
+<style>
+.chent{display:flex;align-items:center;gap:12px;width:calc(100% - 32px);max-width:528px;margin:22px auto 4px;padding:14px;border:1px solid var(--ln);border-radius:18px;background:var(--card);font:inherit;color:inherit;text-align:left;cursor:pointer}
+.chent .chic{position:relative;flex:0 0 46px;height:46px;border-radius:50%;background:#F6EAD0;display:grid;place-items:center}
+.chent svg{width:22px;height:22px;fill:none;stroke:#6E1423;stroke-width:2}
+.chent i{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;border-radius:10px;background:#C63C45;color:#fff;font:700 12px/20px system-ui;text-align:center;font-style:normal;padding:0 5px}
+.chent b{display:block;font-size:16px}.chent small{display:block;color:var(--mut);font-size:13px}.chent em{margin-left:auto;font-style:normal;font-size:22px;color:var(--mut)}
+#chx{background:#FAF7EF;display:flex;flex-direction:column;overflow:hidden}
+.chhd{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px 10px;background:#fff;border-bottom:1px solid #E8D9B9}
+.chhd button,.chhd a{min-width:44px;min-height:44px;border-radius:12px;border:1px solid #E8D9B9;background:#fff;display:grid;place-items:center;font-size:22px;color:#6E1423;cursor:pointer}
+.chhd a svg{width:20px;height:20px;fill:none;stroke:#6E1423;stroke-width:2}
+.chhd div{flex:1;min-width:0}.chhd b{display:block;font-size:17px;color:#4A0D18}.chhd small{display:block;font-size:12.5px;color:#6A5B61}
+#chxm{flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:6px;max-width:600px;width:100%;margin:0 auto;box-sizing:border-box}
+.chm{text-align:left;max-width:80%;padding:8px 12px 6px;border-radius:16px;font-size:15px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.chm small{display:block;text-align:right!important;font-size:11px;opacity:.8}
+.chm.c{align-self:flex-end;background:#6E1423;color:#fff;border-bottom-right-radius:4px}
+.chm.s{align-self:flex-start;background:#fff;border:1px solid #E8D9B9;color:#392027;border-bottom-left-radius:4px}
+.chm.w{align-self:flex-start;background:#FFF7E0;border:1px solid #E7D49B;color:#5A4410;font-size:14px;max-width:88%}
+.chd{align-self:center;background:#F5F0E5;color:#6A5B61;font-size:12px;border-radius:99px;padding:2px 10px;margin:6px 0}
+#chxq{display:flex;gap:8px;overflow:auto;padding:0 12px 8px}
+#chxq button{flex:0 0 auto;border:1px solid #E8D9B9;background:#fff;color:#6E1423;border-radius:99px;padding:8px 12px;font:600 13px inherit;font-family:inherit;cursor:pointer}
+.chin{display:flex;gap:8px;align-items:flex-end;padding:8px 10px calc(env(safe-area-inset-bottom,0px) + 8px);background:#fff;border-top:1px solid #E8D9B9}
+.chin textarea{flex:1;min-width:0;min-height:46px!important;height:46px;box-shadow:none!important;outline-offset:0;resize:none;border:1px solid #E8D9B9;border-radius:22px;padding:11px 16px;font:inherit;font-size:15.5px;max-height:120px;background:#FAF7EF;margin:0}
+.chin button{flex:0 0 48px;height:48px;border-radius:50%;border:0;background:#6E1423;display:grid;place-items:center;cursor:pointer}
+.chin button svg{width:22px;height:22px;fill:#fff}
+.chin button:disabled{opacity:.5}
+</style>
+<script>
+// ===== கடையிடம் கேளுங்க (website) — same gold_chat RPCs as the app =====
+(function(){
+ const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+ const cred=()=>({m:($("cm")||{}).value||"",p:($("cp")||{}).value||""});
+ let msgs=[],timer=null,pending=location.hash==="#chat";
+ const ist=t=>new Date(new Date(t).getTime()+330*60000);
+ const hm=d=>{const h=d.getUTCHours(),m=d.getUTCMinutes();return ((h%12)||12)+":"+String(m).padStart(2,"0")+(h<12?" AM":" PM")};
+ const MON=["ஜன.","பிப்.","மார்.","ஏப்.","மே","ஜூன்","ஜூலை","ஆக.","செப்.","அக்.","நவ.","டிச."];
+ const day=d=>{const n=ist(Date.now()),k=x=>x.toISOString().slice(0,10);if(k(d)===k(n))return"இன்று";if(k(d)===k(new Date(n-864e5)))return"நேற்று";return d.getUTCDate()+" "+MON[d.getUTCMonth()]+" "+d.getUTCFullYear()};
+ const QUICK=["இந்த மாத தவணை எப்போ கட்டணும்?","என் தவணை வரவு வைக்கப்பட்டதா?","நகை எப்போ வாங்கலாம்?","திட்டத் தொகையை மாற்றலாமா?"];
+ function badge(n){$("chb1").textContent=n;$("chb1").classList.toggle("hide",!n);$("chsub").textContent=n?("கடையிலிருந்து "+n+" புது பதில்"):"சந்தேகமா? இங்கேயே கேளுங்க, பதில் வரும்"}
+ async function unread(){if(!window.PBOK)return badge(0);const c=cred();if(!c.m||!c.p)return;try{const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:9e15,p_mark:false});if(data&&data.ok)badge(data.unread||0)}catch(e){}}
+ function render(){const box=$("chxm"),end=box.scrollHeight-box.scrollTop-box.clientHeight<60;let h='<div class="chm w">வணக்கம் 🙏 உங்க சந்தேகத்தை இங்கே கேளுங்க. கடை ஊழியர் இங்கேயே பதில் தருவார்; பதில் வந்ததும் notification வரும். இந்த பேச்சு உங்களுக்கும் கடைக்கும் மட்டும்.</div>',ld="";
+  msgs.forEach(m=>{const d=ist(m.t),dd=day(d);if(dd!==ld){ld=dd;h+='<div class="chd">'+dd+'</div>'}h+='<div class="chm '+(m.s==="c"?"c":"s")+'">'+esc(m.b)+'<small>'+hm(d)+'</small></div>'});
+  box.innerHTML=h;$("chxq").innerHTML=msgs.length?"":QUICK.map(q=>'<button type="button">'+esc(q)+'</button>').join("");if(end||!render.done)box.scrollTop=box.scrollHeight;render.done=true}
+ async function load(){const c=cred();try{const last=msgs.length?msgs[msgs.length-1].id:0;const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:last,p_mark:true});if(data&&data.ok){const add=(data.msgs||[]).filter(x=>!msgs.some(y=>y.id===x.id));if(add.length||!render.done){msgs=msgs.concat(add);render()}badge(0)}}catch(e){}}
+ function open(){if(!window.PBOK){pending=true;if(typeof showLock==="function")showLock();return}
+  const h=ist(Date.now()).getUTCHours();$("chxs").textContent=(h<9||h>=21)?"கடை இப்போ மூடியிருக்கு · காலை 9 மணிக்கு மேல் பதில்":"பொதுவா சில மணி நேரத்தில் பதில்";
+  $("chx").classList.remove("hide");render.done=false;msgs=[];render();load();clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)load()},10000);setTimeout(()=>$("chxi").focus(),200)}
+ function close(){$("chx").classList.add("hide");clearInterval(timer);if(location.hash==="#chat")history.replaceState(null,"",location.pathname)}
+ async function send(){const t=$("chxi").value.trim();if(!t)return;const c=cred(),b=$("chxg");b.disabled=true;
+  try{const {data,error}=await sb.rpc("gold_chat_send",{p_mobile:c.m,p_pin:c.p,p_body:t});
+   if(error||!data||!data.ok){alert(data&&data.err==="too_many"?"இன்னைக்கு அதிக செய்திகள் அனுப்பியாச்சு. கடைக்கு அழைக்கவும்.":"அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.")}
+   else{$("chxi").value="";$("chxi").style.height="";await load();try{sb.functions.invoke("push",{body:{action:"chat_ask",mobile:c.m,pin:c.p}})}catch(e){}}}
+  catch(e){alert("இணைய இணைப்பை சரிபார்க்கவும்")}b.disabled=false}
+ $("chent").onclick=open;$("chxb").onclick=close;$("chxg").onclick=send;
+ $("chxq").addEventListener("click",e=>{const b=e.target.closest("button");if(b){$("chxi").value=b.textContent;$("chxi").focus()}});
+ $("chxi").addEventListener("input",e=>{e.target.style.height="";e.target.style.height=Math.min(120,e.target.scrollHeight)+"px"});
+ window.addEventListener("hashchange",()=>{if(location.hash==="#chat")open()});
+ navigator.serviceWorker&&navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="open"&&e.data.hash==="#chat")open()});
+ // after login: open a chat the push asked for, and keep the badge fresh
+ let was=false;setInterval(()=>{const now=!!window.PBOK;if(now&&!was){unread();if(pending){pending=false;open()}}if(!now&&was){badge(0);close()}was=now},1500);
+ setInterval(()=>{if(window.PBOK&&!document.hidden&&$("chx").classList.contains("hide"))unread()},60000);
+ window.openShopChat=open;
+})();
 </script>
 </body></html>
