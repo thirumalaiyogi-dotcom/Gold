@@ -14,7 +14,7 @@ class C {
   static const navy3 = Color(0xFF801F32);
   static const paper = Color(0xFFFFFFFF);
   static const ink = Color(0xFF392027);
-  static const mute = Color(0xFF81747A);
+  static const mute = Color(0xFF6A5B61); // darker for 50+ readers (design audit 12-11)
   static const gold = Color(0xFFD6B56D);
   static const goldText = Color(0xFF8A6A2E);
   static const goldLine = Color(0xFFD9C08A);
@@ -33,7 +33,8 @@ TextStyle serif(double size, {Color color = C.navy, FontWeight weight = FontWeig
     GoogleFonts.notoSerifTamil(fontSize: size, color: color, fontWeight: weight, height: height);
 
 TextStyle sans(double size, {Color color = C.ink, FontWeight weight = FontWeight.w400, double? height}) =>
-    GoogleFonts.notoSansTamil(fontSize: size, color: color, fontWeight: weight, height: height);
+    // grey helper text never below 12.5 (readability)
+    GoogleFonts.notoSansTamil(fontSize: color == C.mute && size < 12.5 ? 12.5 : size, color: color, fontWeight: weight, height: height);
 
 String rupees(num v, {int decimals = 0}) {
   final s = v.toStringAsFixed(decimals);
@@ -985,17 +986,14 @@ class CoinDots extends StatelessWidget {
 
 /// Warm ivory + champagne page background (owner's image). Decoration only at the
 /// edges, plain cream in the middle, so white cards stay easy to read.
-const _ivoryImg = ResizeImage(AssetImage('assets/ivory_bg.jpg'), width: 900);
 
 class IvoryBg extends StatelessWidget {
   const IvoryBg({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) => DecoratedBox(
-        decoration: const BoxDecoration(
-          color: C.ivory,
-          image: DecorationImage(image: _ivoryImg, fit: BoxFit.cover, alignment: Alignment.center),
-        ),
+        // plain warm ivory behind content (design audit 12-11): no pattern / ribbon behind text
+        decoration: const BoxDecoration(color: C.ivory),
         child: child,
       );
 }

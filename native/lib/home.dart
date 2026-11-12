@@ -299,10 +299,6 @@ class HomeTab extends StatelessWidget {
                     Flexible(child: Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12, color: const Color(0xFF5A4410), weight: FontWeight.w600))),
                   ]),
                 ),
-          if (Demo.goldChange != 0 || Demo.silverChange != 0) ...[
-            const SizedBox(height: 4),
-            Text('▲▼ முந்தைய விலையோடு ஒப்பிட்டு', style: sans(11.5, color: C.mute)),
-          ],
           const SizedBox(height: 8),
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
@@ -326,14 +322,14 @@ class HomeTab extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // ---------- புதுசு என்ன (stories) ----------
           if (app.stories.isNotEmpty) ...[
-            const SectionTitle('✨ புதுசு என்ன'),
+            const SectionTitle('புதுசு என்ன'),
             StoryRow(go: go),
             const SizedBox(height: 22),
           ],
           // ---------- Quick actions ----------
           Row(children: [
             _quick(context, Icons.menu_book_outlined, 'என்\nPassbook', () => go(2)),
-            _quick(context, Icons.credit_card, 'தவணைத்தொகை\nசெலுத்த', () => go(2)),
+            _quick(context, Icons.credit_card, 'தவணை\nகட்ட', () => go(2)),
             _quick(context, Icons.diamond_outlined, 'சேமிப்பு\nதிட்டங்கள்', () => go(1)),
             _quick(context, Icons.how_to_reg_outlined, 'திட்டத்தில்\nசேர', () {
               if (app.schemes.isEmpty) return go(1);
@@ -351,7 +347,7 @@ class HomeTab extends StatelessWidget {
           // ---------- நகை வகைகள் (shop photos, swipe) ----------
           if (app.cats.isNotEmpty) ...[
             const SizedBox(height: 26),
-            const SectionTitle('💍 நகை வகைகள்'),
+            const SectionTitle('நகை வகைகள்'),
             const CategoryStrip(),
           ],
           const SizedBox(height: 24),
@@ -484,8 +480,8 @@ class _RateBoard extends StatelessWidget {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: Text(change == 0 ? '● மாற்றம் இல்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)}',
-                            maxLines: 1, style: sans(12.5, color: change == 0 ? C.mute : (change > 0 ? C.green : C.red), weight: FontWeight.w700)),
+                        child: Text(change == 0 ? '● நேற்றைய விலையே' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)} நேற்றைவிட',
+                            maxLines: 1, style: sans(12.5, color: change == 0 ? C.mute : C.navy, weight: FontWeight.w700)),
                       ),
                     ]),
                   ),
@@ -648,7 +644,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.29', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.30', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -769,7 +765,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.29', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.30', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );

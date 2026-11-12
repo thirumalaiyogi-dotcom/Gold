@@ -69,9 +69,9 @@ class SchemeCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: IntrinsicHeight(
             child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              Expanded(child: OutlineBtn('மேலும் அறியவும்', onTap: () => openScheme(context, s))),
+              Expanded(child: OutlineBtn('விவரம்', onTap: () => openScheme(context, s))),
               const SizedBox(width: 10),
-              Expanded(child: PrimaryButton('இப்போது சேரவும்', onTap: () => openEnrol(context, s))),
+              Expanded(child: PrimaryButton('சேர', onTap: () => openEnrol(context, s))),
             ]),
           ),
         ),

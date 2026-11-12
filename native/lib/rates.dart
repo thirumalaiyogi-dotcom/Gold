@@ -129,7 +129,7 @@ class _RatePageState extends State<RatePage> {
               const SizedBox(width: 10),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
-                child: Text('${diff >= 0 ? '▲' : '▼'} ${rupees(diff.abs(), decimals: dec)}', style: sans(13.5, color: diff >= 0 ? C.green : C.red, weight: FontWeight.w700)),
+                child: Text(diff == 0 ? 'மாற்றம் இல்லை' : '${diff > 0 ? '▲' : '▼'} ${rupees(diff.abs(), decimals: dec)} ${diff > 0 ? 'கூடுதல்' : 'குறைவு'}', style: sans(13.5, color: C.navy, weight: FontWeight.w700)),
               ),
             ]),
             const SizedBox(height: 14),
@@ -149,7 +149,7 @@ class _RatePageState extends State<RatePage> {
           const SizedBox(width: 8),
           _stat('குறைந்தபட்ச விலை', rupees(lo, decimals: dec)),
           const SizedBox(width: 8),
-          _stat('மாற்றம்', '${diff >= 0 ? '+' : '−'}${rupees(diff.abs(), decimals: dec)}', color: diff >= 0 ? C.green : C.red),
+          _stat('மாற்றம்', '${diff >= 0 ? '+' : '−'}${rupees(diff.abs(), decimals: dec)}', color: C.ink),
         ]),
         const SizedBox(height: 18),
         Text('தேதி வாரியான விலை', style: serif(18, color: C.ink, weight: FontWeight.w700)),
