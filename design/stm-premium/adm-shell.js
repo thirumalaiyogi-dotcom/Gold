@@ -16,6 +16,7 @@
   const I = {
     dash: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
     cust: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 21 12z"/>',
     bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
     set: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
     back: '<path d="M15 5l-7 7 7 7"/>',
@@ -117,6 +118,7 @@
     dash: { t: "Dashboard", nav: "dash" },
     cust: { t: "Customers", nav: "cust", cards: ["Customers"] },
     notify: { t: "அறிவிப்பு", nav: "notify" },
+    chat: { t: "கேள்விகள்", nav: "chat", cards: ["கேள்விகள்"] },
     nsend: { t: "Notification அனுப்பு", sub: 1, cards: ["Notification அனுப்பு"] },
     nposter: { t: "App Poster", sub: 1, cards: ["App திறக்கும்போது Poster"] },
     nstory: { t: "புதுசு என்ன", sub: 1, cards: ["புதுசு என்ன"] },
@@ -135,7 +137,7 @@
     staff: { t: "Staff & அனுமதிகள்", sub: 1 },
     more: { t: "மற்றவை", sub: 1 },
   };
-  const NAV = [["dash", "Dashboard", "dash"], ["cust", "Customers", "cust"], ["notify", "அறிவிப்பு", "bell"], ["set", "அமைப்பு", "set"]];
+  const NAV = [["dash", "Dashboard", "dash"], ["cust", "Customers", "cust"], ["chat", "கேள்விகள்", "chat"], ["notify", "அறிவிப்பு", "bell"], ["set", "அமைப்பு", "set"]];
   const norm = (t) => String(t || "").replace(/[^஀-௿A-Za-z0-9& ]/g, "").replace(/\s+/g, " ").trim();
   const cardBy = (t) => [...doc.querySelectorAll("#adm .card")].find((c) => { const h = c.querySelector(":scope>h2"); return h && norm(h.textContent).startsWith(norm(t)); });
   let built = false, cur = "dash", stack = [];
@@ -162,7 +164,7 @@
     const it = (k, l, ic) => `<button type="button" data-n="${k}">${svg(ic)}<span>${l}</span><span class="s6dot" data-dot="${k}"></span></button>`;
     side.innerHTML = `<div class="brand"><img src="${T(() => LOGO, "icon-192.png")}" alt=""><div><b>Staff Panel</b><small>சுப்புலட்சுமி தங்க மாளிகை</small></div></div>
       <h6>முதன்மை</h6>${it("dash", "Dashboard", "dash")}${it("cust", "Customers", "cust")}${it("pay", "தவணை பதிவு", "pay")}${it("newcust", "புதிய Customer", "add")}${it("remind", "நினைவூட்டல்", "remind")}
-      <h6>தொடர்பு</h6>${it("notify", "அறிவிப்பு & Poster", "bell")}${it("refer", "Refer & Earn", "gift")}
+      <h6>தொடர்பு</h6>${it("chat", "கேள்விகள்", "chat")}${it("notify", "அறிவிப்பு & Poster", "bell")}${it("refer", "Refer & Earn", "gift")}
       <h6>அமைப்பு</h6>${it("rate", "தங்கம் / வெள்ளி விலை", "rate")}${it("schemes", "திட்டங்கள்", "scheme")}${it("images", "App படங்கள்", "img")}${it("links", "Links", "link")}${it("staff", "Staff & அனுமதிகள்", "staff")}${it("set", "எல்லா அமைப்பும்", "set")}`;
     side.onclick = (e) => { const b = e.target.closest("[data-n]"); if (b) navTo(b.dataset.n); };
     doc.body.appendChild(side);
@@ -173,6 +175,8 @@
     placeCards();
     buildDash(); buildCust(); buildSettings(); buildNotify(); buildPicker();
     navTo("dash", true);
+    window.S6NAV = (k) => navTo(k);
+    if (location.hash === "#chat") navTo("chat", true); // opened from a "new question" push
     try { history.replaceState({ s6base: 1 }, ""); } catch (e) {}
     armHistory();
     // the old tab switcher is still used by other code (staffTab) → route it here

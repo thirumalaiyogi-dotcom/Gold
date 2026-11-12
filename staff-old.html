@@ -515,6 +515,15 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <input id="ppt" maxlength="80" placeholder="Notification தலைப்பு (tick பண்ணினா மட்டும்)">
   <button class="btn" id="ppgo">📢 Poster வெளியிடு</button>
   <div class="mut" style="margin-top:10px">Posters:</div><div id="pplist"></div></div>
+  <div class="card" id="chatcard"><h2>கேள்விகள் 💬</h2>
+  <div class="mut">Customer-கள் app-லிருந்து கேட்கும் கேள்விகள். இங்கே பதில் போட்டா அவங்க phone-க்கு notification போகும். ஒவ்வொருவருடனான பேச்சும் தனிப்பட்டது.</div>
+  <div id="chpush" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 12px"><button class="btn" id="chpbtn" type="button" style="width:auto;padding:0 16px">🔔 இந்த phone-ல் புது கேள்வி அறிவிப்பு பெற</button><span class="mut" id="chpst"></span></div>
+  <div id="chlist"></div>
+  <div id="chthread" class="hide">
+    <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid #E8D9B9;padding-bottom:10px;margin-bottom:10px"><button type="button" id="chback" style="min-width:44px;min-height:44px;border-radius:12px;border:1px solid #E8D9B9;background:#fff;font-size:18px;cursor:pointer" aria-label="பட்டியலுக்கு">‹</button><div style="flex:1;min-width:0"><b id="chname"></b><div class="mut" id="chinfo"></div></div></div>
+    <div id="chmsgs" style="display:flex;flex-direction:column;gap:8px;max-height:58vh;overflow:auto;padding:4px 2px 8px"></div>
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-top:10px"><textarea id="chin" rows="2" maxlength="1000" aria-label="பதில்" style="flex:1 1 0;width:auto!important;max-width:none!important;margin:0!important;min-width:0"></textarea><button class="btn" id="chsend" type="button" style="width:auto;padding:0 18px;margin:0">அனுப்பு</button></div>
+  </div></div>
   <div class="card" id="wncard"><h2>✨ புதுசு என்ன (Stories)</h2>
   <div class="mut">App home-ல மேல வட்ட வட்டமா வரும். தொட்டா முழுப் படமா (story மாதிரி) திறக்கும். புது நகை, offer, விழா எதுவானாலும் போடலாம். நீள்வாக்கு படம் (1080×1600 போல) நல்லது.</div>
   <input type="file" id="wnf" accept="image/*"><div id="wnimg"></div>
@@ -634,7 +643,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat();loadChats()}
 async function load(){
  let {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name");
  if(error&&/mode|gold_rate/.test(error.message||""))({data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name"));
@@ -1090,6 +1099,48 @@ $("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster �
  let msg="Poster வெளியாச்சு ✅";
  if($("ppn").checked){const d=await pushFn({action:"send",title:$("ppt").value.trim(),body:"",image:PPIMG,url:$("ppl").value,target:"all"});msg+=d.ok?`\n🔔 ${d.sent} phone-க்கு notification போச்சு`:"\nNotification போகல: "+(d.err||"");loadPushLog()}
  alert(msg);PPIMG="";$("ppf").value="";$("ppimg").innerHTML="";$("pps").value="";$("ppe").value="";$("ppn").checked=false;$("ppt").value="";loadPop()};
+
+// ===== கேள்விகள் (gold_chat): customer ↔ shop private chat =====
+let CH_CUR=null,CH_ME="",CH_T=null;
+const chTime=t=>{const d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString("ta-IN",{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString("ta-IN",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("ta-IN",{hour:"numeric",minute:"2-digit"})};
+async function loadChats(){const {data,error}=await sb.from("gold_chat").select("id,customer_id,sender,body,seen,created_at").order("id",{ascending:false}).limit(600);
+ if(error){$("chlist").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
+ const by=new Map();(data||[]).forEach(m=>{let c=by.get(m.customer_id);if(!c){c={last:m,unread:0};by.set(m.customer_id,c)}if(m.sender==="c"&&!m.seen)c.unread++});
+ const ids=[...by.keys()];let names={};if(ids.length){const r=await sb.from("gold_customers").select("id,name,mobile").in("id",ids);(r.data||[]).forEach(x=>names[x.id]=x)}
+ window.CH_NAMES=names;const tot=[...by.values()].reduce((a,c)=>a+c.unread,0);
+ document.querySelectorAll('[data-dot="chat"]').forEach(x=>{x.textContent=tot||"";x.classList.toggle("on",tot>0)});
+ $("chlist").innerHTML=ids.map(id=>{const c=by.get(id),n=names[id]||{};return `<div class="row" data-ch="${id}" style="cursor:pointer;align-items:center"><span style="min-width:0;flex:1"><b>${esc(n.name||"Customer")}</b>${c.unread?` <span style="background:#6E1423;color:#fff;border-radius:99px;padding:0 8px;font-size:12px">${c.unread}</span>`:""}<br><span class="mut" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.last.sender==="s"?"நீங்கள்: ":""}${esc(c.last.body)}</span></span><span class="mut" style="font-size:12px;white-space:nowrap">${chTime(c.last.created_at)}</span></div>`}).join("")||'<div class="mut">இன்னும் கேள்விகள் இல்ல</div>';
+ if(CH_CUR)openChat(CH_CUR,true)}
+async function openChat(id,quiet){CH_CUR=id;$("chin").placeholder="பதில் எழுதுங்க…";$("chlist").classList.add("hide");$("chthread").classList.remove("hide");$("chpush").classList.add("hide");
+ const n=(window.CH_NAMES||{})[id]||{};$("chname").textContent=n.name||"Customer";$("chinfo").textContent=n.mobile?("+91 "+n.mobile):"";
+ const {data}=await sb.from("gold_chat").select("id,sender,body,created_at,staff_email").eq("customer_id",id).order("id",{ascending:true}).limit(300);
+ const box=$("chmsgs"),atEnd=box.scrollHeight-box.scrollTop-box.clientHeight<60;
+ box.innerHTML=(data||[]).map(m=>m.sender==="c"
+  ?`<div style="align-self:flex-start;max-width:80%;background:#fff;border:1px solid #E8D9B9;border-radius:14px 14px 14px 4px;padding:8px 12px"><div style="white-space:pre-wrap">${esc(m.body)}</div><div class="mut" style="font-size:11.5px;text-align:right">${chTime(m.created_at)}</div></div>`
+  :`<div style="align-self:flex-end;max-width:80%;background:#6E1423;color:#fff;border-radius:14px 14px 4px 14px;padding:8px 12px"><div style="white-space:pre-wrap">${esc(m.body)}</div><div style="font-size:11.5px;text-align:right;color:#F1D9DD">${esc((m.staff_email||"").split("@")[0])} · ${chTime(m.created_at)}</div></div>`).join("");
+ if(!quiet||atEnd)box.scrollTop=box.scrollHeight;
+ await sb.from("gold_chat").update({seen:true}).eq("customer_id",id).eq("sender","c").eq("seen",false)}
+$("chlist").addEventListener("click",e=>{const r=e.target.closest("[data-ch]");if(r)openChat(r.dataset.ch)});
+$("chback").onclick=()=>{CH_CUR=null;$("chthread").classList.add("hide");$("chlist").classList.remove("hide");$("chpush").classList.remove("hide");loadChats()};
+$("chsend").onclick=async()=>{const t=$("chin").value.trim();if(!t||!CH_CUR)return;const b=$("chsend");b.disabled=true;
+ if(!CH_ME){const u=await sb.auth.getUser();CH_ME=(u.data&&u.data.user&&u.data.user.email)||""}
+ const {error}=await sb.from("gold_chat").insert({customer_id:CH_CUR,sender:"s",body:t,staff_email:CH_ME});
+ if(error){b.disabled=false;return alert(error.message)}
+ $("chin").value="";await openChat(CH_CUR);b.disabled=false;
+ const d=await pushFn({action:"chat_reply",customer_id:CH_CUR});
+ if(d&&d.ok&&!d.total)$("chinfo").textContent+=" · இவருக்கு app notification இல்லை (app திறந்தால் பதில் தெரியும்)"};
+$("chin").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.ctrlKey||e.metaKey))$("chsend").click()});
+function b64u8(s){const p="=".repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function chPushState(){try{const r=await navigator.serviceWorker.getRegistration();const sub=r&&await r.pushManager.getSubscription();$("chpst").textContent=sub&&Notification.permission==="granted"?"✅ இந்த phone-க்கு அறிவிப்பு வரும் (மீண்டும் அழுத்தினா புதுப்பிக்கும்)":""}catch(e){}}
+$("chpbtn").onclick=async()=>{try{
+ if(!("serviceWorker" in navigator)||!("PushManager" in window))return alert("இந்த browser-ல் push வசதி இல்ல. Chrome-ல் திறங்க.");
+ const perm=await Notification.requestPermission();if(perm!=="granted")return alert("Notification அனுமதி கொடுக்கல. Browser settings-ல் அனுமதி கொடுங்க.");
+ const reg=await navigator.serviceWorker.register("sw.js");await navigator.serviceWorker.ready;
+ let sub=await reg.pushManager.getSubscription();if(!sub){const k=await pushFn({action:"key"});if(!k.ok)return alert("Key கிடைக்கல");sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u8(k.key)})}
+ const d=await pushFn({action:"staff_sub",sub:sub.toJSON()});alert(d.ok?"சரி ✅ புது கேள்வி வந்தா இந்த phone-க்கு notification வரும்":"முடியல: "+(d.err||""));chPushState()}catch(e){alert(e.message||e)}};
+chPushState();
+setInterval(()=>{if(!document.hidden&&!$("adm").classList.contains("hide"))loadChats()},20000);
+navigator.serviceWorker&&navigator.serviceWorker.addEventListener("message",e=>{if(e.data&&e.data.type==="open"&&e.data.hash==="#chat"){window.S6NAV&&window.S6NAV("chat");loadChats()}});
 
 // ===== புதுசு என்ன (stories) + நகை வகைகள் (gold_whatsnew / gold_categories) =====
 async function upImg(f,dir,box){$(box).textContent="படம் ஏற்றுகிறது…";
