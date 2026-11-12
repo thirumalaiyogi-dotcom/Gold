@@ -44,20 +44,23 @@ class SchemeCard extends StatelessWidget {
           onTap: () => openScheme(context, s),
           child: Container(
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
-            decoration: velvetDeco(alignment: Alignment.topLeft),
+            // silver scheme gets a silver card so gold vs silver reads at a glance (design audit)
+            decoration: s.silver
+                ? const BoxDecoration(gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF8A939D), Color(0xFF545B64), Color(0xFF3E444B)]))
+                : velvetDeco(alignment: Alignment.topLeft),
             child: Row(children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                    decoration: BoxDecoration(color: C.goldSoft, borderRadius: BorderRadius.circular(99)),
+                    decoration: BoxDecoration(color: s.silver ? const Color(0xFFE6E9ED) : C.goldSoft, borderRadius: BorderRadius.circular(99)),
                     child: Text('${s.months} மாத திட்டம்', style: sans(11.5, color: C.navy2, weight: FontWeight.w700)),
                   ),
                   const SizedBox(height: 10),
                   Text(s.name, softWrap: true, style: serif(20, color: Colors.white, weight: FontWeight.w700, height: 1.3)),
                   const SizedBox(height: 4),
-                  Text(s.tag, style: sans(13, color: C.navyMute)),
-                  Text(s.amountRange, style: sans(13, color: C.navyMute)),
+                  Text(s.tag, style: sans(13, color: s.silver ? const Color(0xFFEFF1F4) : C.navyMute)),
+                  Text(s.amountRange, style: sans(13, color: s.silver ? const Color(0xFFEFF1F4) : C.navyMute)),
                 ]),
               ),
               const SizedBox(width: 12),

@@ -17,7 +17,7 @@ class PaymentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final n = p[0] as String, date = p[1] as String, amt = p[2] as int, g = p[3] as double;
-    return Container(
+    final row = Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(border: last ? null : const Border(bottom: BorderSide(color: Color(0xFFF0EADB)))),
       child: Row(children: [
@@ -31,30 +31,36 @@ class PaymentRow extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text.rich(TextSpan(children: [
-              TextSpan(text: rupees(amt), style: serif(16.5)),
-              if (g > 0) TextSpan(text: '  ${g.toStringAsFixed(3)} கி', style: sans(12.5, color: C.goldText, weight: FontWeight.w600)),
-            ])),
+            Row(children: [
+              Flexible(
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(text: rupees(amt), style: serif(16.5)),
+                  if (g > 0) TextSpan(text: '  ${g.toStringAsFixed(3)} கி', style: sans(12.5, color: C.goldText, weight: FontWeight.w600)),
+                ])),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+                decoration: BoxDecoration(color: const Color(0xFFE6F3EC), borderRadius: BorderRadius.circular(99)),
+                child: Text('✓ செலுத்தியது', style: sans(11.5, color: C.green, weight: FontWeight.w700)),
+              ),
+            ]),
             const SizedBox(height: 2),
-            Text.rich(TextSpan(children: [
-              TextSpan(text: '$date · ', style: sans(12.5, color: C.mute)),
-              TextSpan(text: '✓ செலுத்தியது', style: sans(12.5, color: C.green, weight: FontWeight.w600)),
-            ])),
+            Text(date, style: sans(12.5, color: C.mute)),
           ]),
         ),
-        if (receipt)
-          OutlinedButton(
-            onPressed: () => showReceipt(context, n, date, amt, g),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: C.navy,
-              side: const BorderSide(color: Color(0xFFE2D6BE)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              minimumSize: const Size(0, 40),
-            ),
-            child: Text('ரசீது', style: sans(13, color: C.navy, weight: FontWeight.w600)),
-          ),
+        if (receipt) ...[
+          const SizedBox(width: 6),
+          Column(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.receipt_long_outlined, size: 20, color: C.navy),
+            Text('ரசீது', style: sans(11.5, color: C.navy, weight: FontWeight.w600)),
+          ]),
+        ],
       ]),
     );
+    if (!receipt) return row;
+    // the whole row opens the receipt (design audit: no button on every line)
+    return InkWell(onTap: () => showReceipt(context, n, date, amt, g), child: row);
   }
 }
 
@@ -140,7 +146,6 @@ class _PassbookTabState extends State<PassbookTab> {
   }
 
   Widget _savings(BuildContext context) {
-    final pct = (paid / Demo.months).clamp(0.0, 1.0);
     final left = (Demo.months - paid).clamp(0, 99);
     final done = Demo.schemeDone;
     final day = nowIst().day;
@@ -176,13 +181,7 @@ class _PassbookTabState extends State<PassbookTab> {
           const SizedBox(height: 14),
           const SizedBox(height: 4),
           CoinStack(total: Demo.months, paid: paid, silver: Demo.silver, labels: Demo.monthLabels),
-          const SizedBox(height: 12),
-          Row(children: [
-            Text('$paid / ${Demo.months} ${Demo.silver ? 'மாதம்' : 'தவணை'}', style: sans(12, color: C.mute)),
-            const Spacer(),
-            Text('${(pct * 100).round()}%', style: sans(12, color: C.mute)),
-          ]),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           const Divider(height: 1, color: C.line),
           const SizedBox(height: 10),
           InfoBox(
@@ -213,8 +212,9 @@ class _PassbookTabState extends State<PassbookTab> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text('பரிசுத் தொகை (${Demo.refCount} நண்பர்)', style: sans(13.5, color: C.ink, weight: FontWeight.w700)),
-                        Text('வரவு வைத்தது ${rupees(Demo.refGiven)} · பாக்கி ${rupees(Demo.refPending)}', style: sans(12, color: C.mute)),
+                        Text('Refer பரிசு', maxLines: 1, style: sans(14, color: C.ink, weight: FontWeight.w700)),
+                        Text(Demo.refPending > 0 ? '${Demo.refCount} நண்பர் · ${rupees(Demo.refPending)} வரவு வைக்க வேண்டியது' : '${Demo.refCount} நண்பர் · முழுதும் வரவு வைத்தாச்சு',
+                            maxLines: 2, style: sans(12.5, color: C.mute)),
                       ]),
                     ),
                     Text(rupees(Demo.refEarned), style: serif(19, color: C.navy, weight: FontWeight.w700)),
@@ -457,7 +457,7 @@ Widget _refStat(String v, String l) => Expanded(
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         FittedBox(fit: BoxFit.scaleDown, child: Text(v, style: serif(19, color: C.navy, weight: FontWeight.w700))),
         const SizedBox(height: 2),
-        Text(l, textAlign: TextAlign.center, style: sans(11.5, color: C.mute)),
+        FittedBox(fit: BoxFit.scaleDown, child: Text(l, maxLines: 1, textAlign: TextAlign.center, style: sans(13, color: C.ink, weight: FontWeight.w600))),
       ]),
     );
 
@@ -505,8 +505,9 @@ class ReferralPage extends StatelessWidget {
                 _refStep('3', 'உங்களுடைய நண்பர் செலுத்தும் முதல் தவணைத் தொகையில் ${Demo.refPct}% உங்களுடைய கணக்கில் பரிசுத் தொகையாக வரவு வைக்கப்படும்.'),
               ]),
             ),
+            // live reward numbers from the passbook — shown once a friend has joined
+            if (Demo.refCount > 0 || Demo.refEarned > 0) ...[
             const SizedBox(height: 14),
-            // live reward numbers from the passbook
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
@@ -523,6 +524,7 @@ class ReferralPage extends StatelessWidget {
             if (Demo.refGiven > 0) ...[
               const SizedBox(height: 6),
               Text('வரவு வைத்தது: ${rupees(Demo.refGiven)}', style: sans(12.5, color: C.green, weight: FontWeight.w600)),
+            ],
             ],
             const SizedBox(height: 14),
             SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்புத் திட்டத்தில் சேருங்கள்! App-ல் சேரும்போது "Reference code" box-ல் என் code ${Demo.member} கொடுங்கள்.\n${Api.site}'))),

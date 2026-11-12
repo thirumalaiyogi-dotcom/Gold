@@ -266,14 +266,18 @@ class HomeTab extends StatelessWidget {
             SizedBox(
               width: 48,
               height: 48,
-              child: IconButton(
-                tooltip: 'Menu',
-                onPressed: () {
-                  tapFeel();
-                  onOpenMenu();
-                },
-                style: IconButton.styleFrom(backgroundColor: C.paper, side: const BorderSide(color: C.line2)),
-                icon: const Icon(Icons.menu, color: C.navy),
+              // ☰ menu duplicated the கணக்கு tab → bell with unread count instead (design audit)
+              child: ValueListenableBuilder<int>(
+                valueListenable: Notify.unread,
+                builder: (_, n, __) => IconButton(
+                  tooltip: 'அறிவிப்புகள்',
+                  onPressed: () {
+                    tapFeel();
+                    go(3);
+                  },
+                  style: IconButton.styleFrom(backgroundColor: C.paper, side: const BorderSide(color: C.line2)),
+                  icon: Badge(isLabelVisible: n > 0, label: Text('$n'), backgroundColor: C.red, child: const Icon(Icons.notifications_none, color: C.navy)),
+                ),
               ),
             ),
           ]),
@@ -320,42 +324,26 @@ class HomeTab extends StatelessWidget {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          // Order (design audit): saver → due card first; guest → scheme hero. Quick-action row and contact chips removed (same as bottom tabs / shop card).
+          if (app.loggedIn && app.pb != null) ...[
+            const _NextDue(),
+            const SizedBox(height: 26),
+          ],
           // ---------- புதுசு என்ன (stories) ----------
           if (app.stories.isNotEmpty) ...[
             const SectionTitle('புதுசு என்ன'),
             StoryRow(go: go),
             const SizedBox(height: 22),
           ],
-          // ---------- Quick actions ----------
-          Row(children: [
-            _quick(context, Icons.menu_book_outlined, 'என்\nPassbook', () => go(2)),
-            _quick(context, Icons.credit_card, 'தவணை\nகட்ட', () => go(2)),
-            _quick(context, Icons.diamond_outlined, 'சேமிப்பு\nதிட்டங்கள்', () => go(1)),
-            _quick(context, Icons.how_to_reg_outlined, 'திட்டத்தில்\nசேர', () {
-              if (app.schemes.isEmpty) return go(1);
-              Navigator.of(context).push(MaterialPageRoute(builder: (_) => EnrolPage(initial: app.schemes.first)));
-            }),
-          ]),
-          const SizedBox(height: 18),
-          Row(children: [
-            _chip(context, Icons.chat_outlined, 'WhatsApp', () => whatsApp(context)),
-            const SizedBox(width: 8),
-            _chip(context, Icons.call_outlined, 'அழைக்க', () => callShop(context)),
-            const SizedBox(width: 8),
-            _chip(context, Icons.place_outlined, 'வழி காட்டு', () => openMaps(context)),
-          ]),
+          if (!(app.loggedIn && app.pb != null)) ...[
+            _SchemeHero(go: go),
+            const SizedBox(height: 4),
+          ],
           // ---------- நகை வகைகள் (shop photos, swipe) ----------
           if (app.cats.isNotEmpty) ...[
-            const SizedBox(height: 26),
+            const SizedBox(height: 24),
             const SectionTitle('நகை வகைகள்'),
             const CategoryStrip(),
-          ],
-          const SizedBox(height: 24),
-          if (app.loggedIn && app.pb != null) const _NextDue() else _SchemeHero(go: go),
-          if (app.notices.isNotEmpty) ...[
-            const SizedBox(height: 28),
-            SectionTitle('அறிவிப்புகள்', action: 'அனைத்தும் ›', onAction: () => go(3)),
-            _NoticePreview(app.notices.first, onTap: () => go(3)),
           ],
           if (app.loggedIn && Demo.payments.isNotEmpty) ...[
             const SizedBox(height: 28),
@@ -365,19 +353,11 @@ class HomeTab extends StatelessWidget {
               return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1)]);
             })),
           ],
-          const SizedBox(height: 28),
-          SectionTitle('சேமிப்புத் திட்டங்கள்', action: 'அனைத்தும் ›', onAction: () => go(1)),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: IntrinsicHeight(
-              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                for (var i = 0; i < app.schemes.length; i++) ...[
-                  if (i > 0) const SizedBox(width: 12),
-                  SchemeCard(app.schemes[i], width: 300),
-                ],
-              ]),
-            ),
-          ),
+          if (app.notices.isNotEmpty) ...[
+            const SizedBox(height: 28),
+            SectionTitle('அறிவிப்புகள்', action: 'அனைத்தும் ›', onAction: () => go(3)),
+            _NoticePreview(app.notices.first, onTap: () => go(3)),
+          ],
           const SizedBox(height: 28),
           LuxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -388,10 +368,12 @@ class HomeTab extends StatelessWidget {
               Text('திங்கள் – சனி 9:00 – 9:00 · ஞாயிறு 9:00 – 8:00', style: sans(13.5, color: C.mute, height: 1.7)),
               const SizedBox(height: 12),
               Row(children: [
-                Expanded(child: PrimaryButton('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
-                const SizedBox(width: 10),
-                Expanded(child: OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => openMaps(context))),
+                Expanded(child: PrimaryButton('அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
+                const SizedBox(width: 8),
+                Expanded(child: OutlineBtn('WhatsApp', icon: Icons.chat_outlined, onTap: () => whatsApp(context))),
               ]),
+              const SizedBox(height: 8),
+              OutlineBtn('வழி காட்டு', icon: Icons.place_outlined, onTap: () => openMaps(context)),
             ]),
           ),
         ]),
@@ -399,50 +381,6 @@ class HomeTab extends StatelessWidget {
     ])));
   }
 
-  Widget _quick(BuildContext context, IconData i, String t, VoidCallback onTap) => Expanded(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            tapFeel();
-            onTap();
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Column(children: [
-              RingIcon(i),
-              const SizedBox(height: 8),
-              // each line shrinks to fit, so labels never wrap to 3 lines or get cut
-              for (final line in t.split('\n'))
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: FittedBox(fit: BoxFit.scaleDown, child: Text(line, maxLines: 1, style: sans(12.5, height: 1.35))),
-                ),
-            ]),
-          ),
-        ),
-      );
-
-  Widget _chip(BuildContext context, IconData i, String t, VoidCallback onTap) => Expanded(
-        child: Material(
-          color: C.paper,
-          shape: const StadiumBorder(side: BorderSide(color: C.line2)),
-          child: InkWell(
-            customBorder: const StadiumBorder(),
-            onTap: () {
-              tapFeel();
-              onTap();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Icon(i, size: 18, color: C.navy),
-                const SizedBox(width: 6),
-                Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: Text(t, maxLines: 1, style: sans(13.5, color: C.navy, weight: FontWeight.w600)))),
-              ]),
-            ),
-          ),
-        ),
-      );
 }
 
 class _RateBoard extends StatelessWidget {
@@ -644,7 +582,7 @@ class SideMenu extends StatelessWidget {
             }, color: C.red),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.30', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
+            child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.31', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6)),
           ),
         ]);
       }),
@@ -765,7 +703,7 @@ class ProfileTab extends StatelessWidget {
                 HapticFeedback.mediumImpact();
                 Navigator.of(context).push(MaterialPageRoute(builder: (_) => const DemoPassbookPage()));
               },
-              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.30', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
+              child: Center(child: Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி\nApp v0.9.31', textAlign: TextAlign.center, style: sans(12, color: C.mute, height: 1.6))),
             ),
           ]),
         );

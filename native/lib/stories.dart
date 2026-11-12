@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +50,7 @@ class _StoryRowState extends State<StoryRow> {
   Widget build(BuildContext context) {
     final list = app.stories;
     return SizedBox(
-      height: 112,
+      height: 126,
       child: ValueListenableBuilder<Set<String>>(
         valueListenable: storySeen,
         builder: (context, seen, _) => ListView.separated(
@@ -85,7 +86,7 @@ class _StoryRowState extends State<StoryRow> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text('${s['title']}', maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: sans(12.5, color: isSeen ? C.mute : C.ink, weight: FontWeight.w600)),
+                    Text('${s['title']}', maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: sans(12, color: isSeen ? C.mute : C.ink, weight: FontWeight.w600, height: 1.3)),
                   ]),
                 ),
               ),
@@ -204,6 +205,12 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
           child: Transform.translate(
             offset: Offset(0, _drag),
             child: Stack(fit: StackFit.expand, children: [
+              // same picture, blurred, fills the bands around a non-tall photo (design audit)
+              ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                child: Image.network('${s['image_url']}', fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox()),
+              ),
+              const ColoredBox(color: Color(0x66000000)),
               Image.network('${s['image_url']}', key: ValueKey(s['id']), fit: BoxFit.contain,
                   loadingBuilder: (c, w, p) => p == null ? w : const Center(child: CircularProgressIndicator(color: C.gold)),
                   errorBuilder: (_, __, ___) => Center(child: Text('படம் திறக்க முடியல', style: sans(14, color: Colors.white70)))),
