@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 import 'api.dart';
 import 'links.dart';
@@ -50,6 +51,7 @@ class _ChatPageState extends State<ChatPage> {
   bool loading = true, sending = false;
   String err = '';
   Timer? _poll;
+  final Map<String, String> _urls = {}; // storage path → signed link (1 h)
 
   static const _quick = [
     'இந்த மாத தவணை எப்போ கட்டணும்?',
@@ -88,6 +90,7 @@ class _ChatPageState extends State<ChatPage> {
         });
         chatUnread.value = 0;
         if (add.isNotEmpty) _toEnd();
+        _signImages();
       } else {
         setState(() {
           loading = false;
@@ -101,6 +104,67 @@ class _ChatPageState extends State<ChatPage> {
         if (!quiet) err = 'இணைய இணைப்பை சரிபார்க்கவும்';
       });
     }
+  }
+
+  Future<Map<String, dynamic>> _fn(String name, Map<String, dynamic> body) async {
+    try {
+      final r = await http.post(Uri.parse('${Api.url}/functions/v1/$name'),
+          headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'}, body: jsonEncode(body)).timeout(const Duration(seconds: 40));
+      final d = jsonDecode(utf8.decode(r.bodyBytes));
+      return d is Map ? Map<String, dynamic>.from(d) : {'ok': false};
+    } catch (_) {
+      return {'ok': false, 'err': 'net'};
+    }
+  }
+
+  Future<void> _signImages() async {
+    final need = _msgs.map((m) => '${m['i'] ?? ''}').where((p) => p.isNotEmpty && p != 'null' && !_urls.containsKey(p)).toSet().toList();
+    if (need.isEmpty) return;
+    final d = await _fn('chat-img', {'action': 'sign', 'mobile': app.mobile, 'pin': app.pin, 'paths': need});
+    final u = d['urls'];
+    if (u is Map && mounted) setState(() => u.forEach((k, v) => _urls['$k'] = '$v'));
+  }
+
+  Future<void> _pickPhoto() async {
+    if (sending) return;
+    final src = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: C.formBg,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(22))),
+      builder: (ctx) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          const SizedBox(height: 8),
+          ListTile(leading: const Icon(Icons.photo_library_outlined, color: C.navy), title: Text('Gallery-லிருந்து', style: sans(15.5)), onTap: () => Navigator.pop(ctx, ImageSource.gallery)),
+          ListTile(leading: const Icon(Icons.photo_camera_outlined, color: C.navy), title: Text('Camera-வில் எடுக்க', style: sans(15.5)), onTap: () => Navigator.pop(ctx, ImageSource.camera)),
+          const SizedBox(height: 8),
+        ]),
+      ),
+    );
+    if (src == null) return;
+    XFile? f;
+    try {
+      f = await ImagePicker().pickImage(source: src, maxWidth: 1280, maxHeight: 1280, imageQuality: 72);
+    } catch (_) {
+      if (mounted) showNote(context, 'படம் திறக்க முடியல');
+      return;
+    }
+    if (f == null) return;
+    final bytes = await f.readAsBytes();
+    if (bytes.length > 2 * 1024 * 1024) {
+      if (mounted) showNote(context, 'படம் மிகப் பெரியது (2 MB-க்கு மேல்)');
+      return;
+    }
+    setState(() => sending = true);
+    final d = await _fn('chat-img', {'action': 'upload', 'mobile': app.mobile, 'pin': app.pin, 'data': base64Encode(bytes), 'caption': _in.text.trim()});
+    if (!mounted) return;
+    if (d['ok'] == true) {
+      _in.clear();
+      await _load(quiet: true);
+      unawaited(_fn('push', {'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}));
+    } else {
+      showNote(context, d['err'] == 'too_many' ? 'இன்னைக்கு 10 படம் அனுப்பியாச்சு. நாளை தொடரலாம்.' : 'படம் அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.');
+    }
+    setState(() => sending = false);
   }
 
   void _toEnd() => WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -119,9 +183,7 @@ class _ChatPageState extends State<ChatPage> {
         _in.clear();
         await _load(quiet: true);
         // tell the shop's phones (fire and forget)
-        unawaited(http.post(Uri.parse('${Api.url}/functions/v1/push'),
-            headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'},
-            body: jsonEncode({'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin})).catchError((_) => http.Response('', 500)));
+        unawaited(_fn('push', {'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}));
       } else {
         showNote(context, d is Map && d['err'] == 'too_many' ? 'இன்னைக்கு அதிக செய்திகள் அனுப்பியாச்சு. நாளை தொடரலாம் அல்லது கடைக்கு அழைக்கவும்.' : 'அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.');
       }
@@ -169,10 +231,33 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          SelectableText('${m['b']}', style: sans(15, color: mine ? Colors.white : C.ink, height: 1.5)),
+          if ('${m['i'] ?? ''}'.isNotEmpty && '${m['i']}' != 'null') _photo('${m['i']}'),
+          if (!('${m['i'] ?? ''}'.isNotEmpty && '${m['i']}' != 'null' && '${m['b']}' == '📷 படம்'))
+            SelectableText('${m['b']}', style: sans(15, color: mine ? Colors.white : C.ink, height: 1.5)),
           const SizedBox(height: 2),
           Text(_hm(_t(m)), style: sans(11, color: mine ? const Color(0xFFF1D9DD) : C.mute)),
         ]),
+      ),
+    );
+  }
+
+  Widget _photo(String path) {
+    final u = _urls[path];
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: u == null
+            ? Container(width: 200, height: 150, color: const Color(0x22000000), alignment: Alignment.center, child: const Icon(Icons.image_outlined, color: Colors.white70))
+            : GestureDetector(
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => Scaffold(
+                          backgroundColor: Colors.black,
+                          appBar: AppBar(backgroundColor: Colors.black, foregroundColor: Colors.white),
+                          body: Center(child: InteractiveViewer(child: Image.network(u))),
+                        ))),
+                child: Image.network(u, width: 220, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox(width: 200, height: 60)),
+              ),
       ),
     );
   }
@@ -263,6 +348,11 @@ class _ChatPageState extends State<ChatPage> {
             padding: const EdgeInsets.fromLTRB(10, 8, 8, 8),
             decoration: const BoxDecoration(color: C.paper, border: Border(top: BorderSide(color: C.line2))),
             child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+              SizedBox(
+                width: 44,
+                height: 50,
+                child: IconButton(tooltip: 'படம் அனுப்ப', onPressed: sending ? null : _pickPhoto, icon: const Icon(Icons.photo_camera_outlined, color: C.navy)),
+              ),
               Expanded(
                 child: TextField(
                   controller: _in,
