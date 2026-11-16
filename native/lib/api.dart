@@ -60,6 +60,12 @@ class Api {
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
   }
 
+  /// Photos inside one நகை வகை (staff panel → நகை வகைகள் → 📷 படங்கள்).
+  static Future<List<Map<String, dynamic>>> categoryPhotos(dynamic categoryId) async {
+    final d = await _get('gold_category_photos?select=id,image_url,title,note&category_id=eq.$categoryId&order=sort.asc,created_at.asc&limit=120');
+    return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();
+  }
+
   static Future<List<Map<String, dynamic>>> extraSchemes() async {
     final d = await _get('gold_schemes?select=*&active=eq.true&order=created_at.asc');
     return (d as List).map((e) => Map<String, dynamic>.from(e)).toList();

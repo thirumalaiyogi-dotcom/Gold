@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'links.dart';
+import 'gallery.dart';
 import 'main.dart';
 import 'rates.dart';
 import 'ui.dart';
@@ -299,12 +300,14 @@ class CategoryStrip extends StatelessWidget {
         itemBuilder: (context, i) {
           final c = list[i];
           final name = '${c['name']}';
-          final wa = '${c['wa_text'] ?? ''}';
           return Semantics(
             button: true,
-            label: '$name — WhatsApp-ல் கேட்க',
+            label: '$name — டிசைன்கள் பார்க்க',
             child: GestureDetector(
-              onTap: () => whatsApp(context, wa.isNotEmpty && wa != 'null' ? wa : 'வணக்கம், $name டிசைன்கள் பார்க்கணும். புகைப்படங்கள் அனுப்ப முடியுமா?'),
+              onTap: () {
+                HapticFeedback.selectionClick();
+                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CategoryGallery(cat: c)));
+              },
               child: Container(
                 width: 148,
                 decoration: BoxDecoration(
@@ -328,7 +331,7 @@ class CategoryStrip extends StatelessWidget {
                         width: 30,
                         height: 30,
                         decoration: const BoxDecoration(color: Color(0xE6FFFFFF), shape: BoxShape.circle),
-                        child: const Icon(Icons.chat_outlined, size: 16, color: C.navy),
+                        child: const Icon(Icons.arrow_forward_rounded, size: 17, color: C.navy),
                       ),
                     ]),
                   ),

@@ -526,13 +526,22 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <button class="btn" id="wngo">✨ App-ல சேர்</button>
   <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="wnlist"></div></div>
   <div class="card" id="catcard"><h2>💍 நகை வகைகள்</h2>
-  <div class="mut">App home-ல swipe பண்ற கட்டங்களா வரும். கடையில எடுத்த photo போடுங்க (சதுரம் அல்லது நீள்வாக்கு). Customer தொட்டா அந்த வகை பற்றி கடைக்கு WhatsApp-ல கேட்பாங்க.</div>
+  <div class="mut">App home-ல swipe பண்ற கட்டங்களா வரும். கடையில எடுத்த photo போடுங்க (சதுரம் அல்லது நீள்வாக்கு). Customer தொட்டா அந்த வகையோட நகை photo-க்கள் app உள்ளேயே திறக்கும் (ஒவ்வொரு வகைக்கும் “📷 படங்கள்” அழுத்தி photo சேருங்க). Photo இல்லாத வகையில் “WhatsApp-ல் கேட்க” button மட்டும் வரும்.</div>
   <input type="file" id="ctf" accept="image/*"><div id="ctimg"></div>
   <input id="ctn" maxlength="20" placeholder="வகை பெயர்* (உதா: நெக்லஸ், ஜிமிக்கி, வளையல்)">
   <input id="ctw" maxlength="120" placeholder="WhatsApp message (விருப்பம் — காலியா விட்டா தானா வரும்)">
   <input id="cts" type="number" inputmode="numeric" placeholder="வரிசை எண் (1 = முதல்ல; விருப்பம்)">
   <button class="btn" id="ctgo">💍 வகை சேர்</button>
-  <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="ctlist"></div></div>
+  <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="ctlist"></div>
+  <div id="cpbox" class="hide" style="margin-top:14px;border-top:1px solid #e6dcc4;padding-top:12px">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="cpname" style="font-size:17px"></b><a id="cpx" style="color:#777;text-decoration:underline">மூடு ✕</a></div>
+   <div class="mut">இந்த வகையை customer தொட்டா இந்த photo-க்கள் app உள்ளேயே gallery-ஆ வரும். ஒரே நேரத்துல நிறைய photo தேர்ந்தெடுக்கலாம்.</div>
+   <input id="cpt" maxlength="40" placeholder="நகை பெயர் (விருப்பம் · உதா: Kerala ஜிமிக்கி)">
+   <input id="cpn" maxlength="80" placeholder="சிறு குறிப்பு (விருப்பம் · உதா: சுமார் 8 கிராம்)">
+   <input type="file" id="cpf" accept="image/*" multiple>
+   <div class="mut" id="cpst"></div>
+   <div id="cplist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"></div>
+  </div></div>
   <div class="card" id="pushcard"><h2>🔔 Notification அனுப்பு</h2>
   <div class="mut">அனுமதி கொடுத்த customer-களுக்கு phone-ல notification-ஆ போகும். லாபம் / “பணம் பெருகும்” மாதிரி வாக்குறுதி வேண்டாம். நாளுக்கு ஒன்னுக்கு மேல வேண்டாம்.</div>
   <input id="pnt" maxlength="80" placeholder="தலைப்பு (எ.கா. தீபாவளி வாழ்த்துகள் 🪔)">
@@ -1157,12 +1166,35 @@ $("wngo").onclick=async()=>{if(!WNIMG)return alert("முதல்ல படம
  const l=$("wnl").value,b=$("wngo");b.disabled=true;
  const {error}=await sb.from("gold_whatsnew").insert({title:t,image_url:WNIMG,body:$("wnb").value.trim()||null,btn_link:l||null,btn_label:l?{wa:"WhatsApp-ல் கேட்க",schemes:"சேமிப்புத் திட்டம் பார்க்க",rate:"இன்றைய விலை பார்க்க"}[l]:null,ends_on:$("wne").value||null,active:true});
  b.disabled=false;if(error)return alert(error.message);alert("App-ல சேர்ந்தாச்சு ✅");WNIMG="";$("wnf").value="";$("wnimg").innerHTML="";$("wnt").value="";$("wnb").value="";$("wnl").value="";$("wne").value="";loadWN()};
-async function loadCat(){const {data,error}=await sb.from("gold_categories").select("*").order("sort").order("created_at");
+let CPN={},CPID=0;
+async function loadCat(){const pc=await sb.from("gold_category_photos").select("category_id");CPN={};(pc.data||[]).forEach(x=>CPN[x.category_id]=(CPN[x.category_id]||0)+1);
+ const {data,error}=await sb.from("gold_categories").select("*").order("sort").order("created_at");
  if(error){$("ctlist").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
- $("ctlist").innerHTML=(data||[]).map(r=>`<div class="row"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(r.image_url)}" style="width:64px;height:64px;object-fit:cover;border-radius:10px"><span><b>${esc(r.name)}</b><br><span class="mut">${r.active?"🟢 App-ல வருது":"⏸ வரல"} · வரிசை ${r.sort}</span></span></span><span><a data-ca="${r.id}" data-on="${r.active?0:1}" style="color:${r.active?"#b00020":"#1f7a4d"};text-decoration:underline">${r.active?"நிறுத்து":"மீண்டும் போடு"}</a><br><a data-cd="${r.id}" style="color:#777;text-decoration:underline">நீக்கு</a></span></div>`).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
-$("ctlist").addEventListener("click",async e=>{const a=e.target.closest("[data-ca],[data-cd]");if(!a)return;
+ $("ctlist").innerHTML=(data||[]).map(r=>`<div class="row"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(r.image_url)}" style="width:64px;height:64px;object-fit:cover;border-radius:10px"><span><b>${esc(r.name)}</b><br><span class="mut">${r.active?"🟢 App-ல வருது":"⏸ வரல"} · வரிசை ${r.sort}</span></span></span><span><a data-cp="${r.id}" data-cn="${esc(r.name)}" style="color:#7a1e2c;font-weight:700;text-decoration:underline">📷 படங்கள்${CPN[r.id]?" ("+CPN[r.id]+")":""}</a><br><a data-ca="${r.id}" data-on="${r.active?0:1}" style="color:${r.active?"#b00020":"#1f7a4d"};text-decoration:underline">${r.active?"நிறுத்து":"மீண்டும் போடு"}</a><br><a data-cd="${r.id}" style="color:#777;text-decoration:underline">நீக்கு</a></span></div>`).join("")||'<div class="mut">இன்னும் இல்ல</div>'}
+$("ctlist").addEventListener("click",async e=>{const p=e.target.closest("[data-cp]");if(p){openCP(+p.dataset.cp,p.dataset.cn);return}
+ const a=e.target.closest("[data-ca],[data-cd]");if(!a)return;
  if(a.dataset.cd){if(!await ASK("இந்த வகையை நீக்கவா?"))return;await sb.from("gold_categories").delete().eq("id",+a.dataset.cd)}
  else await sb.from("gold_categories").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.ca);loadCat()});
+// ---- ஒவ்வொரு வகைக்குள்ளும் நகை photo-க்கள் (gold_category_photos) ----
+function openCP(id,name){CPID=id;$("cpname").textContent="📷 "+name+" — படங்கள்";$("cpbox").classList.remove("hide");$("cpst").textContent="";loadCP();$("cpbox").scrollIntoView({behavior:"smooth",block:"start"})}
+$("cpx").onclick=()=>{CPID=0;$("cpbox").classList.add("hide")};
+async function loadCP(){if(!CPID)return;const {data,error}=await sb.from("gold_category_photos").select("*").eq("category_id",CPID).order("sort").order("created_at");
+ if(error){$("cplist").innerHTML='<div class="mut" style="grid-column:1/-1">'+esc(error.message)+'</div>';return}
+ $("cplist").innerHTML=(data||[]).map(r=>`<div style="border:1px solid #e6dcc4;border-radius:10px;overflow:hidden;background:#fff;${r.active?"":"opacity:.45"}"><img src="${esc(r.image_url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"><div style="padding:6px;font-size:12.5px;line-height:1.35"><b>${esc(r.title||"—")}</b>${r.note?"<br>"+esc(r.note):""}<br><a data-pe="${r.id}" style="text-decoration:underline;color:#555">மாற்று</a> · <a data-pa="${r.id}" data-on="${r.active?0:1}" style="text-decoration:underline;color:${r.active?"#b00020":"#1f7a4d"}">${r.active?"மறை":"காட்டு"}</a> · <a data-pd="${r.id}" style="text-decoration:underline;color:#777">நீக்கு</a></div></div>`).join("")||'<div class="mut" style="grid-column:1/-1">இன்னும் photo இல்ல — மேல photo தேர்ந்தெடுங்க</div>'}
+$("cplist").addEventListener("click",async e=>{const a=e.target.closest("[data-pe],[data-pa],[data-pd]");if(!a)return;
+ if(a.dataset.pd){if(!await ASK("இந்த photo-வை நீக்கவா?"))return;await sb.from("gold_category_photos").delete().eq("id",+a.dataset.pd)}
+ else if(a.dataset.pa)await sb.from("gold_category_photos").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.pa);
+ else{const t=prompt("நகை பெயர் (காலியா விடலாம்)",a.closest("div").querySelector("b").textContent.replace("—",""));if(t===null)return;const n=prompt("சிறு குறிப்பு (காலியா விடலாம்)","");if(n===null)return;
+  await sb.from("gold_category_photos").update({title:t.trim()||null,note:n.trim()||null}).eq("id",+a.dataset.pe)}
+ loadCP();loadCat()});
+$("cpf").addEventListener("change",async e=>{const fs=[...e.target.files];if(!fs.length||!CPID)return;let ok=0;
+ for(let i=0;i<fs.length;i++){$("cpst").textContent=`ஏற்றுகிறது ${i+1} / ${fs.length}…`;
+  try{const blob=await shrink(fs[i]),path=`catphotos/${CPID}/${Date.now()}-${i}.jpg`;
+   const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+   const url=sb.storage.from("slides").getPublicUrl(path).data.publicUrl;
+   const r=await sb.from("gold_category_photos").insert({category_id:CPID,image_url:url,title:$("cpt").value.trim()||null,note:$("cpn").value.trim()||null,sort:Date.now()%1e9|0,active:true});if(r.error)throw r.error;ok++}
+  catch(x){alert((x.message||x)+"")}}
+ $("cpst").textContent=`✅ ${ok} photo சேர்ந்தாச்சு`;e.target.value="";$("cpt").value="";$("cpn").value="";loadCP();loadCat()});
 $("ctgo").onclick=async()=>{if(!CTIMG)return alert("முதல்ல photo போடுங்க");const n=$("ctn").value.trim();if(!n)return alert("வகை பெயர் போடுங்க");
  const b=$("ctgo");b.disabled=true;
  const {error}=await sb.from("gold_categories").insert({name:n,image_url:CTIMG,wa_text:$("ctw").value.trim()||null,sort:+$("cts").value||0,active:true});
