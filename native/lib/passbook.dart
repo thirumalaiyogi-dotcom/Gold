@@ -40,8 +40,12 @@ class PaymentRow extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Expanded(
-                child: Text(Demo.silver || mon.isEmpty ? (mon.isEmpty ? 'தவணை $n' : mon) : 'தவணை $n · $mon',
-                    maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(14.5, weight: FontWeight.w700)),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(Demo.silver || mon.isEmpty ? (mon.isEmpty ? 'தவணை $n' : mon) : 'தவணை $n · $mon',
+                      maxLines: 1, style: sans(14.5, weight: FontWeight.w700)),
+                ),
               ),
               const SizedBox(width: 8),
               Text(rupees(amt), style: serif(17, weight: FontWeight.w700)),
@@ -487,7 +491,7 @@ void showReceipt(BuildContext context, List<Object> p) {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5),
                     child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      SizedBox(width: 118, child: Text(r[0], style: sans(13.5, color: C.mute))),
+                      SizedBox(width: 132, child: Text(r[0], style: sans(13.5, color: C.mute))),
                       Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
                     ]),
                   ),

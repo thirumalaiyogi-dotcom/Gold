@@ -71,7 +71,7 @@ class _StatementPageState extends State<StatementPage> {
     Widget info(String k, String v) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 2.5),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(width: 108, child: Text(k, style: t(11.5, c: mute))),
+            SizedBox(width: 122, child: Text(k, style: t(11.5, c: mute))),
             Expanded(child: Text(v, style: t(12, w: FontWeight.w700))),
           ]),
         );
