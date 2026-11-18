@@ -42,7 +42,7 @@ class NoticesTab extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 8),
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                         decoration: BoxDecoration(color: C.navy, borderRadius: BorderRadius.circular(99)),
-                        child: Text('புதுசு', style: sans(11.5, color: Colors.white, weight: FontWeight.w700)),
+                        child: Text('புதிது', style: sans(11.5, color: Colors.white, weight: FontWeight.w700)),
                       ),
                     Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                       Expanded(child: Text((n['title'] ?? '').toString(), style: sans(15.5, color: C.head, weight: FontWeight.w700))),

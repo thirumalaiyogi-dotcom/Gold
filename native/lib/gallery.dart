@@ -41,7 +41,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
 
   void _askWa() {
     final wa = '${widget.cat['wa_text'] ?? ''}';
-    whatsApp(context, wa.isNotEmpty && wa != 'null' ? wa : 'வணக்கம், $name டிசைன்கள் பார்க்கணும். புகைப்படங்கள் அனுப்ப முடியுமா?');
+    whatsApp(context, wa.isNotEmpty && wa != 'null' ? wa : 'வணக்கம், $name டிசைன்களின் படங்களை அனுப்ப முடியுமா?');
   }
 
   @override
@@ -61,12 +61,12 @@ class _CategoryGalleryState extends State<CategoryGallery> {
       body = ListView(padding: const EdgeInsets.fromLTRB(24, 60, 24, 24), children: [
         const Icon(Icons.photo_library_outlined, size: 54, color: C.goldText),
         const SizedBox(height: 14),
-        Text(failed ? 'படங்களை ஏற்ற முடியல' : '$name டிசைன்கள் விரைவில் இங்கே', textAlign: TextAlign.center, style: serif(20)),
+        Text(failed ? 'படங்களை ஏற்ற முடியல' : '$name டிசைன்கள் விரைவில்', textAlign: TextAlign.center, style: serif(20)),
         const SizedBox(height: 8),
-        Text(failed ? 'Internet சரி பார்த்து மீண்டும் முயலுங்க.' : 'இப்போதைக்கு கடையிடம் WhatsApp-ல் கேட்டா புது டிசைன் photo அனுப்புவாங்க.',
+        Text(failed ? 'இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.' : 'புதிய டிசைன் படங்களுக்கு WhatsApp-ல் எங்களைத் தொடர்பு கொள்ளுங்கள்.',
             textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.5)),
         const SizedBox(height: 22),
-        if (failed) OutlineBtn('மீண்டும் முயல', icon: Icons.refresh, onTap: _load) else PrimaryButton('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: _askWa),
+        if (failed) OutlineBtn('மீண்டும் முயற்சி', icon: Icons.refresh, onTap: _load) else PrimaryButton('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: _askWa),
       ]);
     } else {
       body = RefreshIndicator(
@@ -88,7 +88,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
         foregroundColor: C.navy,
         title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(name, style: serif(20)),
-          if (photos.isNotEmpty) Text('${photos.length} டிசைன்கள் · தொட்டு பெரிசா பாருங்க', style: sans(12.5, color: C.mute)),
+          if (photos.isNotEmpty) Text('${photos.length} டிசைன்கள்', style: sans(12.5, color: C.mute)),
         ]),
       ),
       body: body,
@@ -234,7 +234,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
               if (title.isNotEmpty) Text(title, style: serif(21, color: Colors.white)),
               if (note.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(note, style: sans(15, color: Colors.white70, height: 1.4))),
               const SizedBox(height: 14),
-              PrimaryButton('இந்த நகை பற்றி WhatsApp-ல் கேள்', gold: true, icon: Icons.chat_outlined, onTap: () {
+              PrimaryButton('இந்த நகை பற்றி விசாரிக்க', gold: true, icon: Icons.chat_outlined, onTap: () {
                 final label = title.isNotEmpty ? '"$title"' : 'இந்த டிசைன்';
                 whatsApp(context, 'வணக்கம், ${widget.category} — $label பற்றி விவரம் வேண்டும் (எடை / விலை).\n${p['image_url']}');
               }),

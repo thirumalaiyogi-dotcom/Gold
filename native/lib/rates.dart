@@ -48,7 +48,7 @@ class _RatePageState extends State<RatePage> {
             ? Center(
           child: failed
               ? Column(mainAxisSize: MainAxisSize.min, children: [
-                  Text('விலை விவரம் ஏற்ற முடியல', style: sans(15)),
+                  Text('விலை விவரங்களைப் பெற இயலவில்லை', style: sans(15)),
                   const SizedBox(height: 10),
                   OutlineBtn('மீண்டும் முயற்சி', onTap: _load),
                 ])

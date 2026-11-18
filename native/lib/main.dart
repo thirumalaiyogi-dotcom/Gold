@@ -107,8 +107,8 @@ class Demo {
   }
 
   static String get rateStamp => _rt['updated_on'] == null
-      ? (app.rateError ? 'விலை இப்போ கிடைக்கல' : 'விலை ஏற்றுகிறது…')
-      : (rateIsToday ? 'இன்றைய விலை · ${taDate(_rt['updated_on'].toString())}' : 'கடைசி விலை · ${taDate(_rt['updated_on'].toString())} · இன்று இன்னும் புதுப்பிக்கல');
+      ? (app.rateError ? 'விலை தற்போது கிடைக்கவில்லை' : 'விலை ஏற்றுகிறது…')
+      : (rateIsToday ? 'இன்றைய விலை · ${taDate(_rt['updated_on'].toString())}' : 'கடைசி விலை · ${taDate(_rt['updated_on'].toString())} · இன்றைய விலை இன்னும் பதிவாகவில்லை');
 }
 
 /// App state: live rate / notices / schemes for everyone, passbook after mPIN login.

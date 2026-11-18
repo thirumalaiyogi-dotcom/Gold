@@ -280,7 +280,7 @@ class _MobileScreenState extends State<MobileScreen> {
     if (ok == false) {
       HapticFeedback.heavyImpact();
       setState(() {
-        err = 'இந்த எண் பதிவில் இல்ல. கடையில் பதிவு செய்த எண்ணை போடுங்க.';
+        err = 'இந்த எண் பதிவு செய்யப்படவில்லை. கடையில் கொடுத்த மொபைல் எண்ணை உள்ளிடவும்.';
         shake++;
       });
       return;
@@ -405,7 +405,7 @@ class _PinScreenState extends State<PinScreen> {
           // stored mPIN no longer matches (changed elsewhere): forget it, ask for the mPIN
           await Bio.disable();
           bio = false;
-          fail = 'mPIN மாறியிருக்கு. புது mPIN போடுங்க; அப்புறம் கைரேகையை மறுபடி இயக்கலாம்.';
+          fail = 'உங்கள் mPIN மாற்றப்பட்டுள்ளது. புதிய mPIN-ஐ உள்ளிடவும்; பிறகு கைரேகையை மீண்டும் இயக்கலாம்.';
         }
         if (!mounted) return;
         setState(() {
@@ -515,7 +515,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     } else if (_p1.text.length != 6) {
       e = '6 இலக்க mPIN போடுங்க';
     } else if (_p1.text != _p2.text) {
-      e = 'இரண்டு mPIN-ம் ஒன்னா இல்ல';
+      e = 'இரண்டு mPIN-களும் பொருந்தவில்லை';
     }
     if (e != null) {
       HapticFeedback.heavyImpact();
@@ -550,7 +550,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         }
       } catch (_) {}
       if (!mounted) return;
-      showNote(context, 'mPIN அமைக்கப்பட்டது ✓ இப்போ உள்நுழையுங்க');
+      showNote(context, 'mPIN அமைக்கப்பட்டது ✓ இப்போது உள்நுழையலாம்');
       Navigator.of(context).pop();
     }
     if (mounted) setState(() => busy = false);
@@ -584,10 +584,10 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         const SizedBox(height: 14),
         OutlineBtn('Activation code இல்லையா? Email-ல் OTP பெற', icon: Icons.mail_outline, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmailOtpScreen(mobile: _m.text)))),
         const SizedBox(height: 14),
-        Text('Code வரலையா? கடைக்கு வர வேண்டாம், இங்கேயே கேளுங்க:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
+        Text('Code கிடைக்கவில்லையா? இங்கே கேட்கலாம்:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
         const SizedBox(height: 8),
         Row(children: [
-          Expanded(child: OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => whatsApp(context, 'வணக்கம், எனக்கு Activation code வரல. புது code வேண்டும்.\nமொபைல் எண்: ${_m.text}'))),
+          Expanded(child: OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => whatsApp(context, 'வணக்கம், எனக்கு Activation code கிடைக்கவில்லை. புதிய code அனுப்பவும்.\nமொபைல் எண்: ${_m.text}'))),
           const SizedBox(width: 10),
           Expanded(child: OutlineBtn('கடைக்கு அழை', icon: Icons.call_outlined, onTap: () => callShop(context))),
         ]),
@@ -641,17 +641,17 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
   String _msg(String? e) {
     switch (e) {
       case 'nomatch':
-        return 'இந்த மொபைல் எண் கடையில் பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.';
+        return 'இந்த மொபைல் எண் பதிவு செய்யப்படவில்லை. கடையைத் தொடர்பு கொள்ளவும்.';
       case 'noemail':
         return 'உங்க பதிவில் Email இல்ல. கடையில் Email சேர்க்கச் சொல்லுங்க, அல்லது கீழே WhatsApp-ல் Activation code கேளுங்க.';
       case 'not_ready':
-        return 'Email OTP வசதி இன்னும் தயாராகல. கீழே WhatsApp-ல் Activation code கேளுங்க.';
+        return 'Email OTP தற்போது கிடைக்கவில்லை. கீழே WhatsApp மூலம் Activation code கேட்கலாம்.';
       case 'wait':
         return '1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.';
       case 'too_many':
-        return 'இன்னைக்கு அதிக தடவை OTP கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.';
+        return 'இன்றைக்கான OTP வரம்பு முடிந்தது. நாளை முயற்சிக்கவும் அல்லது கடையை அணுகவும்.';
       case 'expired':
-        return 'OTP காலாவதி ஆகிடுச்சு. மறுபடி அனுப்புங்க.';
+        return 'OTP காலாவதியானது. புதிய OTP பெறவும்.';
       case 'code_invalid':
         return 'OTP தவறு. Email-ல் வந்த 6 இலக்க எண்ணை சரியா போடுங்க.';
       case 'code_max_attempts_exceeded':
@@ -659,7 +659,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
       case 'net':
         return 'இணைய இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்.';
       default:
-        return 'இப்போ முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.${e == null ? '' : ' ($e)'}';
+        return 'தற்போது இயலவில்லை. சிறிது நேரம் கழித்து முயற்சிக்கவும்.${e == null ? '' : ' ($e)'}';
     }
   }
 
@@ -703,7 +703,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
     } else if (_p1.text.length != 6) {
       e = '6 இலக்க mPIN போடுங்க';
     } else if (_p1.text != _p2.text) {
-      e = 'இரண்டு mPIN-ம் ஒன்னா இல்ல';
+      e = 'இரண்டு mPIN-களும் பொருந்தவில்லை';
     }
     if (e != null) {
       HapticFeedback.heavyImpact();
@@ -736,7 +736,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
       }
     } catch (_) {}
     if (!mounted) return;
-    showNote(context, 'புது mPIN அமைக்கப்பட்டது ✓ இப்போ உள்நுழையுங்க');
+    showNote(context, 'புதிய mPIN அமைக்கப்பட்டது ✓ இப்போது உள்நுழையலாம்');
     Navigator.of(context).pop();
   }
 
@@ -784,7 +784,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
           Center(
             child: TextButton(
               onPressed: busy ? null : _send,
-              child: Text('OTP வரலையா? மறுபடி அனுப்பு', style: sans(14, color: C.navy, weight: FontWeight.w700)),
+              child: Text('OTP கிடைக்கவில்லையா? மீண்டும் அனுப்பு', style: sans(14, color: C.navy, weight: FontWeight.w700)),
             ),
           ),
         ],
@@ -841,7 +841,7 @@ class _DigitFieldState extends State<DigitField> {
           if (code != null) {
             widget.controller.text = code;
           } else {
-            showNote(context, 'Copy செய்த OTP இல்ல. Email-ல் OTP-ஐ நீண்ட நேரம் அழுத்தி Copy செய்யுங்க.');
+            showNote(context, 'Copy செய்த OTP இல்லை. Email-ல் உள்ள OTP-ஐ நீண்ட நேரம் அழுத்தி Copy செய்யவும்.');
           }
         },
         icon: const Icon(Icons.content_paste, size: 18, color: C.navy),

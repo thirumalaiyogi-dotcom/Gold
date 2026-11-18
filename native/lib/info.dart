@@ -194,7 +194,7 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
               Row(children: [
                 Icon(next != null ? Icons.check_circle_outline : Icons.error_outline, color: next != null ? C.green : C.red, size: 20),
                 const SizedBox(width: 8),
-                Expanded(child: Text(next != null ? 'அடுத்த வணக்கம்: $next' : 'வணக்கம் திட்டமிடப்படல. App-ஐ மூடி திறந்து பாருங்க.', style: sans(13.5, color: C.ink, height: 1.5))),
+                Expanded(child: Text(next != null ? 'அடுத்த வணக்கம்: $next' : 'வணக்கம் அறிவிப்பு திட்டமிடப்படவில்லை. App-ஐ மூடி மீண்டும் திறக்கவும்.', style: sans(13.5, color: C.ink, height: 1.5))),
               ]),
               if (next == null && gerr != null) ...[
                 const SizedBox(height: 8),
@@ -202,7 +202,7 @@ class _NotifySettingsPageState extends State<NotifySettingsPage> {
               ],
               if (!exact) ...[
                 const SizedBox(height: 12),
-                Text('சரியான நேரத்துக்கு வர, phone-ல "Alarms & reminders" அனுமதி தேவை. இல்லைன்னா phone வணக்கத்தை தள்ளிப்போடலாம் அல்லது விட்டுடலாம்.',
+                Text('சரியான நேரத்தில் வர, phone-ல் "Alarms & reminders" அனுமதி தேவை.',
                     style: sans(13, color: C.mute, height: 1.6)),
                 const SizedBox(height: 10),
                 PrimaryButton('அனுமதி கொடுக்க', icon: Icons.alarm_on_outlined, onTap: () async {

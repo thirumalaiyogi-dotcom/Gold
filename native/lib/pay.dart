@@ -13,14 +13,14 @@ import 'ui.dart';
 
 /// Error texts — same as the website (PAYERR).
 const payErr = {
-  'paid_month': 'இந்த மாசத் தவணை ஏற்கனவே கட்டியாச்சு.',
-  'done': 'எல்லா தவணையும் முடிஞ்சாச்சு.',
+  'paid_month': 'இந்த மாத தவணை ஏற்கனவே செலுத்தப்பட்டுள்ளது.',
+  'done': 'அனைத்து தவணைகளும் செலுத்தப்பட்டுவிட்டன.',
   'auth': 'மீண்டும் உள்நுழைந்து முயற்சிக்கவும்.',
-  'fixed': 'இந்த திட்டத்தில தவணைத் தொகை மாறாது.',
-  'no_keys': 'Online payment இன்னும் தயாராகல. கடையை அணுகவும்.',
-  'net': 'இணைய இணைப்பு இல்ல. மீண்டும் முயற்சிக்கவும்.',
-  'sandbox': 'இது test payment. உண்மையான தவணையா பதியாது.',
-  'dup_paid': 'இந்த மாசத் தவணை ஏற்கனவே பதிவாயிருக்கு, அதனால இந்த பணம் தவணையா சேரல. கடை இதை திருப்பித் தரும். கடையை அணுகவும்.',
+  'fixed': 'இந்தத் திட்டத்தில் தவணைத் தொகையை மாற்ற இயலாது.',
+  'no_keys': 'Online payment தற்போது கிடைக்கவில்லை. கடையை அணுகவும்.',
+  'net': 'இணைய இணைப்பு இல்லை. மீண்டும் முயற்சிக்கவும்.',
+  'sandbox': 'இது சோதனைப் பணம். தவணையாகப் பதிவாகாது.',
+  'dup_paid': 'இந்த மாத தவணை ஏற்கனவே பதிவாகியுள்ளதால், இந்தத் தொகை தவணையாகச் சேர்க்கப்படவில்லை. தொகை திருப்பித் தரப்படும்; கடையை அணுகவும்.',
 };
 
 /// In-app payment: amount → Cashfree checkout inside the app → verify → Passbook refresh.
@@ -63,7 +63,7 @@ class _PayPageState extends State<PayPage> {
   Future<void> _start() async {
     final a = int.tryParse(amount.text.trim()) ?? 0;
     if (a < minAmt || a > 100000) {
-      setState(() => msg = 'தொகை ${rupees(minAmt)} முதல் ₹1,00,000 வரை இருக்கணும்.');
+      setState(() => msg = 'தொகை ${rupees(minAmt)} முதல் ₹1,00,000 வரை இருக்க வேண்டும்.');
       return;
     }
     if (!app.loggedIn || app.pin.isEmpty) {
@@ -81,7 +81,7 @@ class _PayPageState extends State<PayPage> {
       final e = '${d['err']}';
       setState(() {
         st = _St.form;
-        msg = e == 'amount' ? 'தொகை ${rupees(d['min'] ?? minAmt)} முதல் ₹1,00,000 வரை இருக்கணும்.' : (payErr[e] ?? 'Payment தொடங்க முடியல ($e)');
+        msg = e == 'amount' ? 'தொகை ${rupees(d['min'] ?? minAmt)} முதல் ₹1,00,000 வரை இருக்க வேண்டும்.' : (payErr[e] ?? 'Payment தொடங்க இயலவில்லை ($e)');
       });
       return;
     }
@@ -100,7 +100,7 @@ class _PayPageState extends State<PayPage> {
     } on CFException catch (e) {
       setState(() {
         st = _St.form;
-        msg = 'Payment திறக்க முடியல: ${e.message}';
+        msg = 'Payment திறக்க இயலவில்லை: ${e.message}';
       });
     }
   }
@@ -137,8 +137,8 @@ class _PayPageState extends State<PayPage> {
       setState(() {
         st = cancelled ? _St.form : _St.fail;
         msg = cancelled
-            ? 'Payment முடியல. மீண்டும் முயற்சிக்கலாம்.'
-            : 'பணம் இன்னும் உறுதியாகல. பணம் போயிருந்தா சில நிமிஷத்துல தானா பதியும்; இல்லைன்னா கடையை அணுகவும்.';
+            ? 'Payment நிறைவடையவில்லை. மீண்டும் முயற்சிக்கவும்.'
+            : 'பணம் இன்னும் உறுதியாகவில்லை. உங்கள் கணக்கிலிருந்து பணம் எடுக்கப்பட்டிருந்தால், சில நிமிடங்களில் தானாகப் பதிவாகும். இல்லையெனில் கடையை அணுகவும்.';
       });
     }
     settling = false;
@@ -228,9 +228,9 @@ class _PayPageState extends State<PayPage> {
             ),
           ),
           const SizedBox(height: 20),
-          Text('பணம் வந்தது ✅', textAlign: TextAlign.center, style: serif(26, weight: FontWeight.w700)),
+          Text('பணம் பெறப்பட்டது ✓', textAlign: TextAlign.center, style: serif(26, weight: FontWeight.w700)),
           const SizedBox(height: 8),
-          Text('${rupees(paidAmount)} தவணை Passbook-ல பதிவாச்சு. நன்றி 🙏', textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.6)),
+          Text('${rupees(paidAmount)} தவணை உங்கள் Passbook-ல் பதிவு செய்யப்பட்டது. நன்றி.', textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.6)),
           const SizedBox(height: 28),
           PrimaryButton('Passbook பார்க்க', onTap: () => Navigator.of(context).pop(true)),
         ]),

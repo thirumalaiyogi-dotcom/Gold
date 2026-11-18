@@ -346,7 +346,7 @@ class HomeTab extends StatelessWidget {
           ],
           // ---------- புதுசு என்ன (stories) ----------
           if (app.stories.isNotEmpty) ...[
-            const SectionTitle('புதுசு என்ன'),
+            const SectionTitle('புதியவை'),
             StoryRow(go: go),
             const SizedBox(height: 22),
           ],
@@ -435,7 +435,7 @@ class _RateBoard extends StatelessWidget {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: Text(change == 0 ? '● நேற்றைய விலையே' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)} நேற்றைவிட',
+                        child: Text(change == 0 ? '● நேற்றைய விலையில் மாற்றமில்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)} நேற்றைவிட',
                             maxLines: 1, style: sans(12.5, color: change == 0 ? C.mute : C.navy, weight: FontWeight.w700)),
                       ),
                     ]),
@@ -1059,7 +1059,7 @@ class _BioRowState extends State<_BioRow> {
   Future<void> _set(bool v) async {
     if (v) {
       final ok = await Bio.enable(app.mobile, app.pin);
-      if (!ok && mounted) showNote(context, 'கைரேகை சரிபார்ப்பு முடியல. மறுபடி முயற்சிக்கவும்.');
+      if (!ok && mounted) showNote(context, 'கைரேகை சரிபார்ப்பு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.');
     } else {
       await Bio.disable();
     }
@@ -1086,7 +1086,7 @@ class _BioRowState extends State<_BioRow> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('கைரேகை login', style: sans(15.5, color: C.ink)),
-              Text('mPIN போடாம விரல் வெச்சே திறக்க', style: sans(12.5, color: C.mute)),
+              Text('mPIN இல்லாமல் கைரேகை மூலம் திறக்க', style: sans(12.5, color: C.mute)),
             ]),
           ),
           Switch(value: on ?? false, onChanged: _set),

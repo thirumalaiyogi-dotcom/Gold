@@ -89,8 +89,8 @@ class Bio {
           backgroundColor: C.paper,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.fingerprint, size: 48, color: C.navy),
-          title: Text('கைரேகையால திறக்கவா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
-          content: Text('அடுத்த தடவை mPIN போடாம, விரல் வெச்சே Passbook திறக்கலாம். கணக்கு → அமைப்புகள்ல எப்போ வேணும்னாலும் அணைக்கலாம்.',
+          title: Text('கைரேகை மூலம் உள்நுழைய வேண்டுமா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
+          content: Text('அடுத்த முறை mPIN இல்லாமல் கைரேகை மூலம் Passbook-ஐத் திறக்கலாம். கணக்கு → அமைப்புகளில் எப்போது வேண்டுமானாலும் நிறுத்தலாம்.',
               textAlign: TextAlign.center, style: sans(14, color: C.mute, height: 1.6)),
           actionsAlignment: MainAxisAlignment.center,
           actions: [

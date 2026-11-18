@@ -30,7 +30,7 @@ Future<void> refreshChatUnread() async {
 void openChat(BuildContext context) {
   tapFeel();
   if (!app.loggedIn) {
-    showNote(context, 'கேள்வி கேட்க முதல்ல mPIN போட்டு உள்நுழையுங்க');
+    showNote(context, 'கேள்வி கேட்க mPIN மூலம் உள்நுழையவும்');
     openPassbookLogin(context);
     return;
   }
@@ -94,7 +94,7 @@ class _ChatPageState extends State<ChatPage> {
       } else {
         setState(() {
           loading = false;
-          err = 'உள்நுழைவு சரிபார்க்க முடியல. மறுபடி login செய்யுங்க.';
+          err = 'உள்நுழைவு காலாவதியானது. மீண்டும் உள்நுழையவும்.';
         });
       }
     } catch (_) {
@@ -145,7 +145,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       f = await ImagePicker().pickImage(source: src, maxWidth: 1280, maxHeight: 1280, imageQuality: 72);
     } catch (_) {
-      if (mounted) showNote(context, 'படம் திறக்க முடியல');
+      if (mounted) showNote(context, 'படத்தைத் திறக்க இயலவில்லை');
       return;
     }
     if (f == null) return;
@@ -162,7 +162,7 @@ class _ChatPageState extends State<ChatPage> {
       await _load(quiet: true);
       unawaited(_fn('push', {'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}));
     } else {
-      showNote(context, d['err'] == 'too_many' ? 'இன்னைக்கு 10 படம் அனுப்பியாச்சு. நாளை தொடரலாம்.' : 'படம் அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.');
+      showNote(context, d['err'] == 'too_many' ? 'இன்றைக்கான படம் அனுப்பும் வரம்பு முடிந்தது. நாளை மீண்டும் அனுப்பலாம்.' : 'படத்தை அனுப்ப இயலவில்லை. மீண்டும் முயற்சிக்கவும்.');
     }
     setState(() => sending = false);
   }
@@ -185,7 +185,7 @@ class _ChatPageState extends State<ChatPage> {
         // tell the shop's phones (fire and forget)
         unawaited(_fn('push', {'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}));
       } else {
-        showNote(context, d is Map && d['err'] == 'too_many' ? 'இன்னைக்கு அதிக செய்திகள் அனுப்பியாச்சு. நாளை தொடரலாம் அல்லது கடைக்கு அழைக்கவும்.' : 'அனுப்ப முடியல. மறுபடி முயற்சிக்கவும்.');
+        showNote(context, d is Map && d['err'] == 'too_many' ? 'இன்றைக்கான செய்தி வரம்பு முடிந்தது. அவசரம் என்றால் கடைக்கு அழைக்கவும்.' : 'அனுப்ப இயலவில்லை. மீண்டும் முயற்சிக்கவும்.');
       }
     } catch (_) {
       if (mounted) showNote(context, 'இணைய இணைப்பை சரிபார்க்கவும்');
@@ -273,7 +273,7 @@ class _ChatPageState extends State<ChatPage> {
           padding: const EdgeInsets.all(12),
           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * .82),
           decoration: BoxDecoration(color: const Color(0xFFFFF7E0), borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE7D49B))),
-          child: Text('வணக்கம் ${Demo.firstName} 🙏\nஉங்க சந்தேகத்தை இங்கே கேளுங்க. கடை ஊழியர் இங்கேயே பதில் தருவார்; பதில் வந்ததும் notification வரும்.\nஇந்த பேச்சு உங்களுக்கும் கடைக்கும் மட்டும்.',
+          child: Text('வணக்கம் ${Demo.firstName},\nசேமிப்புத் திட்டம், தவணை, நகைகள் தொடர்பான உங்கள் கேள்விகளை இங்கே கேட்கலாம். பதில் வந்ததும் அறிவிப்பு வரும்.\nஇந்த உரையாடல் உங்களுக்கும் கடைக்கும் மட்டுமே தெரியும்.',
               style: sans(13.5, color: const Color(0xFF5A4410), height: 1.6)),
         ),
       ),
@@ -307,7 +307,7 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('கடையிடம் கேளுங்க', style: serif(18)),
-              Text(_afterHours ? 'கடை இப்போ மூடியிருக்கு · காலை 9 மணிக்கு மேல் பதில்' : 'பொதுவா சில மணி நேரத்தில் பதில்', style: sans(12, color: C.mute)),
+              Text(_afterHours ? 'கடை நேரம் முடிந்தது · காலை 9 மணிக்குப் பிறகு பதில்' : 'வழக்கமாக சில மணி நேரத்தில் பதில்', style: sans(12, color: C.mute)),
             ]),
           ),
         ]),
@@ -363,7 +363,7 @@ class _ChatPageState extends State<ChatPage> {
                   style: sans(15.5),
                   decoration: InputDecoration(
                     counterText: '',
-                    hintText: 'கேள்வியை இங்கே எழுதுங்க…',
+                    hintText: 'உங்கள் கேள்வி…',
                     hintStyle: sans(14.5, color: C.mute),
                     filled: true,
                     fillColor: C.ivory,
@@ -421,7 +421,7 @@ class ChatEntry extends StatelessWidget {
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text('கடையிடம் கேளுங்க', style: sans(15.5, color: C.ink, weight: FontWeight.w700)),
-                  Text(n > 0 ? 'கடையிலிருந்து $n புது பதில்' : 'சந்தேகமா? இங்கேயே கேளுங்க, பதில் வரும்', style: sans(13, color: n > 0 ? C.navy : C.mute, weight: n > 0 ? FontWeight.w600 : FontWeight.w400)),
+                  Text(n > 0 ? 'கடையிலிருந்து $n புது பதில்' : 'உங்கள் கேள்விகளுக்கு கடையே நேரடியாகப் பதில் அளிக்கும்', style: sans(13, color: n > 0 ? C.navy : C.mute, weight: n > 0 ? FontWeight.w600 : FontWeight.w400)),
                 ]),
               ),
               const Icon(Icons.chevron_right, color: C.mute),

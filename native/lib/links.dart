@@ -15,7 +15,7 @@ class Shop {
 Future<void> openLink(BuildContext context, String url) async {
   tapFeel();
   final ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication).catchError((_) => false);
-  if (!ok && context.mounted) showNote(context, 'திறக்க முடியல', ok: false);
+  if (!ok && context.mounted) showNote(context, 'திறக்க இயலவில்லை', ok: false);
 }
 
 Future<void> callShop(BuildContext context, [String phone = Shop.phone1]) => openLink(context, 'tel:$phone');

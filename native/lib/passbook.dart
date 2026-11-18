@@ -114,7 +114,7 @@ class _PassbookTabState extends State<PassbookTab> {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('Passbook', style: serif(22, color: Colors.white)),
-              Text('உங்கள் சேமிப்புப் பயணம்', style: sans(12.5, color: C.navyMute)),
+              Text('சேமிப்பு விவரம்', style: sans(12.5, color: C.navyMute)),
             ]),
           ),
           IconButton(
@@ -150,7 +150,7 @@ class _PassbookTabState extends State<PassbookTab> {
     final done = Demo.schemeDone;
     final day = nowIst().day;
     final st = Demo.paidThisMonth
-        ? (Demo.silver ? 'இந்த மாசம் சேமிச்சாச்சு' : 'செலுத்தியாச்சு')
+        ? (Demo.silver ? 'இந்த மாத தவணை செலுத்தப்பட்டது' : 'செலுத்தப்பட்டது')
         : paid == 0
             ? 'முதல் தவணை'
             : day <= 7
@@ -213,7 +213,7 @@ class _PassbookTabState extends State<PassbookTab> {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text('Refer பரிசு', maxLines: 1, style: sans(14, color: C.ink, weight: FontWeight.w700)),
-                        Text(Demo.refPending > 0 ? '${Demo.refCount} நண்பர் · ${rupees(Demo.refPending)} வரவு வைக்க வேண்டியது' : '${Demo.refCount} நண்பர் · முழுதும் வரவு வைத்தாச்சு',
+                        Text(Demo.refPending > 0 ? '${Demo.refCount} நண்பர் · ${rupees(Demo.refPending)} வரவு வைக்க வேண்டியது' : '${Demo.refCount} நண்பர் · முழுமையாக வரவு வைக்கப்பட்டது',
                             maxLines: 2, style: sans(12.5, color: C.mute)),
                       ]),
                     ),
@@ -264,7 +264,7 @@ class _PassbookTabState extends State<PassbookTab> {
             Row(children: [
               const Icon(Icons.south_rounded, size: 16, color: C.goldText),
               const SizedBox(width: 6),
-              Expanded(child: Text('கீழே உள்ள காசை வலப்பக்கம் இழுத்து செலுத்துங்க', style: sans(12.5, color: C.goldText, weight: FontWeight.w600))),
+              Expanded(child: Text('செலுத்த, காசை வலப்பக்கமாக இழுக்கவும்', style: sans(12.5, color: C.goldText, weight: FontWeight.w600))),
             ]),
           ],
         ]),
@@ -326,7 +326,7 @@ class _PassbookTabState extends State<PassbookTab> {
             const SizedBox(height: 12),
             Text('${rupees(Demo.monthly)} சேமிப்பில் சேர்ந்தது ✓', style: serif(20)),
             const SizedBox(height: 6),
-            Text('இது மாதிரி மட்டும். உண்மையான payment நடக்கல.', style: sans(13.5, color: C.mute)),
+            Text('இது மாதிரி மட்டும். உண்மையான பணப் பரிவர்த்தனை நடைபெறவில்லை.', style: sans(13.5, color: C.mute)),
             const SizedBox(height: 16),
             SizedBox(width: double.infinity, child: PrimaryButton('சரி', onTap: () => Navigator.of(ctx).pop())),
           ]),
