@@ -15,6 +15,7 @@ import 'notify.dart';
 import 'api.dart';
 import 'bio.dart';
 import 'info.dart';
+import 'likes.dart';
 import 'pay.dart';
 import 'stories.dart';
 import 'chat.dart';
@@ -580,6 +581,10 @@ class SideMenu extends StatelessWidget {
             close();
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()));
           }),
+          item(Icons.favorite_border, 'என் பிடித்தவை', () {
+            close();
+            openFavorites(context);
+          }),
           item(Icons.diamond_outlined, 'சேமிப்புத் திட்டங்கள்', () {
             close();
             go(1);
@@ -692,6 +697,9 @@ class ProfileTab extends StatelessWidget {
                 _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => whatsApp(context, 'வணக்கம், என் mPIN மாற்ற / புது Activation code வேண்டும்.\nமொபைல்: ${app.mobile}')),
                 _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()))),
               ]),
+            _group([
+              _row(Icons.favorite_border, 'என் பிடித்தவை', () => openFavorites(context), first: true),
+            ]),
             StatefulBuilder(builder: (context, setLocal) {
               return _group([
                 _row(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),

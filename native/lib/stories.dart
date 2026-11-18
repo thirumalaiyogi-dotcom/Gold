@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'links.dart';
 import 'gallery.dart';
+import 'likes.dart';
 import 'main.dart';
 import 'rates.dart';
 import 'ui.dart';
@@ -131,6 +132,7 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
+    Likes.load();
     _show();
   }
 
@@ -258,8 +260,7 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
                   ]),
                 ),
               ),
-              // bottom: text + button
-              if (body.isNotEmpty || hasBtn)
+              // bottom: text + button + ♡ / share
                 Positioned(
                   left: 0,
                   right: 0,
@@ -269,10 +270,24 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
                     decoration: const BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter, colors: [Color(0xDD000000), Color(0x00000000)])),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                       if (body.isNotEmpty) Text(body, style: sans(15, color: Colors.white, height: 1.55)),
-                      if (hasBtn) ...[
-                        const SizedBox(height: 14),
-                        PrimaryButton('${s['btn_label'] ?? 'மேலும் பார்க்க'}', gold: true, onTap: () => _action(s)),
-                      ],
+                      const SizedBox(height: 10),
+                      Row(children: [
+                        if (hasBtn)
+                          Expanded(child: PrimaryButton('${s['btn_label'] ?? 'மேலும் பார்க்க'}', gold: true, onTap: () => _action(s)))
+                        else
+                          const Spacer(),
+                        const SizedBox(width: 6),
+                        LikeButton(type: 'story', id: s['id']),
+                        IconButton(
+                          tooltip: 'பகிர',
+                          onPressed: () async {
+                            _t.stop();
+                            await shareJewel(context, imageUrl: '${s['image_url']}', title: '${s['title'] ?? ''}');
+                            if (mounted) _t.forward();
+                          },
+                          icon: const Icon(Icons.share_outlined, color: Colors.white, size: 26),
+                        ),
+                      ]),
                     ]),
                   ),
                 ),

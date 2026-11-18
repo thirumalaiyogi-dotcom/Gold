@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'api.dart';
+import 'likes.dart';
 import 'links.dart';
 import 'ui.dart';
 
@@ -23,6 +24,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
   void initState() {
     super.initState();
     _load();
+    Likes.load();
   }
 
   Future<void> _load() async {
@@ -131,12 +133,28 @@ class _CategoryGalleryState extends State<CategoryGallery> {
           clipBehavior: Clip.antiAlias,
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Expanded(
-              child: Hero(
+              child: Stack(fit: StackFit.expand, children: [
+              Hero(
                 tag: 'catp${p['id']}',
                 child: Image.network('${p['image_url']}', fit: BoxFit.cover,
                     loadingBuilder: (c, w, e) => e == null ? w : Container(color: C.ivory2),
                     errorBuilder: (_, __, ___) => Container(color: C.ivory2, child: const Icon(Icons.image_not_supported_outlined, color: C.mute))),
               ),
+              Positioned(
+                right: 6,
+                top: 6,
+                child: ValueListenableBuilder<Set<String>>(
+                  valueListenable: Likes.keys,
+                  builder: (_, __, ___) => Likes.has('photo', p['id'])
+                      ? Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: const BoxDecoration(color: Color(0xE6FFFFFF), shape: BoxShape.circle),
+                          child: const Icon(Icons.favorite, size: 16, color: Color(0xFFE0245E)),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ),
+              ]),
             ),
             if (hasT)
               Padding(
@@ -163,11 +181,20 @@ class PhotoViewer extends StatefulWidget {
 class _PhotoViewerState extends State<PhotoViewer> {
   late int i = widget.start;
   late final PageController _pc = PageController(initialPage: widget.start);
+  final _burst = ValueNotifier(0);
 
   @override
   void dispose() {
     _pc.dispose();
+    _burst.dispose();
     super.dispose();
+  }
+
+  String _type(Map<String, dynamic> p) => '${p['_type'] ?? 'photo'}';
+
+  void _doubleTapLike(Map<String, dynamic> p) {
+    _burst.value++;
+    if (!Likes.has(_type(p), p['id'])) Likes.toggle(context, _type(p), p['id']);
   }
 
   String _s(dynamic v) {
@@ -189,7 +216,9 @@ class _PhotoViewerState extends State<PhotoViewer> {
           onPageChanged: (n) => setState(() => i = n),
           itemBuilder: (_, n) {
             final x = widget.photos[n];
-            return InteractiveViewer(
+            return GestureDetector(
+              onDoubleTap: () => _doubleTapLike(x),
+              child: InteractiveViewer(
               minScale: 1,
               maxScale: 5,
               child: Center(
@@ -200,9 +229,10 @@ class _PhotoViewerState extends State<PhotoViewer> {
                       errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported_outlined, color: Colors.white54, size: 48)),
                 ),
               ),
-            );
+            ));
           },
         ),
+        HeartBurst(trigger: _burst),
         Positioned(
           top: pad.top + 6,
           left: 6,
@@ -231,12 +261,25 @@ class _PhotoViewerState extends State<PhotoViewer> {
               gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0x00000000), Color(0xDD000000)]),
             ),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              if (title.isNotEmpty) Text(title, style: serif(21, color: Colors.white)),
-              if (note.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(note, style: sans(15, color: Colors.white70, height: 1.4))),
-              const SizedBox(height: 14),
+              Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    if (title.isNotEmpty) Text(title, style: serif(21, color: Colors.white)),
+                    if (note.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(note, style: sans(15, color: Colors.white70, height: 1.4))),
+                  ]),
+                ),
+                LikeButton(type: _type(p), id: p['id']),
+                IconButton(
+                  tooltip: 'பகிர',
+                  onPressed: () => shareJewel(context, imageUrl: '${p['image_url']}', title: title, category: widget.category),
+                  icon: const Icon(Icons.share_outlined, color: Colors.white, size: 26),
+                ),
+              ]),
+              const SizedBox(height: 12),
               PrimaryButton('இந்த நகை பற்றி விசாரிக்க', gold: true, icon: Icons.chat_outlined, onTap: () {
                 final label = title.isNotEmpty ? '"$title"' : 'இந்த டிசைன்';
-                whatsApp(context, 'வணக்கம், ${widget.category} — $label பற்றி விவரம் வேண்டும் (எடை / விலை).\n${p['image_url']}');
+                final cat = widget.category.isNotEmpty ? '${widget.category} — ' : '';
+                whatsApp(context, 'வணக்கம், $cat$label பற்றி விவரம் வேண்டும் (எடை / விலை).\n${p['image_url']}');
               }),
             ]),
           ),

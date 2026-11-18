@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ta">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>சுப்புலட்சுமி தங்க மாளிகை · App</title>
+<meta name="description" content="இன்றைய தங்க விலை, புதிய நகை டிசைன்கள், தங்க சேமிப்புத் திட்டம் — புளியங்குடி">
+<meta property="og:title" content="சுப்புலட்சுமி தங்க மாளிகை · App">
+<meta property="og:description" content="இன்றைய தங்க விலை, புதிய நகை டிசைன்கள், தங்க சேமிப்புத் திட்டம் — புளியங்குடி">
+<meta property="og:image" content="https://gold.thirumalaiyogi.workers.dev/icon-512.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#4A0D18">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#FAF7EF;--ink:#392027;--mute:#6A5B61;--navy:#6E1423}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1A0509;--ink:#F5EBDD;--mute:#CDBFC4;--navy:#E8D29A}}
+:root[data-theme="dark"]{--bg:#1A0509;--ink:#F5EBDD;--mute:#CDBFC4;--navy:#E8D29A}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font-family:"Noto Sans Tamil",system-ui,sans-serif;padding:16px;box-sizing:border-box;text-align:center}
+img{width:88px;height:88px;border-radius:22px}
+a{display:inline-block;margin-top:18px;padding:13px 22px;border-radius:14px;background:#6E1423;color:#fff;text-decoration:none;font-weight:700}
+p{color:var(--mute)}
+</style>
+<script>
+// One link for every share. Play Store-ல app வந்ததும் PLAY_ID-ஐ நிரப்பினா போதும்:
+// Android phone → Play Store (referral code-ஓட); மற்றவை → website (install as app).
+(function(){
+  var PLAY_ID = ""; // உதா: "com.stm.digigold"
+  var q = new URLSearchParams(location.search), ref = (q.get("ref") || "").trim().toUpperCase();
+  if (!/^[A-Z0-9]{3,12}$/.test(ref)) ref = "";
+  var android = /android/i.test(navigator.userAgent);
+  var to = (PLAY_ID && android)
+    ? "https://play.google.com/store/apps/details?id=" + PLAY_ID + (ref ? "&referrer=" + encodeURIComponent("ref=" + ref) : "")
+    : "/?inst=1" + (ref ? "&ref=" + encodeURIComponent(ref) : "");
+  window.__to = to;
+  location.replace(to);
+})();
+</script>
+</head>
+<body>
+<div>
+<img src="icon-192.png" alt="">
+<h1 style="font-size:20px;margin:14px 0 6px">சுப்புலட்சுமி தங்க மாளிகை</h1>
+<p>App திறக்கிறது…</p>
+<a id="go" href="/?inst=1">தொடர</a>
+</div>
+<script>try{document.getElementById("go").href=window.__to||"/?inst=1"}catch(e){}</script>
+</body>
+</html>

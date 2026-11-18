@@ -551,6 +551,10 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
    <div class="mut" id="cpst"></div>
    <div id="cplist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"></div>
   </div></div>
+  <div class="card" id="likecard"><h2>❤️ அதிகம் பிடித்த நகைகள்</h2>
+  <div class="mut">Customer-கள் App-ல் ♡ அழுத்திய நகைகள். பெயர் உள்ளவர்கள் Passbook-ல் login ஆனவர்கள் — அழைத்து “நீங்கள் பார்த்த நகை கடையில் உள்ளது” என்று சொல்லலாம்.</div>
+  <select id="lkdays"><option value="7">கடந்த 7 நாள்</option><option value="30">கடந்த 30 நாள்</option><option value="365">எல்லாம்</option></select>
+  <div id="lklist"></div></div>
   <div class="card" id="pushcard"><h2>🔔 Notification அனுப்பு</h2>
   <div class="mut">அனுமதி கொடுத்த customer-களுக்கு phone-ல notification-ஆ போகும். லாபம் / “பணம் பெருகும்” மாதிரி வாக்குறுதி வேண்டாம். நாளுக்கு ஒன்னுக்கு மேல வேண்டாம்.</div>
   <input id="pnt" maxlength="80" placeholder="தலைப்பு (எ.கா. தீபாவளி வாழ்த்துகள் 🪔)">
@@ -652,7 +656,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat();loadChats()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat();loadChats();loadLikes()}
 async function load(){
  let {data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name");
  if(error&&/mode|gold_rate/.test(error.message||""))({data,error}=await sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name"));
@@ -1183,6 +1187,20 @@ $("ctlist").addEventListener("click",async e=>{const p=e.target.closest("[data-c
  const a=e.target.closest("[data-ca],[data-cd]");if(!a)return;
  if(a.dataset.cd){if(!confirm("இந்த வகையை நீக்கவா?"))return;await sb.from("gold_categories").delete().eq("id",+a.dataset.cd)}
  else await sb.from("gold_categories").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.ca);loadCat()});
+// ---- ❤️ பிடித்தவை (gold_likes) ----
+async function loadLikes(){const box=$("lklist");box.innerHTML='<div class="mut">ஏற்றுகிறது…</div>';
+ const since=new Date(Date.now()-(+$("lkdays").value)*864e5).toISOString();
+ const {data,error}=await sb.from("gold_likes").select("item_type,item_id,customer_id,created_at").gte("created_at",since).limit(5000);
+ if(error){box.innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
+ if(!data||!data.length){box.innerHTML='<div class="mut">இந்த காலத்தில் இன்னும் யாரும் ♡ அழுத்தவில்லை.</div>';return}
+ const g={};data.forEach(r=>{const k=r.item_type+":"+r.item_id;(g[k]=g[k]||{t:r.item_type,id:r.item_id,n:0,c:new Set()}).n++;if(r.customer_id)g[k].c.add(r.customer_id)});
+ const top=Object.values(g).sort((a,b)=>b.n-a.n).slice(0,20);
+ const sid=top.filter(x=>x.t=="story").map(x=>x.id),pid=top.filter(x=>x.t=="photo").map(x=>x.id),cids=[...new Set(top.flatMap(x=>[...x.c]))];
+ const [ws,ps,cs]=await Promise.all([sid.length?sb.from("gold_whatsnew").select("id,title,image_url").in("id",sid):{data:[]},pid.length?sb.from("gold_category_photos").select("id,title,image_url,category_id").in("id",pid):{data:[]},cids.length?sb.from("gold_customers").select("id,name,mobile").in("id",cids):{data:[]}]);
+ const W={},P={},C={};(ws.data||[]).forEach(x=>W[x.id]=x);(ps.data||[]).forEach(x=>P[x.id]=x);(cs.data||[]).forEach(x=>C[x.id]=x);
+ box.innerHTML=top.map(x=>{const it=x.t=="story"?W[x.id]:P[x.id];if(!it)return "";const ppl=[...x.c].map(id=>C[id]).filter(Boolean);
+  return `<div class="row" style="align-items:center"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(it.image_url)}" style="width:58px;height:58px;object-fit:cover;border-radius:10px"><span><b>${esc(it.title||"(பெயர் இல்லை)")}</b><br><span class="mut">${x.t=="story"?"புதியவை":"நகை வகை"}${ppl.length?" · "+ppl.map(p=>`<a href="tel:+91${esc(p.mobile)}" style="text-decoration:underline">${esc(p.name)}</a>`).join(", "):""}</span></span></span><b style="font-size:18px;white-space:nowrap">❤️ ${x.n}</b></div>`}).join("")||'<div class="mut">—</div>'}
+$("lkdays").addEventListener("change",loadLikes);
 // ---- ஒவ்வொரு வகைக்குள்ளும் நகை photo-க்கள் (gold_category_photos) ----
 function openCP(id,name){CPID=id;$("cpname").textContent="📷 "+name+" — படங்கள்";$("cpbox").classList.remove("hide");$("cpst").textContent="";loadCP();$("cpbox").scrollIntoView({behavior:"smooth",block:"start"})}
 $("cpx").onclick=()=>{CPID=0;$("cpbox").classList.add("hide")};

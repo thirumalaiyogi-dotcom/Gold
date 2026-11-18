@@ -2428,7 +2428,7 @@ setTimeout(function(){if(!PUSH_OK()||Notification.permission!=="default")return;
 // ===== "App-ஆ install பண்ணுங்க" =====
 (function(){let DEF=null;const standalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!/crios|fxios/i.test(navigator.userAgent);
- setTimeout(()=>{try{LS.set("visits",String(+(LS.get("visits")||0)+1))}catch(e){}},0);
+ setTimeout(()=>{try{LS.set("visits",String(+(LS.get("visits")||0)+1));if(/[?&]inst=1/.test(location.search)){LS.set("visits",String(Math.max(2,+(LS.get("visits")||0))));LS.set("instlater","");const u=new URL(location.href);u.searchParams.delete("inst");history.replaceState(history.state,"",u.pathname+(u.search||"")+u.hash)}}catch(e){}},0);
  function close(later){vis("inst",false);if(later)LS.set("instlater",String(Date.now()))}
  window.closeInst=close;
  function want(){if(standalone()||LS.get("installed"))return false;const l=+(LS.get("instlater")||0);return !(l&&Date.now()-l<7*864e5)}
