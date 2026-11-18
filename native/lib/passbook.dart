@@ -22,7 +22,7 @@ class PaymentRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final n = p[0] as String, date = p[1] as String, amt = p[2] as int, g = p[3] as double;
     final rate = p.length > 4 ? p[4] as double : 0.0;
-    final mon = p.length > 5 ? p[5] as String : '';
+    final mon = p.length > 6 ? p[6] as String : (p.length > 5 ? p[5] as String : '');
     final sub = [date, if (g > 0 && rate > 0) '${_inr(rate)}/கி', if (g > 0) '${g.toStringAsFixed(3)} கி'].join(' · ');
     final row = Container(
       padding: const EdgeInsets.symmetric(vertical: 13),
@@ -91,7 +91,10 @@ class MonthGrid extends StatelessWidget {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             SizedBox(height: 18, child: Center(child: mark)),
             const SizedBox(height: 2),
-            Text(lbl, maxLines: 1, style: sans(11.5, color: fg, weight: FontWeight.w600)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: FittedBox(fit: BoxFit.scaleDown, child: Text(lbl, maxLines: 1, style: sans(11.5, color: fg, weight: FontWeight.w600))),
+            ),
           ]),
         ),
       );
@@ -289,11 +292,11 @@ class _PassbookTabState extends State<PassbookTab> {
                 const Icon(Icons.scale_outlined, size: 20, color: C.goldText),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text.rich(TextSpan(children: [
-                    TextSpan(text: 'உங்கள் சராசரி விலை  ', style: sans(13, color: C.mute)),
-                    TextSpan(text: '${_inr(avg)} / கிராம்', style: sans(14, weight: FontWeight.w700)),
-                    if (Demo.gold22 > 0) TextSpan(text: '\nஇன்றைய 22K விலை ${rupees(Demo.gold22)} / கிராம்', style: sans(12, color: C.mute, height: 1.6)),
-                  ])),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text('நீங்கள் தங்கம் சேர்த்த சராசரி விலை', style: sans(12.5, color: C.mute)),
+                    Text('${_inr(avg)} / கிராம்', style: sans(15, weight: FontWeight.w700)),
+                    if (Demo.gold22 > 0) Text('இன்றைய 22K விலை ${rupees(Demo.gold22)} / கிராம்', style: sans(12, color: C.mute, height: 1.5)),
+                  ]),
                 ),
               ]),
             ),

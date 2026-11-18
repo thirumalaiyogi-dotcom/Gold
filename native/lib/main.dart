@@ -47,7 +47,7 @@ class Demo {
   static bool get fixed => app.schemeFixed(schemeKey);
   static List<Map<String, dynamic>> get _ps =>
       ((_pb['payments'] as List?) ?? const []).map((e) => Map<String, dynamic>.from(e as Map)).toList();
-  /// newest first: [number, date, amount, grams, gold rate that day, month label]
+  /// newest first: [number, date, amount, grams, gold rate that day, month label, short month label]
   static List<List<Object>> get payments {
     final p = _ps;
     final s = startDate;
@@ -60,19 +60,20 @@ class Demo {
           (num.tryParse('${p[i]['grams'] ?? 0}') ?? 0).toDouble(),
           (num.tryParse('${p[i]['rate'] ?? 0}') ?? 0).toDouble(),
           _payMonth(p[i], i, s),
+          _payMonth(p[i], i, s, short: true),
         ]
     ];
   }
 
   /// Instalment n belongs to start month + (n-1); silver (many per month) uses the payment's own month.
-  static String _payMonth(Map<String, dynamic> p, int i, DateTime? s) {
+  static String _payMonth(Map<String, dynamic> p, int i, DateTime? s, {bool short = false}) {
     DateTime? d;
     if (!silver && s != null) {
       d = DateTime(s.year, s.month + i);
     } else {
       d = DateTime.tryParse((p['on'] ?? '').toString());
     }
-    return d == null ? '' : '${_taMonLong[d.month - 1]} ${d.year}';
+    return d == null ? '' : '${short ? _taMon[d.month - 1] : _taMonLong[d.month - 1]} ${d.year}';
   }
 
   static DateTime? get startDate => DateTime.tryParse((_pb['start'] ?? '').toString());

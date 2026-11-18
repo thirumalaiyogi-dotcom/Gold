@@ -863,7 +863,7 @@ class _NextDue extends StatelessWidget {
     final title = done
         ? 'எல்லா தவணையும் முடிந்தது ✓'
         : Demo.paidThisMonth && !Demo.silver
-            ? 'இந்த மாத தவணை செலுத்தியாச்சு ✓'
+            ? 'இந்த மாத தவணை செலுத்தப்பட்டது ✓'
             : (Demo.silver ? 'இந்த மாத சேமிப்பு' : 'தவணை ${paid + 1} / ${Demo.months}');
     return LuxCard(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
