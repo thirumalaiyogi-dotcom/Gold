@@ -47,13 +47,55 @@ class Demo {
   static bool get fixed => app.schemeFixed(schemeKey);
   static List<Map<String, dynamic>> get _ps =>
       ((_pb['payments'] as List?) ?? const []).map((e) => Map<String, dynamic>.from(e as Map)).toList();
-  /// newest first: [number, date, amount, grams]
+  /// newest first: [number, date, amount, grams, gold rate that day, month label]
   static List<List<Object>> get payments {
     final p = _ps;
+    final s = startDate;
     return [
       for (var i = p.length - 1; i >= 0; i--)
-        ['${i + 1}', taDate((p[i]['on'] ?? '').toString()), (num.tryParse('${p[i]['amount']}') ?? 0).round(), (num.tryParse('${p[i]['grams'] ?? 0}') ?? 0).toDouble()]
+        [
+          '${i + 1}',
+          taDate((p[i]['on'] ?? '').toString()),
+          (num.tryParse('${p[i]['amount']}') ?? 0).round(),
+          (num.tryParse('${p[i]['grams'] ?? 0}') ?? 0).toDouble(),
+          (num.tryParse('${p[i]['rate'] ?? 0}') ?? 0).toDouble(),
+          _payMonth(p[i], i, s),
+        ]
     ];
+  }
+
+  /// Instalment n belongs to start month + (n-1); silver (many per month) uses the payment's own month.
+  static String _payMonth(Map<String, dynamic> p, int i, DateTime? s) {
+    DateTime? d;
+    if (!silver && s != null) {
+      d = DateTime(s.year, s.month + i);
+    } else {
+      d = DateTime.tryParse((p['on'] ?? '').toString());
+    }
+    return d == null ? '' : '${_taMonLong[d.month - 1]} ${d.year}';
+  }
+
+  static DateTime? get startDate => DateTime.tryParse((_pb['start'] ?? '').toString());
+  static String get startText => startDate == null ? '—' : taDate(startDate!.toIso8601String());
+
+  /// Average gold rate across instalments that have grams (gram schemes only).
+  static double get avgRate {
+    double a = 0, g = 0;
+    for (final p in _ps) {
+      final gr = (num.tryParse('${p['grams'] ?? 0}') ?? 0).toDouble();
+      if (gr <= 0) continue;
+      g += gr;
+      a += (num.tryParse('${p['amount']}') ?? 0).toDouble();
+    }
+    return g > 0 ? a / g : 0;
+  }
+
+  /// Month index (0-based) of today within the scheme.
+  static int get currentIndex {
+    final s = startDate;
+    if (s == null) return -1;
+    final n = nowIst();
+    return (n.year - s.year) * 12 + n.month - s.month;
   }
 
   static Set<String> get _months => _ps.map((e) => (e['on'] ?? '').toString().padRight(7).substring(0, 7)).toSet();

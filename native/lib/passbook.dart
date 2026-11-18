@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'api.dart';
 import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
 import 'pay.dart';
 import 'share_card.dart';
+import 'statement.dart';
+import 'likes.dart' show appLink;
 import 'package:shared_preferences/shared_preferences.dart';
 
+String _inr(double v) => rupees(v.round());
+
+/// One instalment: "தவணை 7 · நவம்பர் 2026 … ₹10,000" / "09 நவ. 2026 · ₹13,255/கி · 0.754 கி".
 class PaymentRow extends StatelessWidget {
   const PaymentRow(this.p, {super.key, this.last = false, this.receipt = false});
   final List<Object> p;
@@ -17,50 +21,106 @@ class PaymentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final n = p[0] as String, date = p[1] as String, amt = p[2] as int, g = p[3] as double;
+    final rate = p.length > 4 ? p[4] as double : 0.0;
+    final mon = p.length > 5 ? p[5] as String : '';
+    final sub = [date, if (g > 0 && rate > 0) '${_inr(rate)}/கி', if (g > 0) '${g.toStringAsFixed(3)} கி'].join(' · ');
     final row = Container(
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.symmetric(vertical: 13),
       decoration: BoxDecoration(border: last ? null : const Border(bottom: BorderSide(color: Color(0xFFF0EADB)))),
       child: Row(children: [
         Container(
           width: 38,
           height: 38,
           alignment: Alignment.center,
-          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: C.goldLine)),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFFFFF7E0), border: Border.all(color: C.goldLine)),
           child: Text(n, style: serif(16, color: C.goldText)),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
-              Flexible(
-                child: Text.rich(TextSpan(children: [
-                  TextSpan(text: rupees(amt), style: serif(16.5)),
-                  if (g > 0) TextSpan(text: '  ${g.toStringAsFixed(3)} கி', style: sans(12.5, color: C.goldText, weight: FontWeight.w600)),
-                ])),
+              Expanded(
+                child: Text(Demo.silver || mon.isEmpty ? (mon.isEmpty ? 'தவணை $n' : mon) : 'தவணை $n · $mon',
+                    maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(14.5, weight: FontWeight.w700)),
               ),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-                decoration: BoxDecoration(color: const Color(0xFFE6F3EC), borderRadius: BorderRadius.circular(99)),
-                child: Text('✓ செலுத்தியது', style: sans(11.5, color: C.green, weight: FontWeight.w700)),
-              ),
+              Text(rupees(amt), style: serif(17, weight: FontWeight.w700)),
             ]),
-            const SizedBox(height: 2),
-            Text(date, style: sans(12.5, color: C.mute)),
+            const SizedBox(height: 3),
+            Text(sub, maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(12.5, color: C.mute)),
           ]),
         ),
-        if (receipt) ...[
-          const SizedBox(width: 6),
-          Column(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.receipt_long_outlined, size: 20, color: C.navy),
-            Text('ரசீது', style: sans(11.5, color: C.navy, weight: FontWeight.w600)),
-          ]),
-        ],
+        if (receipt) const Padding(padding: EdgeInsets.only(left: 4), child: Icon(Icons.chevron_right, color: C.mute)),
       ]),
     );
     if (!receipt) return row;
     // the whole row opens the receipt (design audit: no button on every line)
-    return InkWell(onTap: () => showReceipt(context, n, date, amt, g), child: row);
+    return InkWell(onTap: () => showReceipt(context, p), child: row);
+  }
+}
+
+enum _Box { paid, late, due, next }
+
+/// 11-month grid: ✓ paid · ! pending from earlier months · ● this month · ○ coming.
+class MonthGrid extends StatelessWidget {
+  const MonthGrid({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final total = Demo.months, paid = Demo.paidCount, cur = Demo.currentIndex, s = Demo.startDate;
+    _Box st(int k) {
+      if (k < paid) return _Box.paid;
+      if (cur < 0) return k == paid ? _Box.due : _Box.next;
+      if (k < cur) return Demo.silver ? _Box.next : _Box.late;
+      if (k == cur) return Demo.paidThisMonth ? (Demo.silver ? _Box.next : _Box.late) : _Box.due;
+      return _Box.next;
+    }
+
+    Widget box(int k) {
+      final b = st(k);
+      final lbl = s == null ? '${k + 1}' : taMonth(s.month + k).replaceAll('.', '');
+      final (Color bg, Color bd, Color fg, Widget mark) = switch (b) {
+        _Box.paid => (const Color(0xFFF6E7BE), C.gold, C.goldText, const Icon(Icons.check_rounded, size: 18, color: C.goldText)),
+        _Box.late => (const Color(0xFFFFF1DC), const Color(0xFFE0A33A), const Color(0xFF9A5B00), const Icon(Icons.priority_high_rounded, size: 17, color: Color(0xFF9A5B00))),
+        _Box.due => (C.paper, C.navy, C.navy, Container(width: 10, height: 10, decoration: const BoxDecoration(color: C.navy, shape: BoxShape.circle))),
+        _Box.next => (C.paper, C.line2, C.mute, const SizedBox(height: 18)),
+      };
+      return Semantics(
+        label: '${k + 1} ஆம் தவணை, ${switch (b) { _Box.paid => 'செலுத்தப்பட்டது', _Box.late => 'நிலுவை', _Box.due => 'இந்த மாதம்', _Box.next => 'இனி வரும்' }}',
+        child: Container(
+          decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10), border: Border.all(color: bd, width: b == _Box.due ? 1.6 : 1)),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(height: 18, child: Center(child: mark)),
+            const SizedBox(height: 2),
+            Text(lbl, maxLines: 1, style: sans(11.5, color: fg, weight: FontWeight.w600)),
+          ]),
+        ),
+      );
+    }
+
+    final late = [for (var k = 0; k < total; k++) st(k)].where((b) => b == _Box.late).length;
+    Widget legend(Color c, String t, {bool ring = false}) => Row(mainAxisSize: MainAxisSize.min, children: [
+          Container(width: 10, height: 10, decoration: BoxDecoration(color: ring ? C.paper : c, shape: BoxShape.circle, border: Border.all(color: c, width: 1.4))),
+          const SizedBox(width: 5),
+          Text(t, style: sans(12, color: C.mute)),
+        ]);
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      GridView.count(
+        crossAxisCount: 6,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 7,
+        crossAxisSpacing: 7,
+        childAspectRatio: .95,
+        children: [for (var k = 0; k < total; k++) box(k)],
+      ),
+      const SizedBox(height: 10),
+      Wrap(spacing: 14, runSpacing: 6, alignment: WrapAlignment.center, children: [
+        legend(C.gold, 'செலுத்தியது'),
+        if (late > 0) legend(const Color(0xFFE0A33A), 'நிலுவை ($late)'),
+        legend(C.navy, 'இந்த மாதம்', ring: true),
+        legend(C.line2, 'இனி வரும்', ring: true),
+      ]),
+    ]);
   }
 }
 
@@ -145,6 +205,8 @@ class _PassbookTabState extends State<PassbookTab> {
     ]));
   }
 
+  int _tab = 0;
+
   Widget _savings(BuildContext context) {
     final left = (Demo.months - paid).clamp(0, 99);
     final done = Demo.schemeDone;
@@ -158,11 +220,25 @@ class _PassbookTabState extends State<PassbookTab> {
                 : 'தாமதம்';
     final stColor = Demo.paidThisMonth ? C.green : (st == 'தாமதம்' ? C.red : C.goldText);
     final canPay = Demo.canPay;
+    final avg = Demo.avgRate;
+    Widget kv(String k, String v) => Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(k, style: sans(12, color: C.mute)),
+            const SizedBox(height: 2),
+            Text(v, style: sans(14, weight: FontWeight.w700)),
+          ]),
+        );
     return RefreshIndicator(color: C.navy, onRefresh: app.refreshPassbook, child: ListView(padding: const EdgeInsets.fromLTRB(16, 22, 16, 28), children: [
+      // 1. summary
       LuxCard(
         inner: true,
-        padding: const EdgeInsets.fromLTRB(20, 26, 20, 20),
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
         child: Column(children: [
+          Row(children: [
+            Expanded(child: Text('${Demo.scheme} திட்டம்', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(13.5, color: C.goldText, weight: FontWeight.w700))),
+            if (Demo.member.isNotEmpty) Text('கணக்கு எண் ${Demo.member}', style: sans(12.5, color: C.mute, weight: FontWeight.w600)),
+          ]),
+          const SizedBox(height: 12),
           Text('மொத்த சேமிப்பு', style: sans(12, color: C.goldText, weight: FontWeight.w600).copyWith(letterSpacing: 1.6)),
           GoldShine(
             delay: const Duration(milliseconds: 1000),
@@ -179,56 +255,49 @@ class _PassbookTabState extends State<PassbookTab> {
               TextSpan(text: '${grams.toStringAsFixed(3)} கிராம்', style: sans(14, color: C.goldText, weight: FontWeight.w700)),
             ])),
           const SizedBox(height: 14),
-          const SizedBox(height: 4),
-          CoinStack(total: Demo.months, paid: paid, silver: Demo.silver, labels: Demo.monthLabels),
-          const SizedBox(height: 16),
-          const Divider(height: 1, color: C.line),
-          const SizedBox(height: 10),
-          InfoBox(
-            child: IntrinsicHeight(
-              child: Row(children: [
-                _stat('$paid', 'கட்டியது'),
-                const VerticalDivider(width: 1, color: C.line2),
-                _stat('$left', 'மீதி'),
-                const VerticalDivider(width: 1, color: C.line2),
-                _stat('${Demo.months}', 'மொத்தம்'),
-              ]),
+          // progress
+          ClipRRect(
+            borderRadius: BorderRadius.circular(99),
+            child: LinearProgressIndicator(
+              value: Demo.months == 0 ? 0 : (paid / Demo.months).clamp(0.0, 1.0),
+              minHeight: 8,
+              backgroundColor: const Color(0xFFF1E8D2),
+              valueColor: const AlwaysStoppedAnimation(C.gold),
             ),
           ),
-          // referral reward: a separate balance, not part of the savings total
-          if (Demo.refCount > 0 || Demo.refEarned > 0) ...[
-            const SizedBox(height: 10),
-            Material(
-              color: const Color(0xFFFFF7E0),
-              borderRadius: BorderRadius.circular(14),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage())),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(14), border: Border.all(color: C.goldLine)),
-                  child: Row(children: [
-                    const Icon(Icons.card_giftcard, color: C.navy, size: 22),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text('Refer பரிசு', maxLines: 1, style: sans(14, color: C.ink, weight: FontWeight.w700)),
-                        Text(Demo.refPending > 0 ? '${Demo.refCount} நண்பர் · ${rupees(Demo.refPending)} வரவு வைக்க வேண்டியது' : '${Demo.refCount} நண்பர் · முழுமையாக வரவு வைக்கப்பட்டது',
-                            maxLines: 2, style: sans(12.5, color: C.mute)),
-                      ]),
-                    ),
-                    Text(rupees(Demo.refEarned), style: serif(19, color: C.navy, weight: FontWeight.w700)),
-                    const Icon(Icons.chevron_right, color: C.mute),
-                  ]),
+          const SizedBox(height: 6),
+          Row(children: [
+            Text('$paid / ${Demo.months} தவணை', style: sans(13, weight: FontWeight.w700)),
+            const Spacer(),
+            Text(done ? 'நிறைவு ✓' : 'மீதி $left', style: sans(13, color: C.mute)),
+          ]),
+          const SizedBox(height: 16),
+          const MonthGrid(),
+          const SizedBox(height: 14),
+          const Divider(height: 1, color: C.line),
+          const SizedBox(height: 12),
+          Row(children: [
+            kv('சேர்ந்த நாள்', Demo.startText),
+            kv('நகை வாங்கலாம்', Demo.buyMonth),
+          ]),
+          // 6. average rate (gram schemes) — a plain fact, no promise
+          if (Demo.grams && avg > 0) ...[
+            const SizedBox(height: 12),
+            InfoBox(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+              child: Row(children: [
+                const Icon(Icons.scale_outlined, size: 20, color: C.goldText),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text.rich(TextSpan(children: [
+                    TextSpan(text: 'உங்கள் சராசரி விலை  ', style: sans(13, color: C.mute)),
+                    TextSpan(text: '${_inr(avg)} / கிராம்', style: sans(14, weight: FontWeight.w700)),
+                    if (Demo.gold22 > 0) TextSpan(text: '\nஇன்றைய 22K விலை ${rupees(Demo.gold22)} / கிராம்', style: sans(12, color: C.mute, height: 1.6)),
+                  ])),
                 ),
-              ),
+              ]),
             ),
           ],
-          const SizedBox(height: 10),
-          Text.rich(TextSpan(children: [
-            TextSpan(text: 'நகை வாங்கலாம் : ', style: sans(13.5)),
-            TextSpan(text: Demo.buyMonth, style: sans(13.5, weight: FontWeight.w700)),
-          ])),
           if (done && !Demo.silver && paid > 0) ...[
             const SizedBox(height: 14),
             GoldShine(
@@ -239,6 +308,7 @@ class _PassbookTabState extends State<PassbookTab> {
         ]),
       ),
       const SizedBox(height: 16),
+      // next instalment
       LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
@@ -269,17 +339,52 @@ class _PassbookTabState extends State<PassbookTab> {
           ],
         ]),
       ),
-      const SizedBox(height: 20),
-      const SectionTitle('தவணை வரலாறு'),
-      LuxCard(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Demo.payments.isEmpty
-            ? Padding(padding: const EdgeInsets.all(18), child: Text('இன்னும் தவணை எதுவும் இல்லை. முதல் தவணை கட்டியதும் இங்கே தெரியும்.', style: sans(13.5, color: C.mute, height: 1.6)))
-            : Builder(builder: (_) {
-                final ps = Demo.payments;
-                return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1, receipt: true)]);
-              }),
+      const SizedBox(height: 18),
+      // 4. tabs
+      Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(color: const Color(0xFFF1E8D2), borderRadius: BorderRadius.circular(14)),
+        child: Row(children: [
+          for (final (i, t) in [(0, 'தவணைகள் (${Demo.payments.length})'), (1, 'Referral பரிசு')])
+            Expanded(
+              child: Semantics(
+                selected: _tab == i,
+                button: true,
+                child: GestureDetector(
+                  onTap: () => setState(() => _tab = i),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 11),
+                    decoration: BoxDecoration(
+                      color: _tab == i ? C.paper : Colors.transparent,
+                      borderRadius: BorderRadius.circular(11),
+                      boxShadow: _tab == i ? const [BoxShadow(color: Color(0x14000000), blurRadius: 6, offset: Offset(0, 2))] : null,
+                    ),
+                    child: Text(t, textAlign: TextAlign.center, style: sans(14, color: _tab == i ? C.navy : C.mute, weight: FontWeight.w700)),
+                  ),
+                ),
+              ),
+            ),
+        ]),
       ),
+      const SizedBox(height: 12),
+      if (_tab == 0) ...[
+        LuxCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Demo.payments.isEmpty
+              ? Padding(padding: const EdgeInsets.all(18), child: Text('இன்னும் தவணை எதுவும் இல்லை. முதல் தவணை கட்டியதும் இங்கே தெரியும்.', style: sans(13.5, color: C.mute, height: 1.6)))
+              : Builder(builder: (_) {
+                  final ps = Demo.payments;
+                  return Column(children: [for (var i = 0; i < ps.length; i++) PaymentRow(ps[i], last: i == ps.length - 1, receipt: true)]);
+                }),
+        ),
+        // 5. full statement
+        if (Demo.payments.isNotEmpty) ...[
+          const SizedBox(height: 14),
+          OutlineBtn('கணக்கு அறிக்கை (PDF)', icon: Icons.picture_as_pdf_outlined, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StatementPage()))),
+        ],
+      ] else
+        referralCard(context),
     ]));
   }
 
@@ -339,38 +444,61 @@ class _PassbookTabState extends State<PassbookTab> {
 }
 
 
-void showReceipt(BuildContext context, String n, String date, int amt, double g) {
+void showReceipt(BuildContext context, List<Object> p) {
+  final n = p[0] as String, date = p[1] as String, amt = p[2] as int, g = p[3] as double;
+  final rate = p.length > 4 ? p[4] as double : 0.0;
+  final mon = p.length > 5 ? p[5] as String : '';
+  final key = GlobalKey();
+  final rows = [
+    ['பெயர்', Demo.name],
+    if (Demo.member.isNotEmpty) ['கணக்கு எண்', Demo.member],
+    ['திட்டம்', Demo.scheme],
+    ['தவணை எண்', Demo.silver ? n : '$n / ${Demo.months}'],
+    if (mon.isNotEmpty && !Demo.silver) ['தவணை மாதம்', mon],
+    ['செலுத்திய தேதி', date],
+    ['தொகை', rupees(amt)],
+    if (g > 0 && rate > 0) ['அன்றைய விலை', '${_inr(rate)} / கிராம்'],
+    if (g > 0) ['சேர்ந்த தங்கம்', '${g.toStringAsFixed(3)} கிராம்'],
+  ];
+  final text = 'சுப்புலட்சுமி தங்க மாளிகை · தவணை ரசீது\n${Demo.name} · ${Demo.scheme}\nதவணை $n · $date\nதொகை ${rupees(amt)}${g > 0 ? '\nதங்கம் ${g.toStringAsFixed(3)} கி' : ''}';
   showModalBottomSheet(
     context: context,
     backgroundColor: C.ivory,
+    isScrollControlled: true,
     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
     builder: (ctx) => SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 18),
         child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Center(child: Image.asset('assets/logo.png', height: 52)),
-          const SizedBox(height: 8),
-          Text('தவணை ரசீது', textAlign: TextAlign.center, style: serif(20)),
-          const Divider(height: 24, color: C.line),
-          for (final r in [
-            ['பெயர்', Demo.name],
-            ['திட்டம்', Demo.scheme],
-            ['தவணை எண்', Demo.silver ? n : '$n / ${Demo.months}'],
-            ['தேதி', date],
-            ['தொகை', rupees(amt)],
-            if (g > 0) ['தங்கம்', '${g.toStringAsFixed(3)} கிராம்'],
-          ])
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(children: [
-                SizedBox(width: 110, child: Text(r[0], style: sans(13.5, color: C.mute))),
-                Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
+          RepaintBoundary(
+            key: key,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line2)),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Center(child: Image.asset('assets/logo.png', height: 48)),
+                const SizedBox(height: 6),
+                Text('தவணை ரசீது', textAlign: TextAlign.center, style: serif(19)),
+                const Divider(height: 22, color: C.line),
+                for (final r in rows)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      SizedBox(width: 118, child: Text(r[0], style: sans(13.5, color: C.mute))),
+                      Expanded(child: Text(r[1], style: sans(14.5, weight: FontWeight.w700))),
+                    ]),
+                  ),
+                const Divider(height: 22, color: C.line),
+                Text('சுப்புலட்சுமி தங்க மாளிகை · புளியங்குடி · 97919 18344', textAlign: TextAlign.center, style: sans(11.5, color: C.mute)),
               ]),
             ),
+          ),
           const SizedBox(height: 14),
-          PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () {
+          PrimaryButton('படமாக பகிர்', icon: Icons.share_outlined, onTap: () => shareImage(context, key, text, 'receipt-$n.png')),
+          const SizedBox(height: 8),
+          OutlineBtn('எழுத்தாக WhatsApp-ல் அனுப்ப', onTap: () {
             Navigator.of(ctx).pop();
-            shareWhatsApp(context, 'சுப்புலட்சுமி தங்க மாளிகை · தவணை ரசீது\n${Demo.name} · ${Demo.scheme}\nதவணை $n · $date\nதொகை ${rupees(amt)}${g > 0 ? '\nதங்கம் ${g.toStringAsFixed(3)} கி' : ''}');
+            shareWhatsApp(context, text);
           }),
         ]),
       ),
@@ -480,7 +608,12 @@ class ReferralPage extends StatelessWidget {
   const ReferralPage({super.key});
   @override
   Widget build(BuildContext context) => _page('நண்பரை சேர்க்க', ListView(padding: const EdgeInsets.fromLTRB(16, 18, 16, 24), children: [
-        LuxCard(
+        referralCard(context),
+      ]));
+}
+
+/// Referral card — used on the referral page and in the Passbook "Referral பரிசு" tab.
+Widget referralCard(BuildContext context) => LuxCard(
           inner: true,
           padding: const EdgeInsets.all(22),
           child: Column(children: [
@@ -527,8 +660,6 @@ class ReferralPage extends StatelessWidget {
             ],
             ],
             const SizedBox(height: 14),
-            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்புத் திட்டத்தில் சேருங்கள்! App-ல் சேரும்போது "Reference code" box-ல் என் code ${Demo.member} கொடுங்கள்.\n${Api.site}'))),
+            SizedBox(width: double.infinity, child: PrimaryButton('WhatsApp-ல் பகிர்', icon: Icons.share_outlined, onTap: () => shareWhatsApp(context, 'சுப்புலட்சுமி தங்கமாளிகை தங்கநகை சேமிப்புத் திட்டத்தில் சேருங்கள்! App-ல் சேரும்போது "Reference code" box-ல் என் code ${Demo.member} கொடுங்கள்.\n${appLink()}'))),
           ]),
-        ),
-      ]));
-}
+        );
