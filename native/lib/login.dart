@@ -21,7 +21,10 @@ class _LoginFrame extends StatelessWidget {
     final top = MediaQuery.of(context).padding.top;
     final sh = MediaQuery.of(context).size.height;
     final heroHeight = sh < 700 ? this.heroHeight * .72 : this.heroHeight;
-    return Scaffold(
+    // white status-bar icons over the maroon header (they were invisible before)
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
+      child: Scaffold(
       backgroundColor: C.navy,
       // maroon glow + dot-kolam behind the logo (and behind the rounded corners of the sheet)
       body: Container(
@@ -49,7 +52,8 @@ class _LoginFrame extends StatelessWidget {
             decoration: const BoxDecoration(
               color: C.ivory,
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-              image: DecorationImage(image: ResizeImage(AssetImage('assets/ivory_bg.jpg'), width: 900), fit: BoxFit.cover, alignment: Alignment.bottomCenter),
+              // 2026-11-21 (option A): plain cream, only the gold wave at the bottom — no mandala / side flourish behind the text
+              image: DecorationImage(image: ResizeImage(AssetImage('assets/ivory_plain.jpg'), width: 900), fit: BoxFit.cover, alignment: Alignment.bottomCenter),
             ),
             child: SafeArea(top: false, child: child),
           ),
@@ -57,7 +61,7 @@ class _LoginFrame extends StatelessWidget {
       ]),
         ),
       ),
-    );
+    ));
   }
 }
 
