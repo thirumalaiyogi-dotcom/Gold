@@ -3,6 +3,7 @@
 // Supabase → Edge Functions → Deploy a new function → Via Editor → பெயர்: push → இதை முழுசா paste → Deploy
 // Secrets எதுவும் தேவையில்ல — அனுப்பும் key-ஐ function முதல் தடவை தானே உருவாக்கி gold_push_cfg-ல வைக்கும்.
 // "Verify JWT" ON-ஆவே இருக்கட்டும்.
+// v7 (2026-11-21): cron kind "rate" — morning reminder to staff phones when today's rate is not entered.
 // v6 (2026-11-12): chat — staff_sub (staff phones get "new question"), chat_ask (customer → staff), chat_reply (staff → that customer).
 //     Staff-only subscriptions (staff_email set, no customer) are left out of customer broadcasts.
 // v4: Native app (Android) phone-களுக்கு Firebase (FCM) வழியா அனுப்புதல்.
@@ -169,6 +170,25 @@ async function deliver(subs: any[], payloadFor: (s: any) => string) {
 const MONTHS: Record<string, number> = { dhana: 11, kubera: 11 };
 // தானியங்கி: 1-ம் / 5-ம் தேதி தவணை நினைவூட்டல், தினமும் பிறந்தநாள் / திருமண நாள் வாழ்த்து
 async function cronRun(kind: string) {
+  // Morning reminder to staff phones when today's gold/silver rate is not entered yet (2026-11-21)
+  if (kind === "rate") {
+    const today = new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10);
+    const rr = await rest("gold_rate?select=updated_on&id=eq.1");
+    const last = Array.isArray(rr.data) && rr.data[0] ? String(rr.data[0].updated_on || "").slice(0, 10) : "";
+    if (last === today) return { sent: 0, failed: 0, total: 0, skip: "rate_done" };
+    const sr = await rest("gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails&staff_email=not.is.null");
+    const staff: any[] = Array.isArray(sr.data) ? sr.data : [];
+    if (!staff.length) return { sent: 0, failed: 0, total: 0 };
+    await vapid();
+    const payload = JSON.stringify({
+      title: "இன்றைய விலை இன்னும் பதிவாகவில்லை 🔔",
+      body: "Admin panel-ல் இன்றைய தங்கம் 22K / வெள்ளி விலையை பதிவு செய்யவும். Customer-களுக்கு App-ல் பழைய தேதி காட்டுகிறது.",
+      url: "/staff.html#rate",
+      tag: "rate",
+    });
+    const r = await deliver(staff, () => payload);
+    return { ...r, total: staff.length };
+  }
   const sr = await rest("gold_push_subs?select=endpoint,p256dh,auth,customer_id,fails&customer_id=not.is.null");
   const subs: any[] = Array.isArray(sr.data) ? sr.data : [];
   if (!subs.length) return { sent: 0, failed: 0, total: 0 };

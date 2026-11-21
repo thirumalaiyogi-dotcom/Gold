@@ -178,6 +178,7 @@
     navTo("dash", true);
     window.S6NAV = (k) => navTo(k);
     if (location.hash === "#chat") navTo("chat", true); // opened from a "new question" push
+    else if (location.hash === "#rate") navTo("rate", true); // opened from the morning "rate not entered" push
     try { history.replaceState({ s6base: 1 }, ""); } catch (e) {}
     armHistory();
     // the old tab switcher is still used by other code (staffTab) → route it here
