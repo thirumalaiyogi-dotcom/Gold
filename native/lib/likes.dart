@@ -94,7 +94,7 @@ class LikeButton extends StatelessWidget {
       builder: (context, _, __) {
         final on = Likes.has(type, id);
         return IconButton(
-          tooltip: on ? 'பிடித்தவையிலிருந்து நீக்க' : 'பிடித்தவையில் சேர்க்க',
+          tooltip: on ? 'விருப்பப் பட்டியலிலிருந்து நீக்க' : 'விருப்பப் பட்டியலில் சேர்க்க',
           onPressed: () => Likes.toggle(context, type, id),
           icon: AnimatedSwitcher(
             duration: const Duration(milliseconds: 220),
@@ -278,7 +278,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       body = ListView(padding: const EdgeInsets.fromLTRB(24, 70, 24, 24), children: [
         const Icon(Icons.favorite_border, size: 54, color: C.goldText),
         const SizedBox(height: 14),
-        Text(failed ? 'பிடித்தவைகளைப் பெற இயலவில்லை' : 'இன்னும் எதுவும் சேர்க்கவில்லை', textAlign: TextAlign.center, style: serif(20)),
+        Text(failed ? 'விருப்பப் பட்டியலைப் பெற இயலவில்லை' : 'இன்னும் எதுவும் சேர்க்கவில்லை', textAlign: TextAlign.center, style: serif(20)),
         const SizedBox(height: 8),
         Text(failed ? 'இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.' : 'நகை படங்களில் ♡ அழுத்தினால் அவை இங்கே சேமிக்கப்படும்.',
             textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.5)),
@@ -334,7 +334,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
     return Scaffold(
       backgroundColor: C.ivory,
-      appBar: AppBar(backgroundColor: C.ivory, surfaceTintColor: C.ivory, foregroundColor: C.navy, title: Text('என் பிடித்தவை', style: serif(20))),
+      appBar: AppBar(backgroundColor: C.ivory, surfaceTintColor: C.ivory, foregroundColor: C.navy, title: Text('விருப்பப் பட்டியல்', style: serif(20))),
       body: body,
     );
   }

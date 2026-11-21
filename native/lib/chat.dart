@@ -432,3 +432,94 @@ class ChatEntry extends StatelessWidget {
     );
   }
 }
+
+/// கணக்கை நீக்க கோரிக்கை — sent inside the app as a chat message to the shop (no WhatsApp).
+/// The shop sees it under "கேள்விகள்" and replies in the same chat.
+Future<void> requestAccountDeletion(BuildContext context) async {
+  tapFeel();
+  if (!app.loggedIn) {
+    showNote(context, 'கோரிக்கை அனுப்ப mPIN மூலம் உள்நுழையவும்');
+    openPassbookLogin(context);
+    return;
+  }
+  const reasons = ['இனி App பயன்படுத்தவில்லை', 'திட்டம் முடிந்தது', 'தகவல் பாதுகாப்பு', 'வேறு காரணம்'];
+  String? reason;
+  bool busy = false;
+  final sent = await showModalBottomSheet<bool>(
+    context: context,
+    backgroundColor: C.ivory,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, set) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('கணக்கை நீக்க கோரிக்கை', style: serif(20)),
+            const SizedBox(height: 8),
+            Text('உங்கள் கோரிக்கை App வழியாகவே கடைக்குச் செல்லும். கடை உங்களைத் தொடர்பு கொண்டு உறுதி செய்யும்; பதில் "கடையிடம் கேளுங்க" பகுதியில் வரும்.',
+                style: sans(13.5, color: C.mute, height: 1.6)),
+            const SizedBox(height: 14),
+            Text('காரணம் (விருப்பம்)', style: sans(13, weight: FontWeight.w700)),
+            const SizedBox(height: 8),
+            Wrap(spacing: 8, runSpacing: 8, children: [
+              for (final r in reasons)
+                ChoiceChip(
+                  label: Text(r, style: sans(13, color: reason == r ? Colors.white : C.ink)),
+                  selected: reason == r,
+                  selectedColor: C.navy,
+                  backgroundColor: C.paper,
+                  side: BorderSide(color: reason == r ? C.navy : C.line2),
+                  showCheckmark: false,
+                  onSelected: (_) => set(() => reason = reason == r ? null : r),
+                ),
+            ]),
+            const SizedBox(height: 18),
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: busy
+                    ? null
+                    : () async {
+                        set(() => busy = true);
+                        final body = '🗑 கணக்கை நீக்க கோரிக்கை\nபெயர்: ${Demo.name}${Demo.member.isNotEmpty ? ' · உறுப்பினர் எண்: ${Demo.member}' : ''}\nதிட்டம்: ${Demo.scheme}${reason != null ? '\nகாரணம்: $reason' : ''}';
+                        bool ok = false;
+                        try {
+                          final d = await Api.rpc('gold_chat_send', {'p_mobile': app.mobile, 'p_pin': app.pin, 'p_body': body});
+                          ok = d is Map && d['ok'] == true;
+                        } catch (_) {}
+                        if (ok) {
+                          // tell the shop's phones (same push as a new question)
+                          unawaited(http
+                              .post(Uri.parse('${Api.url}/functions/v1/push'),
+                                  headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'},
+                                  body: jsonEncode({'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}))
+                              .then((_) {}, onError: (_) {}));
+                        }
+                        if (ctx.mounted) Navigator.of(ctx).pop(ok);
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: C.red,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                child: busy
+                    ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white))
+                    : Text('கோரிக்கை அனுப்பு', style: sans(15.5, color: Colors.white, weight: FontWeight.w700)),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text('வேண்டாம்', style: sans(14.5, color: C.navy, weight: FontWeight.w600))),
+          ]),
+        ),
+      ),
+    ),
+  );
+  if (!context.mounted || sent == null) return;
+  if (sent) {
+    showNote(context, 'கோரிக்கை அனுப்பப்பட்டது. கடையின் பதில் இங்கே வரும்.');
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatPage()));
+  } else {
+    showNote(context, 'அனுப்ப இயலவில்லை. மீண்டும் முயற்சிக்கவும்.');
+  }
+}

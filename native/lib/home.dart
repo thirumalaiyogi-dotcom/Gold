@@ -581,7 +581,7 @@ class SideMenu extends StatelessWidget {
             close();
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()));
           }),
-          item(Icons.favorite_border, 'என் பிடித்தவை', () {
+          item(Icons.favorite_border, 'விருப்பப் பட்டியல்', () {
             close();
             openFavorites(context);
           }),
@@ -596,7 +596,10 @@ class SideMenu extends StatelessWidget {
           item(Icons.vibration, 'அதிர்வு', () => setLocal(() => app.haptics = !app.haptics),
               trailing: Switch(value: app.haptics, onChanged: (v) => setLocal(() => app.haptics = v))),
           item(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
-          item(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
+          item(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () {
+            close();
+            requestAccountDeletion(context);
+          }),
           if (app.loggedIn)
             item(Icons.logout, 'வெளியேறு', () {
               app.logout();
@@ -698,7 +701,7 @@ class ProfileTab extends StatelessWidget {
                 _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()))),
               ]),
             _group([
-              _row(Icons.favorite_border, 'என் பிடித்தவை', () => openFavorites(context), first: true),
+              _row(Icons.favorite_border, 'விருப்பப் பட்டியல்', () => openFavorites(context), first: true),
             ]),
             StatefulBuilder(builder: (context, setLocal) {
               return _group([
@@ -708,7 +711,7 @@ class ProfileTab extends StatelessWidget {
                 _row(Icons.notifications_active_outlined, 'Notification அமைப்பு', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const NotifySettingsPage()))),
                 _row(Icons.info_outline, 'எங்களைப் பற்றி', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AboutPage()))),
                 _row(Icons.shield_outlined, 'தனியுரிமைக் கொள்கை', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PrivacyPage()))),
-                if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => whatsApp(context, 'வணக்கம், என் கணக்கை நீக்க கோரிக்கை.')),
+                if (app.loggedIn) _row(Icons.delete_outline, 'கணக்கை நீக்க கோரிக்கை', () => requestAccountDeletion(context)),
                 if (app.loggedIn)
                   _row(Icons.logout, 'வெளியேறு', () {
                     app.logout();

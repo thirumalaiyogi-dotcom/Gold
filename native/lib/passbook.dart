@@ -7,6 +7,7 @@ import 'ui.dart';
 import 'pay.dart';
 import 'share_card.dart';
 import 'statement.dart';
+import 'chat.dart' show requestAccountDeletion;
 import 'likes.dart' show appLink;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -585,12 +586,12 @@ class MyDetailsPage extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text('கணக்கை நீக்க கோரிக்கை', style: serif(17)),
           const SizedBox(height: 6),
-          Text('உங்கள் கணக்கையும் தகவல்களையும் நீக்க கடைக்கு கோரிக்கை அனுப்பலாம். கடை உங்களை அழைத்து உறுதி செய்யும்.', style: sans(13.5, color: C.mute, height: 1.6)),
+          Text('உங்கள் கணக்கையும் தகவல்களையும் நீக்க App வழியாகவே கடைக்கு கோரிக்கை அனுப்பலாம். கடை உங்களைத் தொடர்பு கொண்டு உறுதி செய்யும்.', style: sans(13.5, color: C.mute, height: 1.6)),
           const SizedBox(height: 12),
           SizedBox(
             height: 46,
             child: OutlinedButton(
-              onPressed: () => whatsApp(context, 'வணக்கம், என் கணக்கையும் தகவல்களையும் நீக்க கோரிக்கை.\nபெயர்: ${Demo.name}\nமொபைல்: ${app.mobile}'),
+              onPressed: () => requestAccountDeletion(context),
               style: OutlinedButton.styleFrom(
                 foregroundColor: C.red,
                 side: const BorderSide(color: C.red, width: 1.4),
