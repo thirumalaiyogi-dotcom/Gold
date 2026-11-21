@@ -307,32 +307,11 @@ class HomeTab extends StatelessWidget {
             const _RateBoard(),
           ] else
             const _RateBoard(),
-          const SizedBox(height: 8),
-          Demo.rateIsToday || Demo.gold22 == 0
-              ? Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.mute))
-              : Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  decoration: BoxDecoration(color: const Color(0xFFFFF4D6), borderRadius: BorderRadius.circular(99)),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    const Icon(Icons.info_outline, size: 15, color: Color(0xFF8A6512)),
-                    const SizedBox(width: 6),
-                    Flexible(child: Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12, color: const Color(0xFF5A4410), weight: FontWeight.w600))),
-                  ]),
-                ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RatePage())),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: C.navy,
-              backgroundColor: C.paper,
-              side: const BorderSide(color: C.line2),
-              shape: const StadiumBorder(),
-              minimumSize: const Size(0, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-            ),
-            icon: const Icon(Icons.show_chart, size: 18),
-            label: Text('விலை நிலவரம் பார்க்க  ›', style: sans(14, color: C.navy, weight: FontWeight.w700)),
-          ),
+          // 2026-11-21: date chip lives in the rate board header; no banner, no extra button
+          if (Demo.gold22 == 0 && app.rateError) ...[
+            const SizedBox(height: 8),
+            Text(Demo.rateStamp, textAlign: TextAlign.center, style: sans(12.5, color: C.mute)),
+          ],
         ]),
       )),
       ]),
@@ -436,7 +415,7 @@ class _RateBoard extends StatelessWidget {
                       FittedBox(
                         fit: BoxFit.scaleDown,
                         alignment: Alignment.centerLeft,
-                        child: Text(change == 0 ? '● நேற்றைய விலையில் மாற்றமில்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)} நேற்றைவிட',
+                        child: Text(change == 0 ? '● மாற்றமில்லை' : '${change > 0 ? '▲' : '▼'} ${rupees(change.abs(), decimals: dec)}',
                             maxLines: 1, style: sans(12.5, color: change == 0 ? C.mute : C.navy, weight: FontWeight.w700)),
                       ),
                     ]),
@@ -456,11 +435,44 @@ class _RateBoard extends StatelessWidget {
           );
       return Row(children: [sk(), const SizedBox(width: 12), sk()]);
     }
-    return IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+    // header: "இன்றைய விலை" + date chip (amber when it is an older day's rate) — the whole block opens the rate page
+    final today = Demo.rateIsToday;
+    final u = Demo.rateDay;
+    final header = Semantics(
+      button: true,
+      label: today ? 'இன்றைய விலை, விலை நிலவரம் பார்க்க' : '$u விலை, இன்றைய விலை இன்னும் பதிவாகவில்லை',
+      child: InkWell(
+        onTap: open,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 8),
+          child: Row(children: [
+            Text('இன்றைய விலை', style: sans(14.5, color: C.ink, weight: FontWeight.w700)),
+            const Spacer(),
+            if (u.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                  color: today ? const Color(0xFFF1E8D2) : const Color(0xFFFFEBC7),
+                  borderRadius: BorderRadius.circular(99),
+                  border: Border.all(color: today ? C.line2 : const Color(0xFFE0A33A)),
+                ),
+                child: Text(today ? 'இன்று' : u, style: sans(12, color: today ? C.goldText : const Color(0xFF8A5300), weight: FontWeight.w700)),
+              ),
+            const SizedBox(width: 2),
+            const Icon(Icons.chevron_right, size: 20, color: C.goldText),
+          ]),
+        ),
+      ),
+    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      header,
+      IntrinsicHeight(child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       tile('தங்கம் 22K', Demo.gold22 > 0 ? rupees(Demo.gold22) : '—', Demo.goldChange, 0, 'assets/gold.png'),
       const SizedBox(width: 12),
       tile('வெள்ளி', Demo.silverRate > 0 ? rupees(Demo.silverRate, decimals: _dec(Demo.silverRate)) : '—', Demo.silverChange, _dec(Demo.silverChange.toDouble()), 'assets/silver.png'),
-    ]));
+      ])),
+    ]);
   }
 }
 

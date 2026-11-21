@@ -153,6 +153,14 @@ class Demo {
     return u.substring(0, 10) == today;
   }
 
+  /// "12 நவ." (no year) of the shown rate, for the small date chip.
+  static String get rateDay {
+    final u = '${_rt['updated_on'] ?? ''}';
+    if (u.length < 10) return '';
+    final p = taDate(u).split(' ');
+    return p.length >= 2 ? '${p[0]} ${p[1]}' : taDate(u);
+  }
+
   static String get rateStamp => _rt['updated_on'] == null
       ? (app.rateError ? 'விலை தற்போது கிடைக்கவில்லை' : 'விலை ஏற்றுகிறது…')
       : (rateIsToday ? 'இன்றைய விலை · ${taDate(_rt['updated_on'].toString())}' : 'கடைசி விலை · ${taDate(_rt['updated_on'].toString())} · இன்றைய விலை இன்னும் பதிவாகவில்லை');
