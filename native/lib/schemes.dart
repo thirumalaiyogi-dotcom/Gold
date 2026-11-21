@@ -45,7 +45,7 @@ class SchemeCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
             // silver scheme gets a silver card so gold vs silver reads at a glance (design audit)
-            decoration: velvetDeco(alignment: s.silver ? Alignment.center : Alignment.topLeft, silver: s.silver),
+            decoration: velvetDeco(alignment: s.silver ? const Alignment(0, -0.9) : Alignment.topLeft, silver: s.silver),
             child: Row(children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
