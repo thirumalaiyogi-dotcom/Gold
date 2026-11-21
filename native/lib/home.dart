@@ -1090,7 +1090,7 @@ class _BioRowState extends State<_BioRow> {
   Future<void> _set(bool v) async {
     if (v) {
       final ok = await Bio.enable(app.mobile, app.pin);
-      if (!ok && mounted) showNote(context, 'கைரேகை சரிபார்ப்பு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.');
+      if (!ok && mounted) showNote(context, 'சரிபார்ப்பு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.');
     } else {
       await Bio.disable();
     }
@@ -1116,8 +1116,8 @@ class _BioRowState extends State<_BioRow> {
           const SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('கைரேகை login', style: sans(15.5, color: C.ink)),
-              Text('mPIN இல்லாமல் கைரேகை மூலம் திறக்க', style: sans(12.5, color: C.mute)),
+              Text('Phone lock மூலம் திறக்க', style: sans(15.5, color: C.ink)),
+              Text('கைரேகை / pattern / PIN · mPIN தேவையில்லை', style: sans(12.5, color: C.mute)),
             ]),
           ),
           Switch(value: on ?? false, onChanged: _set),

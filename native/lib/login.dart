@@ -321,8 +321,10 @@ class _MobileScreenState extends State<MobileScreen> {
 }
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({super.key, required this.mobile});
+  const PinScreen({super.key, required this.mobile, this.fromBoot = false});
   final String mobile;
+  /// Opened straight from the splash (GPay-style unlock): back goes to the welcome page.
+  final bool fromBoot;
   @override
   State<PinScreen> createState() => _PinScreenState();
 }
@@ -427,9 +429,11 @@ class _PinScreenState extends State<PinScreen> {
     final m = widget.mobile;
     return _LoginFrame(
       heroHeight: 130,
-      onBack: () => Navigator.of(context).pop(),
+      onBack: widget.fromBoot
+          ? () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const WelcomeScreen()))
+          : () => Navigator.of(context).pop(),
       child: ListView(padding: const EdgeInsets.fromLTRB(22, 18, 22, 16), children: [
-        const _PadHeader('mPIN', 'உங்க 6 இலக்க mPIN போடுங்க'),
+        _PadHeader('mPIN', bio ? 'Phone lock அல்லது 6 இலக்க mPIN மூலம் திறக்கவும்' : 'உங்க 6 இலக்க mPIN போடுங்க'),
         const SizedBox(height: 8),
         Center(
           child: Container(

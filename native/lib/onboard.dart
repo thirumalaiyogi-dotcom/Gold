@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'bio.dart';
 import 'login.dart';
 import 'ui.dart';
 
@@ -23,9 +24,16 @@ class _BootState extends State<Boot> {
     final r = await Future.wait([_seenIntro(), Future.delayed(const Duration(milliseconds: 1700), () => true)]);
     if (!mounted) return;
     final seen = r[0];
+    // GPay-style: a customer who turned on phone-lock unlock goes straight to the unlock prompt
+    Widget next = seen ? const WelcomeScreen() : const Onboarding();
+    if (seen) {
+      final m = await SavedMobile.get();
+      if (m != null && await Bio.enabledFor(m)) next = PinScreen(mobile: m, fromBoot: true);
+    }
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(PageRouteBuilder(
       transitionDuration: const Duration(milliseconds: 500),
-      pageBuilder: (_, __, ___) => seen ? const WelcomeScreen() : const Onboarding(),
+      pageBuilder: (_, __, ___) => next,
       transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
     ));
   }

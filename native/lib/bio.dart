@@ -5,7 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ui.dart';
 
-/// Fingerprint login (owner approved 2026-11-09).
+/// Fingerprint login (owner approved 2026-11-09). Since 2026-11-21 also the phone's own screen lock
+/// (pattern / PIN / password) like GPay — biometricOnly: false.
 /// The mPIN is kept only on this phone, encrypted with the Android Keystore, and the app
 /// hands it to the normal login RPC only after a successful fingerprint check.
 /// Cleared on logout, when the mPIN is set again, or when the stored mPIN stops working.
@@ -14,12 +15,10 @@ class Bio {
   static const _st = FlutterSecureStorage(aOptions: AndroidOptions(encryptedSharedPreferences: true));
   static const _kM = 'bio_mobile', _kP = 'bio_pin';
 
-  /// Phone has a fingerprint (or face) enrolled.
+  /// Phone has a screen lock (fingerprint / face / pattern / PIN / password).
   static Future<bool> available() async {
     try {
-      if (!await _auth.isDeviceSupported()) return false;
-      if (!await _auth.canCheckBiometrics) return false;
-      return (await _auth.getAvailableBiometrics()).isNotEmpty;
+      return await _auth.isDeviceSupported();
     } catch (_) {
       return false;
     }
@@ -37,7 +36,7 @@ class Bio {
     try {
       return await _auth.authenticate(
         localizedReason: reason,
-        options: const AuthenticationOptions(biometricOnly: true, stickyAuth: true),
+        options: const AuthenticationOptions(biometricOnly: false, stickyAuth: true),
       );
     } catch (_) {
       return false;
@@ -46,7 +45,7 @@ class Bio {
 
   /// Turn on after a fresh fingerprint check.
   static Future<bool> enable(String mobile, String pin) async {
-    if (pin.length != 6 || !await check('கைரேகை login-ஐ இயக்க விரல் வையுங்க')) return false;
+    if (pin.length != 6 || !await check('Phone lock மூலம் திறப்பதை இயக்க உறுதிப்படுத்தவும்')) return false;
     try {
       await _st.write(key: _kM, value: mobile);
       await _st.write(key: _kP, value: pin);
@@ -66,7 +65,7 @@ class Bio {
   /// Fingerprint → stored mPIN (null if cancelled / not set up).
   static Future<String?> unlock(String mobile) async {
     if (!await enabledFor(mobile)) return null;
-    if (!await check('Passbook திறக்க கைரேகை வையுங்க')) return null;
+    if (!await check('Passbook திறக்க கைரேகை / phone lock-ஐ பயன்படுத்தவும்')) return null;
     try {
       return await _st.read(key: _kP);
     } catch (_) {
@@ -88,9 +87,9 @@ class Bio {
         builder: (c) => AlertDialog(
           backgroundColor: C.paper,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          icon: const Icon(Icons.fingerprint, size: 48, color: C.navy),
-          title: Text('கைரேகை மூலம் உள்நுழைய வேண்டுமா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
-          content: Text('அடுத்த முறை mPIN இல்லாமல் கைரேகை மூலம் Passbook-ஐத் திறக்கலாம். கணக்கு → அமைப்புகளில் எப்போது வேண்டுமானாலும் நிறுத்தலாம்.',
+          icon: const Icon(Icons.lock_person_outlined, size: 48, color: C.navy),
+          title: Text('Phone lock மூலம் திறக்க வேண்டுமா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
+          content: Text('GPay மாதிரி, அடுத்த முறை mPIN இல்லாமல் உங்கள் phone-ன் lock (கைரேகை / pattern / PIN) மூலம் Passbook-ஐத் திறக்கலாம். கணக்கு → அமைப்புகளில் எப்போது வேண்டுமானாலும் நிறுத்தலாம்.',
               textAlign: TextAlign.center, style: sans(14, color: C.mute, height: 1.6)),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
