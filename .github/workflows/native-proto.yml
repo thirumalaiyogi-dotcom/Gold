@@ -102,14 +102,20 @@ jobs:
             # retry: GitHub-hosted Gradle download sometimes returns 504
             sed -i 's#https\\://github.com/gradle/gradle-distributions/releases/download/v\([0-9.]*\)/gradle-\([0-9.]*\)-all.zip#https\\://services.gradle.org/distributions/gradle-\2-bin.zip#' android/gradle/wrapper/gradle-wrapper.properties || true
             grep distributionUrl android/gradle/wrapper/gradle-wrapper.properties || true
-            for t in 1 2 3; do flutter build apk --release && break; echo "build attempt $t failed, retrying"; sleep 30; done
+            # 2026-11-21: one APK per phone type instead of one 62 MB universal APK.
+            # Main APK = 64-bit ARM (almost every phone since 2019). Same versionCode, so updates keep working.
+            for t in 1 2 3; do flutter build apk --release --target-platform android-arm64 && break; echo "build attempt $t failed, retrying"; sleep 30; done
+            cp build/app/outputs/flutter-apk/app-release.apk "$RUNNER_TEMP/stm-arm64.apk"
+            # small extra APK for old 32-bit phones (best effort)
+            flutter build apk --release --target-platform android-arm && cp build/app/outputs/flutter-apk/app-release.apk "$RUNNER_TEMP/stm-32bit.apk" || echo "32-bit build skipped"
           } 2>&1 | tee build-android.log
       - name: Publish APK + log to branch native-build
         if: always()
         run: |
           OUT="$RUNNER_TEMP/out"; mkdir -p "$OUT"
           cp build-android.log flutter-version.txt "$OUT/" 2>/dev/null || true
-          cp build/app/outputs/flutter-apk/app-release.apk "$OUT/stm-native-proto.apk" 2>/dev/null || true
+          cp "$RUNNER_TEMP/stm-arm64.apk" "$OUT/stm-native-proto.apk" 2>/dev/null || true
+          cp "$RUNNER_TEMP/stm-32bit.apk" "$OUT/stm-native-proto-32bit.apk" 2>/dev/null || true
           RES=${{ steps.build.outcome }}; [ -f "$OUT/stm-native-proto.apk" ] || RES=failure
           echo "commit=$GITHUB_SHA result=$RES built=$(date -u +%FT%TZ)" > "$OUT/BUILD_INFO.txt"
           cd "$OUT"
