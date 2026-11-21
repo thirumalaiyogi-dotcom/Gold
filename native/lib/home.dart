@@ -800,8 +800,9 @@ class _SavingsHero extends StatelessWidget {
           decoration: velvetDeco(
             radius: BorderRadius.circular(20),
             alignment: Alignment.center,
-            frame: Border.all(color: const Color(0xA6D6B56D)),
-            shadow: const [BoxShadow(color: Color(0x406E1423), blurRadius: 22, offset: Offset(0, 10))],
+            silver: Demo.silver,
+            frame: Border.all(color: Demo.silver ? const Color(0xB3C9CED6) : const Color(0xA6D6B56D)),
+            shadow: [BoxShadow(color: Demo.silver ? const Color(0x40343A42) : const Color(0x406E1423), blurRadius: 22, offset: const Offset(0, 10))],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -864,12 +865,12 @@ class _NextDue extends StatelessWidget {
         ? 'எல்லா தவணையும் முடிந்தது ✓'
         : Demo.paidThisMonth && !Demo.silver
             ? 'இந்த மாத தவணை செலுத்தப்பட்டது ✓'
-            : (Demo.silver ? 'இந்த மாத சேமிப்பு' : 'தவணை ${paid + 1} / ${Demo.months}');
+            : (Demo.silver ? (Demo.paidThisMonth ? 'இந்த மாதம் ${rupees(Demo.thisMonthTotal)} சேமிப்பு ✓' : 'இந்த மாத சேமிப்பு') : 'தவணை ${paid + 1} / ${Demo.months}');
     return LuxCard(
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          Expanded(child: Text(title, style: serif(18, color: done || (Demo.paidThisMonth && !Demo.silver) ? C.green : C.navy))),
+          Expanded(child: Text(title, style: serif(18, color: done || Demo.paidThisMonth ? C.green : C.navy))),
           if (!done && Demo.fixed) Text(rupees(Demo.monthly), style: serif(20, weight: FontWeight.w700)),
         ]),
         if (!done) ...[
@@ -877,13 +878,18 @@ class _NextDue extends StatelessWidget {
           Row(children: [
             const Icon(Icons.event_outlined, size: 16, color: C.mute),
             const SizedBox(width: 6),
-            Expanded(child: Text(Demo.paidThisMonth && !Demo.silver ? 'அடுத்த தவணை ${Demo.dueText}' : Demo.dueText, style: sans(13, color: C.mute))),
+            Expanded(
+                child: Text(
+                    Demo.silver
+                        ? (Demo.paidThisMonth ? 'இந்த மாதம் எத்தனை முறை வேண்டுமானாலும் மேலும் சேர்க்கலாம்' : '₹100 முதல் · ${Demo.dueText}')
+                        : (Demo.paidThisMonth ? 'அடுத்த தவணை ${Demo.dueText}' : Demo.dueText),
+                    style: sans(13, color: C.mute))),
           ]),
         ],
         if (Demo.canPay) ...[
           const SizedBox(height: 14),
           SwipeToPay(
-            label: 'தவணை செலுத்த',
+            label: Demo.silver && Demo.paidThisMonth ? 'மேலும் சேமிக்க' : 'தவணை செலுத்த',
             silver: Demo.silver,
             onDone: () async {
               final ok = await Navigator.of(context).push<bool>(MaterialPageRoute(builder: (_) => const PayPage()));

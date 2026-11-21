@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'links.dart';
@@ -9,19 +12,30 @@ import 'main.dart';
 import 'ui.dart';
 
 /// Captures the widget under [key] as a PNG and opens the phone's share sheet (WhatsApp etc.).
+/// Writes [bytes] to a real file in the app's cache folder and opens the share sheet with it.
+/// (Sharing in-memory data was not reliable on some phones: the picture/PDF never reached WhatsApp.)
+Future<void> shareBytes(Uint8List bytes, String name, String mime, {String text = ''}) async {
+  final dir = await getTemporaryDirectory();
+  final safe = name.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
+  final f = File('${dir.path}/share_${DateTime.now().millisecondsSinceEpoch}_$safe');
+  await f.writeAsBytes(bytes, flush: true);
+  await SharePlus.instance.share(ShareParams(files: [XFile(f.path, mimeType: mime, name: safe)], text: text.isEmpty ? null : text));
+}
+
 Future<void> shareImage(BuildContext context, GlobalKey key, String text, String file) async {
   try {
     final b = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     if (b == null) throw 'no card';
-    final img = await b.toImage(pixelRatio: 3);
+    final img = await b.toImage(pixelRatio: 2.5);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
     if (data == null) throw 'no data';
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile.fromData(data.buffer.asUint8List(), mimeType: 'image/png', name: file)],
-      text: text,
-    ));
-  } catch (_) {
-    if (context.mounted) shareWhatsApp(context, text); // fallback: text only
+    await shareBytes(data.buffer.asUint8List(), file, 'image/png', text: text);
+  } catch (e) {
+    debugPrint('shareImage failed: $e');
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('படத்தைப் பகிர இயலவில்லை; எழுத்தாக அனுப்பப்படுகிறது.')));
+      shareWhatsApp(context, text); // fallback: text only
+    }
   }
 }
 

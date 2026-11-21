@@ -219,7 +219,7 @@ class _PassbookTabState extends State<PassbookTab> {
     final done = Demo.schemeDone;
     final day = nowIst().day;
     final st = Demo.paidThisMonth
-        ? (Demo.silver ? 'இந்த மாத தவணை செலுத்தப்பட்டது' : 'செலுத்தப்பட்டது')
+        ? (Demo.silver ? 'சேமித்தது ✓' : 'செலுத்தப்பட்டது')
         : paid == 0
             ? 'முதல் தவணை'
             : day <= 7
@@ -274,7 +274,7 @@ class _PassbookTabState extends State<PassbookTab> {
           ),
           const SizedBox(height: 6),
           Row(children: [
-            Text('$paid / ${Demo.months} தவணை', style: sans(13, weight: FontWeight.w700)),
+            Text('$paid / ${Demo.months} ${Demo.silver ? 'மாதம்' : 'தவணை'}', style: sans(13, weight: FontWeight.w700)),
             const Spacer(),
             Text(done ? 'நிறைவு ✓' : 'மீதி $left', style: sans(13, color: C.mute)),
           ]),
@@ -319,7 +319,14 @@ class _PassbookTabState extends State<PassbookTab> {
       LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
-            Expanded(child: Text(done ? 'திட்டம்' : (Demo.paidThisMonth && !Demo.silver ? 'அடுத்த தவணை (${paid + 1}/${Demo.months})' : 'தவணை (${Demo.paidThisMonth ? paid : paid + 1}/${Demo.months})'), style: sans(13, color: C.mute))),
+            Expanded(
+                child: Text(
+                    done
+                        ? 'திட்டம்'
+                        : Demo.silver
+                            ? 'இந்த மாதம் (${Demo.paidThisMonth ? paid : paid + 1}/${Demo.months})'
+                            : (Demo.paidThisMonth ? 'அடுத்த தவணை (${paid + 1}/${Demo.months})' : 'தவணை (${paid + 1}/${Demo.months})'),
+                    style: sans(13, color: C.mute))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: stColor.withValues(alpha: .45))),
@@ -327,8 +334,19 @@ class _PassbookTabState extends State<PassbookTab> {
             ),
           ]),
           const SizedBox(height: 6),
-          Text(done ? 'எல்லா தவணையும் முடிந்தது' : (Demo.fixed ? rupees(Demo.monthly) : (Demo.silver ? '₹100 முதல்' : 'உங்க விருப்பத் தொகை')), style: serif(done || !Demo.fixed ? 22 : 30)),
-          if (!done) ...[
+          Text(
+              done
+                  ? 'எல்லா தவணையும் முடிந்தது'
+                  : (Demo.fixed
+                      ? rupees(Demo.monthly)
+                      : (Demo.silver ? (Demo.paidThisMonth ? rupees(Demo.thisMonthTotal) : '₹100 முதல்') : 'உங்க விருப்பத் தொகை')),
+              style: serif(done || (!Demo.fixed && !(Demo.silver && Demo.paidThisMonth)) ? 22 : 30)),
+          if (!done && Demo.silver) ...[
+            const SizedBox(height: 4),
+            Text(Demo.paidThisMonth ? 'இந்த மாதம் எத்தனை முறை வேண்டுமானாலும் மேலும் சேர்க்கலாம் (₹100 முதல்).' : 'இந்த மாதம் ₹100 முதல் எத்தனை முறை வேண்டுமானாலும் சேர்க்கலாம்.',
+                style: sans(13, color: C.mute, height: 1.5)),
+          ],
+          if (!done && !Demo.silver) ...[
             const SizedBox(height: 4),
             Row(children: [
               const Icon(Icons.event_outlined, size: 16, color: C.mute),

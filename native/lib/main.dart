@@ -103,6 +103,10 @@ class Demo {
   static String get _cur => nowIst().toIso8601String().substring(0, 7);
   static int get paidCount => silver ? _months.length : _ps.length;
   static bool get paidThisMonth => _months.contains(_cur);
+  /// Amount saved in the current month (silver can pay many times a month).
+  static int get thisMonthTotal => _ps
+      .where((p) => (p['on'] ?? '').toString().startsWith(_cur))
+      .fold(0, (s, p) => s + (num.tryParse('${p['amount']}') ?? 0).round());
   static int get total => _ps.fold(0, (s, p) => s + (num.tryParse('${p['amount']}') ?? 0).round());
   static double get gramsTotal => _ps.fold(0.0, (s, p) => s + (num.tryParse('${p['grams'] ?? 0}') ?? 0).toDouble());
   static int get monthly {

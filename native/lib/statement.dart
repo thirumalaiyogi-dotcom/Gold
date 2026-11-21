@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:share_plus/share_plus.dart';
 
 import 'main.dart';
+import 'share_card.dart' show shareBytes;
 import 'ui.dart';
 
 /// கணக்கு அறிக்கை — the whole passbook on one sheet, shared as a PDF.
@@ -28,12 +28,15 @@ class _StatementPageState extends State<StatementPage> {
 
   Future<void> _sharePdf() async {
     setState(() => _busy = true);
+    String step = 'capture';
     try {
       final b = _key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (b == null) throw 'no sheet';
-      final img = await b.toImage(pixelRatio: 3);
+      final img = await b.toImage(pixelRatio: 2.5);
       final w = img.width.toDouble(), pageH = (w * 1.414).floorToDouble();
-      final doc = pw.Document(title: 'கணக்கு அறிக்கை', author: 'Subbulakshmi Thanga Maligai');
+      step = 'pages';
+      // ASCII metadata only (the PDF info dictionary is not safe for Tamil text)
+      final doc = pw.Document(title: 'Account statement', author: 'Subbulakshmi Thanga Maaligai', compress: true);
       for (double y = 0; y < img.height; y += pageH) {
         final h = (img.height - y).clamp(1, pageH).toDouble();
         final rec = ui.PictureRecorder();
@@ -41,23 +44,24 @@ class _StatementPageState extends State<StatementPage> {
         cv.drawRect(Rect.fromLTWH(0, 0, w, h), Paint()..color = Colors.white);
         cv.drawImageRect(img, Rect.fromLTWH(0, y, w, h), Rect.fromLTWH(0, 0, w, h), Paint()..filterQuality = FilterQuality.high);
         final part = await rec.endRecording().toImage(w.toInt(), h.toInt());
-        final png = await part.toByteData(format: ui.ImageByteFormat.png);
-        if (png == null) continue;
-        final mem = pw.MemoryImage(png.buffer.asUint8List());
+        // raw pixels → no PNG decoding inside the pdf package
+        final raw = await part.toByteData(format: ui.ImageByteFormat.rawRgba);
+        if (raw == null) continue;
+        final pic = pw.RawImage(bytes: raw.buffer.asUint8List(), width: part.width, height: part.height);
         doc.addPage(pw.Page(
           pageFormat: PdfPageFormat.a4,
           margin: const pw.EdgeInsets.all(22),
-          build: (_) => pw.Align(alignment: pw.Alignment.topCenter, child: pw.Image(mem, fit: pw.BoxFit.contain)),
+          build: (_) => pw.Align(alignment: pw.Alignment.topCenter, child: pw.Image(pic, fit: pw.BoxFit.contain)),
         ));
       }
+      step = 'save';
       final bytes = await doc.save();
+      step = 'share';
       final name = 'STM-statement-${Demo.member.isEmpty ? 'passbook' : Demo.member}.pdf';
-      await SharePlus.instance.share(ShareParams(
-        files: [XFile.fromData(bytes, mimeType: 'application/pdf', name: name)],
-        text: 'சுப்புலட்சுமி தங்க மாளிகை · கணக்கு அறிக்கை · ${Demo.name}',
-      ));
-    } catch (_) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('PDF உருவாக்க இயலவில்லை. மீண்டும் முயற்சிக்கவும்.')));
+      await shareBytes(bytes, name, 'application/pdf', text: 'சுப்புலட்சுமி தங்க மாளிகை · கணக்கு அறிக்கை · ${Demo.name}');
+    } catch (e) {
+      debugPrint('statement pdf failed at $step: $e');
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('PDF உருவாக்க இயலவில்லை ($step). மீண்டும் முயற்சிக்கவும்.')));
     }
     if (mounted) setState(() => _busy = false);
   }
@@ -131,7 +135,7 @@ class _StatementPageState extends State<StatementPage> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(children: [
-            Expanded(flex: 4, child: Text('மொத்தம் (${Demo.paidCount} / ${Demo.months} தவணை)', style: t(12, w: FontWeight.w700))),
+            Expanded(flex: 4, child: Text(Demo.silver ? 'மொத்தம் (${ps.length} முறை · ${Demo.paidCount} / ${Demo.months} மாதம்)' : 'மொத்தம் (${Demo.paidCount} / ${Demo.months} தவணை)', style: t(12, w: FontWeight.w700))),
             Expanded(flex: 3, child: Text(rupees(Demo.total), textAlign: TextAlign.right, style: t(12.5, w: FontWeight.w700))),
             if (grams) const Expanded(flex: 3, child: SizedBox()),
             if (grams) Expanded(flex: 2, child: Text(Demo.gramsTotal.toStringAsFixed(3), textAlign: TextAlign.right, style: t(12.5, w: FontWeight.w700))),

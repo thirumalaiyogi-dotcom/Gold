@@ -658,12 +658,15 @@ Widget coinImage({bool silver = false, bool dim = false}) {
 /// Maroon velvet + gold light (brand reference image), used for hero surfaces.
 const _velvet = ResizeImage(AssetImage('assets/velvet.jpg'), width: 1080);
 
-BoxDecoration velvetDeco({BorderRadius? radius, Border? border, Alignment alignment = Alignment.topCenter, BoxBorder? frame, List<BoxShadow>? shadow}) => BoxDecoration(
-      color: C.navy2,
+/// Owner's silver satin picture (2026-11-21) for the silver scheme cards.
+const _silverVelvet = AssetImage('assets/silver_velvet.jpg');
+
+BoxDecoration velvetDeco({BorderRadius? radius, Border? border, Alignment alignment = Alignment.topCenter, BoxBorder? frame, List<BoxShadow>? shadow, bool silver = false}) => BoxDecoration(
+      color: silver ? const Color(0xFF3E444B) : C.navy2,
       borderRadius: radius,
       border: frame ?? border,
       boxShadow: shadow,
-      image: DecorationImage(image: _velvet, fit: BoxFit.cover, alignment: alignment),
+      image: DecorationImage(image: silver ? _silverVelvet : _velvet, fit: BoxFit.cover, alignment: alignment),
     );
 
 /// Faint dot-kolam lattice used behind the maroon headers (shop signature).

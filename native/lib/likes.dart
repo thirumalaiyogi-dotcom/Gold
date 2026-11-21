@@ -10,6 +10,7 @@ import 'package:share_plus/share_plus.dart';
 import 'api.dart';
 import 'gallery.dart';
 import 'main.dart';
+import 'share_card.dart' show shareBytes;
 import 'ui.dart';
 
 /// பிடித்தவை (likes) — stories + category photos. Kept per device (gold_likes via RPC);
@@ -218,10 +219,7 @@ Future<void> shareJewel(BuildContext context, {required String imageUrl, String 
     final out = await rec.endRecording().toImage(src.width, src.height);
     final png = await out.toByteData(format: ui.ImageByteFormat.png);
     if (png == null) throw 'png';
-    await SharePlus.instance.share(ShareParams(
-      files: [XFile.fromData(png.buffer.asUint8List(), mimeType: 'image/png', name: 'subbulakshmi-design.png')],
-      text: text,
-    ));
+    await shareBytes(png.buffer.asUint8List(), 'subbulakshmi-design.png', 'image/png', text: text);
   } catch (_) {
     if (context.mounted) await SharePlus.instance.share(ShareParams(text: '$text\n$imageUrl'));
   }
