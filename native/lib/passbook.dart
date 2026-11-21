@@ -167,7 +167,10 @@ class _PassbookTabState extends State<PassbookTab> {
   Widget build(BuildContext context) {
     final top = MediaQuery.of(context).padding.top;
     return AnimatedBuilder(animation: app, builder: (context, _) => Column(children: [
-      Container(
+      // white status-bar icons (time, battery) over the maroon header
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
+        child: Container(
         decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
         child: KolamBg(child: Padding(
         padding: EdgeInsets.fromLTRB(12, top + 8, 12, 12),
@@ -192,7 +195,7 @@ class _PassbookTabState extends State<PassbookTab> {
             icon: const Icon(Icons.share_outlined, color: C.goldSoft),
           ),
         ]),
-      ))),
+      )))),
       Expanded(child: _savings(context)),
       // one-hand use: the pay coin stays at the bottom, in thumb reach
       if (Demo.canPay)
@@ -204,7 +207,7 @@ class _PassbookTabState extends State<PassbookTab> {
             boxShadow: [BoxShadow(color: Color(0x146E1423), blurRadius: 16, offset: Offset(0, -4))],
           ),
           child: SwipeToPay(
-            label: 'தவணை செலுத்த',
+            label: Demo.silver && Demo.paidThisMonth ? 'மேலும் சேமிக்க' : 'தவணை செலுத்த',
             amount: Demo.fixed ? rupees(Demo.monthly) : null,
             silver: Demo.silver,
             onDone: () => _pay(context),
@@ -242,10 +245,12 @@ class _PassbookTabState extends State<PassbookTab> {
         inner: true,
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
         child: Column(children: [
-          Row(children: [
-            Expanded(child: Text('${Demo.scheme} திட்டம்', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(13.5, color: C.goldText, weight: FontWeight.w700))),
-            if (Demo.member.isNotEmpty) Text('கணக்கு எண் ${Demo.member}', style: sans(12.5, color: C.mute, weight: FontWeight.w600)),
-          ]),
+          Text('${Demo.scheme} திட்டம்', textAlign: TextAlign.center, style: sans(15, color: C.goldText, weight: FontWeight.w700, height: 1.35)),
+          if (Demo.member.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text('கணக்கு எண் ${Demo.member}', textAlign: TextAlign.center, style: sans(13, color: C.mute, weight: FontWeight.w600)),
+            ),
           const SizedBox(height: 12),
           Text('மொத்த சேமிப்பு', style: sans(12, color: C.goldText, weight: FontWeight.w600).copyWith(letterSpacing: 1.6)),
           GoldShine(

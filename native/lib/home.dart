@@ -537,7 +537,9 @@ class SideMenu extends StatelessWidget {
       shape: const RoundedRectangleBorder(),
       child: StatefulBuilder(builder: (context, setLocal) {
         return ListView(padding: EdgeInsets.zero, children: [
-          Container(
+          AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent),
+            child: Container(
             padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).padding.top + 22, 20, 20),
             decoration: velvetDeco(border: const Border(bottom: BorderSide(color: C.gold, width: 2))),
             child: Column(children: [
@@ -563,7 +565,7 @@ class SideMenu extends StatelessWidget {
                 }),
               ],
             ]),
-          ),
+          )),
           item(Icons.person_outline, 'என் விவரம்', () {
             close();
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MyDetailsPage()));
@@ -811,7 +813,7 @@ class _SavingsHero extends StatelessWidget {
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('உங்க சேமிப்பு', style: sans(13, color: C.goldSoft, weight: FontWeight.w700).copyWith(letterSpacing: 1.1)),
+                  Text('உங்க சேமிப்பு', style: sans(13, color: Demo.silver ? const Color(0xFFE6E9EE) : C.goldSoft, weight: FontWeight.w700).copyWith(letterSpacing: 1.1)),
                   Text(Demo.scheme, style: sans(14, color: Colors.white, weight: FontWeight.w600, height: 1.4)),
                 ]),
               ),
