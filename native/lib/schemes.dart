@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data.dart';
 import 'api.dart';
+import 'chat.dart';
 import 'links.dart';
 import 'main.dart';
 import 'ui.dart';
@@ -247,7 +248,7 @@ class SchemeDetailPage extends StatelessWidget {
               Expanded(child: OutlineBtn('93443 95078', icon: Icons.call_outlined, onTap: () => callShop(context, Shop.phone2))),
             ]),
             const SizedBox(height: 10),
-            OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => whatsApp(context, 'வணக்கம், ${s.name} திட்டம் பற்றி விபரம் வேண்டும்.')),
+            OutlineBtn('கடையிடம் கேட்க', icon: Icons.chat_outlined, onTap: () => askShop(context, message: 'வணக்கம், ${s.name} திட்டம் பற்றி விபரம் வேண்டும்.')),
           ]),
         ),
       ]),

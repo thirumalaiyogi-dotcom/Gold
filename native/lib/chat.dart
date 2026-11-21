@@ -232,8 +232,17 @@ class _ChatPageState extends State<ChatPage> {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
           if ('${m['i'] ?? ''}'.isNotEmpty && '${m['i']}' != 'null') _photo('${m['i']}'),
-          if (!('${m['i'] ?? ''}'.isNotEmpty && '${m['i']}' != 'null' && '${m['b']}' == '📷 படம்'))
-            SelectableText('${m['b']}', style: sans(15, color: mine ? Colors.white : C.ink, height: 1.5)),
+          // catalogue enquiry: show the jewel picture instead of its long link
+          if (chatBodyParts('${m['b']}').$2 != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(chatBodyParts('${m['b']}').$2!, width: 200, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox.shrink()),
+              ),
+            ),
+          if (!('${m['i'] ?? ''}'.isNotEmpty && '${m['i']}' != 'null' && '${m['b']}' == '📷 படம்') && chatBodyParts('${m['b']}').$1.isNotEmpty)
+            SelectableText(chatBodyParts('${m['b']}').$1, style: sans(15, color: mine ? Colors.white : C.ink, height: 1.5)),
           const SizedBox(height: 2),
           Text(_hm(_t(m)), style: sans(11, color: mine ? const Color(0xFFF1D9DD) : C.mute)),
         ]),
@@ -518,6 +527,117 @@ Future<void> requestAccountDeletion(BuildContext context) async {
   if (!context.mounted || sent == null) return;
   if (sent) {
     showNote(context, 'கோரிக்கை அனுப்பப்பட்டது. கடையின் பதில் இங்கே வரும்.');
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatPage()));
+  } else {
+    showNote(context, 'அனுப்ப இயலவில்லை. மீண்டும் முயற்சிக்கவும்.');
+  }
+}
+
+/// Catalogue / story / scheme enquiries go to the shop inside the app (chat + push to staff phones),
+/// not to WhatsApp. Shows the photo and an editable message first.
+/// Not logged in → choose: log in, or WhatsApp as before.
+final _slidesImg = RegExp(r'https://\S+/storage/v1/object/public/slides/\S+');
+
+/// Splits a chat body into (text without the catalogue picture link, picture URL or null).
+(String, String?) chatBodyParts(String body) {
+  final m = _slidesImg.firstMatch(body);
+  if (m == null) return (body, null);
+  return (body.replaceFirst(m.group(0)!, '').trim(), m.group(0));
+}
+
+Future<void> askShop(BuildContext context, {required String message, String? imageUrl, String? whatsAppText}) async {
+  tapFeel();
+  if (!app.loggedIn) {
+    final go = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: C.ivory,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('கடையிடம் கேட்க', style: serif(20)),
+            const SizedBox(height: 6),
+            Text('Passbook-ல் உள்நுழைந்தால் App-லேயே கேட்கலாம்; கடையின் பதில் இங்கே அறிவிப்பாக வரும்.', style: sans(13.5, color: C.mute, height: 1.6)),
+            const SizedBox(height: 16),
+            PrimaryButton('உள்நுழைந்து App-ல் கேட்க', icon: Icons.lock_open_rounded, onTap: () => Navigator.pop(ctx, 'login')),
+            const SizedBox(height: 8),
+            OutlineBtn('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: () => Navigator.pop(ctx, 'wa')),
+          ]),
+        ),
+      ),
+    );
+    if (!context.mounted) return;
+    if (go == 'login') openPassbookLogin(context);
+    if (go == 'wa') whatsApp(context, whatsAppText ?? '$message${imageUrl != null ? '\n$imageUrl' : ''}');
+    return;
+  }
+  final ctl = TextEditingController(text: message);
+  bool busy = false;
+  final ok = await showModalBottomSheet<bool>(
+    context: context,
+    backgroundColor: C.ivory,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, set) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              Row(children: [
+                if (imageUrl != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(imageUrl, width: 64, height: 64, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox(width: 64, height: 64)),
+                  ),
+                if (imageUrl != null) const SizedBox(width: 12),
+                Expanded(child: Text('கடையிடம் கேட்க', style: serif(20))),
+              ]),
+              const SizedBox(height: 12),
+              TextField(
+                controller: ctl,
+                minLines: 2,
+                maxLines: 5,
+                maxLength: 600,
+                style: sans(15),
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: C.paper,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.line2)),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.line2)),
+                ),
+              ),
+              Text('கடையின் பதில் "கடையிடம் கேளுங்க" பகுதியில் வரும்; அறிவிப்பும் வரும்.', style: sans(12.5, color: C.mute, height: 1.5)),
+              const SizedBox(height: 12),
+              PrimaryButton(busy ? 'அனுப்புகிறது…' : 'அனுப்பு', icon: Icons.send_rounded, onTap: () async {
+                if (busy || ctl.text.trim().isEmpty) return;
+                set(() => busy = true);
+                final body = '${ctl.text.trim()}${imageUrl != null ? '\n$imageUrl' : ''}';
+                bool sent = false;
+                try {
+                  final d = await Api.rpc('gold_chat_send', {'p_mobile': app.mobile, 'p_pin': app.pin, 'p_body': body});
+                  sent = d is Map && d['ok'] == true;
+                } catch (_) {}
+                if (sent) {
+                  unawaited(http
+                      .post(Uri.parse('${Api.url}/functions/v1/push'),
+                          headers: {'apikey': Api.anon, 'Authorization': 'Bearer ${Api.anon}', 'Content-Type': 'application/json'},
+                          body: jsonEncode({'action': 'chat_ask', 'mobile': app.mobile, 'pin': app.pin}))
+                      .then((_) {}, onError: (_) {}));
+                }
+                if (ctx.mounted) Navigator.of(ctx).pop(sent);
+              }),
+            ]),
+          ),
+        ),
+      ),
+    ),
+  );
+  if (!context.mounted || ok == null) return;
+  if (ok) {
+    showNote(context, 'கேள்வி கடைக்கு அனுப்பப்பட்டது. பதில் வந்ததும் அறிவிப்பு வரும்.');
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ChatPage()));
   } else {
     showNote(context, 'அனுப்ப இயலவில்லை. மீண்டும் முயற்சிக்கவும்.');

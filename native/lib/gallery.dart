@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'api.dart';
+import 'chat.dart';
 import 'likes.dart';
 import 'links.dart';
 import 'ui.dart';
@@ -43,7 +44,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
 
   void _askWa() {
     final wa = '${widget.cat['wa_text'] ?? ''}';
-    whatsApp(context, wa.isNotEmpty && wa != 'null' ? wa : 'வணக்கம், $name டிசைன்களின் படங்களை அனுப்ப முடியுமா?');
+    askShop(context, message: wa.isNotEmpty && wa != 'null' ? wa : 'வணக்கம், $name டிசைன்களின் படங்களை அனுப்ப முடியுமா?');
   }
 
   @override
@@ -68,7 +69,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
         Text(failed ? 'இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.' : 'புதிய டிசைன் படங்களுக்கு WhatsApp-ல் எங்களைத் தொடர்பு கொள்ளுங்கள்.',
             textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.5)),
         const SizedBox(height: 22),
-        if (failed) OutlineBtn('மீண்டும் முயற்சி', icon: Icons.refresh, onTap: _load) else PrimaryButton('WhatsApp-ல் கேட்க', icon: Icons.chat_outlined, onTap: _askWa),
+        if (failed) OutlineBtn('மீண்டும் முயற்சி', icon: Icons.refresh, onTap: _load) else PrimaryButton('கடையிடம் கேட்க', icon: Icons.chat_outlined, onTap: _askWa),
       ]);
     } else {
       body = RefreshIndicator(
@@ -101,7 +102,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
               foregroundColor: Colors.white,
               onPressed: _askWa,
               icon: const Icon(Icons.chat_outlined),
-              label: Text('WhatsApp-ல் கேட்க', style: sans(15, color: Colors.white, weight: FontWeight.w700)),
+              label: Text('கடையிடம் கேட்க', style: sans(15, color: Colors.white, weight: FontWeight.w700)),
             ),
     );
   }
@@ -279,7 +280,7 @@ class _PhotoViewerState extends State<PhotoViewer> {
               PrimaryButton('இந்த நகை பற்றி விசாரிக்க', gold: true, icon: Icons.chat_outlined, onTap: () {
                 final label = title.isNotEmpty ? '"$title"' : 'இந்த டிசைன்';
                 final cat = widget.category.isNotEmpty ? '${widget.category} — ' : '';
-                whatsApp(context, 'வணக்கம், $cat$label பற்றி விவரம் வேண்டும் (எடை / விலை).\n${p['image_url']}');
+                askShop(context, message: 'வணக்கம், $cat$label பற்றி விவரம் வேண்டும் (எடை / விலை).', imageUrl: '${p['image_url']}');
               }),
             ]),
           ),

@@ -1115,6 +1115,7 @@ $("ppgo").onclick=async()=>{if(!PPIMG)return alert("முதல்ல poster �
 
 // ===== கேள்விகள் (gold_chat): customer ↔ shop private chat =====
 let CH_CUR=null,CH_ME="",CH_T=null;
+const jewel=b=>{b=b||"";const m=b.match(/https:\/\/\S+\/storage\/v1\/object\/public\/slides\/\S+/);return m?{u:m[0],t:b.replace(m[0],"").trim()}:{u:"",t:b}};
 const chTime=t=>{const d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString("ta-IN",{hour:"numeric",minute:"2-digit"}):d.toLocaleDateString("ta-IN",{day:"numeric",month:"short"})+" "+d.toLocaleTimeString("ta-IN",{hour:"numeric",minute:"2-digit"})};
 async function loadChats(){const {data,error}=await sb.from("gold_chat").select("id,customer_id,sender,body,seen,created_at").order("id",{ascending:false}).limit(600);
  if(error){$("chlist").innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
@@ -1122,7 +1123,7 @@ async function loadChats(){const {data,error}=await sb.from("gold_chat").select(
  const ids=[...by.keys()];let names={};if(ids.length){const r=await sb.from("gold_customers").select("id,name,mobile").in("id",ids);(r.data||[]).forEach(x=>names[x.id]=x)}
  window.CH_NAMES=names;const tot=[...by.values()].reduce((a,c)=>a+c.unread,0);
  document.querySelectorAll('[data-dot="chat"]').forEach(x=>{x.textContent=tot||"";x.classList.toggle("on",tot>0)});
- $("chlist").innerHTML=ids.map(id=>{const c=by.get(id),n=names[id]||{};return `<div class="row" data-ch="${id}" style="cursor:pointer;align-items:center"><span style="min-width:0;flex:1"><b>${esc(n.name||"Customer")}</b>${c.unread?` <span style="background:#6E1423;color:#fff;border-radius:99px;padding:0 8px;font-size:12px">${c.unread}</span>`:""}<br><span class="mut" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.last.sender==="s"?"நீங்கள்: ":""}${esc(c.last.body)}</span></span><span class="mut" style="font-size:12px;white-space:nowrap">${chTime(c.last.created_at)}</span></div>`}).join("")||'<div class="mut">இன்னும் கேள்விகள் இல்ல</div>';
+ $("chlist").innerHTML=ids.map(id=>{const c=by.get(id),n=names[id]||{};return `<div class="row" data-ch="${id}" style="cursor:pointer;align-items:center"><span style="min-width:0;flex:1"><b>${esc(n.name||"Customer")}</b>${c.unread?` <span style="background:#6E1423;color:#fff;border-radius:99px;padding:0 8px;font-size:12px">${c.unread}</span>`:""}<br><span class="mut" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.last.sender==="s"?"நீங்கள்: ":""}${jewel(c.last.body).u?"📷 ":""}${esc(jewel(c.last.body).t)}</span></span><span class="mut" style="font-size:12px;white-space:nowrap">${chTime(c.last.created_at)}</span></div>`}).join("")||'<div class="mut">இன்னும் கேள்விகள் இல்ல</div>';
  if(CH_CUR)openChat(CH_CUR,true)}
 async function openChat(id,quiet){CH_CUR=id;$("chin").placeholder="பதில் எழுதுங்க…";$("chlist").classList.add("hide");$("chthread").classList.remove("hide");$("chpush").classList.add("hide");
  const n=(window.CH_NAMES||{})[id]||{};$("chname").textContent=n.name||"Customer";$("chinfo").textContent=n.mobile?("+91 "+n.mobile):"";
@@ -1132,7 +1133,7 @@ async function openChat(id,quiet){CH_CUR=id;$("chin").placeholder="பதில�
  const pic=m=>m.image&&U[m.image]?`<a href="${esc(U[m.image])}" target="_blank" rel="noopener"><img src="${esc(U[m.image])}" alt="படம்" style="display:block;max-width:100%;max-height:260px;border-radius:10px;margin-bottom:4px"></a>`:"";
  const box=$("chmsgs"),atEnd=box.scrollHeight-box.scrollTop-box.clientHeight<60;
  box.innerHTML=(data||[]).map(m=>m.sender==="c"
-  ?`<div style="align-self:flex-start;max-width:80%;background:#fff;border:1px solid #E8D9B9;border-radius:14px 14px 14px 4px;padding:8px 12px">${pic(m)}<div style="white-space:pre-wrap">${esc(m.body)}</div><div class="mut" style="font-size:11.5px;text-align:right">${chTime(m.created_at)}</div></div>`
+  ?`<div style="align-self:flex-start;max-width:80%;background:#fff;border:1px solid #E8D9B9;border-radius:14px 14px 14px 4px;padding:8px 12px">${pic(m)}${jewel(m.body).u?`<a href="${jewel(m.body).u}" target="_blank" rel="noopener"><img src="${jewel(m.body).u}" style="display:block;max-width:220px;width:100%;border-radius:10px;margin:2px 0 6px" alt="நகை படம்"></a>`:""}<div style="white-space:pre-wrap">${esc(jewel(m.body).t)}</div><div class="mut" style="font-size:11.5px;text-align:right">${chTime(m.created_at)}</div></div>`
   :`<div style="align-self:flex-end;max-width:80%;background:#6E1423;color:#fff;border-radius:14px 14px 4px 14px;padding:8px 12px"><div style="white-space:pre-wrap">${esc(m.body)}</div><div style="font-size:11.5px;text-align:right;color:#F1D9DD">${esc((m.staff_email||"").split("@")[0])} · ${chTime(m.created_at)}</div></div>`).join("");
  if(!quiet||atEnd)box.scrollTop=box.scrollHeight;
  await sb.from("gold_chat").update({seen:true}).eq("customer_id",id).eq("sender","c").eq("seen",false)}

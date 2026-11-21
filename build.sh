@@ -6,5 +6,6 @@ cp index.html app.html staff.html staff-new.html staff-old.html privacy.html del
 cp -r lib dist/
 cp -r icons3d dist/
 cp -r banners dist/
+cp -r cats dist/
 # Android app (Trusted Web Activity) needs /.well-known/assetlinks.json to hide the address bar
 cp -r .well-known dist/

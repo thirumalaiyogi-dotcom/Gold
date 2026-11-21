@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'links.dart';
+import 'chat.dart';
 import 'gallery.dart';
 import 'likes.dart';
 import 'main.dart';
@@ -168,7 +169,8 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
     final l = '${s['btn_link'] ?? ''}';
     _t.stop();
     if (l == 'wa') {
-      whatsApp(context, 'வணக்கம், App-ல் பார்த்த "${s['title']}" பற்றி விபரம் வேண்டும்.');
+      final img = '${s['image_url'] ?? ''}';
+      askShop(context, message: 'வணக்கம், App-ல் பார்த்த "${s['title']}" பற்றி விபரம் வேண்டும்.', imageUrl: img.contains('/storage/v1/object/public/slides/') ? img : null);
     } else if (l == 'schemes') {
       Navigator.of(context).pop();
       widget.go(1);
