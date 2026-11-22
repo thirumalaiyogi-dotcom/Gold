@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'home.dart';
 import 'links.dart';
 import 'notify.dart';
+import 'visit.dart';
 import 'ui.dart';
 
 Widget _scaffold(String title, Widget body) => Scaffold(
@@ -41,6 +42,22 @@ class AboutPage extends StatelessWidget {
             Text('சுப்புலட்சுமி தங்க மாளிகை', textAlign: TextAlign.center, style: serif(22, color: C.goldSoft, weight: FontWeight.w700)),
             const SizedBox(height: 4),
             Text('தங்கநகை சேமிப்புத் திட்டம் · புளியங்குடி', textAlign: TextAlign.center, style: sans(13.5, color: C.navyMute)),
+          ]),
+        ),
+        const SizedBox(height: 14),
+        // நம்பிக்கை — only facts that are true for every customer (no shop promises; owner may add more later)
+        LuxCard(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Padding(padding: const EdgeInsets.only(top: 4, bottom: 2), child: Text('உங்கள் நம்பிக்கைக்கு', style: serif(18))),
+            row(Icons.verified_outlined, 'Hallmark நகையில் 3 குறிகள் இருக்கும்: BIS முத்திரை, தூய்மை (எ.கா. 22K916), 6 எழுத்து HUID எண். HUID-ஐ அரசின் BIS CARE app-ல் நீங்களே சரிபார்க்கலாம்.',
+                onTap: () => openLink(context, 'https://play.google.com/store/search?q=BIS%20CARE&c=apps')),
+            const Divider(height: 1, color: C.line),
+            row(Icons.receipt_long_outlined, 'ஒவ்வொரு தவணையும் உங்கள் Passbook-ல் பதியும். ரசீதும் முழு கணக்கு அறிக்கையும் (PDF) எப்போது வேண்டுமானாலும் எடுக்கலாம்.'),
+            const Divider(height: 1, color: C.line),
+            row(Icons.lock_outline, 'App-ல் கட்டும் பணம் Cashfree payment gateway வழியாக செல்லும். உங்கள் mPIN மறைக்குறியீடாக (encrypted) சேமிக்கப்படுகிறது — கடை ஊழியர்களுக்கும் தெரியாது.'),
+            const Divider(height: 1, color: C.line),
+            row(Icons.event_available, 'நகை வாங்க வரும் நாளை App-லேயே பதிவு செய்யலாம்.',
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VisitPage()))),
           ]),
         ),
         const SizedBox(height: 14),
