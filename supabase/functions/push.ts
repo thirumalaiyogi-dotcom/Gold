@@ -3,6 +3,7 @@
 // Supabase → Edge Functions → Deploy a new function → Via Editor → பெயர்: push → இதை முழுசா paste → Deploy
 // Secrets எதுவும் தேவையில்ல — அனுப்பும் key-ஐ function முதல் தடவை தானே உருவாக்கி gold_push_cfg-ல வைக்கும்.
 // "Verify JWT" ON-ஆவே இருக்கட்டும்.
+// v8 (2026-11-22): due reminders count silver-scheme months correctly; cron {dry:true} previews without sending.
 // v7 (2026-11-21): cron kind "rate" — morning reminder to staff phones when today's rate is not entered.
 // v6 (2026-11-12): chat — staff_sub (staff phones get "new question"), chat_ask (customer → staff), chat_reply (staff → that customer).
 //     Staff-only subscriptions (staff_email set, no customer) are left out of customer broadcasts.
@@ -169,7 +170,7 @@ async function deliver(subs: any[], payloadFor: (s: any) => string) {
 
 const MONTHS: Record<string, number> = { dhana: 11, kubera: 11 };
 // தானியங்கி: 1-ம் / 5-ம் தேதி தவணை நினைவூட்டல், தினமும் பிறந்தநாள் / திருமண நாள் வாழ்த்து
-async function cronRun(kind: string) {
+async function cronRun(kind: string, dry = false) {
   // Morning reminder to staff phones when today's gold/silver rate is not entered yet (2026-11-21)
   if (kind === "rate") {
     const today = new Date(Date.now() + 330 * 60000).toISOString().slice(0, 10);
@@ -199,17 +200,23 @@ async function cronRun(kind: string) {
   const msgs = new Map<string, { title: string; body: string; url: string }>();
 
   if (kind === "due1" || kind === "due5") {
-    const sch = await rest("gold_schemes?select=key,months");
-    (Array.isArray(sch.data) ? sch.data : []).forEach((x: any) => { if (x.months) MONTHS[x.key] = Number(x.months); });
+    const sch = await rest("gold_schemes?select=key,months,name,tagline,tags");
+    const FLEX = new Set<string>(); // வெள்ளி திட்டம்: மாசத்துக்கு பல தடவை கட்டலாம் → கணக்கு = கட்டிய மாதங்கள்
+    (Array.isArray(sch.data) ? sch.data : []).forEach((x: any) => {
+      if (x.months) MONTHS[x.key] = Number(x.months);
+      if (/சில்வர்|வெள்ளி|silver/i.test(`${x.name || ""} ${x.tagline || ""} ${x.tags || ""}`)) FLEX.add(String(x.key));
+    });
     const pr = await rest(`gold_payments?select=customer_id,paid_on&customer_id=in.(${ids.map(encodeURIComponent).join(",")})`);
     const pays = Array.isArray(pr.data) ? pr.data : [];
     for (const [id, c] of cust) {
       const mine = pays.filter((p: any) => String(p.customer_id) === id);
       const mo = MONTHS[c.scheme] || 12;
-      if (mine.length >= mo) continue;                                                     // திட்டம் முடிஞ்சது
-      const paidNow = mine.some((p: any) => new Date(new Date(p.paid_on).getTime() + 330 * 60000).toISOString().slice(0, 7) === ym);
+      const ymOf = (p: any) => String(p.paid_on || "").slice(0, 7);
+      const done = FLEX.has(String(c.scheme)) ? new Set(mine.map(ymOf)).size : mine.length; // v8: வெள்ளி = கட்டிய மாதங்கள்
+      if (done >= mo) continue;                                                            // திட்டம் முடிஞ்சது
+      const paidNow = mine.some((p: any) => ymOf(p) === ym);
       if (paidNow) continue;                                                              // இந்த மாசம் கட்டியாச்சு
-      const n = mine.length + 1, nm = String(c.name || "").split(" ")[0];
+      const n = done + 1, nm = String(c.name || "").split(" ")[0];
       msgs.set(id, kind === "due1"
         ? { title: "தவணை நினைவூட்டல் 🔔", body: `${nm}, இந்த மாத தவணை (${n}/${mo}) கட்ட நேரம் வந்தாச்சு. 7-ம் தேதிக்குள் கடையிலோ app-லயோ கட்டுங்க.`, url: "/#p" }
         : { title: "தவணை நினைவூட்டல்", body: `${nm}, இந்த மாத தவணை (${n}/${mo}) இன்னும் கட்டல. 7-ம் தேதிக்குள் கட்டுங்க. ஏற்கனவே கட்டியிருந்தா இதை கவனிக்க வேண்டாம்.`, url: "/#p" });
@@ -225,6 +232,8 @@ async function cronRun(kind: string) {
   } else return { sent: 0, failed: 0, total: 0, err: "kind" };
 
   const target = subs.filter((s) => msgs.has(String(s.customer_id)));
+  // v8: dry run — யாருக்கு போகும்னு மட்டும் (அனுப்பாது, log-ல் சேர்க்காது)
+  if (dry) return { sent: 0, failed: 0, total: target.length, dry: true, customers: msgs.size, preview: [...msgs.values()].slice(0, 3).map((m) => m.body) };
   if (!target.length) return { sent: 0, failed: 0, total: 0 };
   await vapid();
   const r = await deliver(target, (s) => JSON.stringify({ ...msgs.get(String(s.customer_id))!, tag: kind }));
@@ -365,7 +374,7 @@ Deno.serve(async (req) => {
       const cfg = await rest("gold_cron_cfg?select=token&id=eq.1");
       const real = Array.isArray(cfg.data) && cfg.data[0] ? String(cfg.data[0].token) : "";
       if (!real || t.length !== real.length || t !== real) return json({ ok: false, err: "token" }, 401);
-      return json({ ok: true, ...(await cronRun(String(b.kind || ""))) });
+      return json({ ok: true, ...(await cronRun(String(b.kind || ""), b.dry === true)) });
     }
 
     if (action === "count" || action === "send") {
