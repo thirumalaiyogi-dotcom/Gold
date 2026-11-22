@@ -816,10 +816,9 @@ class _SavingsHero extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
           decoration: velvetDeco(
             radius: BorderRadius.circular(20),
-            alignment: Demo.silver ? const Alignment(0, -0.85) : Alignment.center,
-            silver: Demo.silver,
-            frame: Border.all(color: Demo.silver ? const Color(0xB3C9CED6) : const Color(0xA6D6B56D)),
-            shadow: [BoxShadow(color: Demo.silver ? const Color(0x40343A42) : const Color(0x406E1423), blurRadius: 22, offset: const Offset(0, 10))],
+            alignment: Alignment.center,
+            frame: Border.all(color: const Color(0xA6D6B56D)),
+            shadow: const [BoxShadow(color: Color(0x406E1423), blurRadius: 22, offset: Offset(0, 10))],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
