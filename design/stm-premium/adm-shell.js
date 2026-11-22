@@ -131,6 +131,7 @@
     rate: { t: "தங்கம் / வெள்ளி விலை", sub: 1, cards: ["இன்றைய 22K விலை", "பழைய விலை சேர்க்க"] },
     newcust: { t: "புதிய Customer", sub: 1, cards: ["புதிய Customer"] },
     remind: { t: "இந்த மாத நினைவூட்டல்", sub: 1, cards: ["இந்த மாத நினைவூட்டல்"] },
+    visit: { t: "கடை வருகைகள்", sub: 1, cards: ["கடை வருகைகள்"] },
     refer: { t: "Refer & Earn", sub: 1, cards: ["Refer & Earn அமைப்பு", "Refer பரிசுகள்"] },
     schemes: { t: "திட்டங்கள்", sub: 1, cards: ["புதிய திட்டம் சேர்க்க"] },
     images: { t: "App படங்கள்", sub: 1, cards: ["கடை புகைப்படம்", "நகை படங்கள்", "Maroon பின்னணி படம்", "Header பின்னணி படம்", "திட்ட card படங்கள்", "Banner படங்கள்", "Onboarding படங்கள்"], cols: 1 },
@@ -208,7 +209,7 @@
   }
 
   // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
-  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nlike: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
+  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nlike: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", visit: "dash", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
@@ -334,7 +335,8 @@
     const dl = $i("s6due");
     if (dl) dl.innerHTML = `<div class="hd2"><h3>இந்த மாதம் நிலுவை</h3><small>${due.length} பேர்</small></div>
       ${due.length ? due.slice(0, 5).map(({ c, s }) => `<div class="r"><b>${E(c.name)}<small>${E(T(() => SN[c.scheme], c.scheme))} · ${s.n + 1}/${s.mo} தவணை</small></b>${c.monthly_amount ? `<span>₹${N(c.monthly_amount)}</span>` : ""}</div>`).join("") : '<div class="s6empty"><b>எல்லாரும் கட்டியாச்சு ✨</b>இந்த மாசம் நிலுவை இல்ல.</div>'}
-      ${due.length ? `<button type="button" class="s6link" data-go="remind">WhatsApp நினைவூட்டல் அனுப்ப ›</button>` : ""}`;
+      ${due.length ? `<button type="button" class="s6link" data-go="remind">WhatsApp நினைவூட்டல் அனுப்ப ›</button>` : ""}
+      <button type="button" class="s6link" data-go="visit">📅 கடை வருகைகள்${window.VISN ? " · " + window.VISN + " புதியவை" : ""} ›</button>`;
     // badges
     const rq = (window.RQ || []).length;
     doc.querySelectorAll('[data-dot="dash"]').forEach((x) => { x.textContent = rq; x.classList.toggle("on", rq > 0); });

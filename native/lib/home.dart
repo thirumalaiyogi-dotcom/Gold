@@ -10,6 +10,7 @@ import 'rates.dart';
 import 'schemes.dart';
 import 'main.dart';
 import 'passbook.dart';
+import 'visit.dart';
 import 'ui.dart';
 import 'notify.dart';
 import 'api.dart';
@@ -595,6 +596,10 @@ class SideMenu extends StatelessWidget {
             close();
             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()));
           }),
+          item(Icons.event_available, 'நகை வாங்க வருகை பதிவு', () {
+            close();
+            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VisitPage()));
+          }),
           item(Icons.favorite_border, 'விருப்பப் பட்டியல்', () {
             close();
             openFavorites(context);
@@ -713,6 +718,7 @@ class ProfileTab extends StatelessWidget {
                 _row(Icons.menu_book_outlined, 'என் Passbook', () => go(2)),
                 _row(Icons.key_outlined, 'mPIN மாற்ற / மறந்துவிட்டேன்', () => whatsApp(context, 'வணக்கம், என் mPIN மாற்ற / புது Activation code வேண்டும்.\nமொபைல்: ${app.mobile}')),
                 _row(Icons.card_giftcard, 'நண்பரை சேர்க்க (Referral)', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReferralPage()))),
+                _row(Icons.event_available, 'நகை வாங்க வருகை பதிவு', () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VisitPage()))),
               ]),
             _group([
               _row(Icons.favorite_border, 'விருப்பப் பட்டியல்', () => openFavorites(context), first: true),

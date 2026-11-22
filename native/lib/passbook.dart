@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'links.dart';
 import 'main.dart';
+import 'visit.dart';
 import 'ui.dart';
 import 'pay.dart';
 import 'share_card.dart';
@@ -413,6 +414,11 @@ class _PassbookTabState extends State<PassbookTab> {
         if (Demo.payments.isNotEmpty) ...[
           const SizedBox(height: 14),
           OutlineBtn('கணக்கு அறிக்கை (PDF)', icon: Icons.picture_as_pdf_outlined, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const StatementPage()))),
+        ],
+        // 6. last month / scheme complete → book a shop visit to choose jewellery
+        if (app.loggedIn && app.demoPb == null && Demo.paidCount > 0 && Demo.months - Demo.paidCount <= 1) ...[
+          const SizedBox(height: 14),
+          visitCard(context),
         ],
       ] else
         referralCard(context),

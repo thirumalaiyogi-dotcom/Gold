@@ -28,6 +28,7 @@ label{display:block;font-size:14px;color:var(--mut);margin:10px 0 4px}
 input,select{width:100%;padding:12px;border:1px solid var(--ln);border-radius:10px;background:var(--bg);color:var(--tx);font:16px inherit;font-family:inherit}
 .btn{display:block;width:100%;padding:14px;border:0;border-radius:12px;background:var(--gold);color:#fff;font:700 16px inherit;font-family:inherit;text-align:center;text-decoration:none;margin-top:12px}
 .btn.alt{background:var(--ok)}
+.vbtn{width:auto!important;padding:8px 12px!important;font-size:13.5px!important;margin:0!important}.vbtn.g{background:#fff!important;color:#4A0D18!important;border:1px solid #E8D9B9!important;box-shadow:none!important}
 .res{background:var(--gold2);border-radius:12px;padding:12px;margin-top:12px;font-size:15px}
 .res b{font-size:20px;display:block}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
@@ -542,6 +543,10 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
    <div class="mut" id="cpst"></div>
    <div id="cplist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"></div>
   </div></div>
+  <div class="card" id="viscard"><h2>📅 கடை வருகைகள்</h2>
+  <div class="mut">Customer-கள் App-ல் "நகை வாங்க வருகை" பதிவு செய்தவை. "உறுதி" அழுத்தினால் அவருக்கு chat-ல் பதிலும் notification-உம் போகும்.</div>
+  <select id="visf"><option value="up">வரவிருப்பவை</option><option value="all">கடந்த 60 நாள் · எல்லாம்</option></select>
+  <div id="vislist"></div></div>
   <div class="card" id="likecard"><h2>❤️ அதிகம் பிடித்த நகைகள்</h2>
   <div class="mut">Customer-கள் App-ல் ♡ அழுத்திய நகைகள். பெயர் உள்ளவர்கள் Passbook-ல் login ஆனவர்கள் — அழைத்து “நீங்கள் பார்த்த நகை கடையில் உள்ளது” என்று சொல்லலாம்.</div>
   <select id="lkdays"><option value="7">கடந்த 7 நாள்</option><option value="30">கடந்த 30 நாள்</option><option value="365">எல்லாம்</option></select>
@@ -647,7 +652,7 @@ async function login(){
  const {error}=await sb.auth.signInWithPassword({email:$("se").value,password:$("sp").value});
  if(error)return alert("Login தவறு");show()}
 async function out(){await sb.auth.signOut();$("adm").classList.add("hide");$("lg").classList.remove("hide")}
-async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat();loadChats();loadLikes()}
+async function show(){$("lg").classList.add("hide");$("adm").classList.remove("hide");load();loadPushLog();pnCount();loadPop();loadCol();loadWN();loadCat();loadChats();loadLikes();loadVisits()}
 async function PAGED(mk){let all=[],i=0;for(;;){const r=await mk().range(i,i+999);if(r.error)return r;const d=r.data||[];all=all.concat(d);if(d.length<1000||i>=500000)break;i+=1000}return {data:all,error:null}}
 async function load(){
  let {data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name").order("id"));
@@ -1194,6 +1199,35 @@ async function loadLikes(){const box=$("lklist");box.innerHTML='<div class="mut"
  box.innerHTML=top.map(x=>{const it=x.t=="story"?W[x.id]:P[x.id];if(!it)return "";const ppl=[...x.c].map(id=>C[id]).filter(Boolean);
   return `<div class="row" style="align-items:center"><span style="display:flex;gap:10px;align-items:center"><img src="${esc(it.image_url)}" style="width:58px;height:58px;object-fit:cover;border-radius:10px"><span><b>${esc(it.title||"(பெயர் இல்லை)")}</b><br><span class="mut">${x.t=="story"?"புதியவை":"நகை வகை"}${ppl.length?" · "+ppl.map(p=>`<a href="tel:+91${esc(p.mobile)}" style="text-decoration:underline">${esc(p.name)}</a>`).join(", "):""}</span></span></span><b style="font-size:18px;white-space:nowrap">❤️ ${x.n}</b></div>`}).join("")||'<div class="mut">—</div>'}
 $("lkdays").addEventListener("change",loadLikes);
+// ---- கடை வருகைகள் (gold_visits) ----
+const VST={new:["புதியது","#B45309"],ok:["உறுதி ✓","#15803D"],done:["வந்தார்","#334155"],cancel:["ரத்து","#B91C1C"]};
+const vday=d=>String(d).slice(0,10).split("-").reverse().join("-");
+async function loadVisits(){const box=$("vislist");if(!box)return;box.innerHTML='<div class="mut">ஏற்றுகிறது…</div>';
+ const today=new Date(Date.now()+330*6e4).toISOString().slice(0,10);
+ let q=sb.from("gold_visits").select("id,customer_id,visit_on,slot,note,status,created_at").order("visit_on",{ascending:true}).limit(300);
+ if($("visf").value==="up")q=q.gte("visit_on",today).in("status",["new","ok"]);else q=q.gte("visit_on",new Date(Date.now()-60*864e5).toISOString().slice(0,10));
+ const {data,error}=await q;
+ if(error){box.innerHTML='<div class="mut">'+esc(error.message)+'</div>';return}
+ window.VISN=(data||[]).filter(v=>v.status==="new"&&v.visit_on>=today).length;
+ if(!data||!data.length){box.innerHTML='<div class="mut">வருகை பதிவு எதுவும் இல்லை.</div>';return}
+ const ids=[...new Set(data.map(v=>v.customer_id))];
+ const {data:cs}=await sb.from("gold_customers").select("id,name,mobile").in("id",ids);const C={};(cs||[]).forEach(c=>C[c.id]=c);
+ box.innerHTML=data.map(v=>{const c=C[v.customer_id]||{},st=VST[v.status]||[v.status,"#334155"],open=v.status==="new"||v.status==="ok";
+  return `<div class="row" style="align-items:flex-start;gap:10px"><span style="min-width:0;flex:1"><b>${esc(c.name||"Customer")}</b>${c.mobile?` · <a href="tel:+91${esc(c.mobile)}" style="text-decoration:underline">${esc(c.mobile)}</a>`:""}<br>
+  <span style="font-weight:700">${vday(v.visit_on)} · ${v.slot==="m"?"காலை":"மாலை"}</span> <span style="color:${st[1]};font-weight:700">· ${st[0]}</span>${v.note?`<br><span class="mut" style="white-space:pre-wrap">${esc(v.note)}</span>`:""}</span>
+  <span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${v.status==="new"?`<button class="btn vbtn" data-vis="ok" data-id="${v.id}">உறுதி</button>`:""}${open?`<button class="btn vbtn g" data-vis="done" data-id="${v.id}">வந்தார்</button><button class="btn vbtn g" data-vis="cancel" data-id="${v.id}">ரத்து</button>`:""}</span></div>`}).join("")}
+$("visf").addEventListener("change",loadVisits);
+$("vislist").addEventListener("click",async e=>{const b=e.target.closest("[data-vis]");if(!b)return;const st=b.dataset.vis,id=+b.dataset.id;
+ if(st==="cancel"&&!await ASK("இந்த வருகையை ரத்து செய்யவா? Customer-க்கு chat-ல் தகவல் போகும்."))return;
+ b.disabled=true;
+ if(!CH_ME){const u=await sb.auth.getUser();CH_ME=(u.data&&u.data.user&&u.data.user.email)||""}
+ const {data:v,error}=await sb.from("gold_visits").update({status:st,staff_email:CH_ME}).eq("id",id).select("customer_id,visit_on,slot").single();
+ if(error){b.disabled=false;return alert(error.message)}
+ if(st!=="done"){const when=vday(v.visit_on)+" ("+(v.slot==="m"?"காலை":"மாலை")+")";
+  const body=st==="ok"?"உங்கள் கடை வருகை "+when+" உறுதி செய்யப்பட்டது. உங்களை வரவேற்கக் காத்திருக்கிறோம் 🙏":"உங்கள் கடை வருகை "+when+" ரத்து செய்யப்பட்டது. வேறு நாள் பதிவு செய்யலாம் அல்லது இங்கே கேளுங்கள்.";
+  const r=await sb.from("gold_chat").insert({customer_id:v.customer_id,sender:"s",body,staff_email:CH_ME});
+  if(!r.error)pushFn({action:"chat_reply",customer_id:v.customer_id})}
+ loadVisits()});
 // ---- ஒவ்வொரு வகைக்குள்ளும் நகை photo-க்கள் (gold_category_photos) ----
 function openCP(id,name){CPID=id;$("cpname").textContent="📷 "+name+" — படங்கள்";$("cpbox").classList.remove("hide");$("cpst").textContent="";loadCP();$("cpbox").scrollIntoView({behavior:"smooth",block:"start"})}
 $("cpx").onclick=()=>{CPID=0;$("cpbox").classList.add("hide")};
@@ -2204,6 +2238,7 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
     rate: { t: "தங்கம் / வெள்ளி விலை", sub: 1, cards: ["இன்றைய 22K விலை", "பழைய விலை சேர்க்க"] },
     newcust: { t: "புதிய Customer", sub: 1, cards: ["புதிய Customer"] },
     remind: { t: "இந்த மாத நினைவூட்டல்", sub: 1, cards: ["இந்த மாத நினைவூட்டல்"] },
+    visit: { t: "கடை வருகைகள்", sub: 1, cards: ["கடை வருகைகள்"] },
     refer: { t: "Refer & Earn", sub: 1, cards: ["Refer & Earn அமைப்பு", "Refer பரிசுகள்"] },
     schemes: { t: "திட்டங்கள்", sub: 1, cards: ["புதிய திட்டம் சேர்க்க"] },
     images: { t: "App படங்கள்", sub: 1, cards: ["கடை புகைப்படம்", "நகை படங்கள்", "Maroon பின்னணி படம்", "Header பின்னணி படம்", "திட்ட card படங்கள்", "Banner படங்கள்", "Onboarding படங்கள்"], cols: 1 },
@@ -2281,7 +2316,7 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
   }
 
   // Parent of each sub page (used when it was opened directly, e.g. from the desktop sidebar)
-  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nlike: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
+  const PARENT = { nsend: "notify", nposter: "notify", nstory: "notify", ncat: "notify", nlike: "notify", nnotice: "notify", nlog: "notify", pay: "dash", newcust: "cust", remind: "cust", visit: "dash", rate: "set", refer: "set", schemes: "set", images: "set", links: "set", staff: "set", more: "set" };
   function navTo(k, replace) {
     if (!PAGES[k]) k = "dash";
     if (k === "set") { const g = doc.querySelector('#stabs [data-g="set"]'); if (g) g.click(); } // keeps the 10-tap developer unlock working
@@ -2407,7 +2442,8 @@ html[data-s6] #adm .s6chips select{width:auto!important;min-height:34px!importan
     const dl = $i("s6due");
     if (dl) dl.innerHTML = `<div class="hd2"><h3>இந்த மாதம் நிலுவை</h3><small>${due.length} பேர்</small></div>
       ${due.length ? due.slice(0, 5).map(({ c, s }) => `<div class="r"><b>${E(c.name)}<small>${E(T(() => SN[c.scheme], c.scheme))} · ${s.n + 1}/${s.mo} தவணை</small></b>${c.monthly_amount ? `<span>₹${N(c.monthly_amount)}</span>` : ""}</div>`).join("") : '<div class="s6empty"><b>எல்லாரும் கட்டியாச்சு ✨</b>இந்த மாசம் நிலுவை இல்ல.</div>'}
-      ${due.length ? `<button type="button" class="s6link" data-go="remind">WhatsApp நினைவூட்டல் அனுப்ப ›</button>` : ""}`;
+      ${due.length ? `<button type="button" class="s6link" data-go="remind">WhatsApp நினைவூட்டல் அனுப்ப ›</button>` : ""}
+      <button type="button" class="s6link" data-go="visit">📅 கடை வருகைகள்${window.VISN ? " · " + window.VISN + " புதியவை" : ""} ›</button>`;
     // badges
     const rq = (window.RQ || []).length;
     doc.querySelectorAll('[data-dot="dash"]').forEach((x) => { x.textContent = rq; x.classList.toggle("on", rq > 0); });
