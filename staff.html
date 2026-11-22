@@ -522,12 +522,12 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <input id="wnt" maxlength="22" placeholder="வட்டத்துக்குக் கீழ வரும் பெயர்* (உதா: தீபாவளி Offer)">
   <textarea id="wnb" rows="2" maxlength="200" placeholder="படத்துக்குக் கீழ 1–2 வரி (விருப்பம்)"></textarea>
   <div class="mut">கீழ வரும் button</div>
-  <select id="wnl"><option value="">Button வேண்டாம்</option><option value="wa">WhatsApp-ல் கேட்க</option><option value="schemes">சேமிப்புத் திட்டம் பார்க்க</option><option value="rate">இன்றைய விலை பார்க்க</option></select>
+  <select id="wnl"><option value="">Button வேண்டாம்</option><option value="wa">கடையிடம் கேட்க (App-ல்)</option><option value="schemes">சேமிப்புத் திட்டம் பார்க்க</option><option value="rate">இன்றைய விலை பார்க்க</option></select>
   <div class="mut">எதுவரை காட்டணும் (காலியா விட்டா எப்போதும்)</div><input type="date" id="wne">
   <button class="btn" id="wngo">✨ App-ல சேர்</button>
   <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="wnlist"></div></div>
   <div class="card" id="catcard"><h2>💍 நகை வகைகள்</h2>
-  <div class="mut">App home-ல swipe பண்ற கட்டங்களா வரும். கடையில எடுத்த photo போடுங்க (சதுரம் அல்லது நீள்வாக்கு). Customer தொட்டா அந்த வகையோட நகை photo-க்கள் app உள்ளேயே திறக்கும் (ஒவ்வொரு வகைக்கும் “📷 படங்கள்” அழுத்தி photo சேருங்க). Photo இல்லாத வகையில் “WhatsApp-ல் கேட்க” button மட்டும் வரும்.</div>
+  <div class="mut">App home-ல swipe பண்ற கட்டங்களா வரும். கடையில எடுத்த photo போடுங்க (சதுரம் அல்லது நீள்வாக்கு). Customer தொட்டா அந்த வகையோட நகை photo-க்கள் app உள்ளேயே திறக்கும் (ஒவ்வொரு வகைக்கும் “📷 படங்கள்” அழுத்தி photo சேருங்க). Photo இல்லாத வகையில் “கடையிடம் கேட்க” button மட்டும் வரும் (கேள்வி App-லேயே கடைக்கு வரும்).</div>
   <input type="file" id="ctf" accept="image/*"><div id="ctimg"></div>
   <input id="ctn" maxlength="20" placeholder="வகை பெயர்* (உதா: நெக்லஸ், ஜிமிக்கி, வளையல்)">
   <input id="ctw" maxlength="120" placeholder="WhatsApp message (விருப்பம் — காலியா விட்டா தானா வரும்)">
@@ -1174,7 +1174,7 @@ $("wnlist").addEventListener("click",async e=>{const a=e.target.closest("[data-w
  else await sb.from("gold_whatsnew").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.wa);loadWN()});
 $("wngo").onclick=async()=>{if(!WNIMG)return alert("முதல்ல படம் போடுங்க");const t=$("wnt").value.trim();if(!t)return alert("பெயர் போடுங்க");
  const l=$("wnl").value,b=$("wngo");b.disabled=true;
- const {error}=await sb.from("gold_whatsnew").insert({title:t,image_url:WNIMG,body:$("wnb").value.trim()||null,btn_link:l||null,btn_label:l?{wa:"WhatsApp-ல் கேட்க",schemes:"சேமிப்புத் திட்டம் பார்க்க",rate:"இன்றைய விலை பார்க்க"}[l]:null,ends_on:$("wne").value||null,active:true});
+ const {error}=await sb.from("gold_whatsnew").insert({title:t,image_url:WNIMG,body:$("wnb").value.trim()||null,btn_link:l||null,btn_label:l?{wa:"கடையிடம் கேட்க",schemes:"சேமிப்புத் திட்டம் பார்க்க",rate:"இன்றைய விலை பார்க்க"}[l]:null,ends_on:$("wne").value||null,active:true});
  b.disabled=false;if(error)return alert(error.message);alert("App-ல சேர்ந்தாச்சு ✅");WNIMG="";$("wnf").value="";$("wnimg").innerHTML="";$("wnt").value="";$("wnb").value="";$("wnl").value="";$("wne").value="";loadWN()};
 let CPN={},CPID=0;
 async function loadCat(){const pc=await sb.from("gold_category_photos").select("category_id");CPN={};(pc.data||[]).forEach(x=>CPN[x.category_id]=(CPN[x.category_id]||0)+1);
