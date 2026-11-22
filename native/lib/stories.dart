@@ -302,61 +302,106 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
 }
 
 /// "💍 நகை வகைகள்" — swipeable shop-photo cards; tap → WhatsApp enquiry for that category.
-class CategoryStrip extends StatelessWidget {
+/// நகை வகைகள் — slides by itself every few seconds; stops while the customer touches it.
+class CategoryStrip extends StatefulWidget {
   const CategoryStrip({super.key});
+  @override
+  State<CategoryStrip> createState() => _CategoryStripState();
+}
+
+class _CategoryStripState extends State<CategoryStrip> {
+  final _sc = ScrollController();
+  Timer? _t;
+  DateTime _pausedUntil = DateTime.fromMillisecondsSinceEpoch(0);
+  static const _step = 160.0; // card 148 + gap 12
+
+  @override
+  void initState() {
+    super.initState();
+    _t = Timer.periodic(const Duration(milliseconds: 3200), (_) => _next());
+  }
+
+  void _next() {
+    if (!mounted || !_sc.hasClients || DateTime.now().isBefore(_pausedUntil)) return;
+    final p = _sc.position;
+    if (p.maxScrollExtent <= 0) return;
+    if (p.pixels >= p.maxScrollExtent - 4) {
+      _sc.animateTo(0, duration: const Duration(milliseconds: 900), curve: Curves.easeInOutCubic);
+    } else {
+      final to = ((p.pixels / _step).round() + 1) * _step;
+      _sc.animateTo(to.clamp(0, p.maxScrollExtent), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic);
+    }
+  }
+
+  void _pause() => _pausedUntil = DateTime.now().add(const Duration(seconds: 8));
+
+  @override
+  void dispose() {
+    _t?.cancel();
+    _sc.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final list = app.cats;
-    return SizedBox(
-      height: 196,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: list.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) {
-          final c = list[i];
-          final name = '${c['name']}';
-          return Semantics(
-            button: true,
-            label: '$name — டிசைன்கள் பார்க்க',
-            child: GestureDetector(
-              onTap: () {
-                HapticFeedback.selectionClick();
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => CategoryGallery(cat: c)));
-              },
-              child: Container(
-                width: 148,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: C.line2),
-                  boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 10, offset: Offset(0, 4))],
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: Stack(fit: StackFit.expand, children: [
-                  Image.network('${c['image_url']}', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: C.ivory2)),
-                  const DecoratedBox(
-                    decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, stops: [.45, 1], colors: [Color(0x00000000), Color(0xCC2A0610)])),
+    return Listener(
+      onPointerDown: (_) => _pause(),
+      child: SizedBox(
+        height: 196,
+        child: ListView.separated(
+          controller: _sc,
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          itemCount: list.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, i) {
+            final c = list[i];
+            final name = '${c['name']}';
+            return Semantics(
+              button: true,
+              label: '$name — டிசைன்கள் பார்க்க',
+              child: GestureDetector(
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => CategoryGallery(cat: c)));
+                },
+                child: Container(
+                  width: 148,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: C.line2),
+                    boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 10, offset: Offset(0, 4))],
                   ),
-                  Positioned(
-                    left: 12,
-                    right: 10,
-                    bottom: 10,
-                    child: Row(children: [
-                      Expanded(child: Text(name, maxLines: 2, style: sans(15, color: Colors.white, weight: FontWeight.w700, height: 1.3))),
-                      Container(
-                        width: 30,
-                        height: 30,
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(fit: StackFit.expand, children: [
+                    Image.network('${c['image_url']}', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: C.ivory2)),
+                    const DecoratedBox(
+                      decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, stops: [.4, 1], colors: [Color(0x00000000), Color(0xD92A0610)])),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 26,
+                        height: 26,
                         decoration: const BoxDecoration(color: Color(0xE6FFFFFF), shape: BoxShape.circle),
-                        child: const Icon(Icons.arrow_forward_rounded, size: 17, color: C.navy),
+                        child: const Icon(Icons.arrow_forward_rounded, size: 15, color: C.navy),
                       ),
-                    ]),
-                  ),
-                ]),
+                    ),
+                    // full card width for the name, so long Tamil words are not cut in the middle
+                    Positioned(
+                      left: 10,
+                      right: 10,
+                      bottom: 10,
+                      child: Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, style: sans(14.5, color: Colors.white, weight: FontWeight.w700, height: 1.3)),
+                    ),
+                  ]),
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
