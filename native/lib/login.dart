@@ -590,7 +590,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
         PrimaryButton(busy ? 'சரிபார்க்கிறது…' : 'mPIN அமை', busy: busy, onTap: _save),
         const SizedBox(height: 14),
-        OutlineBtn('Activation code இல்லையா? Email-ல் OTP பெற', icon: Icons.mail_outline, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmailOtpScreen(mobile: _m.text)))),
+        OutlineBtn('Activation code இல்லையா? OTP பெற', icon: Icons.sms_outlined, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => EmailOtpScreen(mobile: _m.text)))),
         const SizedBox(height: 14),
         Text('Code கிடைக்கவில்லையா? இங்கே கேட்கலாம்:', textAlign: TextAlign.center, style: sans(13.5, color: C.mute)),
         const SizedBox(height: 8),
@@ -633,7 +633,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
   final _c = TextEditingController();
   final _p1 = TextEditingController();
   final _p2 = TextEditingController();
-  String err = '', to = '';
+  String err = '', to = '', via = '';
   bool busy = false, sent = false;
   DateTime _next = DateTime(2000);
 
@@ -661,7 +661,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
       case 'expired':
         return 'OTP காலாவதியானது. புதிய OTP பெறவும்.';
       case 'code_invalid':
-        return 'OTP தவறு. Email-ல் வந்த 6 இலக்க எண்ணை சரியா போடுங்க.';
+        return 'OTP தவறு. வந்த 6 இலக்க எண்ணை சரியா போடுங்க.';
       case 'code_max_attempts_exceeded':
         return 'நிறைய தவறான முயற்சி. மறுபடி OTP அனுப்புங்க.';
       case 'net':
@@ -694,6 +694,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
       if (d['ok'] == true) {
         sent = true;
         to = '${d['to'] ?? ''}';
+        via = '${d['via'] ?? 'email'}';
         _next = DateTime.now().add(const Duration(seconds: 60));
         _c.clear();
       } else {
@@ -707,7 +708,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
     if (busy) return;
     String? e;
     if (_c.text.length != 6) {
-      e = 'Email-ல் வந்த 6 இலக்க OTP போடுங்க';
+      e = '6 இலக்க OTP போடுங்க';
     } else if (_p1.text.length != 6) {
       e = '6 இலக்க mPIN போடுங்க';
     } else if (_p1.text != _p2.text) {
@@ -764,7 +765,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
         backgroundColor: C.ivory,
         surfaceTintColor: C.ivory,
         foregroundColor: C.navy,
-        title: Text('Email-ல் OTP', style: serif(19)),
+        title: Text('OTP மூலம் mPIN', style: serif(19)),
       ),
       body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 30), children: [
         Center(child: Image.asset('assets/lock.png', height: 58)),
@@ -774,17 +775,19 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
           decoration: BoxDecoration(color: const Color(0xFFFFF7E0), borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE7D49B))),
           child: Text(
               sent
-                  ? 'OTP அனுப்பியாச்சு: $to\nInbox-ல் வரலைன்னா Spam / Promotions folder-லயும் பாருங்க. 10 நிமிடம் மட்டும் செல்லும்.'
-                  : 'கடையில் பதிவு செய்த உங்க Email-க்கு 6 இலக்க OTP அனுப்புவோம். அதை போட்டு உங்க சொந்த 6 இலக்க mPIN வைக்கலாம்.',
+                  ? (via == 'wa'
+                      ? 'OTP உங்க WhatsApp-க்கு அனுப்பியாச்சு: $to\nWhatsApp-ல் "Copy code" அழுத்தி இங்கே வந்தா தானா நிரப்பும். 10 நிமிடம் மட்டும் செல்லும்.'
+                      : 'OTP அனுப்பியாச்சு: $to\nInbox-ல் வரலைன்னா Spam / Promotions folder-லயும் பாருங்க. 10 நிமிடம் மட்டும் செல்லும்.')
+                  : 'உங்க WhatsApp அல்லது கடையில் பதிவு செய்த Email-க்கு 6 இலக்க OTP அனுப்புவோம். அதை போட்டு உங்க சொந்த 6 இலக்க mPIN வைக்கலாம்.',
               style: sans(13.5, color: const Color(0xFF5A4410), height: 1.6)),
         ),
         const SizedBox(height: 16),
         _field('மொபைல் எண்*', _m, max: 10),
         if (!sent) ...[
           if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),
-          PrimaryButton(busy ? 'அனுப்புகிறது…' : 'Email-க்கு OTP அனுப்பு', busy: busy, onTap: _send),
+          PrimaryButton(busy ? 'அனுப்புகிறது…' : 'OTP அனுப்பு', busy: busy, onTap: _send),
         ] else ...[
-          _field('Email-ல் வந்த OTP*', _c, focus: true, paste: true),
+          _field(via == 'wa' ? 'WhatsApp-ல் வந்த OTP*' : 'Email-ல் வந்த OTP*', _c, focus: true, paste: true),
           _field('புது 6 இலக்க mPIN*', _p1, secret: true),
           _field('mPIN மறுபடி*', _p2, secret: true),
           if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(err, style: sans(13.5, color: C.red))),

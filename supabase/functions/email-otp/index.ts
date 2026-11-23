@@ -6,6 +6,8 @@
 //   BREVO_API_KEY = Brevo → SMTP & API → API keys
 //   MAIL_FROM     = Brevo-ல verify செய்த sender email (உதா: stmgold2021@gmail.com)
 // Code DB-ல hash-ஆ மட்டும் (gold_email_otp, service_role மட்டும்). 10 நிமிடம் செல்லும், 5 தவறு வரை.
+// 2026-11-23: முதல்ல WhatsApp (template stm_otp, secrets WA_TOKEN + WA_PHONE_ID); அனுப்ப முடியலைன்னா தானா Email.
+//   பதில்: {ok, to, via: "wa" | "email"}. Template approve ஆகும் வரை WhatsApp தோல்வி → Email (முன்பு போலவே).
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -201,6 +203,35 @@ async function sendMail(to: string, name: string, code: string) {
   }
 }
 
+// WhatsApp OTP (authentication template stm_otp, copy-code button). Throws on any failure so the caller can fall back to email.
+const waReady = () => !!((Deno.env.get("WA_TOKEN") || "").trim() && (Deno.env.get("WA_PHONE_ID") || "").trim());
+async function sendWa(m: string, code: string) {
+  const tok = Deno.env.get("WA_TOKEN")!.trim(), pid = Deno.env.get("WA_PHONE_ID")!.trim();
+  const r = await fetch(`https://graph.facebook.com/v21.0/${encodeURIComponent(pid)}/messages`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${tok}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to: "91" + m,
+      type: "template",
+      template: {
+        name: "stm_otp",
+        language: { code: "en" },
+        components: [
+          { type: "body", parameters: [{ type: "text", text: code }] },
+          { type: "button", sub_type: "url", index: "0", parameters: [{ type: "text", text: code }] },
+        ],
+      },
+    }),
+  });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || !d?.messages?.[0]?.id) {
+    console.log("wa", r.status, JSON.stringify(d?.error || d).slice(0, 200));
+    throw new Error("wa:" + (d?.error?.code ?? r.status));
+  }
+}
+const maskPhone = (m: string) => "+91 ••••• " + m.slice(-5);
+
 // code சரியா? (consume=true ஆனா பயன்படுத்திய பின் அழிக்கும்)
 async function check(m: string, code: string, consume: boolean): Promise<string | null> {
   const r = await sbReq(`gold_email_otp?select=code_hash,expires_at,tries&mobile=eq.${m}&limit=1`);
@@ -231,8 +262,10 @@ Deno.serve(async (req) => {
       const rows = c.ok ? await c.json().catch(() => []) : [];
       if (!rows.length) return json({ ok: false, err: "nomatch" }, 400);
       const email = String(rows[0].email || "").trim().toLowerCase();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ ok: false, err: "noemail" }, 400);
-      if (!mailReady()) return json({ ok: false, err: "not_ready" }, 503);
+      const hasMail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const wa = waReady() && b.channel !== "email";
+      if (!wa && !hasMail) return json({ ok: false, err: "noemail" }, 400);
+      if (!wa && !mailReady()) return json({ ok: false, err: "not_ready" }, 503);
       const lim = await rateOk(m);
       if (lim) return json({ ok: false, err: lim }, 429);
       const code = sixDigits();
@@ -242,13 +275,23 @@ Deno.serve(async (req) => {
         body: JSON.stringify({ mobile: m, code_hash: await hashCode(m, code), expires_at: new Date(Date.now() + TTL_MS).toISOString(), tries: 0, created_at: new Date().toISOString() }),
       });
       if (!up.ok) return json({ ok: false, err: "db" }, 500);
+      if (wa) {
+        try {
+          await sendWa(m, code);
+          return json({ ok: true, to: maskPhone(m), via: "wa" });
+        } catch (_) { /* fall back to email below */ }
+      }
+      if (!hasMail || !mailReady()) {
+        await sbReq(`gold_email_otp?mobile=eq.${m}`, { method: "DELETE" });
+        return json({ ok: false, err: hasMail ? "not_ready" : "noemail" }, hasMail ? 503 : 400);
+      }
       try {
         await sendMail(email, String(rows[0].name || ""), code);
       } catch (e) {
         await sbReq(`gold_email_otp?mobile=eq.${m}`, { method: "DELETE" });
         return json({ ok: false, err: String((e as Error).message) }, 502);
       }
-      return json({ ok: true, to: mask(email) });
+      return json({ ok: true, to: mask(email), via: "email" });
     }
 
     const code = String(b.code || "");

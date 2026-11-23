@@ -2958,9 +2958,9 @@ $("otbt").onclick=()=>{OTV="tg";sendTG()};
 async function sendEM(){OTV="em";const m=$("otm").value.trim();
  if(!/^[6-9][0-9]{9}$/.test(m))return otErr("10 இலக்க மொபைல் எண் போடுங்க");
  const left=Math.ceil((otT-Date.now())/1000);if(left>0)return otErr(left+" வினாடி கழித்து மறுபடி அனுப்பலாம்");
- otErr("Email-க்கு அனுப்புகிறோம்…");$("otbe").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otbe").disabled=false;
+ otErr("OTP அனுப்புகிறோம்…");$("otbe").disabled=true;const d=await tgCall({action:"send",mobile:m});$("otbe").disabled=false;
  if(!d||!d.ok)return otErr((d&&d.err=="nomatch"?"இந்த மொபைல் கடையில பதிவு ஆகல. கடையை தொடர்பு கொள்ளுங்க.":d&&d.err=="noemail"?"உங்க பதிவில் Email இல்ல. கடையில் Email சேர்க்கச் சொல்லுங்க, அல்லது Activation code கேளுங்க.":d&&d.err=="not_ready"?"Email OTP வசதி இன்னும் தயாராகல. கடைக்கு WhatsApp பண்ணுங்க.":d&&d.err=="wait"?"1 நிமிடம் கழித்து மறுபடி அனுப்பலாம்.":d&&d.err=="too_many"?"இன்னைக்கு அதிக தடவை code கேட்டாச்சு. நாளைக்கு முயற்சிக்கவும் அல்லது கடையை அணுகவும்.":"Email அனுப்ப முடியல. கொஞ்ச நேரம் கழித்து முயற்சிக்கவும்.")+(d&&d.err?" ("+d.err+")":""));
- OTM=m;otT=Date.now()+60000;$("otvia").textContent="Email ("+(d.to||"")+")";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
+ OTM=m;otT=Date.now()+60000;$("otvia").textContent=(d.via=="wa"?"WhatsApp (":"Email (")+(d.to||"")+")";$("otsh").textContent="+91 "+m;$("otc").value="";otStep(2)}
 $("otbe").onclick=sendEM;
 // OTP paste: Email-ல் copy செய்த 6 இலக்க எண்ணை ஒட்டு; App-க்கு திரும்பும்போது (focus) தானா முயற்சி
 const pickCode=t=>{const m=String(t||"").match(/(?:^|\D)(\d{6})(?!\d)/);return m?m[1]:null};
