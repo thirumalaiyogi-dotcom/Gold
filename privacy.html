@@ -36,7 +36,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:8px 16px 32px}
 <div class="draft"><b>DRAFT — கடை உரிமையாளர் சரிபார்க்க வேண்டும்.</b> <span class="dr">DRAFT</span> குறியிட்ட ஒவ்வொரு வரியும் சட்ட / வணிக வாக்குறுதி. வெளியிடுவதற்கு முன் உரிமையாளர் (தேவைப்பட்டால் வழக்கறிஞர் / கணக்காளர்) உறுதி செய்ய வேண்டும்.<br>
 <b>DRAFT — to be confirmed by the shop owner.</b> Every line marked DRAFT is a legal or business statement and must be confirmed before publishing.</div>
 
-<p><span class="dr">DRAFT</span> கடைசியாக மாற்றியது · Last updated: <b>23 Oct 2026</b></p>
+<p><span class="dr">DRAFT</span> கடைசியாக மாற்றியது · Last updated: <b>24 Nov 2026</b></p>
 
 <section id="who">
  <h2>1. நாங்கள் யார் · Who we are</h2>
@@ -54,10 +54,13 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:8px 16px 32px}
   <li>தவணை / பணம் செலுத்திய பதிவுகள்: தொகை, தேதி, ரசீது / order எண், சேர்ந்த தங்கம் (கிராம்)</li>
   <li>Login: மொபைல் எண் + 6 இலக்க mPIN; முதல் முறை OTP</li>
   <li>Referral code (நீங்கள் யாரை அழைத்தீர்கள் / யார் உங்களை அழைத்தார்கள்)</li>
-  <li>Notification அனுமதி கொடுத்தால்: உங்கள் browser-ன் push subscription (தொலைபேசி எண் அல்ல)</li>
+  <li>Notification அனுமதி கொடுத்தால்: உங்கள் phone / browser-ன் notification token (தொலைபேசி எண் அல்ல)</li>
+  <li>“கடையிடம் கேளுங்க” chat-ல் நீங்கள் அனுப்பும் செய்திகள், படங்கள்; கடை வருகைப் பதிவு (நாள், நேரம், குறிப்பு)</li>
+  <li>“விருப்பப் பட்டியல்”-ல் நீங்கள் விரும்பிய நகைப் படங்கள் (phone-க்கான ஒரு சாதாரண அடையாள எண்ணுடன்)</li>
+  <li>Phone lock / fingerprint: உங்கள் phone-லேயே சரிபார்க்கப்படும்; அந்த விவரம் எங்களுக்கு வராது</li>
  </ul>
  <p>Card / UPI / வங்கி விவரங்களை நாங்கள் சேமிப்பதில்லை. அவற்றை Cashfree Payments நேரடியாகக் கையாள்கிறது.</p>
- <p class="en">Name, mobile number, address/town; nominee details; dates (joining date, installment dates, and, <span class="dr">DRAFT</span> if you give them, birthday/anniversary); payment records (amount, date, receipt/order number, gold grams credited); login data (mobile number + 6-digit mPIN, OTP on first setup); referral codes; and, if you allow notifications, your browser's push subscription. We do not store card, UPI or bank details. Those are handled directly by Cashfree Payments.</p>
+ <p class="en">Name, mobile number, address/town; nominee details; dates (joining date, installment dates, and, <span class="dr">DRAFT</span> if you give them, birthday/anniversary); payment records (amount, date, receipt/order number, gold grams credited); login data (mobile number + 6-digit mPIN, OTP on first setup); referral codes; if you allow notifications, your phone's or browser's notification token; messages and photos you send in the “Ask the shop” chat and shop-visit bookings (date, time, note); items you add to your wish list (linked to a random device ID). Phone-lock / fingerprint checks happen only on your phone and are not sent to us. We do not store card, UPI or bank details. Those are handled directly by Cashfree Payments.</p>
 </section>
 
 <section id="why">
@@ -79,10 +82,10 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:8px 16px 32px}
   <li><b>Supabase</b>: தரவுத்தளம் (database), login / OTP சரிபார்ப்பு</li>
   <li><b>Cloudflare</b>: website / app hosting</li>
   <li><b>Cashfree Payments</b>: online பணம் செலுத்துதல்</li>
-  <li><b>Browser push service</b> (Android-ல் Google): notifications அனுப்ப</li>
-  <li><span class="dr">DRAFT</span> <b>OTP அனுப்பும் சேவை</b> (SMS / Telegram / email; எது பயன்படுகிறது என்று உரிமையாளர் உறுதி செய்ய வேண்டும்)</li>
+  <li><b>Google Firebase Cloud Messaging</b> / browser push service: notifications அனுப்ப</li>
+  <li><b>OTP அனுப்ப</b>: WhatsApp (Meta Platforms) அல்லது Email (Google Gmail / Brevo)</li>
  </ul>
- <p class="en">Supabase (database, login/OTP checks), Cloudflare (hosting), Cashfree Payments (online payments), the browser's push service (Google on Android, for notifications) and, <span class="dr">DRAFT</span> the OTP delivery provider (SMS / Telegram / email; owner to confirm which). They process data only to provide these services.</p>
+ <p class="en">Supabase (database, login/OTP checks), Cloudflare (hosting), Cashfree Payments (online payments), Google Firebase Cloud Messaging and browser push services (notifications), and WhatsApp (Meta Platforms) or email (Google Gmail / Brevo) to deliver OTP codes. They process data only to provide these services.</p>
 </section>
 
 <section id="security">
@@ -99,8 +102,8 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:8px 16px 32px}
 
 <section id="delete">
  <h2>7. கணக்கை நீக்க · Deleting your account</h2>
- <p>App-ல்: <b>Passbook → என் விவரம் → “கணக்கை நீக்க கோரிக்கை”</b>. App இல்லாமலும் இந்தப் பக்கத்தில் கோரலாம்: <a href="/delete-account.html">கணக்கை நீக்க கோரிக்கை</a>. அல்லது <a href="mailto:stmgold2021@gmail.com">stmgold2021@gmail.com</a>-க்கு email அனுப்புங்கள்.</p>
- <p class="en">In the app: <b>Passbook → என் விவரம் (My details) → “கணக்கை நீக்க கோரிக்கை” (Request account deletion)</b>. Without the app: <a href="/delete-account.html">request account deletion here</a>, or email stmgold2021@gmail.com.</p>
+ <p>App-ல்: <b>கணக்கு → “கணக்கை நீக்க கோரிக்கை”</b>. App இல்லாமலும் இந்தப் பக்கத்தில் கோரலாம்: <a href="/delete-account.html">கணக்கை நீக்க கோரிக்கை</a>. அல்லது <a href="mailto:stmgold2021@gmail.com">stmgold2021@gmail.com</a>-க்கு email அனுப்புங்கள்.</p>
+ <p class="en">In the app: <b>கணக்கு (Account) → “கணக்கை நீக்க கோரிக்கை” (Request account deletion)</b>. Without the app: <a href="/delete-account.html">request account deletion here</a>, or email stmgold2021@gmail.com.</p>
 </section>
 
 <section id="rights">
