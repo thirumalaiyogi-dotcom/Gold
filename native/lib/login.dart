@@ -432,7 +432,11 @@ class _PinScreenState extends State<PinScreen> {
       onBack: widget.fromBoot
           ? () => Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const WelcomeScreen()))
           : () => Navigator.of(context).pop(),
-      child: ListView(padding: const EdgeInsets.fromLTRB(22, 18, 22, 16), children: [
+      // 2026-11-24: the whole mPIN page fits on one screen (no scrolling, nothing cut) — it shrinks a little on small phones.
+      child: LayoutBuilder(builder: (context, box) => FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.topCenter,
+        child: SizedBox(width: box.maxWidth, child: Padding(padding: const EdgeInsets.fromLTRB(22, 14, 22, 10), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _PadHeader('mPIN', bio ? 'Phone lock அல்லது 6 இலக்க mPIN மூலம் திறக்கவும்' : 'உங்க 6 இலக்க mPIN போடுங்க'),
         const SizedBox(height: 8),
         Center(
@@ -475,7 +479,7 @@ class _PinScreenState extends State<PinScreen> {
         ]),
         const SizedBox(height: 8),
         const _HelpTiles(),
-      ]),
+      ]))))),
     );
   }
 }
