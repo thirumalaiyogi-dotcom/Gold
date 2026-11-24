@@ -141,7 +141,8 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          FB_APP_ID: ${{ vars.FB_APP_ID_RELEASE }}
+          # Firebase app "STM Digi Gold" (com.subbulakshmi.thangamaligai) in project stm-gold — public id, not a secret
+          FB_APP_ID: ${{ vars.FB_APP_ID_RELEASE || '1:742720250332:android:7cdf5cde6cea8f815bef19' }}
         run: |
           set -o pipefail
           NUM=$(grep '^version:' pubspec.yaml | sed 's/.*+//')
