@@ -3575,7 +3575,7 @@ function pbDelReq(){try{
 .chm{text-align:left;max-width:80%;padding:8px 12px 6px;border-radius:16px;font-size:15px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
 .chm small{display:block;text-align:right!important;font-size:11px;opacity:.8}
 .chm.c{align-self:flex-end;background:#6E1423;color:#fff;border-bottom-right-radius:4px}
-.chm.s{align-self:flex-start;background:#fff;border:1px solid #E8D9B9;color:#392027;border-bottom-left-radius:4px}
+.chm.sr{align-self:flex-start;background:#fff;border:1px solid #E8D9B9;color:#392027;border-bottom-left-radius:4px}
 .chm.w{align-self:flex-start;background:#FFF7E0;border:1px solid #E7D49B;color:#5A4410;font-size:14px;max-width:88%}
 .chd{align-self:center;background:#F5F0E5;color:#6A5B61;font-size:12px;border-radius:99px;padding:2px 10px;margin:6px 0}
 #chxq{display:flex;gap:8px;overflow:auto;padding:0 12px 8px}
@@ -3605,7 +3605,7 @@ function pbDelReq(){try{
  function badge(n){$("chb1").textContent=n;$("chb1").classList.toggle("hide",!n);$("chsub").textContent=n?("கடையிலிருந்து "+n+" புது பதில்"):"சந்தேகமா? இங்கேயே கேளுங்க, பதில் வரும்"}
  async function unread(){if(!window.PBOK)return badge(0);const c=cred();if(!c.m||!c.p)return;try{const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:9e15,p_mark:false});if(data&&data.ok)badge(data.unread||0)}catch(e){}}
  function render(){const box=$("chxm"),end=box.scrollHeight-box.scrollTop-box.clientHeight<60;let h='<div class="chm w">வணக்கம் 🙏 உங்க சந்தேகத்தை இங்கே கேளுங்க. கடை ஊழியர் இங்கேயே பதில் தருவார்; பதில் வந்ததும் notification வரும். இந்த பேச்சு உங்களுக்கும் கடைக்கும் மட்டும்.</div>',ld="";
-  msgs.forEach(m=>{const d=ist(m.t),dd=day(d);if(dd!==ld){ld=dd;h+='<div class="chd">'+dd+'</div>'}const im=m.i?(SIGN[m.i]?'<a href="'+esc(SIGN[m.i])+'" target="_blank" rel="noopener"><img src="'+esc(SIGN[m.i])+'" alt="படம்"></a>':'<div class="mut" style="color:inherit;opacity:.8">📷 படம் ஏற்றுகிறது…</div>'):"";h+='<div class="chm '+(m.s==="c"?"c":"s")+'">'+im+(m.i&&/^📷 படம்$/.test(m.b)?"":esc(m.b))+'<small>'+hm(d)+'</small></div>'});
+  msgs.forEach(m=>{const d=ist(m.t),dd=day(d);if(dd!==ld){ld=dd;h+='<div class="chd">'+dd+'</div>'}const im=m.i?(SIGN[m.i]?'<a href="'+esc(SIGN[m.i])+'" target="_blank" rel="noopener"><img src="'+esc(SIGN[m.i])+'" alt="படம்"></a>':'<div class="mut" style="color:inherit;opacity:.8">📷 படம் ஏற்றுகிறது…</div>'):"";h+='<div class="chm '+(m.s==="c"?"c":"sr")+'">'+im+(m.i&&/^📷 படம்$/.test(m.b)?"":esc(m.b))+'<small>'+hm(d)+'</small></div>'});
   box.innerHTML=h;$("chxq").innerHTML=msgs.length?"":QUICK.map(q=>'<button type="button">'+esc(q)+'</button>').join("");if(end||!render.done)box.scrollTop=box.scrollHeight;render.done=true}
  async function load(){const c=cred();try{const last=msgs.length?msgs[msgs.length-1].id:0;const {data}=await sb.rpc("gold_chat_get",{p_mobile:c.m,p_pin:c.p,p_after:last,p_mark:true});if(data&&data.ok){const add=(data.msgs||[]).filter(x=>!msgs.some(y=>y.id===x.id));if(add.length||!render.done){msgs=msgs.concat(add);render();sign()}badge(0)}}catch(e){}}
  function open(){if(!window.PBOK){pending=true;if(typeof showLock==="function")showLock();return}
