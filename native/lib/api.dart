@@ -9,7 +9,7 @@ class Api {
   static const url = 'https://efvcsxgzxkfcqjhgvniz.supabase.co';
   static const anon =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4';
-  static const site = 'https://gold.thirumalaiyogi.workers.dev';
+  static const site = 'https://subbulakshmithangamaaligai.com';
   static final _h = {'apikey': anon, 'Authorization': 'Bearer $anon', 'Content-Type': 'application/json'};
   static const _t = Duration(seconds: 15);
 

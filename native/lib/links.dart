@@ -9,7 +9,7 @@ class Shop {
   static const phone2 = '+919344395078';
   static const waNumber = '919791918344';
   static const maps = 'https://maps.app.goo.gl/iSgYseucFYJ5mivV9';
-  static const privacy = 'https://gold.thirumalaiyogi.workers.dev/privacy.html';
+  static const privacy = 'https://subbulakshmithangamaaligai.com/privacy.html';
 }
 
 Future<void> openLink(BuildContext context, String url) async {
