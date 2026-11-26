@@ -2019,6 +2019,10 @@ html[data-p5] #lock .lknewp a{color:#4C0F1A}
 html[data-p5] #lock .lkhelp a{color:#4C0F1A}
 html[data-p5][data-style] .sc.silver .coin:after{color:#3D3832!important;background:linear-gradient(180deg,#ffffff,#DAD6D1)!important}
 html[data-p5] .sdpur.ag{color:#4F4840!important;background:linear-gradient(180deg,#F7F6F5,#DAD6D1)!important;border-color:#C8C2BB!important}
+/* 2026-11-26: scheme cards in the home carousel all the same height (a 2-line name made one card taller) */
+#hs>.sc,#hs2>.sc{align-self:stretch!important;display:flex!important;flex-direction:column}
+#hs>.sc>.sct,#hs2>.sc>.sct{flex:1 1 auto}
+#hs>.sc>.scb,#hs2>.sc>.scb{flex:none}
 </style></head><body><div id="spl" aria-hidden="true"><img alt=""><span></span></div><script>try{if(document.documentElement.getAttribute("data-style")!=="3"||sessionStorage.getItem("stm_spl"))document.getElementById("spl").remove();else sessionStorage.setItem("stm_spl","1")}catch(e){}</script>
 <div id="lock" class="ov hide stA" aria-modal="true" role="dialog" aria-labelledby="lkh">
  <div class="lkhero"><span class="shopn"></span></div><script>try{(function(){var u=localStorage.getItem("stm_hdr"),l=document.getElementById("lock");if(u&&l&&/^https:\/\//.test(u)){l.classList.add("img");l.style.setProperty("--hdimg",'url("'+u.replace(/["\\]/g,"")+'")')}})()}catch(e){}</script>
@@ -2290,7 +2294,7 @@ const f=fmt;
 const SB_URL="https://efvcsxgzxkfcqjhgvniz.supabase.co", SB_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVmdmNzeGd6eGtmY3FqaGd2bml6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM3NTQsImV4cCI6MjA5NDU4OTc1NH0.b_y6Hm61BVbDJmERAF_CEGcPIEZi51xL2SgAqZJlqI4";
 const sb=supabase.createClient(SB_URL,SB_KEY);
 // Read cache for public data: repeat opens read from the phone instead of Supabase (cuts egress)
-(function(){const TTL={gold_rate_history:60,gold_slides:360,gold_banners:360,gold_scheme_img:360,gold_links:360,gold_schemes:360};
+(function(){const TTL={gold_rate_history:60,gold_slides:5,gold_banners:5,gold_scheme_img:5,gold_links:5,gold_schemes:5};
  const raw=sb.from.bind(sb);sb.from0=raw;
  try{const now=Date.now();for(let i=localStorage.length-1;i>=0;i--){const k=localStorage.key(i);if(k&&k.startsWith("sbc:")){const c=JSON.parse(localStorage.getItem(k)||"{}");if(!c.t||now-c.t>864e5)localStorage.removeItem(k)}}}catch(e){}
  sb.from=function(t){if(!TTL[t])return raw(t);const calls=[];let write=false;
