@@ -316,6 +316,12 @@ class _EnrolPageState extends State<EnrolPage> {
   void initState() {
     super.initState();
     if (app.mobile.length == 10) mobile.text = app.mobile;
+    // an old error message disappears as soon as the customer corrects the field
+    for (final c in [name, mobile, addr, city, pin, amount, nominee, refc, panC, aadC]) {
+      c.addListener(() {
+        if (err.isNotEmpty && mounted) setState(() => err = '');
+      });
+    }
   }
 
   @override
