@@ -324,7 +324,7 @@ class HomeTab extends StatelessWidget {
       ]),
       ),
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 28),
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 96), // room under the last card for the floating chat button
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           // Order (design audit): saver → due card first; guest → scheme hero. Quick-action row and contact chips removed (same as bottom tabs / shop card).
           if (app.loggedIn && app.pb != null) ...[
