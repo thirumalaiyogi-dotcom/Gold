@@ -160,6 +160,7 @@ class _PassbookTabState extends State<PassbookTab> {
   /// First time a customer finishes every installment, open the greeting card once.
   Future<void> _maybeCertificate() async {
     if (app.demoPb != null || !app.loggedIn || Demo.silver || !Demo.schemeDone || Demo.paidCount == 0) return;
+    if (Demo.closed && Demo.status != 'redeemed') return; // refund / nominee: no celebration card
     try {
       final sp = await SharedPreferences.getInstance();
       final k = 'cert_${app.mobile}_${Demo.schemeKey}_${(app.pb?['start'] ?? '')}';
@@ -247,6 +248,26 @@ class _PassbookTabState extends State<PassbookTab> {
           ]),
         );
     return RefreshIndicator(color: C.navy, onRefresh: app.refreshPassbook, child: ListView(padding: const EdgeInsets.fromLTRB(16, 22, 16, 28), children: [
+      // 0. closed by the shop
+      if (Demo.closed) ...[
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(color: const Color(0xFFEFF7F2), borderRadius: BorderRadius.circular(18), border: Border.all(color: const Color(0xFFBFE0CD))),
+          child: Row(children: [
+            const Icon(Icons.verified_rounded, color: C.green, size: 30),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(Demo.closeTitle, style: sans(15, color: C.ink, weight: FontWeight.w700, height: 1.4)),
+                if (Demo.closedOn.isNotEmpty) Text(Demo.closedOn, style: sans(13, color: C.mute)),
+                const SizedBox(height: 2),
+                Text('உங்கள் தவணைப் பதிவுகள் கீழே உள்ளன. நன்றி!', style: sans(13, color: C.mute, height: 1.5)),
+              ]),
+            ),
+          ]),
+        ),
+        const SizedBox(height: 16),
+      ],
       // 1. summary
       LuxCard(
         inner: true,

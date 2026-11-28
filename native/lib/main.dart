@@ -125,8 +125,18 @@ class Demo {
   }
 
   /// Every installment paid (silver keeps saving monthly).
-  static bool get schemeDone => (months - paidCount) <= 0 && !(silver && paidThisMonth);
-  static bool get canPay => !schemeDone && (!paidThisMonth || silver);
+  /// Account closed by the shop (2026-11-28): redeemed / refunded / nominee. No more payments.
+  static String get status => '${_pb['status'] ?? 'active'}';
+  static bool get closed => status != 'active' && status.isNotEmpty && status != 'null';
+  static String get closeTitle => switch (status) {
+        'redeemed' => 'திட்டம் நிறைவு · நகை வாங்கப்பட்டது',
+        'refunded' => 'திட்டம் நிறைவு · தொகை திருப்பித் தரப்பட்டது',
+        'nominee' => 'திட்டம் நிறைவு · Nominee-க்கு வழங்கப்பட்டது',
+        _ => 'திட்டம் நிறைவு',
+      };
+  static String get closedOn => taDate('${_pb['closed_on'] ?? ''}');
+  static bool get schemeDone => closed || ((months - paidCount) <= 0 && !(silver && paidThisMonth));
+  static bool get canPay => !closed && !schemeDone && (!paidThisMonth || silver);
 
   /// Short month name for each installment, from the start date.
   static List<String> get monthLabels {

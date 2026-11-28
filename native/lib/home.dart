@@ -886,7 +886,9 @@ class _NextDue extends StatelessWidget {
   Widget build(BuildContext context) {
     final paid = Demo.paidCount;
     final done = Demo.schemeDone;
-    final title = done
+    final title = Demo.closed
+        ? Demo.closeTitle
+        : done
         ? 'எல்லா தவணையும் முடிந்தது ✓'
         : Demo.paidThisMonth && !Demo.silver
             ? 'இந்த மாத தவணை செலுத்தப்பட்டது ✓'
@@ -899,6 +901,8 @@ class _NextDue extends StatelessWidget {
           Expanded(child: Text(title.replaceAll(' ✓', ''), style: serif(18, color: C.head))),
           if (!done && Demo.fixed) Text(rupees(Demo.monthly), style: serif(20, weight: FontWeight.w700)),
         ]),
+        if (Demo.closed && Demo.closedOn.isNotEmpty)
+          Padding(padding: const EdgeInsets.only(top: 4), child: Text(Demo.closedOn, style: sans(13, color: C.mute))),
         if (!done) ...[
           const SizedBox(height: 4),
           Row(children: [
