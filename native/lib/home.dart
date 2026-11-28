@@ -275,7 +275,7 @@ class HomeTab extends StatelessWidget {
       Container(
         // final polish: a soft champagne wash behind logo + rates, fading into the ivory page (one quiet brand moment)
         decoration: const BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFF2E4CC), Color(0xFFF7EFE1), C.ivory], stops: [0, .55, 1]),
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFF1E2C8), Color(0x99F1E2C8), Color(0x00F1E2C8)], stops: [0, .5, 1]),
         ),
         child: Stack(children: [
         KolamBg(festive: Fest.today != null, child: Padding(
