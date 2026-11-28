@@ -130,7 +130,7 @@ class StoryBox extends StatelessWidget {
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
             boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 6, offset: Offset(0, 2))],
           ),
-          child: Text(t, style: sans(15, color: C.navy, weight: FontWeight.w800)),
+          child: Text(t, style: sans(15, color: C.navy, weight: FontWeight.w700)),
         ),
         Padding(padding: const EdgeInsets.only(top: 6), child: CustomPaint(size: const Size(9, 9), painter: _Fold(left: false))),
       ]);
