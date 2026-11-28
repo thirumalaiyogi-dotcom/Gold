@@ -545,12 +545,28 @@ html[data-a5][data-style] #stabs #slo{grid-column:auto!important;color:var(--a-e
   <div class="mut" style="margin-top:10px">இப்போ உள்ளவை:</div><div id="ctlist"></div>
   <div id="cpbox" class="hide" style="margin-top:14px;border-top:1px solid #e6dcc4;padding-top:12px">
    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="cpname" style="font-size:17px"></b><a id="cpx" style="color:#777;text-decoration:underline">மூடு ✕</a></div>
-   <div class="mut">இந்த வகையை customer தொட்டா இந்த photo-க்கள் app உள்ளேயே gallery-ஆ வரும். ஒரே நேரத்துல நிறைய photo தேர்ந்தெடுக்கலாம்.</div>
+   <div class="mut">இந்த வகையை customer தொட்டா இந்த photo-க்கள் app உள்ளேயே gallery-ஆ வரும். ஒரே நேரத்துல நிறைய photo தேர்ந்தெடுக்கலாம். ஒவ்வொரு photo-வின் கீழ "மாற்று" அழுத்தி எடை, தூய்மை, code, கூடுதல் படங்கள் சேர்க்கலாம்.</div>
    <input id="cpt" maxlength="40" placeholder="நகை பெயர் (விருப்பம் · உதா: Kerala ஜிமிக்கி)">
    <input id="cpn" maxlength="80" placeholder="சிறு குறிப்பு (விருப்பம் · உதா: சுமார் 8 கிராம்)">
    <input type="file" id="cpf" accept="image/*" multiple>
    <div class="mut" id="cpst"></div>
    <div id="cplist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px"></div>
+   <div id="cpe" class="hide" style="margin-top:12px;border:1.5px solid #d9c08a;border-radius:12px;padding:12px;background:#fffdf7">
+    <div style="display:flex;gap:10px;align-items:center"><img id="cpeimg" style="width:64px;height:64px;object-fit:cover;border-radius:8px"><b style="font-size:16px">✏️ டிசைன் விவரம்</b></div>
+    <div class="mut" style="margin:6px 0">எல்லாம் விருப்பம் — போட்டது மட்டும் App-ல் தெரியும்.</div>
+    <input id="cpet" maxlength="40" placeholder="நகை பெயர் (உதா: சிங்க முக காப்பு)">
+    <input id="cpec" maxlength="30" placeholder="டிசைன் code (உதா: STM-VL-0142)">
+    <div style="display:flex;gap:8px"><input id="cpew" type="number" step="0.001" inputmode="decimal" placeholder="எடை (கிராம்)"><input id="cpes" maxlength="30" placeholder="அளவு (உதா: 2.6&quot; / 18 inch)"></div>
+    <div style="display:flex;gap:8px"><select id="cpep"><option value="">தூய்மை —</option><option>22K 916</option><option>18K 750</option><option>24K 999</option><option>வெள்ளி 925</option></select>
+    <select id="cpetag"><option value="">வகை (filter) —</option><option>Bridal</option><option>தினசரி</option><option>Light weight</option><option>கோயில் டிசைன்</option><option>Antique</option><option>குழந்தைகள்</option></select></div>
+    <div style="display:flex;gap:8px;align-items:center"><select id="cpeb"><option value="">Badge இல்லை</option><option value="new">புதுசு</option><option value="best">அதிகம் விற்பனை</option></select>
+    <label style="display:flex;gap:6px;align-items:center;white-space:nowrap"><input type="checkbox" id="cpeh" style="width:auto"> BIS HUID உள்ளது</label></div>
+    <textarea id="cpen" maxlength="160" placeholder="சிறு விளக்கம் (உதா: கையால் செதுக்கிய பாரம்பரிய வேலைப்பாடு)"></textarea>
+    <div class="mut">கூடுதல் படங்கள் (வேற கோணம், அணிந்த படம் · 8 வரை):</div>
+    <div id="cpem" style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0"></div>
+    <input type="file" id="cpef" accept="image/*" multiple>
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="cpesave">சேமி</button><button class="btn" id="cpecan" style="background:#eee;color:#333">ரத்து</button></div>
+   </div>
   </div></div>
   <div class="card" id="viscard"><h2>📅 கடை வருகைகள்</h2>
   <div class="mut">Customer-கள் App-ல் "நகை வாங்க வருகை" பதிவு செய்தவை. "உறுதி" அழுத்தினால் அவருக்கு chat-ல் பதிலும் notification-உம் போகும்.</div>
@@ -1241,13 +1257,36 @@ function openCP(id,name){CPID=id;$("cpname").textContent="📷 "+name+" — ப�
 $("cpx").onclick=()=>{CPID=0;$("cpbox").classList.add("hide")};
 async function loadCP(){if(!CPID)return;const {data,error}=await sb.from("gold_category_photos").select("*").eq("category_id",CPID).order("sort").order("created_at");
  if(error){$("cplist").innerHTML='<div class="mut" style="grid-column:1/-1">'+esc(error.message)+'</div>';return}
- $("cplist").innerHTML=(data||[]).map(r=>`<div style="border:1px solid #e6dcc4;border-radius:10px;overflow:hidden;background:#fff;${r.active?"":"opacity:.45"}"><img src="${esc(r.image_url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"><div style="padding:6px;font-size:12.5px;line-height:1.35"><b>${esc(r.title||"—")}</b>${r.note?"<br>"+esc(r.note):""}<br><a data-pe="${r.id}" style="text-decoration:underline;color:#555">மாற்று</a> · <a data-pa="${r.id}" data-on="${r.active?0:1}" style="text-decoration:underline;color:${r.active?"#b00020":"#1f7a4d"}">${r.active?"மறை":"காட்டு"}</a> · <a data-pd="${r.id}" style="text-decoration:underline;color:#777">நீக்கு</a></div></div>`).join("")||'<div class="mut" style="grid-column:1/-1">இன்னும் photo இல்ல — மேல photo தேர்ந்தெடுங்க</div>'}
+ CPROWS={};(data||[]).forEach(r=>CPROWS[r.id]=r);
+ $("cplist").innerHTML=(data||[]).map(r=>`<div style="border:1px solid #e6dcc4;border-radius:10px;overflow:hidden;background:#fff;${r.active?"":"opacity:.45"}"><img src="${esc(r.image_url)}" style="width:100%;aspect-ratio:1;object-fit:cover;display:block"><div style="padding:6px;font-size:12.5px;line-height:1.35"><b>${esc(r.title||"—")}</b>${[r.purity,r.weight_g?(+r.weight_g)+" கி":"",(r.more_images||[]).length?"+"+r.more_images.length+" படம்":""].filter(Boolean).length?'<br><span style="color:#8a6a2e">'+esc([r.purity,r.weight_g?(+r.weight_g)+" கி":"",(r.more_images||[]).length?"+"+r.more_images.length+" படம்":""].filter(Boolean).join(" · "))+"</span>":""}<br><a data-pe="${r.id}" style="text-decoration:underline;color:#555">✏️ விவரம்</a> · <a data-pa="${r.id}" data-on="${r.active?0:1}" style="text-decoration:underline;color:${r.active?"#b00020":"#1f7a4d"}">${r.active?"மறை":"காட்டு"}</a> · <a data-pd="${r.id}" style="text-decoration:underline;color:#777">நீக்கு</a></div></div>`).join("")||'<div class="mut" style="grid-column:1/-1">இன்னும் photo இல்ல — மேல photo தேர்ந்தெடுங்க</div>'}
 $("cplist").addEventListener("click",async e=>{const a=e.target.closest("[data-pe],[data-pa],[data-pd]");if(!a)return;
  if(a.dataset.pd){if(!confirm("இந்த photo-வை நீக்கவா?"))return;await sb.from("gold_category_photos").delete().eq("id",+a.dataset.pd)}
  else if(a.dataset.pa)await sb.from("gold_category_photos").update({active:a.dataset.on=="1"}).eq("id",+a.dataset.pa);
- else{const t=prompt("நகை பெயர் (காலியா விடலாம்)",a.closest("div").querySelector("b").textContent.replace("—",""));if(t===null)return;const n=prompt("சிறு குறிப்பு (காலியா விடலாம்)","");if(n===null)return;
-  await sb.from("gold_category_photos").update({title:t.trim()||null,note:n.trim()||null}).eq("id",+a.dataset.pe)}
+ else{openCPE(+a.dataset.pe);return}
  loadCP();loadCat()});
+// ---- ஒரு டிசைனின் முழு விவரம் (எடை, தூய்மை, code, badge, HUID, கூடுதல் படங்கள்) ----
+let CPROWS={},CPEID=0,CPEM=[];
+function cpeThumbs(){$("cpem").innerHTML=CPEM.map((u,i)=>`<span style="position:relative"><img src="${esc(u)}" style="width:58px;height:58px;object-fit:cover;border-radius:8px;border:1px solid #e6dcc4"><a data-mi="${i}" style="position:absolute;top:-6px;right:-6px;background:#b00020;color:#fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center;font-size:12px;text-decoration:none">✕</a></span>`).join("")||'<span class="mut">இல்லை</span>'}
+function openCPE(id){const r=CPROWS[id];if(!r)return;CPEID=id;CPEM=[...(r.more_images||[])];
+ $("cpeimg").src=r.image_url;$("cpet").value=r.title||"";$("cpec").value=r.code||"";$("cpew").value=r.weight_g?+r.weight_g:"";$("cpes").value=r.size||"";
+ $("cpep").value=r.purity||"";if(r.purity&&$("cpep").value!==r.purity){const o=document.createElement("option");o.textContent=r.purity;$("cpep").appendChild(o);$("cpep").value=r.purity}
+ $("cpetag").value=r.tag||"";if(r.tag&&$("cpetag").value!==r.tag){const o=document.createElement("option");o.textContent=r.tag;$("cpetag").appendChild(o);$("cpetag").value=r.tag}
+ $("cpeb").value=r.badge||"";$("cpeh").checked=!!r.hallmark;$("cpen").value=r.note||"";cpeThumbs();
+ $("cpe").classList.remove("hide");$("cpe").scrollIntoView({behavior:"smooth",block:"center"})}
+$("cpem").addEventListener("click",e=>{const a=e.target.closest("[data-mi]");if(!a)return;CPEM.splice(+a.dataset.mi,1);cpeThumbs()});
+$("cpecan").onclick=()=>{CPEID=0;$("cpe").classList.add("hide")};
+$("cpef").addEventListener("change",async e=>{const fs=[...e.target.files];if(!fs.length||!CPEID)return;
+ for(let i=0;i<fs.length&&CPEM.length<8;i++){$("cpst").textContent=`கூடுதல் படம் ஏற்றுகிறது ${i+1} / ${fs.length}…`;
+  try{const blob=await shrink(fs[i]),path=`catphotos/${CPID}/${CPEID}-${Date.now()}-${i}.jpg`;
+   const u=await sb.storage.from("slides").upload(path,blob,{upsert:true,contentType:"image/jpeg",cacheControl:"31536000"});if(u.error)throw u.error;
+   CPEM.push(sb.storage.from("slides").getPublicUrl(path).data.publicUrl);cpeThumbs()}catch(x){alert((x.message||x)+"")}}
+ $("cpst").textContent="";e.target.value="";if(CPEM.length>=8)alert("8 படம் வரை மட்டும்")});
+$("cpesave").onclick=async()=>{if(!CPEID)return;const w=$("cpew").value.trim();
+ if(w&&!(+w>0&&+w<5000))return alert("எடை சரியா போடுங்க (கிராம்)");
+ const b=$("cpesave");b.disabled=true;
+ const {error}=await sb.from("gold_category_photos").update({title:$("cpet").value.trim()||null,code:$("cpec").value.trim()||null,weight_g:w?+w:null,size:$("cpes").value.trim()||null,
+  purity:$("cpep").value||null,tag:$("cpetag").value||null,badge:$("cpeb").value||null,hallmark:$("cpeh").checked,note:$("cpen").value.trim()||null,more_images:CPEM}).eq("id",CPEID);
+ b.disabled=false;if(error)return alert(error.message);CPEID=0;$("cpe").classList.add("hide");$("cpst").textContent="✅ விவரம் சேமிச்சாச்சு";loadCP()};
 $("cpf").addEventListener("change",async e=>{const fs=[...e.target.files];if(!fs.length||!CPID)return;let ok=0;
  for(let i=0;i<fs.length;i++){$("cpst").textContent=`ஏற்றுகிறது ${i+1} / ${fs.length}…`;
   try{const blob=await shrink(fs[i]),path=`catphotos/${CPID}/${Date.now()}-${i}.jpg`;
