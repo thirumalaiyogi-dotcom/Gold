@@ -674,12 +674,13 @@ async function load(){
  let {data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,gold_rate,paid_on,mode)").order("name").order("id"));
  if(error&&/mode|gold_rate/.test(error.message||""))({data,error}=await PAGED(()=>sb.from("gold_customers").select("*,gold_payments(amount,grams,paid_on)").order("name").order("id")));
  if(error)return alert(error.message);window.CU=data;remind(data);rewards(data);loadReq();loadHist();setTimeout(pcInfo,0);
- $("pc").innerHTML=data.map(c=>`<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.mobile)}</option>`).join("");
+ $("pc").innerHTML=data.filter(c=>(c.status||"active")=="active").map(c=>`<option value="${esc(c.id)}">${esc(c.name)} · ${esc(c.mobile)}</option>`).join("");
  $("cl").innerHTML=data.map(c=>{const t=c.gold_payments.reduce((s,x)=>s+x.amount,0);
   const gm=GR(c.scheme)?c.gold_payments.reduce((s,x)=>s+(+x.grams||0),0):null;
-  return `<div class="row"><span><a data-cd="${esc(c.id)}" style="color:inherit;font-weight:700;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer">${esc(c.name)}</a><br><span class="mut">${esc(SN[c.scheme])} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false?" · ⏳ செயல்படுத்தல் பாக்கி":""}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b style="text-align:right">₹${f(t)}${gm!=null?`<br><small style="color:#8a5a00;font-weight:700">${gm.toFixed(3)} கி</small>`:""}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
+  return `<div class="row"><span><a data-cd="${esc(c.id)}" style="color:inherit;font-weight:700;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer">${esc(c.name)}</a><br><span class="mut">${esc(SN[c.scheme])} · ${c.gold_payments.length}/${MON(c.scheme)}${c.ref_code?" · 🎁 "+esc(c.ref_code):""}${c.pin_set===false&&(c.status||"active")!="deleted"?" · ⏳ செயல்படுத்தல் பாக்கி":""}${stChip(c)}<br>${c.email?"✉️ "+esc(c.email):"✉️ Email இல்ல"} · <a data-em="${c.id}" style="color:var(--b2F6FD6)">மாற்று</a></span></span><b style="text-align:right">₹${f(t)}${gm!=null?`<br><small style="color:#8a5a00;font-weight:700">${gm.toFixed(3)} கி</small>`:""}</b><a data-ac="${c.id}" style="color:#1f7a4d;font-size:13px">🔑 புது code</a></div>`}).join("")}
 function remind(data){
  const ym=new Date(Date.now()+330*60000).toISOString().slice(0,7);
+ data=data.filter(c=>(c.status||"active")=="active");
  const p=data.filter(c=>c.gold_payments.length<MON(c.scheme)&&!c.gold_payments.some(x=>String(x.paid_on).startsWith(ym)));
  $("rm").innerHTML=p.length?`<div class="mut">இந்த மாதம் தவணை பாக்கி: ${p.length}</div>`+p.map(c=>{
   const n=c.gold_payments.length+1;
@@ -900,8 +901,49 @@ function openCD(id){const c=(window.CU||[]).find(x=>String(x.id)==String(id));if
  const box=document.getElementById("cdv");
  box.innerHTML=`<div class="cdvs" role="document"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><div style="flex:1"><b style="font-size:18px">${esc(c.name)}</b><div class="mut">${esc(SN[c.scheme])} · ${esc(String(c.mobile||"").slice(-10))}</div></div><button type="button" id="cdx" aria-label="மூடு" style="width:44px;height:44px;border-radius:12px;border:0;background:#F7F0E1;font-size:20px;cursor:pointer">✕</button></div>
   <div style="display:grid;grid-template-columns:repeat(${s.k?3:2},1fr);gap:8px;margin-bottom:8px"><div class="cdk"><small>தவணை</small><b>${s.n}/${s.mo}</b></div><div class="cdk"><small>மொத்த தொகை</small><b>₹${f(s.tot)}</b></div>${s.k?`<div class="cdk" style="background:#fff8e6"><small>மொத்த தங்கம்</small><b style="color:#8a5a00">${s.g.toFixed(3)} கி</b></div>`:""}</div>
-  <div>${rows}</div>${s.k&&s.n?`<div style="display:flex;justify-content:space-between;padding:12px 0 4px;font-weight:700"><span>மொத்தம்</span><span style="color:#8a5a00">${s.g.toFixed(3)} கிராம்</span></div>`:""}</div>`;
+  <div>${rows}</div>${s.k&&s.n?`<div style="display:flex;justify-content:space-between;padding:12px 0 4px;font-weight:700"><span>மொத்தம்</span><span style="color:#8a5a00">${s.g.toFixed(3)} கிராம்</span></div>`:""}${closeBlock(c,s)}</div>`;
  box.classList.remove("hide");document.getElementById("cdx").onclick=closeCD}
+// ===== கணக்கு முடித்தல் / நீக்கம் (2026-11-28) =====
+const ST={active:"நடப்பில்",redeemed:"💍 நகையாக முடிந்தது",refunded:"💵 பணம் திருப்பித் தரப்பட்டது",nominee:"🕊 Nominee-க்கு வழங்கப்பட்டது",deleted:"🗑 கணக்கு நீக்கப்பட்டது"};
+function idleMonths(c){const ps=(c.gold_payments||[]).map(p=>String(p.paid_on||"")).sort();const last=ps.length?ps[ps.length-1]:String(c.start_date||"");if(!last)return 0;
+ const [y,m]=last.slice(0,7).split("-").map(Number),d=new Date();return (d.getFullYear()-y)*12+(d.getMonth()+1-m)}
+function stChip(c){const st=c.status||"active";
+ if(st!="active")return ` · <b style="color:${st=="deleted"?"#b00020":"#1f7a4d"}">${ST[st]}</b>`;
+ const n=(c.gold_payments||[]).length;return n<MON(c.scheme)&&idleMonths(c)>5?' · <b style="color:#b26a00">⚠ 5 மாதத்துக்கு மேல் கட்டவில்லை</b>':""}
+function closeBlock(c,s){const st=c.status||"active",ci=c.close_info||{},sec='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eef2f8">';
+ const L=(k,v)=>v||v===0?`<div style="display:flex;justify-content:space-between;gap:10px;padding:3px 0"><span class="mut">${k}</span><b style="text-align:right">${esc(String(v))}</b></div>`:"";
+ if(st=="deleted")return sec+`<b style="color:#b00020">🗑 கணக்கு நீக்கப்பட்டது</b><div class="mut" style="margin-top:4px">${esc(String(c.deleted_at||"").slice(0,10))} · தனிப்பட்ட விவரங்கள் அழிக்கப்பட்டன; தவணைப் பதிவுகள் மட்டும் சட்டப்படி வைக்கப்பட்டுள்ளன.</div>${ci.erase_note?L("குறிப்பு",ci.erase_note):""}</div>`;
+ let h=sec;
+ if(st!="active"){h+=`<b style="color:#1f7a4d">${ST[st]}</b>`+L("தேதி",String(c.closed_on||"").split("-").reverse().join("-"))+L("பில் எண்",ci.bill_no)+L("நகை",ci.item)+L("எடை (கி)",ci.weight_g)+L("தொகை (₹)",ci.amount!=null?f(+ci.amount):"")+L("முறை",ci.mode?(MDL[ci.mode]||ci.mode):"")+L("Reference",ci.ref)+L("Nominee",ci.nominee)+L("வழங்கியது",ci.given)+L("குறிப்பு",ci.note)+L("பதிந்தவர்",c.closed_by)+
+  `<div style="margin-top:10px"><a data-reopen="${esc(c.id)}" style="color:#555;text-decoration:underline;font-size:13px">தவறுதலா முடிச்சிட்டீங்களா? மீண்டும் நடப்புக்கு</a></div>`}
+ else{if(s.n<s.mo&&idleMonths(c)>5)h+=`<div style="background:#fff4e0;border-radius:10px;padding:8px 10px;margin-bottom:10px;color:#8a5300;font-size:13.5px">⚠ ${idleMonths(c)} மாதமாக தவணை வரவில்லை. விதிமுறைப்படி 5 மாதத்துக்கு மேல் கட்டாவிட்டால் திட்டப் பயன் கிடைக்காது.</div>`;
+  h+=`<b>கணக்கை முடி</b><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px"><button type="button" class="btn" data-close="redeemed" style="padding:10px 4px;font-size:13px">💍 நகையாக</button><button type="button" class="btn" data-close="refunded" style="padding:10px 4px;font-size:13px">💵 பணம் திருப்பி</button><button type="button" class="btn" data-close="nominee" style="padding:10px 4px;font-size:13px">🕊 Nominee</button></div><div id="clf"></div>`}
+ h+=`<div style="margin-top:16px"><button type="button" data-erase="${esc(c.id)}" style="width:100%;padding:12px;border-radius:12px;border:1.5px solid #b00020;background:#fff;color:#b00020;font-weight:700;cursor:pointer">🗑 நீக்கக் கோரிக்கையை நிறைவேற்று</button><div class="mut" style="font-size:12px;margin-top:4px">Login, KYC, email, முகவரி, chat, வருகைகள் அழியும். பெயர், மொபைல், தவணைப் பதிவுகள் சட்டப்படி வைக்கப்படும்.</div></div>`;
+ return h+"</div>"}
+function closeForm(c,s,type){const today=new Date(Date.now()+330*60000).toISOString().slice(0,10),I=(id,ph,t,v)=>`<input id="${id}" ${t?`type="${t}"`:""} placeholder="${ph}" value="${v??""}" style="margin-top:6px">`;
+ let h=`<div style="margin-top:10px;border:1.5px solid #d9c08a;border-radius:12px;padding:10px;background:#fffdf7"><b>${ST[type]}</b>`+I("clon","தேதி","date",today);
+ if(type=="redeemed")h+=I("clbill","பில் எண்")+I("clitem","நகை (உதா: நெக்லஸ் 22K)")+I("clw","எடை (கிராம்)","number")+I("clamt","மொத்த பில் தொகை (₹)","number");
+ if(type=="refunded")h+=I("clamt","திருப்பிய தொகை (₹)","number",s.tot)+`<select id="clmode" style="margin-top:6px"><option value="cash">பணம் (Cash)</option><option value="bank">Bank</option><option value="upi">UPI</option></select>`+I("clref","Reference / UTR (இருந்தால்)")+'<div class="mut" style="font-size:12.5px;margin-top:4px">விதிமுறைப்படி: நடுவில் நிறுத்தினால் திட்டப் பயன் (சேதாரம் / செய்கூலி தள்ளுபடி) இல்லை.</div>';
+ if(type=="nominee")h+=I("clnom","Nominee பெயர்","",c.nominee||"")+`<select id="clgiven" style="margin-top:6px"><option>நகை</option><option>பணம்</option></select>`+I("clamt","தொகை (₹)","number");
+ h+=`<textarea id="clnote" placeholder="குறிப்பு (விருப்பம்)" style="margin-top:6px"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" data-clsave="${type}">சேமி</button><button type="button" class="btn" data-clcancel="1" style="background:#eee;color:#333">ரத்து</button></div></div>`;return h}
+document.getElementById("cdv").addEventListener("click",async e=>{const t=e.target.closest("[data-close],[data-clsave],[data-clcancel],[data-erase],[data-reopen]");if(!t)return;
+ const id=document.querySelector("#cdv [data-erase]")?.dataset.erase||t.dataset.reopen;const c=(window.CU||[]).find(x=>String(x.id)==String(id));if(!c)return;const s=cuSum(c);
+ if(t.dataset.close){$("clf").innerHTML=closeForm(c,s,t.dataset.close);return}
+ if(t.dataset.clcancel){$("clf").innerHTML="";return}
+ const me=((await sb.auth.getUser()).data.user||{}).email||null;
+ if(t.dataset.clsave){const type=t.dataset.clsave,v=k=>{const x=document.getElementById(k);return x?x.value.trim():""},num=k=>v(k)===""?null:+v(k);
+  const ci={bill_no:v("clbill")||null,item:v("clitem")||null,weight_g:num("clw"),amount:num("clamt"),mode:v("clmode")||null,ref:v("clref")||null,nominee:v("clnom")||null,given:v("clgiven")||null,note:v("clnote")||null,paid_total:s.tot,installments:s.n};
+  Object.keys(ci).forEach(k=>ci[k]==null&&delete ci[k]);
+  if(type=="refunded"&&!(ci.amount>=0))return alert("திருப்பிய தொகையை உள்ளிடவும்");
+  if(!await ASK(c.name+" – "+ST[type]+" என்று கணக்கை முடிக்கவா? இனி online-ல் பணம் கட்ட முடியாது."))return;
+  t.disabled=true;const {error}=await sb.from("gold_customers").update({status:type,closed_on:v("clon")||null,close_info:ci,closed_by:me}).eq("id",c.id);t.disabled=false;
+  if(error)return alert(error.message);await load();openCD(c.id);return}
+ if(t.dataset.reopen){if(!await ASK("இந்த கணக்கை மீண்டும் நடப்புக்கு மாற்றவா?"))return;const {error}=await sb.from("gold_customers").update({status:"active",closed_on:null,close_info:null,closed_by:me}).eq("id",c.id);if(error)return alert(error.message);await load();openCD(c.id);return}
+ if(t.dataset.erase){if(!await ASK(c.name+" – கணக்கு நீக்கக் கோரிக்கையை நிறைவேற்றவா?\n\nLogin, KYC, email, முகவரி, chat, வருகைகள் நிரந்தரமாக அழியும். திரும்பப் பெற முடியாது."))return;
+  const note=prompt("குறிப்பு (விருப்பம் · உதா: Customer chat-ல் கோரிக்கை, 28-11-2026)","");if(note===null)return;
+  const {data,error}=await sb.rpc("gold_erase_customer",{p_id:c.id,p_note:note||null});
+  if(error||!data||!data.ok)return alert(error?error.message:(data&&data.err=="perm"?"இதற்கு Owner / Admin அனுமதி வேண்டும்":"நீக்க முடியவில்லை"));
+  alert("கணக்கு நீக்கப்பட்டது ✅");await load();openCD(c.id)}});
 function closeCD(){const b=document.getElementById("cdv");if(b)b.classList.add("hide")}
 $("cl").addEventListener("click",e=>{const a=e.target.closest("[data-cd]");if(a)openCD(a.dataset.cd)});
 document.getElementById("cdv").addEventListener("click",e=>{if(e.target.id=="cdv")closeCD()});
