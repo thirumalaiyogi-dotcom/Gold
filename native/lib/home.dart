@@ -1102,6 +1102,7 @@ class _BioRowState extends State<_BioRow> {
       if (!ok && mounted) showNote(context, 'சரிபார்ப்பு தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.');
     } else {
       await Bio.disable();
+      await Bio.setWanted(app.mobile, false);
     }
     await _load();
   }
@@ -1125,8 +1126,8 @@ class _BioRowState extends State<_BioRow> {
           const SizedBox(width: 14),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Phone lock மூலம் திறக்க', style: sans(15.5, color: C.ink)),
-              Text('கைரேகை / pattern / PIN · mPIN தேவையில்லை', style: sans(12.5, color: C.mute)),
+              Text('கைரேகை / Phone lock உள்நுழைவு', style: sans(15.5, color: C.ink)),
+              Text('ஒவ்வொரு முறையும் mPIN தேவையில்லை', style: sans(12.5, color: C.mute)),
             ]),
           ),
           Switch(value: on ?? false, onChanged: _set),

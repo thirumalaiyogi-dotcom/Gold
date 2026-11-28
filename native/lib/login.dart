@@ -267,7 +267,7 @@ class _MobileScreenState extends State<MobileScreen> {
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(v)) {
       HapticFeedback.heavyImpact();
       setState(() {
-        err = 'சரியான 10 இலக்க மொபைல் எண் போடுங்க';
+        err = 'சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்';
         shake++;
       });
       return;
@@ -299,7 +299,7 @@ class _MobileScreenState extends State<MobileScreen> {
       heroHeight: 130,
       onBack: () => Navigator.of(context).pop(),
       child: ListView(padding: const EdgeInsets.fromLTRB(22, 18, 22, 16), children: [
-        const _PadHeader('மொபைல் எண்', 'கடையில் பதிவு செய்த எண்ணை போடுங்க'),
+        const _PadHeader('மொபைல் எண்', 'கடையில் பதிவு செய்த மொபைல் எண்ணை உள்ளிடவும்'),
         const SizedBox(height: 14),
         Shake(
           trigger: shake,
@@ -437,7 +437,7 @@ class _PinScreenState extends State<PinScreen> {
         fit: BoxFit.scaleDown,
         alignment: Alignment.topCenter,
         child: SizedBox(width: box.maxWidth, child: Padding(padding: const EdgeInsets.fromLTRB(22, 14, 22, 10), child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        _PadHeader('mPIN', bio ? 'Phone lock அல்லது 6 இலக்க mPIN மூலம் திறக்கவும்' : 'உங்க 6 இலக்க mPIN போடுங்க'),
+        _PadHeader('mPIN', bio ? 'கைரேகை / phone lock அல்லது 6 இலக்க mPIN மூலம் உள்நுழையவும்' : 'உங்கள் 6 இலக்க mPIN-ஐ உள்ளிடவும்'),
         const SizedBox(height: 8),
         Center(
           child: Container(
@@ -521,11 +521,11 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     if (busy) return;
     String? e;
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(_m.text)) {
-      e = 'சரியான மொபைல் எண் போடுங்க';
+      e = 'சரியான மொபைல் எண்ணை உள்ளிடவும்';
     } else if (_c.text.length != 6) {
-      e = '6 இலக்க Activation code போடுங்க';
+      e = '6 இலக்க Activation code-ஐ உள்ளிடவும்';
     } else if (_p1.text.length != 6) {
-      e = '6 இலக்க mPIN போடுங்க';
+      e = '6 இலக்க mPIN-ஐ உள்ளிடவும்';
     } else if (_p1.text != _p2.text) {
       e = 'இரண்டு mPIN-களும் பொருந்தவில்லை';
     }
@@ -665,7 +665,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
       case 'expired':
         return 'OTP காலாவதியானது. புதிய OTP பெறவும்.';
       case 'code_invalid':
-        return 'OTP தவறு. வந்த 6 இலக்க எண்ணை சரியா போடுங்க.';
+        return 'OTP தவறு. வந்த 6 இலக்க எண்ணைச் சரியாக உள்ளிடவும்.';
       case 'code_max_attempts_exceeded':
         return 'நிறைய தவறான முயற்சி. மறுபடி OTP அனுப்புங்க.';
       case 'net':
@@ -679,7 +679,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
     if (busy) return;
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(_m.text)) {
       HapticFeedback.heavyImpact();
-      setState(() => err = 'சரியான 10 இலக்க மொபைல் எண் போடுங்க');
+      setState(() => err = 'சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்');
       return;
     }
     final left = _next.difference(DateTime.now()).inSeconds;
@@ -712,9 +712,9 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
     if (busy) return;
     String? e;
     if (_c.text.length != 6) {
-      e = '6 இலக்க OTP போடுங்க';
+      e = '6 இலக்க OTP-ஐ உள்ளிடவும்';
     } else if (_p1.text.length != 6) {
-      e = '6 இலக்க mPIN போடுங்க';
+      e = '6 இலக்க mPIN-ஐ உள்ளிடவும்';
     } else if (_p1.text != _p2.text) {
       e = 'இரண்டு mPIN-களும் பொருந்தவில்லை';
     }

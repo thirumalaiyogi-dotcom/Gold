@@ -328,16 +328,16 @@ class _EnrolPageState extends State<EnrolPage> {
     String e = '';
     if (step == 0) {
       if (name.text.trim().length < 2) {
-        e = 'பெயர் போடுங்க';
+        e = 'உங்கள் பெயரை உள்ளிடவும்';
       } else if (!RegExp(r'^[6-9][0-9]{9}$').hasMatch(mobile.text.trim())) {
-        e = 'சரியான 10 இலக்க மொபைல் எண் போடுங்க';
+        e = 'சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்';
       }
     } else if (step == 1) {
-      if (addr.text.trim().length < 4 || city.text.trim().isEmpty) e = 'முகவரி, ஊர் போடுங்க';
-      if (pin.text.trim().isNotEmpty && !RegExp(r'^[0-9]{6}$').hasMatch(pin.text.trim())) e = 'Pincode 6 இலக்கம்';
+      if (addr.text.trim().length < 4 || city.text.trim().isEmpty) e = 'முகவரி மற்றும் ஊரை உள்ளிடவும்';
+      if (pin.text.trim().isNotEmpty && !RegExp(r'^[0-9]{6}$').hasMatch(pin.text.trim())) e = 'Pincode 6 இலக்கமாக இருக்க வேண்டும்';
     } else if (step == 2) {
       final a = int.tryParse(amount.text.trim()) ?? 0;
-      if (a < sch.minAmount || a > 100000) e = 'மாத தவணை ${rupees(sch.minAmount)} முதல் ₹1,00,000 வரை';
+      if (a < sch.minAmount || a > 100000) e = 'மாதத் தவணை ${rupees(sch.minAmount)} முதல் ₹1,00,000 வரை இருக்கலாம்';
     } else if (step == 3) {
       final r = refc.text.trim().toUpperCase();
       if (r.isNotEmpty && !RegExp(r'^[A-Z0-9]{3,12}$').hasMatch(r)) {
@@ -454,7 +454,7 @@ class _EnrolPageState extends State<EnrolPage> {
             ),
         ]),
         const SizedBox(height: 10),
-        _field(amount, 'அல்லது தொகை போடுங்க', kb: TextInputType.number, hint: '${rupees(sch.minAmount)} – ₹1,00,000'),
+        _field(amount, 'அல்லது தொகையை உள்ளிடவும்', kb: TextInputType.number, hint: '${rupees(sch.minAmount)} – ₹1,00,000'),
         if (sch.fixed) Text('குறிப்பு: குபேரலட்சுமியில் முதல் மாதத் தொகையையே 11 மாதமும் செலுத்த வேண்டும்.', style: sans(12.5, color: C.goldText, height: 1.5)),
       ]);
     } else {

@@ -496,7 +496,7 @@ class _CategoryStripState extends State<CategoryStrip> {
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
             decoration: BoxDecoration(color: C.navy, borderRadius: BorderRadius.circular(999)),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Flexible(child: Text('${cur['name']} டிசைன்கள் பார்க்க', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(13.5, color: Colors.white, weight: FontWeight.w700))),
+              Flexible(child: Text('டிசைன்களைப் பார்க்க', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(13.5, color: Colors.white, weight: FontWeight.w700))),
               const SizedBox(width: 6),
               const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
             ]),

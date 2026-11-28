@@ -45,14 +45,24 @@ class Bio {
 
   /// Turn on after a fresh fingerprint check.
   static Future<bool> enable(String mobile, String pin) async {
-    if (pin.length != 6 || !await check('Phone lock மூலம் திறப்பதை இயக்க உறுதிப்படுத்தவும்')) return false;
+    if (pin.length != 6 || !await check('கைரேகை / phone lock உள்நுழைவை இயக்க உறுதிப்படுத்தவும்')) return false;
     try {
       await _st.write(key: _kM, value: mobile);
       await _st.write(key: _kP, value: pin);
+      await setWanted(mobile, true);
       return true;
     } catch (_) {
       return false;
     }
+  }
+
+  /// The customer's choice survives logout: logout wipes the stored mPIN (security),
+  /// but the next mPIN login on this phone turns phone-lock login back on with one confirmation.
+  static Future<void> setWanted(String mobile, bool v) async {
+    try {
+      final sp = await SharedPreferences.getInstance();
+      await sp.setBool('bio_wanted_$mobile', v);
+    } catch (_) {}
   }
 
   static Future<void> disable() async {
@@ -78,6 +88,10 @@ class Bio {
     try {
       if (await enabledFor(mobile) || !await available()) return;
       final sp = await SharedPreferences.getInstance();
+      if (sp.getBool('bio_wanted_$mobile') == true) {
+        await enable(mobile, pin);
+        return;
+      }
       final k = 'bio_asked_$mobile';
       if (sp.getBool(k) == true) return;
       await sp.setBool(k, true);
@@ -88,15 +102,15 @@ class Bio {
           backgroundColor: C.paper,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           icon: const Icon(Icons.lock_person_outlined, size: 48, color: C.navy),
-          title: Text('Phone lock மூலம் திறக்க வேண்டுமா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
-          content: Text('GPay மாதிரி, அடுத்த முறை mPIN இல்லாமல் உங்கள் phone-ன் lock (கைரேகை / pattern / PIN) மூலம் Passbook-ஐத் திறக்கலாம். கணக்கு → அமைப்புகளில் எப்போது வேண்டுமானாலும் நிறுத்தலாம்.',
+          title: Text('கைரேகை மூலம் உள்நுழையலாமா?', textAlign: TextAlign.center, style: serif(20, color: C.head)),
+          content: Text('அடுத்த முறை mPIN இல்லாமல், உங்கள் phone-ன் கைரேகை / pattern / PIN மூலம் பாதுகாப்பாக உள்நுழையலாம். கணக்கு → அமைப்புகளில் எப்போது வேண்டுமானாலும் மாற்றலாம்.',
               textAlign: TextAlign.center, style: sans(14, color: C.mute, height: 1.6)),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             Row(children: [
-              Expanded(child: OutlineBtn('வேண்டாம்', onTap: () => Navigator.pop(c, false))),
+              Expanded(child: OutlineBtn('இப்போது வேண்டாம்', onTap: () => Navigator.pop(c, false))),
               const SizedBox(width: 10),
-              Expanded(child: PrimaryButton('சரி', onTap: () => Navigator.pop(c, true))),
+              Expanded(child: PrimaryButton('இயக்கு', onTap: () => Navigator.pop(c, true))),
             ]),
           ],
         ),

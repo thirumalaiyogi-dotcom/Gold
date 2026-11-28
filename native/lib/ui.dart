@@ -284,7 +284,7 @@ class _PadKeyState extends State<_PadKey> {
     final fg = down ? Colors.white : C.navy;
     return Semantics(
       button: true,
-      label: widget.k == 'del' ? 'அழி' : (widget.k == 'bio' ? 'Phone lock மூலம் திறக்க' : widget.k),
+      label: widget.k == 'del' ? 'அழி' : (widget.k == 'bio' ? 'கைரேகை / phone lock மூலம் உள்நுழைய' : widget.k),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapDown: (_) => _set(true),

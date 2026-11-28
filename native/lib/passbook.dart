@@ -91,7 +91,7 @@ class MonthGrid extends StatelessWidget {
         _Box.next => (C.paper, C.line2, C.mute, const SizedBox(height: 18)),
       };
       return Semantics(
-        label: '${k + 1} ஆம் தவணை, ${switch (b) { _Box.paid => 'செலுத்தப்பட்டது', _Box.late => 'நிலுவை', _Box.due => 'இந்த மாதம்', _Box.next => 'இனி வரும்' }}',
+        label: '${k + 1} ஆம் தவணை, ${switch (b) { _Box.paid => 'செலுத்தப்பட்டது', _Box.late => 'நிலுவை', _Box.due => 'நடப்பு மாதம்', _Box.next => 'வரவிருப்பது' }}',
         child: Container(
           decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10), border: Border.all(color: bd, width: b == _Box.due ? 1.6 : 1)),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -123,12 +123,17 @@ class MonthGrid extends StatelessWidget {
         children: [for (var k = 0; k < total; k++) box(k)],
       ),
       const SizedBox(height: 10),
-      Wrap(spacing: 14, runSpacing: 6, alignment: WrapAlignment.center, children: [
-        legend(C.gold, 'செலுத்தியது'),
-        if (late > 0) legend(const Color(0xFFE0A33A), 'நிலுவை ($late)'),
-        legend(C.navy, 'இந்த மாதம்', ring: true),
-        legend(C.line2, 'இனி வரும்', ring: true),
-      ]),
+      FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          legend(C.gold, 'செலுத்தப்பட்டது'),
+          if (late > 0) ...[const SizedBox(width: 14), legend(const Color(0xFFE0A33A), 'நிலுவை ($late)')],
+          const SizedBox(width: 14),
+          legend(C.navy, 'நடப்பு மாதம்', ring: true),
+          const SizedBox(width: 14),
+          legend(C.line2, 'வரவிருப்பவை', ring: true),
+        ]),
+      ),
     ]);
   }
 }
