@@ -273,6 +273,10 @@ class HomeTab extends StatelessWidget {
       child: ListView(padding: EdgeInsets.zero, children: [
       // ---------- Header: warm ivory; only the savings card / promos wear velvet ----------
       Container(
+        // final polish: a soft champagne wash behind logo + rates, fading into the ivory page (one quiet brand moment)
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFFF2E4CC), Color(0xFFF7EFE1), C.ivory], stops: [0, .55, 1]),
+        ),
         child: Stack(children: [
         KolamBg(festive: Fest.today != null, child: Padding(
         padding: EdgeInsets.fromLTRB(16, top + 8, 16, 18),
@@ -323,12 +327,12 @@ class HomeTab extends StatelessWidget {
           // Order (design audit): saver → due card first; guest → scheme hero. Quick-action row and contact chips removed (same as bottom tabs / shop card).
           if (app.loggedIn && app.pb != null) ...[
             const _NextDue(),
-            const SizedBox(height: 26),
+            const SizedBox(height: 28),
           ],
           // ---------- புதுசு என்ன (stories) ----------
           if (app.stories.isNotEmpty) ...[
             StoryBox(go: go),
-            const SizedBox(height: 22),
+            const SizedBox(height: 28),
           ],
           if (!(app.loggedIn && app.pb != null)) ...[
             _SchemeHero(go: go),
@@ -336,7 +340,7 @@ class HomeTab extends StatelessWidget {
           ],
           // ---------- நகை வகைகள் (shop photos, swipe) ----------
           if (app.cats.isNotEmpty) ...[
-            const SizedBox(height: 24),
+            const SizedBox(height: 28),
             const SectionTitle('நகை வகைகள்'),
             const CategoryStrip(),
           ],
@@ -389,9 +393,9 @@ class _RateBoard extends StatelessWidget {
     Widget tile(String label, String value, num change, int dec, String img) => Expanded(
           child: Material(
             color: C.paper,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: C.line2)),
-            shadowColor: const Color(0x334A0D18),
-            elevation: 1.5,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: C.cardLine)),
+            shadowColor: const Color(0x404A0D18),
+            elevation: 2,
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
               onTap: open,
@@ -429,7 +433,7 @@ class _RateBoard extends StatelessWidget {
       Widget sk() => Expanded(
             child: Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(20), border: Border.all(color: C.line2)),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(20), border: Border.all(color: C.cardLine)),
               child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Skeleton(width: 60, height: 12), SizedBox(height: 10), Skeleton(width: 90, height: 22), SizedBox(height: 8), Skeleton(width: 50, height: 10)]),
             ),
           );
@@ -665,7 +669,7 @@ class ProfileTab extends StatelessWidget {
 
   Widget _group(List<Widget> rows, {String? title}) => Container(
         margin: const EdgeInsets.only(top: 14),
-        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.cardLine)),
         clipBehavior: Clip.antiAlias,
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           if (title != null) Padding(padding: const EdgeInsets.fromLTRB(16, 12, 16, 4), child: Text(title, style: sans(12, color: C.mute, weight: FontWeight.w600))),
@@ -891,7 +895,18 @@ class _NextDue extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
-          Expanded(child: Text(title, style: serif(18, color: done || Demo.paidThisMonth ? C.green : C.navy))),
+          Expanded(child: Text(title.replaceAll(' ✓', ''), style: serif(18, color: C.head))),
+          if (done || Demo.paidThisMonth)
+            Container(
+              margin: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+              decoration: BoxDecoration(color: const Color(0xFFE6F3EC), borderRadius: BorderRadius.circular(999)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.check_circle, size: 15, color: C.green),
+                const SizedBox(width: 4),
+                Text(done ? 'முடிந்தது' : 'செலுத்தியது', style: sans(12, color: C.green, weight: FontWeight.w700)),
+              ]),
+            ),
           if (!done && Demo.fixed) Text(rupees(Demo.monthly), style: serif(20, weight: FontWeight.w700)),
         ]),
         if (!done) ...[

@@ -38,7 +38,7 @@ class SchemeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final card = Container(
-      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.line2)),
+      decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(18), border: Border.all(color: C.cardLine)),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         _grow(InkWell(
@@ -275,7 +275,7 @@ class _Acc extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+        decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.cardLine)),
         clipBehavior: Clip.antiAlias,
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),

@@ -511,7 +511,7 @@ void showReceipt(BuildContext context, List<Object> p) {
             key: key,
             child: Container(
               padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
-              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.line2)),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: C.cardLine)),
               child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 Center(child: Image.asset('assets/logo.png', height: 48)),
                 const SizedBox(height: 6),
@@ -680,7 +680,7 @@ Widget referralCard(BuildContext context) => LuxCard(
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+              decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.cardLine)),
               child: IntrinsicHeight(
                 child: Row(children: [
                   _refStat('${Demo.refCount}', 'சேர்ந்த நண்பர்கள்'),

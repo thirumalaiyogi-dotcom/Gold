@@ -175,7 +175,7 @@ class _RatePageState extends State<RatePage> {
   Widget _stat(String l, String v, {Color color = C.ink}) => Expanded(
         child: Container(
           padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.line2)),
+          decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(14), border: Border.all(color: C.cardLine)),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(l, style: sans(11.5, color: C.mute)),
             const SizedBox(height: 4),

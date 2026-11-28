@@ -27,6 +27,7 @@ class C {
   static const red = Color(0xFFC63C45);
   static const green = Color(0xFF24865B);
   static const navyMute = Color(0xFFEAD9B8);
+  static const cardLine = Color(0xFFEFE6D4); // 2026-11-28 final polish: lighter card edge, depth comes from a soft shadow
 }
 
 TextStyle serif(double size, {Color color = C.navy, FontWeight weight = FontWeight.w600, double? height}) =>
@@ -70,8 +71,11 @@ class LuxCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: C.paper,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: C.line2),
-        boxShadow: const [BoxShadow(color: Color(0x0D4A0D18), blurRadius: 16, offset: Offset(0, 4))],
+        border: Border.all(color: C.cardLine),
+        boxShadow: const [
+          BoxShadow(color: Color(0x0A4A0D18), blurRadius: 3, offset: Offset(0, 1)),
+          BoxShadow(color: Color(0x0F4A0D18), blurRadius: 24, offset: Offset(0, 8)),
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
@@ -404,7 +408,7 @@ class _SwipeToPayState extends State<SwipeToPay> with TickerProviderStateMixin {
           decoration: BoxDecoration(
             color: C.navy,
             borderRadius: BorderRadius.circular(h),
-            boxShadow: const [BoxShadow(color: Color(0x336E1423), blurRadius: 12, offset: Offset(0, 5))],
+            boxShadow: const [BoxShadow(color: Color(0x1F6E1423), blurRadius: 10, offset: Offset(0, 4))],
           ),
           child: Stack(alignment: Alignment.centerLeft, children: [
             // gold fill that follows the coin

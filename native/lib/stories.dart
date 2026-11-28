@@ -113,8 +113,8 @@ class StoryBox extends StatelessWidget {
           decoration: BoxDecoration(
             color: C.paper,
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: C.line2),
-            boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 16, offset: Offset(0, 6))],
+            border: Border.all(color: C.cardLine),
+            boxShadow: const [BoxShadow(color: Color(0x0A4A0D18), blurRadius: 3, offset: Offset(0, 1)), BoxShadow(color: Color(0x0F4A0D18), blurRadius: 24, offset: Offset(0, 8))],
           ),
           child: StoryRow(go: go),
         ),
