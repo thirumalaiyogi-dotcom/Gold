@@ -301,7 +301,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
                       loadingBuilder: (c, w, e) => e == null ? w : Container(color: C.ivory2),
                       errorBuilder: (_, __, ___) => Container(color: C.ivory2, child: const Icon(Icons.image_not_supported_outlined, color: C.mute))),
                 ),
-                Positioned(left: 8, top: 8, child: designBadge(_sv(p['badge']))),
+                Positioned(left: 8, top: 12, right: 46, child: Align(alignment: Alignment.centerLeft, child: FittedBox(fit: BoxFit.scaleDown, child: designBadge(_sv(p['badge']))))),
                 Positioned(
                   right: 4,
                   top: 4,
@@ -479,12 +479,15 @@ class _DesignPageState extends State<DesignPage> {
               decoration: const BoxDecoration(color: C.ivory, borderRadius: BorderRadius.vertical(top: Radius.circular(26))),
               padding: const EdgeInsets.fromLTRB(18, 22, 18, 0),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  if (code.isNotEmpty) Text(code, style: sans(12.5, color: C.goldText, weight: FontWeight.w700)),
-                  if (code.isNotEmpty) const SizedBox(width: 8),
-                  designBadge(_sv(d['badge'])),
-                ]),
-                const SizedBox(height: 4),
+                if (code.isNotEmpty || _sv(d['badge']).isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(children: [
+                      if (code.isNotEmpty) Text(code, style: sans(12.5, color: C.goldText, weight: FontWeight.w700)),
+                      if (code.isNotEmpty) const SizedBox(width: 8),
+                      designBadge(_sv(d['badge'])),
+                    ]),
+                  ),
                 Text(title, style: serif(25, height: 1.3)),
                 if (note.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 4), child: Text(note, style: sans(14.5, color: C.mute, height: 1.5))),
                 if (specs.isNotEmpty) ...[
