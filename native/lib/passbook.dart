@@ -7,6 +7,7 @@ import 'main.dart';
 import 'visit.dart';
 import 'ui.dart';
 import 'pay.dart';
+import 'schemes.dart' show SchemesTab;
 import 'share_card.dart';
 import 'statement.dart';
 import 'chat.dart' show requestAccountDeletion;
@@ -266,8 +267,16 @@ class _PassbookTabState extends State<PassbookTab> {
             ),
           ]),
         ),
+        const SizedBox(height: 12),
+        PrimaryButton('புதிய திட்டத்தில் சேர', icon: Icons.add_circle_outline, onTap: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) => Scaffold(
+                  backgroundColor: C.ivory,
+                  appBar: AppBar(backgroundColor: C.ivory, surfaceTintColor: C.ivory, foregroundColor: C.navy),
+                  body: const SchemesTab(),
+                )))),
         const SizedBox(height: 16),
       ],
+      const _PastSchemes(),
       // 1. summary
       LuxCard(
         inner: true,
@@ -643,6 +652,59 @@ class MyDetailsPage extends StatelessWidget {
         ]),
       ),
     ]));
+  }
+}
+
+/// "முந்தைய திட்டங்கள்" — schemes finished before this one (gold_history RPC, summary only).
+class _PastSchemes extends StatefulWidget {
+  const _PastSchemes();
+  @override
+  State<_PastSchemes> createState() => _PastSchemesState();
+}
+
+class _PastSchemesState extends State<_PastSchemes> {
+  List<dynamic> h = [];
+  @override
+  void initState() {
+    super.initState();
+    if (app.demoPb == null && app.loggedIn) {
+      Api.rpc('gold_history', {'p_mobile': app.mobile, 'p_pin': app.pin}).then((d) {
+        if (mounted && d is Map && d['ok'] == true) setState(() => h = (d['history'] as List?) ?? []);
+      }, onError: (_) {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (h.isEmpty) return const SizedBox.shrink();
+    const st = {'redeemed': 'நகை வாங்கப்பட்டது', 'refunded': 'தொகை திருப்பித் தரப்பட்டது', 'nominee': 'Nominee-க்கு வழங்கப்பட்டது'};
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: LuxCard(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text('முந்தைய திட்டங்கள்', style: serif(17)),
+          const SizedBox(height: 6),
+          for (final x in h)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Row(children: [
+                const Icon(Icons.history_rounded, color: C.goldText, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Text(app.schemeName('${x['scheme']}'), style: sans(14.5, weight: FontWeight.w700)),
+                    Text('${taDate('${x['start']}')} – ${taDate('${x['closed_on'] ?? ''}')} · ${st['${x['status']}'] ?? ''}', style: sans(12.5, color: C.mute)),
+                  ]),
+                ),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+                  Text(rupees(num.tryParse('${x['total']}') ?? 0), style: sans(14.5, weight: FontWeight.w700)),
+                  Text('${x['n']} தவணை', style: sans(12.5, color: C.mute)),
+                ]),
+              ]),
+            ),
+        ]),
+      ),
+    );
   }
 }
 

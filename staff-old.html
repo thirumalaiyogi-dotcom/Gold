@@ -701,6 +701,14 @@ async function addCust(){
  const rf=$("nr").value.trim();
  if(rf){const isMob=/^[0-9]{10}$/.test(rf);const {data:rr}=await sb.from("gold_customers").select("id").eq(isMob?"mobile":"ref_code",isMob?rf:rf.toUpperCase()).maybeSingle();if(!rr)return alert("அந்த referral code / மொபைல் உள்ள customer இல்ல");r.ref_by=rr.id}
  if(window.REQD){const q=REQD;Object.assign(r,{address:q.address+", "+q.city+" "+(q.pincode||""),nominee:q.nominee,nominee_rel:q.nominee_rel,pan:q.pan||null,aadhaar_last4:q.aadhaar_last4||null,email:r.email||(q.email?q.email.toLowerCase():null),dob:r.dob||q.dob||null,anniv:r.anniv||q.anniv||null})}
+ // மறுபடி சேர: இதே மொபைலுக்கு முடிந்த கணக்கு இருந்தால் அதே கணக்கில் புதுத் திட்டம்
+ {const ex=(window.CU||[]).find(x=>String(x.mobile)===r.mobile);if(ex){const st=ex.status||"active";
+  if(st=="active")return alert("இந்த மொபைல் எண்ணுக்கு ஏற்கனவே நடப்பில் உள்ள கணக்கு இருக்கு: "+ex.name);
+  if(st!="deleted"){if(!confirm(ex.name+" – முந்தைய திட்டம் முடிந்தது ("+ST[st]+").\nஅதே கணக்கில் "+(SN[r.scheme]||r.scheme)+" புதுத் திட்டம் தொடங்கவா?\n(பழைய தவணைகள் 'முந்தைய திட்டங்கள்'-ல் பாதுகாப்பாக இருக்கும்; அதே mPIN தொடரும்)"))return;
+   const {data,error}=await sb.rpc("gold_restart_scheme",{p_id:ex.id,p_scheme:r.scheme,p_monthly:r.monthly_amount,p_start:null});
+   if(error||!data||!data.ok)return alert(error?error.message:(data&&data.err=="perm"?"இதற்கு அனுமதி இல்லை":"தொடங்க முடியவில்லை"));
+   if(window.REQD){await sb.from("gold_requests").update({status:"approved"}).eq("id",REQD.id);window.REQD=null;loadReq()}
+   alert("புதுத் திட்டம் தொடங்கியது ✅");load();return}}}
  let {error}=await sb.from("gold_customers").insert(r);if(error&&/dob|anniv/.test(error.message||"")){delete r.dob;delete r.anniv;({error}=await sb.from("gold_customers").insert(r))}if(error)return alert(error.code=="23505"?"இந்த மொபைல் / Email ஏற்கனவே வேற customer-க்கு இருக்கு":error.message);
  if(window.REQD){await sb.from("gold_requests").update({status:"approved"}).eq("id",REQD.id);window.REQD=null;loadReq()}
  ["nn","nm","ne","na","nr","ndob","nanv"].forEach(i=>$(i).value="");welcomeSheet(r);load()}
@@ -910,7 +918,9 @@ function openCD(id){const c=(window.CU||[]).find(x=>String(x.id)==String(id));if
  box.innerHTML=`<div class="cdvs" role="document"><div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px"><div style="flex:1"><b style="font-size:18px">${esc(c.name)}</b><div class="mut">${esc(SN[c.scheme])} · ${esc(String(c.mobile||"").slice(-10))}</div></div><button type="button" id="cdx" aria-label="மூடு" style="width:44px;height:44px;border-radius:12px;border:0;background:#f1f4f9;font-size:20px;cursor:pointer">✕</button></div>
   <div style="display:grid;grid-template-columns:repeat(${s.k?3:2},1fr);gap:8px;margin-bottom:8px"><div class="cdk"><small>தவணை</small><b>${s.n}/${s.mo}</b></div><div class="cdk"><small>மொத்த தொகை</small><b>₹${f(s.tot)}</b></div>${s.k?`<div class="cdk" style="background:#fff8e6"><small>மொத்த தங்கம்</small><b style="color:#8a5a00">${s.g.toFixed(3)} கி</b></div>`:""}</div>
   <div>${rows}</div>${s.k&&s.n?`<div style="display:flex;justify-content:space-between;padding:12px 0 4px;font-weight:700"><span>மொத்தம்</span><span style="color:#8a5a00">${s.g.toFixed(3)} கிராம்</span></div>`:""}${closeBlock(c,s)}</div>`;
- box.classList.remove("hide");document.getElementById("cdx").onclick=closeCD}
+ box.classList.remove("hide");document.getElementById("cdx").onclick=closeCD;cdHist(c.id)}
+async function cdHist(id){const {data}=await sb.from("gold_scheme_history").select("scheme,start_date,status,closed_on,total,installments,close_info").eq("customer_id",id).order("id",{ascending:false});const b=document.getElementById("cdhist");if(!b||!data||!data.length)return;
+ b.innerHTML='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eef2f8"><b>முந்தைய திட்டங்கள்</b>'+data.map(h=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #eee;font-size:13.5px"><span>${esc(SN[h.scheme]||h.scheme)}<br><span class="mut">${esc(String(h.start_date||"").split("-").reverse().join("-"))} → ${esc(String(h.closed_on||"").split("-").reverse().join("-"))} · ${esc(ST[h.status]||h.status)}</span></span><b>₹${f(+h.total||0)}<br><small class="mut">${h.installments} தவணை</small></b></div>`).join("")+"</div>"}
 // ===== கணக்கு முடித்தல் / நீக்கம் (2026-11-28) =====
 const ST={active:"நடப்பில்",redeemed:"💍 நகையாக முடிந்தது",refunded:"💵 பணம் திருப்பித் தரப்பட்டது",nominee:"🕊 Nominee-க்கு வழங்கப்பட்டது",deleted:"🗑 கணக்கு நீக்கப்பட்டது"};
 function idleMonths(c){const ps=(c.gold_payments||[]).map(p=>String(p.paid_on||"")).sort();const last=ps.length?ps[ps.length-1]:String(c.start_date||"");if(!last)return 0;
@@ -918,11 +928,12 @@ function idleMonths(c){const ps=(c.gold_payments||[]).map(p=>String(p.paid_on||"
 function stChip(c){const st=c.status||"active";
  if(st!="active")return ` · <b style="color:${st=="deleted"?"#b00020":"#1f7a4d"}">${ST[st]}</b>`;
  const n=(c.gold_payments||[]).length;return n<MON(c.scheme)&&idleMonths(c)>5?' · <b style="color:#b26a00">⚠ 5 மாதத்துக்கு மேல் கட்டவில்லை</b>':""}
-function closeBlock(c,s){const st=c.status||"active",ci=c.close_info||{},sec='<div style="margin-top:14px;padding-top:12px;border-top:1px solid #eef2f8">';
+function closeBlock(c,s){const st=c.status||"active",ci=c.close_info||{},sec='<div id="cdhist"></div><div style="margin-top:14px;padding-top:12px;border-top:1px solid #eef2f8">';
  const L=(k,v)=>v||v===0?`<div style="display:flex;justify-content:space-between;gap:10px;padding:3px 0"><span class="mut">${k}</span><b style="text-align:right">${esc(String(v))}</b></div>`:"";
  if(st=="deleted")return sec+`<b style="color:#b00020">🗑 கணக்கு நீக்கப்பட்டது</b><div class="mut" style="margin-top:4px">${esc(String(c.deleted_at||"").slice(0,10))} · தனிப்பட்ட விவரங்கள் அழிக்கப்பட்டன; தவணைப் பதிவுகள் மட்டும் சட்டப்படி வைக்கப்பட்டுள்ளன.</div>${ci.erase_note?L("குறிப்பு",ci.erase_note):""}</div>`;
  let h=sec;
  if(st!="active"){h+=`<b style="color:#1f7a4d">${ST[st]}</b>`+L("தேதி",String(c.closed_on||"").split("-").reverse().join("-"))+L("பில் எண்",ci.bill_no)+L("நகை",ci.item)+L("எடை (கி)",ci.weight_g)+L("தொகை (₹)",ci.amount!=null?f(+ci.amount):"")+L("முறை",ci.mode?(MDL[ci.mode]||ci.mode):"")+L("Reference",ci.ref)+L("Nominee",ci.nominee)+L("வழங்கியது",ci.given)+L("குறிப்பு",ci.note)+L("பதிந்தவர்",c.closed_by)+
+  `<button type="button" class="btn" data-restart="${esc(c.id)}" style="margin-top:10px;width:100%">🔄 புதிய திட்டம் தொடங்கு (மறுபடி சேர)</button><div id="rsf"></div>`+
   `<div style="margin-top:10px"><a data-reopen="${esc(c.id)}" style="color:#555;text-decoration:underline;font-size:13px">தவறுதலா முடிச்சிட்டீங்களா? மீண்டும் நடப்புக்கு</a></div>`}
  else{if(s.n<s.mo&&idleMonths(c)>5)h+=`<div style="background:#fff4e0;border-radius:10px;padding:8px 10px;margin-bottom:10px;color:#8a5300;font-size:13.5px">⚠ ${idleMonths(c)} மாதமாக தவணை வரவில்லை. விதிமுறைப்படி 5 மாதத்துக்கு மேல் கட்டாவிட்டால் திட்டப் பயன் கிடைக்காது.</div>`;
   h+=`<b>கணக்கை முடி</b><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px"><button type="button" class="btn" data-close="redeemed" style="padding:10px 4px;font-size:13px">💍 நகையாக</button><button type="button" class="btn" data-close="refunded" style="padding:10px 4px;font-size:13px">💵 பணம் திருப்பி</button><button type="button" class="btn" data-close="nominee" style="padding:10px 4px;font-size:13px">🕊 Nominee</button></div><div id="clf"></div>`}
@@ -934,9 +945,16 @@ function closeForm(c,s,type){const today=new Date(Date.now()+330*60000).toISOStr
  if(type=="refunded")h+=I("clamt","திருப்பிய தொகை (₹)","number",s.tot)+`<select id="clmode" style="margin-top:6px"><option value="cash">பணம் (Cash)</option><option value="bank">Bank</option><option value="upi">UPI</option></select>`+I("clref","Reference / UTR (இருந்தால்)")+'<div class="mut" style="font-size:12.5px;margin-top:4px">விதிமுறைப்படி: நடுவில் நிறுத்தினால் திட்டப் பயன் (சேதாரம் / செய்கூலி தள்ளுபடி) இல்லை.</div>';
  if(type=="nominee")h+=I("clnom","Nominee பெயர்","",c.nominee||"")+`<select id="clgiven" style="margin-top:6px"><option>நகை</option><option>பணம்</option></select>`+I("clamt","தொகை (₹)","number");
  h+=`<textarea id="clnote" placeholder="குறிப்பு (விருப்பம்)" style="margin-top:6px"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button type="button" class="btn" data-clsave="${type}">சேமி</button><button type="button" class="btn" data-clcancel="1" style="background:#eee;color:#333">ரத்து</button></div></div>`;return h}
-document.getElementById("cdv").addEventListener("click",async e=>{const t=e.target.closest("[data-close],[data-clsave],[data-clcancel],[data-erase],[data-reopen]");if(!t)return;
+document.getElementById("cdv").addEventListener("click",async e=>{const t=e.target.closest("[data-close],[data-clsave],[data-clcancel],[data-erase],[data-reopen],[data-restart],[data-rsgo]");if(!t)return;
  const id=document.querySelector("#cdv [data-erase]")?.dataset.erase||t.dataset.reopen;const c=(window.CU||[]).find(x=>String(x.id)==String(id));if(!c)return;const s=cuSum(c);
  if(t.dataset.close){$("clf").innerHTML=closeForm(c,s,t.dataset.close);return}
+ if(t.dataset.restart){const today=new Date(Date.now()+330*60000).toISOString().slice(0,10);
+  $("rsf").innerHTML=`<div style="margin-top:8px;border:1.5px solid #d9c08a;border-radius:12px;padding:10px;background:#fffdf7"><b>புதிய திட்டம்</b><select id="rss" style="margin-top:6px">${Object.keys(SN).map(k=>`<option value="${esc(k)}"${k==c.scheme?" selected":""}>${esc(SN[k])}</option>`).join("")}</select><input id="rsa" type="number" inputmode="numeric" placeholder="மாதத் தவணை (₹)" value="${c.monthly_amount||""}" style="margin-top:6px"><input id="rsd" type="date" value="${today}" style="margin-top:6px"><div class="mut" style="font-size:12.5px;margin-top:4px">பழைய தவணைகள் "முந்தைய திட்டங்கள்"-க்கு மாறும். அதே mobile, அதே mPIN தொடரும்.</div><button type="button" class="btn" data-rsgo="1" style="margin-top:8px">தொடங்கு</button></div>`;return}
+ if(t.dataset.rsgo){const sc=$("rss").value,am=+$("rsa").value||null,sd=$("rsd").value||null;if(!sc)return;
+  if(!confirm(c.name+" – "+(SN[sc]||sc)+" புதிய திட்டம் தொடங்கவா?"))return;
+  const {data,error}=await sb.rpc("gold_restart_scheme",{p_id:c.id,p_scheme:sc,p_monthly:am,p_start:sd});
+  if(error||!data||!data.ok)return alert(error?error.message:(data&&data.err=="perm"?"இதற்கு அனுமதி இல்லை":"தொடங்க முடியவில்லை"));
+  alert("புதுத் திட்டம் தொடங்கியது ✅");await load();openCD(c.id);return}
  if(t.dataset.clcancel){$("clf").innerHTML="";return}
  const me=((await sb.auth.getUser()).data.user||{}).email||null;
  if(t.dataset.clsave){const type=t.dataset.clsave,v=k=>{const x=document.getElementById(k);return x?x.value.trim():""},num=k=>v(k)===""?null:+v(k);

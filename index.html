@@ -2537,7 +2537,7 @@ async function viewPB(){
  // 2026-11-28: கடை கணக்கை முடித்திருந்தால் (நகை / பணம் திருப்பி / nominee) — பணம் கட்டும் பகுதி இல்லை
  if(data.status&&data.status!="active"){const CT={redeemed:"திட்டம் நிறைவு · நகை வாங்கப்பட்டது",refunded:"திட்டம் நிறைவு · தொகை திருப்பித் தரப்பட்டது",nominee:"திட்டம் நிறைவு · Nominee-க்கு வழங்கப்பட்டது"}[data.status]||"திட்டம் நிறைவு";
   const cd=data.closed_on?new Date(data.closed_on+"T00:00:00").toLocaleDateString("ta-IN",{day:"numeric",month:"long",year:"numeric"}):"";
-  nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>${CT}</b>${cd?`<small>${cd}</small>`:""}</div></div></div>`}
+  nx=`<div class="pbcard pbnx s-up pbdone"><div class="pbnxt"><span class="pbnxi">${PBI.ok}</span><div><small>திட்ட நிலை</small><b>${CT}</b>${cd?`<small>${cd}</small>`:""}</div></div><div class="noprint" style="margin-top:12px"><button type="button" class="yb" style="width:100%" onclick="openEnrol()">புதிய திட்டத்தில் சேர</button></div></div>`}
  const C=2*Math.PI*30,off=C*(1-pct/100);
  $("pb").innerHTML=`<div class="pbx"><div class="onlyprint"><img class="logo" src="${LOGO}" style="height:70px;margin:0 auto 10px"></div>
  <div class="pbtop noprint"><a class="pbback" role="button" tabindex="0" onclick="document.querySelector('nav button[data-t=&quot;s&quot;]').click()" aria-label="முகப்பு">←</a><div><b>Passbook</b><small>உங்கள் சேமிப்பு பயணம்</small></div><span class="pbtopi">${PBI.r}</span></div>
