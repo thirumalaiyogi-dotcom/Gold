@@ -577,7 +577,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
         foregroundColor: C.navy,
         title: Text('புது mPIN உருவாக்க', style: serif(19)),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 30), children: [
+      body: ListView(padding: EdgeInsets.fromLTRB(20, 4, 20, 30 + MediaQuery.of(context).viewPadding.bottom), children: [
         Center(child: Image.asset('assets/logo.png', height: 70)),
         const SizedBox(height: 14),
         Container(
@@ -771,7 +771,7 @@ class _EmailOtpScreenState extends State<EmailOtpScreen> {
         foregroundColor: C.navy,
         title: Text('OTP மூலம் mPIN', style: serif(19)),
       ),
-      body: ListView(padding: const EdgeInsets.fromLTRB(20, 4, 20, 30), children: [
+      body: ListView(padding: EdgeInsets.fromLTRB(20, 4, 20, 30 + MediaQuery.of(context).viewPadding.bottom), children: [
         Center(child: Image.asset('assets/lock.png', height: 58)),
         const SizedBox(height: 12),
         Container(

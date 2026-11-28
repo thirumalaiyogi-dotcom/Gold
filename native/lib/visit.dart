@@ -158,7 +158,7 @@ class _VisitPageState extends State<VisitPage> {
                 PrimaryButton('உள்நுழைய', onTap: () => openPassbookLogin(context)),
               ]),
             )
-          : ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 32), children: [
+          : ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + MediaQuery.of(context).viewPadding.bottom), children: [
               Text('உங்கள் சேமிப்பில் நகை வாங்க கடைக்கு வரும் நாளைப் பதிவு செய்யுங்கள். கடை உங்களுக்காக நேரம் ஒதுக்கி உறுதி செய்யும்.',
                   style: sans(14, color: C.mute, height: 1.6)),
               if (_mine.isNotEmpty) ...[

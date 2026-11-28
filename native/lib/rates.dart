@@ -100,7 +100,7 @@ class _RatePageState extends State<RatePage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: appBar,
-      body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
+      body: ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 24 + MediaQuery.of(context).viewPadding.bottom), children: [
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(99), border: Border.all(color: C.line2)),

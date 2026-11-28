@@ -548,7 +548,7 @@ class _EnrolPageState extends State<EnrolPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(backgroundColor: C.paper, surfaceTintColor: C.paper, foregroundColor: C.navy, title: Text('திட்டத்தில் சேர', style: sans(16.5, color: C.ink, weight: FontWeight.w700))),
-      body: ListView(padding: const EdgeInsets.fromLTRB(16, 16, 16, 24), children: [
+      body: ListView(padding: EdgeInsets.fromLTRB(16, 16, 16, 24 + MediaQuery.of(context).viewPadding.bottom), children: [
         Row(children: [
           for (var i = 0; i < 4; i++)
             Expanded(
