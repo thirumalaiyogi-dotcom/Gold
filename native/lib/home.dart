@@ -896,19 +896,24 @@ class _NextDue extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Row(children: [
           Expanded(child: Text(title.replaceAll(' ✓', ''), style: serif(18, color: C.head))),
-          if (done || Demo.paidThisMonth)
-            Container(
-              margin: const EdgeInsets.only(left: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-              decoration: BoxDecoration(color: const Color(0xFFE6F3EC), borderRadius: BorderRadius.circular(999)),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.check_circle, size: 15, color: C.green),
-                const SizedBox(width: 4),
-                Text(done ? 'முடிந்தது' : 'செலுத்தியது', style: sans(12, color: C.green, weight: FontWeight.w700)),
-              ]),
-            ),
           if (!done && Demo.fixed) Text(rupees(Demo.monthly), style: serif(20, weight: FontWeight.w700)),
         ]),
+        if (done || Demo.paidThisMonth)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(color: const Color(0xFFE6F3EC), borderRadius: BorderRadius.circular(999)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.check_circle, size: 15, color: C.green),
+                  const SizedBox(width: 5),
+                  Text(done ? 'எல்லா தவணையும் முடிந்தது' : 'இந்த மாதம் செலுத்தியாச்சு', style: sans(12.5, color: C.green, weight: FontWeight.w700)),
+                ]),
+              ),
+            ),
+          ),
         if (!done) ...[
           const SizedBox(height: 4),
           Row(children: [
