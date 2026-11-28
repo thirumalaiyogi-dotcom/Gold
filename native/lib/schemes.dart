@@ -305,6 +305,8 @@ class _EnrolPageState extends State<EnrolPage> {
   late Scheme sch = widget.initial;
   final name = TextEditingController(), mobile = TextEditingController(), addr = TextEditingController(), city = TextEditingController(), pin = TextEditingController();
   final amount = TextEditingController(), nominee = TextEditingController(), refc = TextEditingController();
+  final panC = TextEditingController(), aadC = TextEditingController();
+  bool kyc = false; // optional KYC (PAN + Aadhaar last 4 only)
   String rel = 'கணவர் / மனைவி';
   bool agree = false;
   bool busy = false;
@@ -318,7 +320,7 @@ class _EnrolPageState extends State<EnrolPage> {
 
   @override
   void dispose() {
-    for (final c in [name, mobile, addr, city, pin, amount, nominee, refc]) {
+    for (final c in [name, mobile, addr, city, pin, amount, nominee, refc, panC, aadC]) {
       c.dispose();
     }
     super.dispose();
@@ -340,7 +342,12 @@ class _EnrolPageState extends State<EnrolPage> {
       if (a < sch.minAmount || a > 100000) e = 'மாதத் தவணை ${rupees(sch.minAmount)} முதல் ₹1,00,000 வரை இருக்கலாம்';
     } else if (step == 3) {
       final r = refc.text.trim().toUpperCase();
-      if (r.isNotEmpty && !RegExp(r'^[A-Z0-9]{3,12}$').hasMatch(r)) {
+      final pan = panC.text.trim().toUpperCase(), aad = aadC.text.trim();
+      if (kyc && pan.isNotEmpty && !RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]$').hasMatch(pan)) {
+        e = 'PAN எண் சரியில்லை (எ.கா. ABCDE1234F)';
+      } else if (kyc && aad.isNotEmpty && !RegExp(r'^[0-9]{4}$').hasMatch(aad)) {
+        e = 'Aadhaar-ன் கடைசி 4 இலக்கங்களை மட்டும் உள்ளிடவும்';
+      } else if (r.isNotEmpty && !RegExp(r'^[A-Z0-9]{3,12}$').hasMatch(r)) {
         e = 'Reference code சரியில்லை (எழுத்தும் எண்ணும் மட்டும், எ.கா. SL1024)';
       } else if (!agree) {
         e = 'விதிமுறைகளை ஒப்புக்கொள்ளுங்க';
@@ -369,6 +376,8 @@ class _EnrolPageState extends State<EnrolPage> {
         'nominee': nominee.text.trim().isEmpty ? null : nominee.text.trim(),
         'nominee_rel': nominee.text.trim().isEmpty ? null : rel,
         'ref_code': refc.text.trim().isEmpty ? null : refc.text.trim().toUpperCase(),
+        if (kyc && panC.text.trim().isNotEmpty) 'pan': panC.text.trim().toUpperCase(),
+        if (kyc && aadC.text.trim().isNotEmpty) 'aadhaar_last4': aadC.text.trim(),
       });
       if (!mounted) return;
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => _EnrolDone(name: name.text.trim(), scheme: sch)));
@@ -468,7 +477,56 @@ class _EnrolPageState extends State<EnrolPage> {
         ),
         const SizedBox(height: 12),
         _field(refc, 'Reference code (இருந்தால்)', hint: 'நண்பர் கொடுத்த code, எ.கா. SL1024'),
-        const SizedBox(height: 2),
+        // optional KYC: tick → PAN + Aadhaar (last 4 digits only)
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(color: C.paper, borderRadius: BorderRadius.circular(16), border: Border.all(color: kyc ? C.goldLine : C.cardLine)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            CheckboxListTile(
+              value: kyc,
+              onChanged: (v) => setState(() => kyc = v ?? false),
+              activeColor: C.navy,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: Text('KYC விவரம் சேர்க்க (விருப்பம்)', style: sans(14.5, weight: FontWeight.w600)),
+              subtitle: Text('PAN, Aadhaar — நகை வாங்கும்போது கடையில் நேரம் மிச்சமாகும்', style: sans(12.5, color: C.mute)),
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              child: !kyc
+                  ? const SizedBox(width: double.infinity)
+                  : Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 0, 14, 4),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: TextField(
+                            controller: panC,
+                            textCapitalization: TextCapitalization.characters,
+                            maxLength: 10,
+                            decoration: _dec('PAN எண்', hint: 'ABCDE1234F').copyWith(counterText: ''),
+                            style: sans(15).copyWith(letterSpacing: 1.2),
+                          ),
+                        ),
+                        TextField(
+                          controller: aadC,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          decoration: _dec('Aadhaar கடைசி 4 இலக்கம்', hint: 'XXXX XXXX 1234').copyWith(counterText: ''),
+                          style: sans(15).copyWith(letterSpacing: 2),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 6, 2, 8),
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                            const Icon(Icons.lock_outline, size: 15, color: C.goldText),
+                            const SizedBox(width: 6),
+                            Expanded(child: Text('உங்கள் பாதுகாப்புக்காக Aadhaar-ன் கடைசி 4 இலக்கம் மட்டுமே சேமிக்கப்படும். இந்த விவரங்கள் கடை ஊழியர்களுக்கு மட்டுமே தெரியும்.', style: sans(12.5, color: C.mute, height: 1.5))),
+                          ]),
+                        ),
+                      ]),
+                    ),
+            ),
+          ]),
+        ),
         LuxCard(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('சுருக்கம்', style: sans(13, color: C.mute, weight: FontWeight.w600)),
