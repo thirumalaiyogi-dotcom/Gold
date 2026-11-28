@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'api.dart';
 import 'links.dart';
 import 'main.dart';
 import 'visit.dart';
@@ -598,6 +599,8 @@ class MyDetailsPage extends StatelessWidget {
         ]),
       ),
       const SizedBox(height: 16),
+      const KycCard(),
+      const SizedBox(height: 16),
       LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Text('கணக்கை நீக்க கோரிக்கை', style: serif(17)),
@@ -619,6 +622,145 @@ class MyDetailsPage extends StatelessWidget {
         ]),
       ),
     ]));
+  }
+}
+
+/// Optional KYC (PAN + Aadhaar last 4) for existing customers — gold_kyc RPC (mobile + mPIN checked, masked values only).
+class KycCard extends StatefulWidget {
+  const KycCard({super.key});
+  @override
+  State<KycCard> createState() => _KycCardState();
+}
+
+class _KycCardState extends State<KycCard> {
+  String? pan, aad;
+  bool loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _call();
+  }
+
+  Future<String> _call({bool save = false, String? p, String? a}) async {
+    try {
+      final d = await Api.rpc('gold_kyc', {'p_mobile': app.mobile, 'p_pin': app.pin, 'p_save': save, if (save && p != null) 'p_pan': p, if (save) 'p_aadhaar_last4': a ?? ''});
+      if (d is Map && d['ok'] == true) {
+        if (mounted) {
+          setState(() {
+            pan = d['pan'] as String?;
+            aad = d['aadhaar'] as String?;
+            loaded = true;
+          });
+        }
+        return '';
+      }
+      return '${d is Map ? d['err'] : 'x'}';
+    } catch (_) {
+      return 'net';
+    }
+  }
+
+  Future<void> _edit() async {
+    final pc = TextEditingController(), ac = TextEditingController(text: aad ?? '');
+    String err = '';
+    bool busy = false;
+    final ok = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: C.formBg,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, set) => Padding(
+          padding: EdgeInsets.fromLTRB(20, 18, 20, MediaQuery.of(ctx).viewInsets.bottom + MediaQuery.of(ctx).padding.bottom + 18),
+          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('KYC விவரம்', style: serif(20)),
+            const SizedBox(height: 4),
+            Text(pan != null ? 'PAN மாற்ற வேண்டுமென்றால் மட்டும் புதிய எண்ணை உள்ளிடவும்' : 'விருப்பம்', style: sans(13, color: C.mute)),
+            const SizedBox(height: 16),
+            TextField(
+              controller: pc,
+              textCapitalization: TextCapitalization.characters,
+              maxLength: 10,
+              decoration: formDeco(label: pan != null ? 'PAN எண் (இப்போது: $pan)' : 'PAN எண்', hint: 'ABCDE1234F').copyWith(counterText: ''),
+              style: sans(15).copyWith(letterSpacing: 1.2),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: ac,
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              decoration: formDeco(label: 'Aadhaar கடைசி 4 இலக்கம்', hint: 'XXXX XXXX 1234').copyWith(counterText: ''),
+              style: sans(15).copyWith(letterSpacing: 2),
+            ),
+            const SizedBox(height: 8),
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Icon(Icons.lock_outline, size: 15, color: C.goldText),
+              const SizedBox(width: 6),
+              Expanded(child: Text('Aadhaar-ன் கடைசி 4 இலக்கம் மட்டுமே சேமிக்கப்படும். இந்த விவரங்கள் கடை ஊழியர்களுக்கு மட்டுமே தெரியும்.', style: sans(12.5, color: C.mute, height: 1.5))),
+            ]),
+            if (err.isNotEmpty) Padding(padding: const EdgeInsets.only(top: 8), child: Text(err, style: sans(13.5, color: C.red))),
+            const SizedBox(height: 16),
+            PrimaryButton(busy ? 'சேமிக்கிறது…' : 'சேமி', busy: busy, onTap: () async {
+              if (busy) return;
+              final p = pc.text.trim().toUpperCase();
+              final a = ac.text.trim();
+              if (p.isNotEmpty && !RegExp(r'^[A-Z]{5}[0-9]{4}[A-Z]$').hasMatch(p)) {
+                set(() => err = 'PAN எண் சரியில்லை (எ.கா. ABCDE1234F)');
+                return;
+              }
+              if (a.isNotEmpty && !RegExp(r'^[0-9]{4}$').hasMatch(a)) {
+                set(() => err = 'Aadhaar-ன் கடைசி 4 இலக்கங்களை மட்டும் உள்ளிடவும்');
+                return;
+              }
+              set(() {
+                busy = true;
+                err = '';
+              });
+              final e = await _call(save: true, p: p.isEmpty ? null : p, a: a.isEmpty ? null : a);
+              if (!ctx.mounted) return;
+              if (e.isEmpty) {
+                Navigator.pop(ctx, true);
+              } else {
+                set(() {
+                  busy = false;
+                  err = e == 'net' ? 'இணைய இணைப்பைச் சரிபார்க்கவும்.' : 'சேமிக்க முடியவில்லை. விவரங்களைச் சரிபார்க்கவும்.';
+                });
+              }
+            }),
+          ]),
+        ),
+      ),
+    );
+    pc.dispose();
+    ac.dispose();
+    if (ok == true && mounted) showNote(context, 'KYC விவரம் சேமிக்கப்பட்டது');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final has = pan != null || aad != null;
+    return LuxCard(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Row(children: [
+          const Icon(Icons.verified_user_outlined, color: C.navy, size: 22),
+          const SizedBox(width: 8),
+          Expanded(child: Text('KYC (விருப்பம்)', style: serif(17))),
+          if (loaded)
+            TextButton(onPressed: _edit, child: Text(has ? 'மாற்ற' : 'சேர்க்க', style: sans(14, color: C.navy, weight: FontWeight.w700))),
+        ]),
+        const SizedBox(height: 4),
+        if (!loaded)
+          const Skeleton(height: 14, width: 160)
+        else if (!has)
+          Text('PAN, Aadhaar விவரம் சேர்த்தால் நகை வாங்கும்போது கடையில் நேரம் மிச்சமாகும்.', style: sans(13.5, color: C.mute, height: 1.6))
+        else ...[
+          Text('PAN: ${pan ?? '—'}', style: sans(14.5, weight: FontWeight.w600)),
+          const SizedBox(height: 4),
+          Text('Aadhaar: ${aad != null ? 'XXXX XXXX $aad' : '—'}', style: sans(14.5, weight: FontWeight.w600)),
+        ],
+      ]),
+    );
   }
 }
 

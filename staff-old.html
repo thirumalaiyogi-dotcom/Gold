@@ -1826,14 +1826,14 @@ document.addEventListener("click",function(e){var b=e.target.closest&&e.target.c
       add("திட்ட சுருக்கம்", rows, [26, 11, 10, 11, 18, 17, 18, 16, 16]);
     }
     if (pick.includes("cust")) {
-      const rows = [["#", "பெயர்", "மொபைல்", "திட்டம்", "மாதத் தொகை (₹)", "சேர்ந்த நாள்", "கட்டிய தவணை", "மொத்த தவணை", "மீதி", "மொத்தம் (₹)", "தங்கம் (கி)", "கடைசி தவணை", "இந்த மாதம்", "நிலை", "Referral code", "Nominee", "முகவரி"]];
+      const rows = [["#", "பெயர்", "மொபைல்", "திட்டம்", "மாதத் தொகை (₹)", "சேர்ந்த நாள்", "கட்டிய தவணை", "மொத்த தவணை", "மீதி", "மொத்தம் (₹)", "தங்கம் (கி)", "கடைசி தவணை", "இந்த மாதம்", "நிலை", "Referral code", "Nominee", "முகவரி", "PAN", "Aadhaar"]];
       list.forEach((c, i) => {
         const ps = pays(c), n = paidN(c), mo = MONS(c.scheme), last = ps.length ? ps[ps.length - 1].paid_on : "";
         const tot = ps.reduce((a, p) => a + (+p.amount || 0), 0), g = ps.reduce((a, p) => a + (+p.grams || 0), 0);
         rows.push([i + 1, c.name || "", c.mobile || "", SCH(c.scheme), +c.monthly_amount || 0, c.start_date || "", n, mo, Math.max(0, mo - n), tot, GRS(c.scheme) ? +g.toFixed(3) : "", last ? String(last).slice(0, 10) : "",
-          n >= mo ? "—" : ps.some((p) => ym(p.paid_on) === cym) ? "கட்டியாச்சு" : "நிலுவை", n >= mo ? "முடிந்தது" : n ? "நடப்பில்" : "தொடங்கல", c.ref_code || "", c.nominee ? c.nominee + (c.nominee_rel ? " (" + c.nominee_rel + ")" : "") : "", c.address || ""]);
+          n >= mo ? "—" : ps.some((p) => ym(p.paid_on) === cym) ? "கட்டியாச்சு" : "நிலுவை", n >= mo ? "முடிந்தது" : n ? "நடப்பில்" : "தொடங்கல", c.ref_code || "", c.nominee ? c.nominee + (c.nominee_rel ? " (" + c.nominee_rel + ")" : "") : "", c.address || "", c.pan || "", c.aadhaar_last4 ? "XXXX XXXX " + c.aadhaar_last4 : ""]);
       });
-      add("Customers", rows, [5, 24, 13, 22, 14, 13, 12, 12, 8, 13, 11, 13, 12, 11, 13, 22, 36]);
+      add("Customers", rows, [5, 24, 13, 22, 14, 13, 12, 12, 8, 13, 11, 13, 12, 11, 13, 22, 36, 13, 17]);
     }
     if (pick.includes("grid")) {
       const all = list.flatMap((c) => pays(c).map((p) => ym(p.paid_on))).concat(list.map((c) => ym(c.start_date || cym))).filter(Boolean).sort();

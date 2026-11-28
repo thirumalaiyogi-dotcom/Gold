@@ -2112,6 +2112,12 @@ html[data-p5] .sdpur.ag{color:#4F4840!important;background:linear-gradient(180de
   <label for="rganv">திருமண நாள் (விருப்பம்)</label><input id="rganv" type="date">
   <label for="rgnn">Nominee பெயர்</label><input id="rgnn" placeholder="உங்களுக்கு பின் யாருக்கு?">
   <label for="rgnr">உறவு</label><select id="rgnr"><option value="">தேர்வு செய்யவும்</option><option>தந்தை</option><option>தாய்</option><option>கணவர் / மனைவி</option><option>மகன்</option><option>மகள்</option><option>சகோதரர்</option><option>சகோதரி</option><option>மற்றவர்</option></select>
+  <div class="chk"><input type="checkbox" id="rgk"><label for="rgk"><b>KYC விவரம் சேர்க்க (விருப்பம்)</b> · நகை வாங்கும்போது கடையில் நேரம் மிச்சமாகும்</label></div>
+  <div id="rgkb" class="hide">
+   <label for="rgpan">PAN எண்</label><input id="rgpan" type="text" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="ABCDE1234F" style="text-transform:uppercase;letter-spacing:1px">
+   <label for="rgaad">Aadhaar கடைசி 4 இலக்கம்</label><input id="rgaad" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="XXXX XXXX 1234" style="letter-spacing:2px">
+   <div class="mut" style="font-size:12.5px;margin:4px 0 10px">🔒 உங்கள் பாதுகாப்புக்காக Aadhaar-ன் கடைசி 4 இலக்கம் மட்டுமே சேமிக்கப்படும். இந்த விவரங்கள் கடை ஊழியர்களுக்கு மட்டுமே தெரியும்.</div>
+  </div>
   <div class="wzsum" id="wzsum"></div>
   <div class="chk"><input type="checkbox" id="rgc"><label for="rgc">நான் <a id="tml">விதிமுறைகளுக்கு</a> ஒப்புதல் அளிக்கிறேன்</label></div>
  </div>
@@ -2894,10 +2900,15 @@ $("wzsum").addEventListener("click",e=>{const a=e.target.closest("[data-go]");if
 document.querySelectorAll("#rgf .wzs input").forEach(i=>i.addEventListener("keydown",e=>{if(e.key=="Enter"&&WZ<4){e.preventDefault();$("wznext").click()}}));
 
 $("rgx").onclick=()=>vis("rg",false);
+$("rgk").addEventListener("change",()=>$("rgkb").classList.toggle("hide",!$("rgk").checked));
 $("rgb").onclick=async()=>{const r={name:$("rgn").value.trim(),mobile:$("rgm").value.trim(),email:$("rge").value.trim().toLowerCase()||null,address:$("rga").value.trim(),city:$("rgt").value.trim(),pincode:$("rgp").value.trim()||null,scheme:$("rgs").value,monthly_amount:+$("rgq").value||null,ref_code:$("rgr").value.trim().toUpperCase()||null,nominee:$("rgnn").value.trim()||null,nominee_rel:$("rgnr").value||null,dob:$("rgdob").value||null,anniv:$("rganv").value||null};
  if(!r.name||!/^[0-9]{10}$/.test(r.mobile))return alert("பெயர், 10 இலக்க மொபைல் எண் போடுங்க");
  if(r.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email))return alert("சரியான Email போடுங்க");
  if(!r.address||!r.city)return alert("முகவரி, ஊர் போடுங்க");
+ if($("rgk").checked){const pn=$("rgpan").value.trim().toUpperCase(),ad=$("rgaad").value.trim();
+  if(pn&&!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pn))return alert("PAN எண் சரியில்லை (எ.கா. ABCDE1234F)");
+  if(ad&&!/^[0-9]{4}$/.test(ad))return alert("Aadhaar-ன் கடைசி 4 இலக்கங்களை மட்டும் உள்ளிடவும்");
+  if(pn)r.pan=pn;if(ad)r.aadhaar_last4=ad}
  if(!$("rgc").checked)return alert("விதிமுறைகளுக்கு ஒப்புதல் தேவை");
  if($("rgb").disabled)return;$("rgb").disabled=true;const _rt=$("rgb").textContent;$("rgb").textContent="அனுப்புகிறோம்…";let error;try{({error}=await sb.from("gold_requests").insert(r));if(error&&/dob|anniv/.test(error.message||"")){delete r.dob;delete r.anniv;({error}=await sb.from("gold_requests").insert(r))}}catch(x){error={message:"Internet இணைப்பை சரிபார்த்து மறுபடி முயற்சிக்கவும்"}}$("rgb").disabled=false;$("rgb").textContent=_rt;
  if(error)return alert(error.code=="23505"?"இந்த மொபைலுக்கு விண்ணப்பம் ஏற்கனவே உள்ளது. கடையை தொடர்பு கொள்ளுங்க.":error.message);
