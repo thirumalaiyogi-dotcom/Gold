@@ -101,6 +101,59 @@ class _StoryRowState extends State<StoryRow> {
   }
 }
 
+/// "புதியவை" — the story circles inside one white box with a gold ribbon label on top (like the "what's new" box in big apps).
+class StoryBox extends StatelessWidget {
+  const StoryBox({super.key, required this.go});
+  final ValueChanged<int> go;
+  @override
+  Widget build(BuildContext context) => Stack(clipBehavior: Clip.none, children: [
+        Container(
+          margin: const EdgeInsets.only(top: 15),
+          padding: const EdgeInsets.fromLTRB(12, 30, 12, 8),
+          decoration: BoxDecoration(
+            color: C.paper,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: C.line2),
+            boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 16, offset: Offset(0, 6))],
+          ),
+          child: StoryRow(go: go),
+        ),
+        Positioned(top: 0, left: 0, right: 0, child: Center(child: _ribbon('புதியவை'))),
+      ]);
+
+  static Widget _ribbon(String t) => Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(padding: const EdgeInsets.only(top: 6), child: CustomPaint(size: const Size(9, 9), painter: _Fold(left: true))),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 7),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [Color(0xFFF3D68A), C.gold, Color(0xFFE6C77E)]),
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(10)),
+            boxShadow: [BoxShadow(color: Color(0x22000000), blurRadius: 6, offset: Offset(0, 2))],
+          ),
+          child: Text(t, style: sans(15, color: C.navy, weight: FontWeight.w800)),
+        ),
+        Padding(padding: const EdgeInsets.only(top: 6), child: CustomPaint(size: const Size(9, 9), painter: _Fold(left: false))),
+      ]);
+}
+
+class _Fold extends CustomPainter {
+  _Fold({required this.left});
+  final bool left;
+  @override
+  void paint(Canvas canvas, Size s) {
+    final p = Path();
+    if (left) {
+      p..moveTo(s.width, 0)..lineTo(0, s.height)..lineTo(s.width, s.height)..close();
+    } else {
+      p..moveTo(0, 0)..lineTo(0, s.height)..lineTo(s.width, s.height)..close();
+    }
+    canvas.drawPath(p, Paint()..color = const Color(0xFF9E7A2E));
+  }
+
+  @override
+  bool shouldRepaint(_Fold o) => o.left != left;
+}
+
 Future<void> openStories(BuildContext context, int start, ValueChanged<int> go) {
   tapFeel();
   return Navigator.of(context).push(PageRouteBuilder(
@@ -301,8 +354,8 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
   }
 }
 
-/// "💍 நகை வகைகள்" — swipeable shop-photo cards; tap → WhatsApp enquiry for that category.
-/// நகை வகைகள் — slides by itself every few seconds; stops while the customer touches it.
+/// "💍 நகை வகைகள்" — coverflow: the middle card is big, the side cards peek smaller and dimmer.
+/// Slides by itself every few seconds (loops), stops while the customer touches it; ‹ › buttons on the sides.
 class CategoryStrip extends StatefulWidget {
   const CategoryStrip({super.key});
   @override
@@ -310,99 +363,146 @@ class CategoryStrip extends StatefulWidget {
 }
 
 class _CategoryStripState extends State<CategoryStrip> {
-  final _sc = ScrollController();
+  static const _loop = 1000;
+  late final PageController _pc;
+  double _page = 0;
   Timer? _t;
   DateTime _pausedUntil = DateTime.fromMillisecondsSinceEpoch(0);
-  static const _step = 160.0; // card 148 + gap 12
+
+  int get _len => app.cats.length;
 
   @override
   void initState() {
     super.initState();
-    _t = Timer.periodic(const Duration(milliseconds: 3200), (_) => _next());
+    final start = _len > 1 ? _len * (_loop ~/ 2) : 0;
+    _page = start.toDouble();
+    _pc = PageController(viewportFraction: .64, initialPage: start)
+      ..addListener(() {
+        if (mounted) setState(() => _page = _pc.page ?? _page);
+      });
+    _t = Timer.periodic(const Duration(milliseconds: 3600), (_) => _auto());
   }
 
-  void _next() {
-    if (!mounted || !_sc.hasClients || DateTime.now().isBefore(_pausedUntil)) return;
-    final p = _sc.position;
-    if (p.maxScrollExtent <= 0) return;
-    if (p.pixels >= p.maxScrollExtent - 4) {
-      _sc.animateTo(0, duration: const Duration(milliseconds: 900), curve: Curves.easeInOutCubic);
-    } else {
-      final to = ((p.pixels / _step).round() + 1) * _step;
-      _sc.animateTo(to.clamp(0, p.maxScrollExtent), duration: const Duration(milliseconds: 650), curve: Curves.easeOutCubic);
-    }
+  void _auto() {
+    if (!mounted || !_pc.hasClients || _len < 2 || DateTime.now().isBefore(_pausedUntil)) return;
+    _pc.nextPage(duration: const Duration(milliseconds: 700), curve: Curves.easeOutCubic);
   }
 
   void _pause() => _pausedUntil = DateTime.now().add(const Duration(seconds: 8));
 
+  void _step(int d) {
+    if (!_pc.hasClients) return;
+    _pause();
+    HapticFeedback.selectionClick();
+    d > 0
+        ? _pc.nextPage(duration: const Duration(milliseconds: 450), curve: Curves.easeOutCubic)
+        : _pc.previousPage(duration: const Duration(milliseconds: 450), curve: Curves.easeOutCubic);
+  }
+
+  void _open(Map<String, dynamic> c) {
+    HapticFeedback.selectionClick();
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => CategoryGallery(cat: c)));
+  }
+
   @override
   void dispose() {
     _t?.cancel();
-    _sc.dispose();
+    _pc.dispose();
     super.dispose();
   }
+
+  Widget _arrow(IconData icon, int d, String label) => Semantics(
+        button: true,
+        label: label,
+        child: GestureDetector(
+          onTap: () => _step(d),
+          child: Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: const Color(0xF2FFFFFF),
+              shape: BoxShape.circle,
+              border: Border.all(color: C.line2),
+              boxShadow: const [BoxShadow(color: Color(0x22000000), blurRadius: 10, offset: Offset(0, 3))],
+            ),
+            child: Icon(icon, size: 22, color: C.navy),
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     final list = app.cats;
+    if (list.isEmpty) return const SizedBox.shrink();
+    final n = list.length;
+    final cur = list[((_page.round() % n) + n) % n];
     return Listener(
       onPointerDown: (_) => _pause(),
-      child: SizedBox(
-        height: 196,
-        child: ListView.separated(
-          controller: _sc,
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          itemCount: list.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, i) {
-            final c = list[i];
-            final name = '${c['name']}';
-            return Semantics(
-              button: true,
-              label: '$name — டிசைன்கள் பார்க்க',
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => CategoryGallery(cat: c)));
-                },
-                child: Container(
-                  width: 148,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: C.line2),
-                    boxShadow: const [BoxShadow(color: Color(0x14000000), blurRadius: 10, offset: Offset(0, 4))],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Stack(fit: StackFit.expand, children: [
-                    Image.network('${c['image_url']}', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: C.ivory2)),
-                    const DecoratedBox(
-                      decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, stops: [.4, 1], colors: [Color(0x00000000), Color(0xD92A0610)])),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        width: 26,
-                        height: 26,
-                        decoration: const BoxDecoration(color: Color(0xE6FFFFFF), shape: BoxShape.circle),
-                        child: const Icon(Icons.arrow_forward_rounded, size: 15, color: C.navy),
+      child: Column(children: [
+        SizedBox(
+          height: 262,
+          child: Stack(alignment: Alignment.center, children: [
+            PageView.builder(
+              controller: _pc,
+              itemCount: n > 1 ? n * _loop : 1,
+              itemBuilder: (context, i) {
+                final c = list[i % n];
+                final d = (_page - i).abs().clamp(0.0, 1.0);
+                final name = '${c['name']}';
+                return Semantics(
+                  button: true,
+                  label: '$name — டிசைன்கள் பார்க்க',
+                  child: GestureDetector(
+                    onTap: () => d < .5 ? _open(c) : _pc.animateToPage(i, duration: const Duration(milliseconds: 450), curve: Curves.easeOutCubic),
+                    child: Transform.scale(
+                      scale: 1 - .14 * d,
+                      child: Opacity(
+                        opacity: 1 - .38 * d,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: d < .5 ? C.goldLine : C.line2, width: d < .5 ? 1.4 : 1),
+                            boxShadow: [BoxShadow(color: Color.fromRGBO(60, 10, 20, .22 * (1 - d)), blurRadius: 18, offset: const Offset(0, 8))],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: Stack(fit: StackFit.expand, children: [
+                            Image.network('${c['image_url']}', fit: BoxFit.cover, errorBuilder: (_, __, ___) => Container(color: C.ivory2)),
+                            const DecoratedBox(
+                              decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, stops: [.45, 1], colors: [Color(0x00000000), Color(0xCC2A0610)])),
+                            ),
+                            Positioned(
+                              left: 12,
+                              right: 12,
+                              bottom: 12,
+                              child: Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, textAlign: TextAlign.center, style: sans(16, color: Colors.white, weight: FontWeight.w700, height: 1.3)),
+                            ),
+                          ]),
+                        ),
                       ),
                     ),
-                    // full card width for the name, so long Tamil words are not cut in the middle
-                    Positioned(
-                      left: 10,
-                      right: 10,
-                      bottom: 10,
-                      child: Text(name, maxLines: 2, overflow: TextOverflow.ellipsis, style: sans(14.5, color: Colors.white, weight: FontWeight.w700, height: 1.3)),
-                    ),
-                  ]),
-                ),
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+            if (n > 1) Positioned(left: 4, child: _arrow(Icons.chevron_left_rounded, -1, 'முந்தைய வகை')),
+            if (n > 1) Positioned(right: 4, child: _arrow(Icons.chevron_right_rounded, 1, 'அடுத்த வகை')),
+          ]),
         ),
-      ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: () => _open(cur),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+            decoration: BoxDecoration(color: C.navy, borderRadius: BorderRadius.circular(999)),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Flexible(child: Text('${cur['name']} டிசைன்கள் பார்க்க', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(13.5, color: Colors.white, weight: FontWeight.w700))),
+              const SizedBox(width: 6),
+              const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
+            ]),
+          ),
+        ),
+      ]),
     );
   }
 }

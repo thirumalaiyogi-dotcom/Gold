@@ -327,8 +327,7 @@ class HomeTab extends StatelessWidget {
           ],
           // ---------- புதுசு என்ன (stories) ----------
           if (app.stories.isNotEmpty) ...[
-            const SectionTitle('புதியவை'),
-            StoryRow(go: go),
+            StoryBox(go: go),
             const SizedBox(height: 22),
           ],
           if (!(app.loggedIn && app.pb != null)) ...[
