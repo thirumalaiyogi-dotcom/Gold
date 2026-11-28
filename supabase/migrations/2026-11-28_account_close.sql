@@ -89,3 +89,15 @@ begin
 end $$;
 revoke all on function public.gold_erase_customer(uuid, text) from public, anon;
 grant execute on function public.gold_erase_customer(uuid, text) to authenticated;
+
+-- Closed by refund / nominee: stop due reminders by removing that customer's push subscriptions (no edge-function change needed).
+-- Deleted accounts are cleaned in gold_erase_customer. Redeemed accounts have all instalments, so no reminder is due anyway.
+create or replace function public.gold_close_cleanup() returns trigger language plpgsql security definer set search_path to 'public' as $$
+begin
+  if new.status in ('refunded','nominee') and coalesce(old.status, 'active') = 'active' then
+    delete from public.gold_push_subs where customer_id = new.id;
+  end if;
+  return new;
+end $$;
+drop trigger if exists gold_close_cleanup on public.gold_customers;
+create trigger gold_close_cleanup after update of status on public.gold_customers for each row execute function public.gold_close_cleanup();

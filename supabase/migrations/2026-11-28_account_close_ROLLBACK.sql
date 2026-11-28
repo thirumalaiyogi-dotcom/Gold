@@ -26,3 +26,5 @@ end;
 $function$;
 alter table public.gold_customers drop column if exists status, drop column if exists closed_on, drop column if exists close_info,
   drop column if exists closed_by, drop column if exists deleted_at;
+drop trigger if exists gold_close_cleanup on public.gold_customers;
+drop function if exists public.gold_close_cleanup();
