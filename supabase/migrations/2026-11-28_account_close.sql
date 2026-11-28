@@ -78,7 +78,7 @@ begin
   where id = p_id;
   delete from public.gold_chat where customer_id = p_id;
   delete from public.gold_visits where customer_id = p_id;
-  delete from public.gold_push_subs where customer_id = p_id;
+  delete from public.gold_push_subs where customer_id = p_id::text;
   delete from public.gold_likes where customer_id = p_id;
   delete from public.gold_requests where mobile = m;
   delete from public.gold_email_otp where mobile = m;
@@ -95,7 +95,7 @@ grant execute on function public.gold_erase_customer(uuid, text) to authenticate
 create or replace function public.gold_close_cleanup() returns trigger language plpgsql security definer set search_path to 'public' as $$
 begin
   if new.status in ('refunded','nominee') and coalesce(old.status, 'active') = 'active' then
-    delete from public.gold_push_subs where customer_id = new.id;
+    delete from public.gold_push_subs where customer_id = new.id::text;
   end if;
   return new;
 end $$;
