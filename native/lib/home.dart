@@ -187,6 +187,8 @@ class _MainShellState extends State<MainShell> {
           child: KeyedSubtree(key: ValueKey(tab), child: pages[tab]),
         ),
         bottomNavigationBar: _BottomNav(index: tab, onTap: go),
+        // "எங்களிடம் கேளுங்கள்" — a round chat button that stays on the home screen (like a WhatsApp button)
+        floatingActionButton: tab == 0 ? const ChatFab() : null,
       ),
     );
   }
@@ -358,8 +360,6 @@ class HomeTab extends StatelessWidget {
             _NoticePreview(app.notices.first, onTap: () => go(3)),
           ],
           const SizedBox(height: 28),
-          const ChatEntry(),
-          const SizedBox(height: 14),
           LuxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text('எங்கள் கடை', style: serif(19)),

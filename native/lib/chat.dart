@@ -315,8 +315,8 @@ class _ChatPageState extends State<ChatPage> {
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('எங்களிடம் கேளுங்கள்', style: serif(18)),
-              Text(_afterHours ? 'கடை நேரம் முடிந்தது · காலை 9 மணிக்குப் பிறகு பதில்' : 'வழக்கமாக சில மணி நேரத்தில் பதில்', style: sans(12, color: C.mute)),
+              FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Text('எங்களிடம் கேளுங்கள்', maxLines: 1, style: serif(18))),
+              Text(_afterHours ? 'காலை 9 மணிக்குப் பிறகு பதில்' : 'பொதுவாக சில மணி நேரத்தில் பதில்', maxLines: 1, overflow: TextOverflow.ellipsis, style: sans(12, color: C.mute)),
             ]),
           ),
         ]),
@@ -440,6 +440,38 @@ class ChatEntry extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Floating round chat button on the home screen, with the unread-reply count.
+class ChatFab extends StatelessWidget {
+  const ChatFab({super.key});
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<int>(
+        valueListenable: chatUnread,
+        builder: (context, n, _) => Semantics(
+          button: true,
+          label: n > 0 ? 'எங்களிடம் கேளுங்கள் · $n புது பதில்' : 'எங்களிடம் கேளுங்கள்',
+          child: Badge(
+            isLabelVisible: n > 0,
+            label: Text('$n'),
+            backgroundColor: C.red,
+            offset: const Offset(-4, 4),
+            child: FloatingActionButton(
+              heroTag: 'chatFab',
+              tooltip: 'எங்களிடம் கேளுங்கள்',
+              backgroundColor: C.navy,
+              foregroundColor: Colors.white,
+              elevation: 4,
+              shape: const CircleBorder(side: BorderSide(color: C.gold, width: 1.5)),
+              onPressed: () {
+                tapFeel();
+                openChat(context);
+              },
+              child: const Icon(Icons.forum_rounded, size: 26),
+            ),
+          ),
+        ),
+      );
 }
 
 /// கணக்கை நீக்க கோரிக்கை — sent inside the app as a chat message to the shop (no WhatsApp).
