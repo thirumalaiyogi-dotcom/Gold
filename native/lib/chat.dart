@@ -12,7 +12,7 @@ import 'login.dart';
 import 'main.dart';
 import 'ui.dart';
 
-/// Unread shop replies (badge on the "கடையிடம் கேளுங்க" entries).
+/// Unread shop replies (badge on the "எங்களிடம் கேளுங்கள்" entries).
 final ValueNotifier<int> chatUnread = ValueNotifier(0);
 
 /// Cheap unread check (no messages returned, nothing marked as read).
@@ -315,7 +315,7 @@ class _ChatPageState extends State<ChatPage> {
           const SizedBox(width: 10),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('கடையிடம் கேளுங்க', style: serif(18)),
+              Text('எங்களிடம் கேளுங்கள்', style: serif(18)),
               Text(_afterHours ? 'கடை நேரம் முடிந்தது · காலை 9 மணிக்குப் பிறகு பதில்' : 'வழக்கமாக சில மணி நேரத்தில் பதில்', style: sans(12, color: C.mute)),
             ]),
           ),
@@ -404,7 +404,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 }
 
-/// Entry tile used on Home / Account: "கடையிடம் கேளுங்க" with unread badge.
+/// Entry tile used on Home / Account: "எங்களிடம் கேளுங்கள்" with unread badge.
 class ChatEntry extends StatelessWidget {
   const ChatEntry({super.key});
   @override
@@ -429,7 +429,7 @@ class ChatEntry extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text('கடையிடம் கேளுங்க', style: sans(15.5, color: C.ink, weight: FontWeight.w700)),
+                  Text('எங்களிடம் கேளுங்கள்', style: sans(15.5, color: C.ink, weight: FontWeight.w700)),
                   Text(n > 0 ? 'கடையிலிருந்து $n புது பதில்' : 'உங்கள் கேள்விகளுக்கு கடையே நேரடியாகப் பதில் அளிக்கும்', style: sans(13, color: n > 0 ? C.navy : C.mute, weight: n > 0 ? FontWeight.w600 : FontWeight.w400)),
                 ]),
               ),
@@ -466,7 +466,7 @@ Future<void> requestAccountDeletion(BuildContext context) async {
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
             Text('கணக்கை நீக்க கோரிக்கை', style: serif(20)),
             const SizedBox(height: 8),
-            Text('உங்கள் கோரிக்கை App வழியாகவே கடைக்குச் செல்லும். கடை உங்களைத் தொடர்பு கொண்டு உறுதி செய்யும்; பதில் "கடையிடம் கேளுங்க" பகுதியில் வரும்.',
+            Text('உங்கள் கோரிக்கை App வழியாகவே கடைக்குச் செல்லும். கடை உங்களைத் தொடர்பு கொண்டு உறுதி செய்யும்; பதில் "எங்களிடம் கேளுங்கள்" பகுதியில் வரும்.',
                 style: sans(13.5, color: C.mute, height: 1.6)),
             const SizedBox(height: 14),
             Text('காரணம் (விருப்பம்)', style: sans(13, weight: FontWeight.w700)),
@@ -556,7 +556,7 @@ Future<void> askShop(BuildContext context, {required String message, String? ima
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
           child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text('கடையிடம் கேட்க', style: serif(20)),
+            Text('எங்களிடம் கேளுங்கள்', style: serif(20)),
             const SizedBox(height: 6),
             Text('Passbook-ல் உள்நுழைந்தால் App-லேயே கேட்கலாம்; கடையின் பதில் இங்கே அறிவிப்பாக வரும்.', style: sans(13.5, color: C.mute, height: 1.6)),
             const SizedBox(height: 16),
@@ -593,7 +593,7 @@ Future<void> askShop(BuildContext context, {required String message, String? ima
                     child: Image.network(imageUrl, width: 64, height: 64, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const SizedBox(width: 64, height: 64)),
                   ),
                 if (imageUrl != null) const SizedBox(width: 12),
-                Expanded(child: Text('கடையிடம் கேட்க', style: serif(20))),
+                Expanded(child: Text('எங்களிடம் கேளுங்கள்', style: serif(20))),
               ]),
               const SizedBox(height: 12),
               TextField(
@@ -609,7 +609,7 @@ Future<void> askShop(BuildContext context, {required String message, String? ima
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: C.line2)),
                 ),
               ),
-              Text('கடையின் பதில் "கடையிடம் கேளுங்க" பகுதியில் வரும்; அறிவிப்பும் வரும்.', style: sans(12.5, color: C.mute, height: 1.5)),
+              Text('கடையின் பதில் "எங்களிடம் கேளுங்கள்" பகுதியில் வரும்; அறிவிப்பும் வரும்.', style: sans(12.5, color: C.mute, height: 1.5)),
               const SizedBox(height: 12),
               PrimaryButton(busy ? 'அனுப்புகிறது…' : 'அனுப்பு', icon: Icons.send_rounded, onTap: () async {
                 if (busy || ctl.text.trim().isEmpty) return;

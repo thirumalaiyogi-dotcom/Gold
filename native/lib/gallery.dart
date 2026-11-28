@@ -69,7 +69,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
         Text(failed ? 'இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.' : 'புதிய டிசைன் படங்களுக்கு WhatsApp-ல் எங்களைத் தொடர்பு கொள்ளுங்கள்.',
             textAlign: TextAlign.center, style: sans(15, color: C.mute, height: 1.5)),
         const SizedBox(height: 22),
-        if (failed) OutlineBtn('மீண்டும் முயற்சி', icon: Icons.refresh, onTap: _load) else PrimaryButton('கடையிடம் கேட்க', icon: Icons.chat_outlined, onTap: _askWa),
+        if (failed) OutlineBtn('மீண்டும் முயற்சி', icon: Icons.refresh, onTap: _load) else PrimaryButton('எங்களிடம் கேளுங்கள்', icon: Icons.chat_outlined, onTap: _askWa),
       ]);
     } else {
       body = RefreshIndicator(
@@ -102,7 +102,7 @@ class _CategoryGalleryState extends State<CategoryGallery> {
               foregroundColor: Colors.white,
               onPressed: _askWa,
               icon: const Icon(Icons.chat_outlined),
-              label: Text('கடையிடம் கேட்க', style: sans(15, color: Colors.white, weight: FontWeight.w700)),
+              label: Text('எங்களிடம் கேளுங்கள்', style: sans(15, color: Colors.white, weight: FontWeight.w700)),
             ),
     );
   }

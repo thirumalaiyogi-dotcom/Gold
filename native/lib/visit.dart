@@ -86,7 +86,7 @@ class _VisitPageState extends State<VisitPage> {
         _note.clear();
         _day = null;
         await _load();
-        if (mounted) showNote(context, 'வருகை பதிவு செய்யப்பட்டது. கடை உறுதி செய்ததும் "கடையிடம் கேளுங்க"-ல் பதில் வரும்.');
+        if (mounted) showNote(context, 'வருகை பதிவு செய்யப்பட்டது. கடை உறுதி செய்ததும் "எங்களிடம் கேளுங்கள்"-ல் பதில் வரும்.');
       } else {
         err = '${(d is Map ? d['err'] : '') ?? ''}';
       }
@@ -232,7 +232,7 @@ class _VisitPageState extends State<VisitPage> {
                 child: TextButton.icon(
                   onPressed: () => openChat(context),
                   icon: const Icon(Icons.forum_outlined, size: 18),
-                  label: Text('கடையிடம் கேளுங்க', style: sans(13.5, weight: FontWeight.w600)),
+                  label: Text('எங்களிடம் கேளுங்கள்', style: sans(13.5, weight: FontWeight.w600)),
                 ),
               ),
               if (_loading) const Padding(padding: EdgeInsets.only(top: 8), child: Center(child: CircularProgressIndicator(strokeWidth: 2))),

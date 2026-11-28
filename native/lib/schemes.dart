@@ -248,7 +248,7 @@ class SchemeDetailPage extends StatelessWidget {
               Expanded(child: OutlineBtn('93443 95078', icon: Icons.call_outlined, onTap: () => callShop(context, Shop.phone2))),
             ]),
             const SizedBox(height: 10),
-            OutlineBtn('கடையிடம் கேட்க', icon: Icons.chat_outlined, onTap: () => askShop(context, message: 'வணக்கம், ${s.name} திட்டம் பற்றி விபரம் வேண்டும்.')),
+            OutlineBtn('எங்களிடம் கேளுங்கள்', icon: Icons.chat_outlined, onTap: () => askShop(context, message: 'வணக்கம், ${s.name} திட்டம் பற்றி விபரம் வேண்டும்.')),
           ]),
         ),
       ]),

@@ -739,7 +739,7 @@ class ProfileTab extends StatelessWidget {
               ], title: 'அமைப்புகள்');
             }),
             _group([
-              _row(Icons.forum_outlined, 'கடையிடம் கேளுங்க (App-ல்)', () => openChat(context), first: true,
+              _row(Icons.forum_outlined, 'எங்களிடம் கேளுங்கள்', () => openChat(context), first: true,
                   trailing: ValueListenableBuilder<int>(
                       valueListenable: chatUnread,
                       builder: (_, n, __) => n > 0 ? Badge(label: Text('$n'), backgroundColor: C.red) : const Icon(Icons.chevron_right, color: C.mute))),

@@ -328,7 +328,7 @@ class _StoryViewerState extends State<StoryViewer> with SingleTickerProviderStat
                       const SizedBox(height: 10),
                       Row(children: [
                         if (hasBtn)
-                          Expanded(child: PrimaryButton('${s['btn_link']}' == 'wa' ? 'கடையிடம் கேட்க' : '${s['btn_label'] ?? 'மேலும் பார்க்க'}', gold: true, onTap: () => _action(s)))
+                          Expanded(child: PrimaryButton('${s['btn_link']}' == 'wa' ? 'எங்களிடம் கேளுங்கள்' : '${s['btn_label'] ?? 'மேலும் பார்க்க'}', gold: true, onTap: () => _action(s)))
                         else
                           const Spacer(),
                         const SizedBox(width: 6),
